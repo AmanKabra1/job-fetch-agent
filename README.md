@@ -1,12 +1,21 @@
-# Daily Job Fetch Agent
+# Job Finder & Resume Tailor
 
-Scrapes **backend developer / software engineer / software developer** roles from
-LinkedIn, Indeed, and Google Jobs every day and appends new listings (with a
-direct apply link) to a Google Sheet you can open on your phone.
+A single-user web app (and optional daily cron):
+1. **Find jobs** across many boards — **generic**: ranked to whatever you give it
+   (an uploaded resume / target role / JD / skills), never to any baked-in data.
+2. **Create a resume** two ways: **(A)** generate your saved resume
+   ([`resume_profile.py`](resume_profile.py)) in your own one-page format,
+   tailored to a pasted JD, or **(B)** upload any resume and tailor it while
+   keeping its exact format. Output is PDF and/or Word.
 
-- **Source:** [`python-jobspy`](https://github.com/Bunsly/JobSpy) — no API key
-- **Schedule:** GitHub Actions cron (free)
-- **Output:** Google Sheets (deduped, append-only)
+Your saved profile is used **only** in *Create a resume → A* — the *Find jobs*
+section never uses it. The optional daily cron can also append fresh listings to
+a Google Sheet.
+
+- **Sources:** [`python-jobspy`](https://github.com/Bunsly/JobSpy) (LinkedIn,
+  Indeed, Google, Glassdoor, ZipRecruiter, Naukri, Bayt) **+ Remotive & RemoteOK**
+  free APIs — no API key.
+- **Schedule (optional):** GitHub Actions cron (free) → Google Sheets.
 
 ---
 
@@ -61,48 +70,6 @@ To change the schedule, edit the `cron:` line in `.github/workflows/daily-jobs.y
 
 ---
 
-## Tailored resume builder
-
-When you find a job worth applying to, generate a resume **in your own format**
-with the matching skills pushed to the front and bolded, exported as **PDF and/or
-Word**. Output lands in [`resume/`](resume/).
-
-```bash
-pip install -r requirements.txt   # adds reportlab + python-docx
-
-# Auto-tailor from a job description (recommended):
-python resume_builder.py new --title "Backend Developer" --company "Acme" --jd jd.txt
-
-# Or paste the JD inline:
-python resume_builder.py new --title "Node.js Developer" --company "Acme" \
-    --jd-text "We need a Node.js / NestJS engineer with MySQL and AWS ..."
-
-# No JD -> plain base resume:
-python resume_builder.py new --title "Software Engineer" --company "Acme"
-```
-
-What tailoring does: it scans the JD, and for every skill of yours it finds
-(see `SKILL_KEYWORDS` in [`resume_profile.py`](resume_profile.py)) it reorders
-that skill to the front of its category, **bolds it**, and rewrites the summary
-line to lead with your top matching stack. Everything else (experience,
-projects, education) stays intact so the resume always reads naturally.
-
-| Command | What it does |
-|---|---|
-| `new --title T --company C [--jd FILE \| --jd-text "..."] [--format pdf\|docx\|both]` | Build a resume (default: both formats) |
-| `list` | Show every resume you've generated |
-| `delete "<base-name>"` | Delete one resume (both formats) |
-| `delete --all` | Delete every generated resume |
-
-- **Edit your details once** in [`resume_profile.py`](resume_profile.py) — PDF and
-  Word stay in sync.
-- Files are named `Aman-Kabra_<Company>_<Title>_<date>.{pdf,docx}`, so the
-  `delete` base name is everything before the extension.
-- PDF is built with `reportlab`, Word with `python-docx` — **no Microsoft Word
-  required**.
-
----
-
 ## Web dashboard (jobs + resume in your browser)
 
 [`app.py`](app.py) is **one FastAPI app** that runs in two modes:
@@ -124,16 +91,68 @@ python app.py
 # open http://localhost:8000
 ```
 
-Then:
-1. Click **"Fetch today's jobs"** — it scrapes LinkedIn/Indeed/Google across your
-   7 resume-matched search terms, scores each job 0-100 against your skills, and
-   shows the **top 50 ranked** (with match chips + direct apply links).
-2. On any row, pick **PDF / Word / both** and click **Generate** — a resume
-   tailored to *that* job's description is built and downloaded. It also appears
-   in the **Generated resumes** panel with Download / Delete.
+The page has **two independent sections**:
 
-Controls: posting age (24h–7d) and how many top jobs to show. Results are cached
-to `data/jobs_latest.json`, so **Reload cached** is instant.
+**① Find jobs.** Everything is optional:
+- Upload your **resume** — the app infers which roles to search and ranks jobs to it.
+- Type a **position/role** (e.g. `Backend Developer, DevOps`) to search exactly that.
+- Add a **JD** and/or **skills** to sharpen the ranking.
+- Give nothing and a broad default search runs.
+
+Click **Fetch jobs**. It pulls from **LinkedIn, Indeed, Google, Glassdoor,
+ZipRecruiter, Naukri, Bayt** (via jobspy) **plus Remotive and RemoteOK** (free
+remote-job APIs — startups & MNCs), scores each job 0–100, and shows the
+**top N ranked** in one combined list (match chips + direct apply links). A
+**Size** column shows company headcount when the board reports it; established
+companies (≥150 employees, when known) get a small ranking boost.
+   > LinkedIn / Indeed / Google / Remotive / RemoteOK are the workhorses.
+   > ZipRecruiter is US/Canada-only and Naukri/Bayt/Glassdoor often block
+   > datacenter or repeated requests, so they may return little from a home IP;
+   > a board that blocks us or returns nothing never aborts the run.
+   > **Note:** a hard "150+ employees only" filter isn't possible — job boards
+   > almost never publish headcount — so company size is a soft ranking signal,
+   > not a filter.
+
+Tick **Remote only** to keep just remote jobs. On any job row, **Tailor to this ↓**
+copies that job's description into section ② so you can tailor your resume to it.
+
+**② Create a tailored resume** — see the next section.
+
+Controls: posting age (24h–7d), how many top jobs to show, and the Remote-only
+toggle. Results are cached to `data/jobs_latest.json`, so **Reload cached** is
+instant.
+
+### ② Create a resume — two ways
+
+**A · From your saved resume (your format).** Your resume content lives in
+[`resume_profile.py`](resume_profile.py) and renders in your own **one-page**
+layout (PDF + Word). Paste a job description and the matching skills are
+reordered to the front of their category and **bolded**, and the summary leads
+with your top matching stack — everything else stays intact. Click **Generate
+resume**. (Edit your details once in `resume_profile.py`; both formats stay in
+sync. This is the only place your saved data is used — *Find jobs* never is.)
+
+**B · Tailor a resume you upload (keeps your exact format).** Upload any resume
+and work a job's requirements into it without restyling:
+
+1. Upload your resume. **`.docx` is edited in place**, so every font, margin and
+   color you chose is preserved. A **`.pdf`** can't be edited in place without
+   wrecking its layout, so its text is extracted and rebuilt into a clean
+   document (you're told when this happens).
+2. Optionally paste a **job description** and/or a comma-separated list of
+   **skills to emphasize** — both are optional.
+3. Pick **PDF / Word / both** and click **Create resume**.
+
+What it does to the document — and nothing more:
+- **Bolds** the skills your resume *already has* that the job is asking for.
+- Inserts one **"Key Skills for this Role"** line near the top (the matching
+  skills you have, plus any you typed in the skills box).
+- Shows you, but **never silently adds**, the skills the JD wants that your
+  resume is missing — so you decide whether to add them.
+
+PDF output is produced from the tailored Word file via **Microsoft Word**
+(`docx2pdf`) so the PDF matches the Word styling exactly. If Word isn't installed
+the Word file is still produced and the PDF falls back to a basic text render.
 
 > First scrape can take ~1 minute (LinkedIn descriptions are fetched so the
 > resume tailoring has text to match). If a board returns little, Indeed +

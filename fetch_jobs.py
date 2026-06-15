@@ -12,11 +12,29 @@ Run in CI:      GitHub Actions cron (see .github/workflows/daily-jobs.yml)
 import os
 import sys
 import json
+import logging
 from datetime import datetime, timezone
 
 import pandas as pd
 import gspread
 from jobspy import scrape_jobs
+
+import extra_sources as ES
+
+
+def _quiet_jobspy():
+    """Disable jobspy's per-board loggers (named 'JobSpy:<Board>', each with its
+    own handler). jobspy resets their level every call so setLevel() won't stick,
+    but disabling does — blocked-board errors are expected and handled. Lower/
+    upper-case variants are pre-disabled too (jobspy makes a fresh logger at call
+    time for its 'finished scraping' line)."""
+    names = {n for n in logging.root.manager.loggerDict if n.startswith("JobSpy:")}
+    for site in ("LinkedIn", "Linkedin", "linkedin", "Indeed", "indeed", "Google",
+                 "google", "Glassdoor", "glassdoor", "ZipRecruiter", "zip_recruiter",
+                 "Naukri", "naukri", "Bayt", "bayt", "BDJobs", "bdjobs"):
+        names.add(f"JobSpy:{site}")
+    for name in names:
+        logging.getLogger(name).disabled = True
 
 # --------------------------------------------------------------------------- #
 # CONFIG  -- edit these freely
@@ -31,8 +49,10 @@ SEARCH_TERMS = [
 LOCATION = "India"
 COUNTRY_INDEED = "India"
 
-# Which boards to hit. google + linkedin + indeed are the most useful in India.
-SITES = ["linkedin", "indeed", "google"]
+# Which boards to hit. Every board python-jobspy supports — LinkedIn/Indeed/
+# Google are the workhorses in India; the rest are tried resiliently (a board
+# that blocks us or returns nothing never aborts the run).
+SITES = ["linkedin", "indeed", "google", "glassdoor", "zip_recruiter", "naukri", "bayt"]
 
 # Only jobs posted within this many hours (24 = last day, since this runs daily).
 HOURS_OLD = 48
@@ -56,6 +76,7 @@ COLUMNS = [
     "min_amount",
     "max_amount",
     "is_remote",
+    "company_num_employees",
     "search_term",
 ]
 # --------------------------------------------------------------------------- #
@@ -85,6 +106,7 @@ def get_worksheet():
 
 def fetch_all_jobs() -> pd.DataFrame:
     """Run every search term and return one combined, deduped DataFrame."""
+    _quiet_jobspy()
     frames = []
     for term in SEARCH_TERMS:
         print(f"  searching: {term!r} ...", flush=True)
@@ -106,6 +128,17 @@ def fetch_all_jobs() -> pd.DataFrame:
             df["search_term"] = term
             frames.append(df)
             print(f"    -> {len(df)} rows", flush=True)
+
+    # Extra real remote sources (Remotive + RemoteOK) — startups & MNCs.
+    try:
+        extra = ES.fetch_extra(SEARCH_TERMS, per_term=20, max_age_hours=HOURS_OLD)
+        if extra:
+            edf = pd.DataFrame(extra)
+            edf["search_term"] = "remote-api"
+            frames.append(edf)
+            print(f"    -> {len(edf)} rows (Remotive/RemoteOK)", flush=True)
+    except Exception as e:
+        print(f"    ! extra sources failed: {e}", flush=True)
 
     if not frames:
         return pd.DataFrame(columns=COLUMNS)

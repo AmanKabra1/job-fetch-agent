@@ -131,37 +131,38 @@ def render_pdf(path, summary, skills, matched, target_title, target_company):
 
     doc = SimpleDocTemplate(
         path, pagesize=A4,
-        leftMargin=15 * mm, rightMargin=15 * mm,
-        topMargin=12 * mm, bottomMargin=12 * mm,
+        leftMargin=14 * mm, rightMargin=14 * mm,
+        topMargin=9 * mm, bottomMargin=9 * mm,
         title=f"{P.NAME} - Resume", author=P.NAME,
     )
     content_w = doc.width
 
-    name_st = ParagraphStyle("name", fontName="Helvetica-Bold", fontSize=20,
-                             alignment=TA_CENTER, textColor=DARK, spaceAfter=2, leading=23)
-    contact_st = ParagraphStyle("contact", fontName="Helvetica", fontSize=8.5,
-                                alignment=TA_CENTER, textColor=DARK, leading=11)
-    summary_st = ParagraphStyle("summary", fontName="Helvetica", fontSize=9.2,
-                                alignment=TA_JUSTIFY, textColor=DARK, leading=12.5)
-    body_st = ParagraphStyle("body", fontName="Helvetica", fontSize=9.2,
-                             textColor=DARK, leading=12.5)
+    # Sizes/spacing tuned so the full resume fits on ONE page. Keep compact.
+    name_st = ParagraphStyle("name", fontName="Helvetica-Bold", fontSize=18,
+                             alignment=TA_CENTER, textColor=DARK, spaceAfter=1, leading=20)
+    contact_st = ParagraphStyle("contact", fontName="Helvetica", fontSize=8.2,
+                                alignment=TA_CENTER, textColor=DARK, leading=10)
+    summary_st = ParagraphStyle("summary", fontName="Helvetica", fontSize=8.6,
+                                alignment=TA_JUSTIFY, textColor=DARK, leading=11)
+    body_st = ParagraphStyle("body", fontName="Helvetica", fontSize=8.6,
+                             textColor=DARK, leading=11)
     bullet_st = ParagraphStyle("bullet", parent=body_st, leftIndent=10, bulletIndent=0)
-    role_l = ParagraphStyle("role_l", fontName="Helvetica-Bold", fontSize=10, textColor=DARK)
-    role_r = ParagraphStyle("role_r", fontName="Helvetica-Bold", fontSize=9.2,
+    role_l = ParagraphStyle("role_l", fontName="Helvetica-Bold", fontSize=9.4, textColor=DARK)
+    role_r = ParagraphStyle("role_r", fontName="Helvetica-Bold", fontSize=8.6,
                             textColor=DARK, alignment=2)
-    sub_l = ParagraphStyle("sub_l", fontName="Helvetica-Oblique", fontSize=9, textColor=DARK)
-    sub_r = ParagraphStyle("sub_r", fontName="Helvetica-Oblique", fontSize=9,
+    sub_l = ParagraphStyle("sub_l", fontName="Helvetica-Oblique", fontSize=8.4, textColor=DARK)
+    sub_r = ParagraphStyle("sub_r", fontName="Helvetica-Oblique", fontSize=8.4,
                            textColor=DARK, alignment=2)
 
     story = []
 
     def section(title):
-        story.append(Spacer(1, 7))
+        story.append(Spacer(1, 4))
         story.append(Paragraph(title.upper(),
-                     ParagraphStyle("sec", fontName="Helvetica-Bold", fontSize=10.5,
-                                    textColor=ACCENT, spaceAfter=2, leading=12)))
+                     ParagraphStyle("sec", fontName="Helvetica-Bold", fontSize=10,
+                                    textColor=ACCENT, spaceAfter=1, leading=11)))
         story.append(HRFlowable(width="100%", thickness=0.8, color=ACCENT,
-                                spaceBefore=1, spaceAfter=4))
+                                spaceBefore=1, spaceAfter=3))
 
     def two_col(left, right, lstyle, rstyle):
         t = Table([[Paragraph(left, lstyle), Paragraph(right, rstyle)]],
@@ -179,8 +180,8 @@ def render_pdf(path, summary, skills, matched, target_title, target_company):
         return ListFlowable(
             [ListItem(Paragraph(b, bullet_st), value="bullet", leftIndent=12)
              for b in items],
-            bulletType="bullet", bulletFontSize=7, start="•",
-            leftIndent=12, spaceBefore=1, spaceAfter=1,
+            bulletType="bullet", bulletFontSize=6.5, start="•",
+            leftIndent=12, spaceBefore=0.5, spaceAfter=0.5,
         )
 
     def bold_matched(skill):
@@ -205,10 +206,10 @@ def render_pdf(path, summary, skills, matched, target_title, target_company):
     section("Experience")
     for i, job in enumerate(P.EXPERIENCE):
         if i:
-            story.append(Spacer(1, 4))
+            story.append(Spacer(1, 2.5))
         story.append(two_col(job["company"], job["dates"], role_l, role_r))
         story.append(two_col(job["title"], job["location"], sub_l, sub_r))
-        story.append(Spacer(1, 1))
+        story.append(Spacer(1, 0.5))
         story.append(bullets(job["bullets"]))
 
     # Technical skills
@@ -216,13 +217,13 @@ def render_pdf(path, summary, skills, matched, target_title, target_company):
     for category, items in skills.items():
         line = f"<b>{category}:</b> " + ", ".join(bold_matched(s) for s in items)
         story.append(Paragraph(line, body_st))
-        story.append(Spacer(1, 1.5))
+        story.append(Spacer(1, 1))
 
     # Projects
     section("Projects")
     for i, proj in enumerate(P.PROJECTS):
         if i:
-            story.append(Spacer(1, 4))
+            story.append(Spacer(1, 2.5))
         head = (f'<b>{proj["name"]}</b> | <i>{proj["stack"]}</i> | '
                 f'<a href="{proj["link"]}">{proj["link"]}</a>')
         story.append(Paragraph(head, body_st))
@@ -256,18 +257,19 @@ def render_docx(path, summary, skills, matched, target_title, target_company):
 
     doc = Document()
     for section in doc.sections:
-        section.top_margin = Inches(0.5)
-        section.bottom_margin = Inches(0.5)
-        section.left_margin = Inches(0.6)
-        section.right_margin = Inches(0.6)
+        section.top_margin = Inches(0.38)
+        section.bottom_margin = Inches(0.38)
+        section.left_margin = Inches(0.5)
+        section.right_margin = Inches(0.5)
     usable_width = doc.sections[0].page_width - doc.sections[0].left_margin - doc.sections[0].right_margin
 
+    # Tuned compact so the resume stays on ONE page.
     normal = doc.styles["Normal"]
     normal.font.name = "Calibri"
-    normal.font.size = Pt(9.5)
+    normal.font.size = Pt(8.8)
     normal.font.color.rgb = DARK
 
-    def no_space(p, before=0, after=2):
+    def no_space(p, before=0, after=1):
         pf = p.paragraph_format
         pf.space_before = Pt(before)
         pf.space_after = Pt(after)
@@ -286,10 +288,10 @@ def render_docx(path, summary, skills, matched, target_title, target_company):
         pPr.append(pbdr)
 
     def section_heading(title):
-        p = no_space(doc.add_paragraph(), before=6, after=3)
+        p = no_space(doc.add_paragraph(), before=4, after=2)
         run = p.add_run(title.upper())
         run.bold = True
-        run.font.size = Pt(10.5)
+        run.font.size = Pt(10)
         run.font.color.rgb = ACCENT
         add_bottom_border(p)
 
@@ -308,8 +310,8 @@ def render_docx(path, summary, skills, matched, target_title, target_company):
         return p
 
     def bullet(text):
-        p = no_space(doc.add_paragraph(style="List Bullet"), after=1)
-        p.paragraph_format.left_indent = Inches(0.25)
+        p = no_space(doc.add_paragraph(style="List Bullet"), after=0.5)
+        p.paragraph_format.left_indent = Inches(0.22)
         p.add_run(text)
         return p
 
@@ -318,7 +320,7 @@ def render_docx(path, summary, skills, matched, target_title, target_company):
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     r = p.add_run(P.NAME)
     r.bold = True
-    r.font.size = Pt(20)
+    r.font.size = Pt(18)
     r.font.color.rgb = DARK
 
     p = no_space(doc.add_paragraph(), after=2)

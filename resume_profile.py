@@ -34,7 +34,8 @@ SUMMARY_TEMPLATE = (
     "optimizing relational databases (MySQL, PostgreSQL) and integrating "
     "cloud-native AWS services to achieve 99.9% uptime. Strong foundation in Go "
     "(Golang) for performance-critical services. Passionate about distributed "
-    "systems, clean architecture, and high-throughput applications."
+    "systems, clean architecture, and leveraging Spring Boot for high-throughput "
+    "applications."
 )
 
 # --------------------------------------------------------------------------- #

@@ -2,10 +2,16 @@ python-jobspy>=1.1.80
 gspread>=6.0.0
 pandas>=2.0.0
 
-# Resume builder (resume_builder.py)
+# Resume tailoring (resume_tailor.py): read/edit .docx, fallback PDF render
 reportlab>=4.0.0
 python-docx>=1.1.0
 
 # Web dashboard (app.py) — local UI + Vercel
 fastapi>=0.110.0
 uvicorn[standard]>=0.29.0
+python-multipart>=0.0.9          # resume upload (multipart form)
+
+# Tailor an UPLOADED resume (resume_tailor.py)
+pypdf>=4.0.0                      # read text from uploaded PDFs
+docx2pdf>=0.1.8 ; sys_platform == "win32"   # .docx -> PDF via MS Word (local, Windows)
+pywin32>=306 ; sys_platform == "win32"       # COM bridge docx2pdf needs
