@@ -1,0 +1,6 @@
+data/
+resume/
+__pycache__/
+*.pyc
+service_account.json
+fetch_jobs.py

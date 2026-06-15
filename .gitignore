@@ -1,0 +1,24 @@
+# NEVER commit your Google service account key
+service_account.json
+# Vercel build config must be committed (no inline comments in .gitignore!)
+*.json
+!package.json
+!vercel.json
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# Local output
+*.csv
+*.xlsx
+
+# Dashboard cache + generated resumes
+data/
+resume/
+
+# Vercel
+.vercel/
