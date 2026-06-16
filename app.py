@@ -51,6 +51,7 @@ from starlette.concurrency import run_in_threadpool
 
 import resume_tailor as RT
 import resume_builder as RB
+import resume_profile as P
 import extra_sources as ES
 
 
@@ -181,7 +182,12 @@ def _score_and_rank(rows, limit, target_text=None):
         job_labels = _labels_in(f"{title} {desc}")
         if targets:
             overlap = targets & job_labels
-            score = round(100 * len(overlap) / len(targets))
+            # Match level: how many of YOUR skills this job hits. Cap the
+            # denominator so a job matching ~8 of your skills already reads as a
+            # strong 100% — otherwise resumes with many skills make every % look
+            # low. More overlap -> higher % -> sorts to the top.
+            denom = max(1, min(len(targets), 8))
+            score = round(100 * min(len(overlap), denom) / denom)
             matched = sorted(overlap)
         else:
             matched = sorted(job_labels)
@@ -209,14 +215,15 @@ def _score_and_rank(rows, limit, target_text=None):
             "job_url": str(r.get("job_url") or ""),
             "description": desc,
         })
-    scored = [s for s in scored if s["job_url"]]
-    # dedupe by url
+    # Keep only real matches (drop near-zero noise) and dedupe by url.
+    scored = [s for s in scored if s["job_url"] and s["score"] >= 10]
     seen, unique = set(), []
     for s in scored:
         if s["job_url"] in seen:
             continue
         seen.add(s["job_url"])
         unique.append(s)
+    # Highest match first (100% -> down).
     unique.sort(key=lambda s: s["score"], reverse=True)
     return unique[:limit]
 
@@ -399,10 +406,23 @@ def api_resume_build(payload: dict):
     summary = RB.build_summary(matched)
     base = RB.base_filename(company, title)
 
+    # ATS: add only the JD keywords NOT already in the profile (the ones you have
+    # already appear in Technical Skills) to a short "Core Competencies" line, so
+    # total keyword coverage is ~100% without duplicating or overflowing the page.
+    ats_keywords = None
+    if description:
+        profile_blob = " ".join(
+            [P.SUMMARY_TEMPLATE] +
+            [s for items in P.SKILLS.values() for s in items] +
+            [b for j in P.EXPERIENCE for b in j["bullets"]]
+        )
+        have = _labels_in(profile_blob)
+        ats_keywords = sorted(_labels_in(description) - have) or None
+
     out_files = []
     if fmt in ("pdf", "both"):
         buf = io.BytesIO()
-        RB.render_pdf(buf, summary, skills, matched, title, company)
+        RB.render_pdf(buf, summary, skills, matched, title, company, ats_keywords)
         data = buf.getvalue()
         name = base + ".pdf"
         _save_resume_copy(name, data)
@@ -410,14 +430,15 @@ def api_resume_build(payload: dict):
                           "b64": base64.b64encode(data).decode()})
     if fmt in ("docx", "both"):
         buf = io.BytesIO()
-        RB.render_docx(buf, summary, skills, matched, title, company)
+        RB.render_docx(buf, summary, skills, matched, title, company, ats_keywords)
         data = buf.getvalue()
         name = base + ".docx"
         _save_resume_copy(name, data)
         out_files.append({"name": name, "mime": _DOCX_MIME,
                           "b64": base64.b64encode(data).decode()})
 
-    return {"files": out_files, "emphasized": sorted(matched)}
+    return {"files": out_files, "emphasized": sorted(matched),
+            "ats_keywords": ats_keywords or []}
 
 
 @app.post("/api/resume/tailor")
@@ -483,6 +504,7 @@ async def api_resume_tailor(
         "analysis": result["analysis"],
         "layout_preserved": result["layout_preserved"],
         "pdf_note": result.get("pdf_note"),
+        "ats_added": result.get("ats_added", 0),
         "files": out_files,
     }
 
@@ -565,6 +587,9 @@ INDEX_HTML = r"""<!doctype html>
   .sec-title { font-size:15px; margin:0 0 4px; display:flex; align-items:center; gap:8px; }
   .sec-num { background:var(--accent); color:#fff; border-radius:6px; font-size:12px; padding:1px 8px; }
   .card { border:1px solid var(--line); background:#0e172680; border-radius:10px; padding:14px 16px; margin:12px 0 16px; }
+  .tabs { display:flex; gap:8px; margin-bottom:22px; }
+  .tab { background:#111c2e; color:var(--mut); border:1px solid var(--line); padding:10px 18px; border-radius:9px; font-size:14px; font-weight:600; }
+  .tab.active { background:var(--accent); color:#fff; border-color:var(--accent); }
   table { width:100%; border-collapse:collapse; font-size:13px; }
   th, td { text-align:left; padding:9px 10px; border-bottom:1px solid var(--line); vertical-align:top; }
   th { color:var(--mut); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.04em; }
@@ -594,6 +619,11 @@ INDEX_HTML = r"""<!doctype html>
   <span class="sub" id="status"></span>
 </header>
 <main>
+
+  <div class="tabs">
+    <button id="tabFind" class="tab active">&#9312; Find jobs</button>
+    <button id="tabCreate" class="tab">&#9313; Create resume</button>
+  </div>
 
   <!-- ============ SECTION 1 — FIND JOBS ============ -->
   <section id="findJobs">
@@ -626,7 +656,6 @@ INDEX_HTML = r"""<!doctype html>
           <select id="hours"><option value="24">24h</option><option value="48">48h</option><option value="72">72h</option><option value="168">7d</option></select>
         </label>
         <label class="note">Top <input id="limit" type="number" value="50" min="5" max="100" style="width:60px"/></label>
-        <label class="switch note" title="Only return jobs marked remote"><input type="checkbox" id="remoteOnly"/> Remote only</label>
         <button class="secondary" id="reloadBtn">Reload cached</button>
         <span class="note" id="count"></span>
       </div>
@@ -638,7 +667,7 @@ INDEX_HTML = r"""<!doctype html>
         <th>#</th><th>Match</th><th>Job</th><th>Company</th><th>Size</th><th>Location</th>
         <th>Site</th><th>Posted</th><th>Apply</th><th>Tailor</th>
       </tr></thead>
-      <tbody id="jobsBody"><tr><td colspan="10" class="empty">No jobs yet — click "Fetch jobs".</td></tr></tbody>
+      <tbody id="jobsBody"><tr><td colspan="10" class="empty">No jobs yet. Optionally upload your resume (and/or type a role) above, then click <b>Fetch jobs</b> — results are ranked to your skills, best match first.</td></tr></tbody>
     </table>
   </section>
 
@@ -731,13 +760,13 @@ function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>
 
 function renderJobs(){
   const b=$('#jobsBody');
-  if(!jobs.length){ b.innerHTML='<tr><td colspan="10" class="empty">No jobs.</td></tr>'; return; }
+  if(!jobs.length){ b.innerHTML='<tr><td colspan="10" class="empty">No matching jobs found. Try a different role/position, widen the posting age, or upload a resume to guide the search.</td></tr>'; return; }
   b.innerHTML = jobs.map((j,i)=>{
     const chips=(j.matched||[]).slice(0,6).map(m=>'<span class="chip">'+esc(m.split(' (')[0])+'</span>').join('');
     const size=j.employees>=150?(j.employees>=1000?(Math.floor(j.employees/1000)+'k+'):(j.employees+'+')):'';
     return `<tr>
       <td>${i+1}</td>
-      <td><span class="score ${scoreClass(j.score)}">${j.score}</span></td>
+      <td><span class="score ${scoreClass(j.score)}">${j.score}%</span></td>
       <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}<div class="chips">${chips}</div></td>
       <td>${esc(j.company)}</td>
       <td class="note">${size}</td>
@@ -763,13 +792,12 @@ async function fetchJobs(){
   const btn=$('#fetchBtn'); btn.disabled=true; const old=btn.textContent;
   btn.innerHTML='<span class="spin"></span> Searching (can take ~1 min)…';
   try{
-    const remote=$('#remoteOnly').checked?'&remote=true':'';
     const fd=new FormData();
     const f=$('#jfFile').files[0]; if(f) fd.append('file', f);
     fd.append('position', $('#jfPosition').value||'');
     fd.append('jd', $('#jfJD').value||'');
     fd.append('skills', $('#jfSkills').value||'');
-    const r=await fetch('/api/fetch?hours_old='+$('#hours').value+'&limit='+($('#limit').value||50)+remote,
+    const r=await fetch('/api/fetch?hours_old='+$('#hours').value+'&limit='+($('#limit').value||50),
                         {method:'POST', body:fd});
     const d=await r.json();
     if(!r.ok){ toast('Fetch failed: '+(d.detail||r.status)); }
@@ -779,13 +807,21 @@ async function fetchJobs(){
   finally{ btn.disabled=false; btn.textContent=old; }
 }
 
+function showTab(which){
+  const find = which==='find';
+  document.getElementById('findJobs').style.display = find?'':'none';
+  document.getElementById('createResume').style.display = find?'none':'';
+  $('#tabFind').classList.toggle('active', find);
+  $('#tabCreate').classList.toggle('active', !find);
+}
+
 function useInTailor(i){
   const j=jobs[i];
   const jd = j.description || (j.title+' at '+j.company);
   $('#genJD').value = jd; $('#tailorJD').value = jd;
   $('#genTitle').value = j.title||''; $('#genCompany').value = j.company||'';
-  document.getElementById('createResume').scrollIntoView({behavior:'smooth'});
-  toast('Job sent to §2 — generate from your saved resume (A) or tailor an upload (B).');
+  showTab('create');
+  toast('Job sent to Create resume — generate from your saved resume (A) or tailor an upload (B).');
 }
 
 async function generateResume(){
@@ -799,8 +835,10 @@ async function generateResume(){
     const d=await r.json();
     if(!r.ok){ $('#genResult').textContent='Failed: '+(d.detail||r.status); toast('Generate failed.'); return; }
     (d.files||[]).forEach(f=>b64Download(f.name, f.b64, f.mime));
-    const emph=(d.emphasized||[]).length;
-    $('#genResult').textContent='Downloaded '+(d.files||[]).map(f=>f.name).join(', ')+(emph?(' · emphasized '+emph+' skills'):'');
+    const emph=(d.emphasized||[]).length, ats=(d.ats_keywords||[]).length;
+    $('#genResult').textContent='Downloaded '+(d.files||[]).map(f=>f.name).join(', ')
+      +(emph?(' · emphasized '+emph+' skills'):'')
+      +(ats?(' · '+ats+' ATS keywords added'):'');
     toast('Resume generated in your format.');
     loadResumes();
   }catch(e){ $('#genResult').textContent='Error: '+e; }
@@ -839,7 +877,7 @@ async function tailorResume(){
     if(d.pdf_note) html+='<div class="note" style="color:var(--ambt)">PDF note: '+esc(d.pdf_note)+'</div>';
     if((a.present||[]).length) html+='<div class="field" style="margin-top:10px"><label>Highlighted (you already have, JD wants)</label><div class="tagrow">'+tags(a.present,'have')+'</div></div>';
     if((a.typed||[]).length) html+='<div class="field"><label>Added from your skills box</label><div class="tagrow">'+tags(a.typed,'add')+'</div></div>';
-    if((a.suggestions||[]).length) html+='<div class="field"><label>JD asks for these — not in your resume (consider adding)</label><div class="tagrow">'+tags(a.suggestions,'miss')+'</div></div>';
+    if(d.ats_added && (a.suggestions||[]).length) html+='<div class="field"><label>Added for ATS keyword coverage — <b>verify these are truthful before sending</b></label><div class="tagrow">'+tags(a.suggestions,'miss')+'</div></div>';
     if(!a.had_request) html+='<div class="note" style="margin-top:8px">No JD or skills given — returned your resume unchanged in the chosen format(s).</div>';
     html+='<div class="note" style="margin-top:10px">Downloaded: '+(d.files||[]).map(f=>esc(f.name)).join(', ')+'</div>';
     $('#tailorResult').innerHTML=html;
@@ -866,11 +904,14 @@ async function delResume(name){
   toast('Deleted '+name); loadResumes();
 }
 
+$('#tabFind').onclick=()=>showTab('find');
+$('#tabCreate').onclick=()=>showTab('create');
 $('#fetchBtn').onclick=fetchJobs;
 $('#reloadBtn').onclick=loadJobs;
 $('#genBtn').onclick=generateResume;
 $('#tailorBtn').onclick=tailorResume;
 $('#refreshResumes').onclick=loadResumes;
+showTab('find');
 $('#modePill').textContent = LIVE ? 'LOCAL · live scrape' : 'VERCEL · Google Sheet';
 if(!LIVE){ $('#fetchBtn').textContent='Load jobs from Sheet'; $('#hours').style.display='none'; }
 loadJobs(); loadResumes();

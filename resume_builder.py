@@ -115,7 +115,8 @@ def base_filename(company: str, title: str) -> str:
 # --------------------------------------------------------------------------- #
 # PDF RENDERER  (reportlab)
 # --------------------------------------------------------------------------- #
-def render_pdf(path, summary, skills, matched, target_title, target_company):
+def render_pdf(path, summary, skills, matched, target_title, target_company,
+               ats_keywords=None):
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.units import mm
     from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
@@ -132,20 +133,20 @@ def render_pdf(path, summary, skills, matched, target_title, target_company):
     doc = SimpleDocTemplate(
         path, pagesize=A4,
         leftMargin=14 * mm, rightMargin=14 * mm,
-        topMargin=9 * mm, bottomMargin=9 * mm,
+        topMargin=8 * mm, bottomMargin=8 * mm,
         title=f"{P.NAME} - Resume", author=P.NAME,
     )
     content_w = doc.width
 
-    # Sizes/spacing tuned so the full resume fits on ONE page. Keep compact.
+    # Sizes/spacing tuned so the full resume (incl. an ATS line) fits on ONE page.
     name_st = ParagraphStyle("name", fontName="Helvetica-Bold", fontSize=18,
                              alignment=TA_CENTER, textColor=DARK, spaceAfter=1, leading=20)
     contact_st = ParagraphStyle("contact", fontName="Helvetica", fontSize=8.2,
                                 alignment=TA_CENTER, textColor=DARK, leading=10)
-    summary_st = ParagraphStyle("summary", fontName="Helvetica", fontSize=8.6,
-                                alignment=TA_JUSTIFY, textColor=DARK, leading=11)
-    body_st = ParagraphStyle("body", fontName="Helvetica", fontSize=8.6,
-                             textColor=DARK, leading=11)
+    summary_st = ParagraphStyle("summary", fontName="Helvetica", fontSize=8.5,
+                                alignment=TA_JUSTIFY, textColor=DARK, leading=10.4)
+    body_st = ParagraphStyle("body", fontName="Helvetica", fontSize=8.5,
+                             textColor=DARK, leading=10.4)
     bullet_st = ParagraphStyle("bullet", parent=body_st, leftIndent=10, bulletIndent=0)
     role_l = ParagraphStyle("role_l", fontName="Helvetica-Bold", fontSize=9.4, textColor=DARK)
     role_r = ParagraphStyle("role_r", fontName="Helvetica-Bold", fontSize=8.6,
@@ -157,12 +158,12 @@ def render_pdf(path, summary, skills, matched, target_title, target_company):
     story = []
 
     def section(title):
-        story.append(Spacer(1, 4))
+        story.append(Spacer(1, 3))
         story.append(Paragraph(title.upper(),
-                     ParagraphStyle("sec", fontName="Helvetica-Bold", fontSize=10,
-                                    textColor=ACCENT, spaceAfter=1, leading=11)))
+                     ParagraphStyle("sec", fontName="Helvetica-Bold", fontSize=9.8,
+                                    textColor=ACCENT, spaceAfter=1, leading=10.5)))
         story.append(HRFlowable(width="100%", thickness=0.8, color=ACCENT,
-                                spaceBefore=1, spaceAfter=3))
+                                spaceBefore=1, spaceAfter=2.5))
 
     def two_col(left, right, lstyle, rstyle):
         t = Table([[Paragraph(left, lstyle), Paragraph(right, rstyle)]],
@@ -218,6 +219,10 @@ def render_pdf(path, summary, skills, matched, target_title, target_company):
         line = f"<b>{category}:</b> " + ", ".join(bold_matched(s) for s in items)
         story.append(Paragraph(line, body_st))
         story.append(Spacer(1, 1))
+    if ats_keywords:
+        kw = ", ".join(bold_matched(k) for k in ats_keywords)
+        story.append(Paragraph(f"<b>Core Competencies:</b> {kw}", body_st))
+        story.append(Spacer(1, 1))
 
     # Projects
     section("Projects")
@@ -245,7 +250,8 @@ def render_pdf(path, summary, skills, matched, target_title, target_company):
 # --------------------------------------------------------------------------- #
 # WORD RENDERER  (python-docx)
 # --------------------------------------------------------------------------- #
-def render_docx(path, summary, skills, matched, target_title, target_company):
+def render_docx(path, summary, skills, matched, target_title, target_company,
+                ats_keywords=None):
     from docx import Document
     from docx.shared import Pt, RGBColor, Inches
     from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
@@ -349,6 +355,14 @@ def render_docx(path, summary, skills, matched, target_title, target_company):
         for idx, s in enumerate(items):
             run = p.add_run(s + (", " if idx < len(items) - 1 else ""))
             if s in matched:
+                run.bold = True
+    if ats_keywords:
+        p = no_space(doc.add_paragraph(), after=2)
+        cr = p.add_run("Core Competencies: ")
+        cr.bold = True
+        for idx, k in enumerate(ats_keywords):
+            run = p.add_run(k + (", " if idx < len(ats_keywords) - 1 else ""))
+            if k in matched:
                 run.bold = True
 
     # Projects

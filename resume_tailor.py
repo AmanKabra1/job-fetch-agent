@@ -237,9 +237,21 @@ def analyze(resume_text: str, jd_text: str = "", extra_skills: str = "") -> dict
     }
 
 
-def _key_skills_line(analysis: dict) -> str:
-    """The single tailored line we insert (present + user-typed skills)."""
-    skills = analysis["present"] + [t for t in analysis["typed"] if t not in analysis["present"]]
+def _key_skills_line(analysis: dict, ats: bool = False) -> str:
+    """The skills line we insert.
+
+    Normal: skills you already have + skills you typed.
+    ATS mode: ALSO append the JD's remaining keywords ('suggestions') so an
+    Applicant Tracking System scanning for the JD's terms finds them all — i.e.
+    ~100% keyword coverage. (The UI warns you to keep these truthful.)"""
+    skills = list(analysis["present"])
+    for t in analysis["typed"]:
+        if t not in skills:
+            skills.append(t)
+    if ats:
+        for s in analysis["suggestions"]:
+            if s not in skills:
+                skills.append(s)
     return ", ".join(skills)
 
 
@@ -287,13 +299,13 @@ def _bold_in_run(run, regex):
         anchor = new_r
 
 
-def _insert_key_skills(doc, line: str):
-    """Insert a 'Key Skills for this Role' paragraph just below the header."""
+def _insert_key_skills(doc, line: str, label: str = "Key Skills for this Role: "):
+    """Insert a skills paragraph just below the header."""
     if not line:
         return
     from docx.shared import Pt
     paras = doc.paragraphs
-    label, body = "Key Skills for this Role: ", line
+    body = line
     if len(paras) >= 2:
         new_p = paras[1].insert_paragraph_before("")
     elif paras:
@@ -311,7 +323,7 @@ def _insert_key_skills(doc, line: str):
         pass
 
 
-def tailor_docx(data: bytes, analysis: dict) -> bytes:
+def tailor_docx(data: bytes, analysis: dict, ats: bool = False) -> bytes:
     """Edit an uploaded .docx in place and return the tailored bytes."""
     from docx import Document
     doc = Document(io.BytesIO(data))
@@ -330,7 +342,8 @@ def tailor_docx(data: bytes, analysis: dict) -> bytes:
                         for run in list(p.runs):
                             _bold_in_run(run, regex)
 
-    _insert_key_skills(doc, _key_skills_line(analysis))
+    label = "Core Competencies: " if ats else "Key Skills for this Role: "
+    _insert_key_skills(doc, _key_skills_line(analysis, ats=ats), label=label)
 
     out = io.BytesIO()
     doc.save(out)
@@ -340,7 +353,7 @@ def tailor_docx(data: bytes, analysis: dict) -> bytes:
 # --------------------------------------------------------------------------- #
 # PDF UPLOAD -> rebuilt DOCX (layout NOT preserved)
 # --------------------------------------------------------------------------- #
-def rebuild_docx_from_text(resume_text: str, analysis: dict) -> bytes:
+def rebuild_docx_from_text(resume_text: str, analysis: dict, ats: bool = False) -> bytes:
     """Build a clean .docx from extracted PDF text. Original layout is lost."""
     from docx import Document
     from docx.shared import Pt
@@ -349,7 +362,8 @@ def rebuild_docx_from_text(resume_text: str, analysis: dict) -> bytes:
     doc.styles["Normal"].font.name = "Calibri"
     doc.styles["Normal"].font.size = Pt(10.5)
 
-    _insert_key_skills(doc, _key_skills_line(analysis))
+    label = "Core Competencies: " if ats else "Key Skills for this Role: "
+    _insert_key_skills(doc, _key_skills_line(analysis, ats=ats), label=label)
 
     regex = _bold_terms_regex(analysis["bold_terms"])
     for raw in (resume_text or "").splitlines():
@@ -440,12 +454,15 @@ def _fallback_text_pdf(docx_bytes: bytes) -> bytes:
 # --------------------------------------------------------------------------- #
 def tailor_upload(filename: str, data: bytes, jd_text: str = "",
                   extra_skills: str = "", want_pdf: bool = True,
-                  want_docx: bool = True) -> dict:
+                  want_docx: bool = True, ats: bool = True) -> dict:
     """Tailor an uploaded resume.
+
+    ats=True (default): also add the JD's remaining keywords to the skills line
+    for ~100% ATS keyword coverage.
 
     Returns dict with:
       analysis, layout_preserved (bool), docx (bytes|None), pdf (bytes|None),
-      pdf_note (str|None)  -- set if PDF used the fallback / failed.
+      pdf_note (str|None), ats_added (int)  -- keywords added for ATS coverage.
     """
     if not data:
         raise ValueError("Empty file.")
@@ -462,9 +479,9 @@ def tailor_upload(filename: str, data: bytes, jd_text: str = "",
 
     layout_preserved = ext == ".docx"
     if layout_preserved:
-        tailored_docx = tailor_docx(data, info)
+        tailored_docx = tailor_docx(data, info, ats=ats)
     else:
-        tailored_docx = rebuild_docx_from_text(resume_text, info)
+        tailored_docx = rebuild_docx_from_text(resume_text, info, ats=ats)
 
     result = {
         "analysis": info,
@@ -472,6 +489,7 @@ def tailor_upload(filename: str, data: bytes, jd_text: str = "",
         "docx": tailored_docx if want_docx else None,
         "pdf": None,
         "pdf_note": None,
+        "ats_added": len(info["suggestions"]) if ats else 0,
     }
 
     if want_pdf:
