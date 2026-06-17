@@ -206,33 +206,57 @@ def _labels_in(text: str) -> set:
             if any(RT._word_in(a, tl) for a in aliases)}
 
 
-def _derive_search_terms(position: str = "", resume_text: str = ""):
-    """Build the board search terms generically (no hardcoded profile):
-       1. explicit position(s) the user typed (comma/newline separated), else
-       2. roles inferred from the uploaded resume, else
-       3. a dominant language in the resume -> a role, else
-       4. a broad generic default."""
+def _derive_search_terms(position: str = "", resume_text: str = "",
+                         jd_text: str = "", skills_text: str = ""):
+    """Build the board search queries from what the user sends, in priority order
+    so the title/skills/JD actually drive the search (not just the ranking):
+       1. explicit position(s) the user typed,
+       2. a role title inferred from the pasted JD,
+       3. roles inferred from the typed skills (e.g. 'node' -> Node.js Developer),
+       4. roles inferred from the uploaded resume,
+       5. a broad generic default.
+    """
+    terms, seen = [], set()
+
+    def add(t):
+        t = (t or "").strip()
+        if t and t.lower() not in seen:
+            seen.add(t.lower())
+            terms.append(t)
+
+    # 1. explicit position (highest priority)
     if position and position.strip():
-        terms = [t.strip() for t in re.split(r"[,\n;]+", position) if t.strip()]
-        if terms:
-            return terms[:6]
+        for t in re.split(r"[,\n;]+", position):
+            add(t)
 
-    text = (resume_text or "").lower()
-    if text.strip():
-        roles, seen = [], set()
+    # 2. a title from the JD
+    jl = (jd_text or "").lower()
+    for needle, role in _ROLE_HINTS:
+        if needle in jl:
+            add(role)
+            break
+
+    # 3. roles from the typed skills
+    sl = (skills_text or "").lower()
+    for needle, role in _LANG_HINTS:
+        if needle in sl:
+            add(role)
+
+    # 4. roles from the resume
+    rl = (resume_text or "").lower()
+    if rl.strip():
         for needle, role in _ROLE_HINTS:
-            if needle in text and role not in seen:
-                seen.add(role)
-                roles.append(role)
-        if not roles:
+            if needle in rl:
+                add(role)
+        if not terms:
             for needle, role in _LANG_HINTS:
-                if needle in text and role not in seen:
-                    seen.add(role)
-                    roles.append(role)
-        if roles:
-            return roles[:6]
+                if needle in rl:
+                    add(role)
 
-    return list(DEFAULT_SEARCH_TERMS)
+    if not terms:
+        for t in DEFAULT_SEARCH_TERMS:
+            add(t)
+    return terms[:6]
 
 
 def _score_and_rank(rows, limit, target_text=None, cand_years=0):
@@ -365,11 +389,25 @@ def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
 
     if not rows:
         return []
-    ranked = _score_and_rank(rows, limit * 3 if remote_only else limit,
-                             target_text, cand_years)
-    if remote_only:
-        ranked = [j for j in ranked if j.get("is_remote")][:limit]
-    return ranked
+    # Rank a wider pool, then cap any single board's share so Indeed (which
+    # returns by far the most) can't swamp the list — keeps the boards balanced.
+    ranked = _score_and_rank(rows, limit * 4, target_text, cand_years)
+    return _diversify_by_site(ranked, limit, max_share=0.45)
+
+
+def _diversify_by_site(ranked, limit, max_share=0.45):
+    """Keep best-match order but stop one board from filling more than max_share
+    of the list; overflow from a dominant board drops to the bottom."""
+    cap = max(3, int(limit * max_share))
+    primary, overflow, counts = [], [], {}
+    for j in ranked:
+        site = j.get("site") or "?"
+        if counts.get(site, 0) < cap:
+            counts[site] = counts.get(site, 0) + 1
+            primary.append(j)
+        else:
+            overflow.append(j)
+    return (primary + overflow)[:limit]
 
 
 def fetch_from_sheet(limit: int):
@@ -449,7 +487,7 @@ async def api_fetch(
 
     parts = [p for p in (jd, skills, resume_text) if p and p.strip()]
     target_text = "\n".join(parts)
-    search_terms = _derive_search_terms(position, resume_text)
+    search_terms = _derive_search_terms(position, resume_text, jd, skills)
 
     # Years of experience: explicit field, else inferred from the resume.
     try:
