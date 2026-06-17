@@ -19,6 +19,7 @@ These are best-effort and resilient: a source that is down or rate-limited just
 returns [] and never aborts the run.
 """
 
+import os
 import re
 import html
 import datetime as dt
@@ -207,6 +208,65 @@ def fetch_arbeitnow(terms, max_age_hours=0):
             "job_url": j.get("url", ""),
             "description": _strip_html(j.get("description", "")),
         })
+    return rows
+
+
+# Domains that are actual job postings (used to filter Tavily web results).
+_JOB_DOMAINS = (
+    "linkedin.com/jobs", "indeed.", "glassdoor.", "naukri.com", "lever.co",
+    "greenhouse.io", "ashbyhq.com", "myworkdayjobs.com", "workday", "wellfound.com",
+    "angel.co", "remoteok", "weworkremotely.com", "remotive.com", "jobicy.com",
+    "ziprecruiter.com", "dice.com", "monster.com", "instahyre.com", "cutshort.io",
+    "hirist.", "ycombinator.com/jobs", "/careers", "careers.", "jobs.", "smartrecruiters.com",
+)
+
+
+def fetch_tavily(terms, max_results=5, max_age_hours=0):
+    """Fallback search via Tavily (AI web-search API). Needs a free API key in
+    env TAVILY_API_KEY — returns [] (and a one-time note) if it isn't set. Web
+    results are filtered to real job-posting domains and mapped to job rows."""
+    key = os.environ.get("TAVILY_API_KEY")
+    if not key:
+        print("  (Tavily fallback skipped: set TAVILY_API_KEY to enable)", flush=True)
+        return []
+    rows, seen = [], set()
+    for term in terms:
+        try:
+            r = requests.post("https://api.tavily.com/search", json={
+                "api_key": key,
+                "query": f"{term} job openings apply",
+                "max_results": max_results,
+                "search_depth": "basic",
+            }, headers=_UA, timeout=_TIMEOUT)
+            r.raise_for_status()
+            results = r.json().get("results", [])
+        except Exception as e:
+            print(f"  ! tavily {term!r} failed: {e}", flush=True)
+            continue
+        for res in results:
+            url = res.get("url", "")
+            if not url or url in seen:
+                continue
+            if not any(d in url.lower() for d in _JOB_DOMAINS):
+                continue
+            seen.add(url)
+            title, company = res.get("title", ""), ""
+            for sep in (" - ", " at ", " | ", " – "):
+                if sep in title:
+                    bits = title.split(sep)
+                    title, company = bits[0].strip(), bits[1].strip()
+                    break
+            content = res.get("content", "")
+            rows.append({
+                "title": title,
+                "company": company,
+                "location": "",
+                "site": "tavily",
+                "date_posted": "",
+                "is_remote": "remote" in (title + " " + content).lower(),
+                "job_url": url,
+                "description": content,
+            })
     return rows
 
 

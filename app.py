@@ -59,6 +59,30 @@ def _slugify(text: str) -> str:
     text = re.sub(r"[^A-Za-z0-9]+", "-", str(text or "")).strip("-")
     return text or "resume"
 
+
+def _load_dotenv():
+    """Load KEY=VALUE lines from a local .env (if present) into the environment,
+    so secrets like TAVILY_API_KEY / GOOGLE_CREDENTIALS are set ONCE in a file
+    instead of re-typed each run. Real environment variables take precedence."""
+    path = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env")
+    if not os.path.exists(path):
+        return
+    try:
+        with open(path, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#") or "=" not in line:
+                    continue
+                k, v = line.split("=", 1)
+                k, v = k.strip(), v.strip().strip('"').strip("'")
+                if k and k not in os.environ:
+                    os.environ[k] = v
+    except Exception as e:
+        print(f"  ! could not read .env: {e}", flush=True)
+
+
+_load_dotenv()
+
 # --------------------------------------------------------------------------- #
 # CONFIG
 # --------------------------------------------------------------------------- #
@@ -285,12 +309,20 @@ def _score_and_rank(rows, limit, target_text=None, cand_years=0):
             score = min(100, len(job_labels) * 12)
         base = score
 
-        # --- experience fit: penalise roles needing many more years ---
+        # --- experience fit (a PRIMARY signal) ---
+        # Strongly prefer roles that match the candidate's years; strongly push
+        # down roles that need many more years, and senior-titled roles.
         req_years = _required_years(f"{title} {desc}")
-        if cand_years and req_years and req_years > cand_years + 1:
-            score -= min(35, (req_years - cand_years) * 6)
+        exp_fit = True
+        if cand_years and req_years:
+            if req_years <= cand_years + 1:
+                score += 10                       # fits your experience
+            else:
+                score -= min(45, (req_years - cand_years) * 8)
+                exp_fit = False
         if _SENIOR_RE.search(title):
-            score -= 18
+            score -= 20
+            exp_fit = False
 
         # --- preferences (soft boosts) ---
         is_remote = bool(r.get("is_remote"))
@@ -322,6 +354,7 @@ def _score_and_rank(rows, limit, target_text=None, cand_years=0):
             "is_remote": is_remote,
             "employees": employees,
             "big": big,
+            "exp_fit": exp_fit,
             "salary_lpa": round(lpa, 1) if lpa else 0,
             "job_url": str(r.get("job_url") or ""),
             "description": desc,
@@ -386,6 +419,17 @@ def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
         rows += ES.fetch_extra(terms, per_term=15, max_age_hours=hours_old)
     except Exception as e:
         print(f"  ! extra sources failed: {e}", flush=True)
+
+    # Fallback: if the boards/APIs returned little, use Tavily AI web-search
+    # (only runs when TAVILY_API_KEY is set — saves free credits).
+    if len(rows) < limit:
+        try:
+            tav = ES.fetch_tavily(terms, max_results=6, max_age_hours=hours_old)
+            if tav:
+                rows += tav
+                print(f"    -> {len(tav)} rows (Tavily fallback)", flush=True)
+        except Exception as e:
+            print(f"  ! tavily fallback failed: {e}", flush=True)
 
     if not rows:
         return []
@@ -706,6 +750,7 @@ INDEX_HTML = r"""<!doctype html>
   button { background:var(--accent); color:#fff; border:0; padding:8px 14px; border-radius:8px; cursor:pointer; font-size:13px; }
   button.secondary { background:#1e293b; color:var(--ink); border:1px solid var(--line); }
   button:disabled { opacity:.5; cursor:default; }
+  input:disabled, select:disabled, textarea:disabled { opacity:.55; cursor:not-allowed; }
   input, select, textarea { background:#0e1726; color:var(--ink); border:1px solid var(--line); border-radius:7px; padding:7px 9px; font-size:13px; font-family:inherit; }
   textarea { width:100%; resize:vertical; min-height:74px; }
   .note { color:var(--mut); font-size:12px; }
@@ -896,6 +941,12 @@ function toast(msg, ms=3500){ const t=$('#toast'); t.innerHTML='<div class="toas
   clearTimeout(window._tt); window._tt=setTimeout(()=>t.innerHTML='',ms); }
 function scoreClass(s){ return s>=65?'s-hi':s>=45?'s-md':'s-lo'; }
 function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+// While an action runs, lock every input/select/textarea/button in its card so
+// fields can't be edited mid-process; unlock when done.
+function setBusy(btn, busy){
+  const scope = (btn && btn.closest && btn.closest('.card')) || document;
+  scope.querySelectorAll('input, select, textarea, button').forEach(el=>{ el.disabled = busy; });
+}
 
 function renderJobs(){
   const b=$('#jobsBody');
@@ -906,7 +957,7 @@ function renderJobs(){
     return `<tr>
       <td>${i+1}</td>
       <td><span class="score ${scoreClass(j.score)}">${j.score}%</span></td>
-      <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.salary_lpa>=7?(' <span class="chip">'+j.salary_lpa+' LPA</span>'):''}<div class="chips">${chips}</div></td>
+      <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${j.exp_fit?' <span class="tag have" style="font-size:10px">exp fit</span>':''}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.salary_lpa>=7?(' <span class="chip">'+j.salary_lpa+' LPA</span>'):''}<div class="chips">${chips}</div></td>
       <td>${esc(j.company)}</td>
       <td class="note">${size}</td>
       <td>${esc(j.location)}</td>
@@ -928,7 +979,7 @@ async function loadJobs(){
 
 async function fetchJobs(){
   if(!LIVE){ toast('Live fetch is off in Vercel mode - showing Google Sheet jobs.'); return loadJobs(); }
-  const btn=$('#fetchBtn'); btn.disabled=true; const old=btn.textContent;
+  const btn=$('#fetchBtn'); const old=btn.textContent; setBusy(btn,true);
   btn.innerHTML='<span class="spin"></span> Searching (can take ~1 min)…';
   try{
     const fd=new FormData();
@@ -944,7 +995,7 @@ async function fetchJobs(){
     else { jobs=d.jobs||[]; $('#count').textContent=jobs.length+' jobs · fetched '+d.fetched_at; renderJobs();
            toast(jobs.length+(d.guided?' jobs ranked to your resume/JD/skills.':' jobs ranked by tech relevance.')+(d.search_terms?' Searched: '+d.search_terms.join(', '):'')); }
   }catch(e){ toast('Fetch error: '+e); }
-  finally{ btn.disabled=false; btn.textContent=old; }
+  finally{ setBusy(btn,false); btn.textContent=old; }
 }
 
 function showTab(which){
@@ -965,7 +1016,7 @@ function useInTailor(i){
 }
 
 async function generateResume(){
-  const btn=$('#genBtn'); btn.disabled=true; const old=btn.textContent;
+  const btn=$('#genBtn'); const old=btn.textContent; setBusy(btn,true);
   btn.innerHTML='<span class="spin"></span> Generating…';
   $('#genResult').textContent='';
   try{
@@ -982,7 +1033,7 @@ async function generateResume(){
     toast('Resume generated in your format.');
     loadResumes();
   }catch(e){ $('#genResult').textContent='Error: '+e; }
-  finally{ btn.disabled=false; btn.textContent=old; }
+  finally{ setBusy(btn,false); btn.textContent=old; }
 }
 
 function b64Download(name, b64, mime){
@@ -1002,7 +1053,7 @@ async function tailorResume(){
   fd.append('jd', $('#tailorJD').value||'');
   fd.append('skills', $('#tailorSkills').value||'');
   fd.append('fmt', $('#tailorFmt').value);
-  const btn=$('#tailorBtn'); btn.disabled=true; const old=btn.textContent;
+  const btn=$('#tailorBtn'); const old=btn.textContent; setBusy(btn,true);
   btn.innerHTML='<span class="spin"></span> Tailoring…';
   $('#tailorResult').innerHTML='Working — building your resume'+($('#tailorFmt').value!=='docx'?' (PDF via Word can take a few seconds)':'')+'…';
   try{
@@ -1024,7 +1075,7 @@ async function tailorResume(){
     toast('Tailored resume downloaded.');
     loadResumes();
   }catch(e){ $('#tailorResult').textContent='Error: '+e; }
-  finally{ btn.disabled=false; btn.textContent=old; }
+  finally{ setBusy(btn,false); btn.textContent=old; }
 }
 
 async function loadResumes(){

@@ -1,5 +1,6 @@
-# NEVER commit your Google service account key
+# NEVER commit secrets
 service_account.json
+.env
 # Vercel build config must be committed (no inline comments in .gitignore!)
 *.json
 !package.json
