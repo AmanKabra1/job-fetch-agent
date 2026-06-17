@@ -114,6 +114,71 @@ _LANG_HINTS = [
     (".net", ".NET Developer"), ("php", "PHP Developer"),
 ]
 
+# --------------------------------------------------------------------------- #
+# RANKING PREFERENCES
+#   Soft signals that nudge jobs up the list — never hard filters.
+# --------------------------------------------------------------------------- #
+# Big employers (MNCs + large/well-funded startups). Substring match on company.
+BIG_COMPANIES = {
+    "google", "microsoft", "amazon", "meta", "facebook", "apple", "netflix",
+    "adobe", "salesforce", "oracle", "ibm", "sap", "intel", "nvidia", "cisco",
+    "vmware", "uber", "airbnb", "atlassian", "stripe", "shopify", "paypal",
+    "walmart", "accenture", "deloitte", "pwc", "kpmg", "ey", "tcs", "infosys",
+    "wipro", "cognizant", "capgemini", "hcl", "tech mahindra", "mindtree",
+    "thoughtworks", "publicis sapient", "epam", "globallogic", "persistent",
+    "flipkart", "zomato", "swiggy", "paytm", "razorpay", "cred", "phonepe",
+    "zerodha", "freshworks", "zoho", "postman", "browserstack", "groww",
+    "meesho", "ola", "oyo", "byju", "unacademy", "dream11", "sharechat",
+    "nykaa", "delhivery", "myntra", "makemytrip", "navi", "slice", "upstox",
+    "jupiter", "gojek", "grab", "servicenow", "databricks", "snowflake",
+    "mongodb", "gitlab", "github", "twilio", "intuit", "expedia", "booking",
+    "goldman sachs", "jp morgan", "jpmorgan", "morgan stanley", "barclays",
+    "hsbc", "wells fargo", "american express", "mastercard", "visa", "optum",
+    "jio", "reliance", "samsung", "qualcomm", "dell", "hp ", "sony", "uber",
+    "walmart global", "target", "lowe", "mastercard", "rakuten", "agoda",
+}
+
+_SENIOR_RE = re.compile(
+    r"\b(senior|sr\.?|lead|principal|staff|architect|manager|head\s+of|"
+    r"director|vp|vice\s+president)\b", re.I)
+_YEARS_RE = re.compile(r"(\d{1,2})\s*\+?\s*(?:years|yrs|yr)\b", re.I)
+
+
+def _required_years(text: str) -> int:
+    """Largest 'N years' mentioned in a JD (rough seniority signal). 0 if none."""
+    yrs = [int(m) for m in _YEARS_RE.findall(text or "") if int(m) <= 20]
+    return max(yrs) if yrs else 0
+
+
+def _infer_years(resume_text: str) -> int:
+    """Guess the candidate's years of experience from their resume text."""
+    m = re.search(r"(\d{1,2})\s*\+?\s*years?\b", resume_text or "", re.I)
+    return int(m.group(1)) if m else 0
+
+
+def _is_big_company(name: str) -> bool:
+    n = " " + (name or "").lower() + " "
+    return any(b in n for b in BIG_COMPANIES)
+
+
+def _salary_lpa(r) -> float:
+    """Best-effort annual salary in lakhs (INR). Returns 0 when unknown/ambiguous
+    (most boards don't publish salary, especially in India)."""
+    amt = r.get("max_amount") or r.get("min_amount")
+    try:
+        amt = float(amt)
+    except (TypeError, ValueError):
+        return 0.0
+    if amt <= 0:
+        return 0.0
+    interval = str(r.get("interval") or "").lower()
+    if "month" in interval:
+        amt *= 12
+    elif "hour" in interval or "day" in interval or "week" in interval:
+        return 0.0  # too noisy to annualise reliably
+    # Heuristic: large rupee figures -> lakhs; ignore small (likely USD/hourly).
+    return amt / 100000.0 if amt >= 100000 else 0.0
+
 # Google Sheet (sheet mode)
 SHEET_NAME = os.environ.get("SHEET_NAME", "Job Listings")
 WORKSHEET_NAME = os.environ.get("WORKSHEET_NAME", "jobs")
@@ -170,15 +235,17 @@ def _derive_search_terms(position: str = "", resume_text: str = ""):
     return list(DEFAULT_SEARCH_TERMS)
 
 
-def _score_and_rank(rows, limit, target_text=None):
-    """Rank jobs generically. If target_text (the user's resume / JD / skills)
-    names any skills, rank by overlap with THOSE; otherwise rank by how many
-    recognised tech skills each posting mentions (a generic relevance signal)."""
+def _score_and_rank(rows, limit, target_text=None, cand_years=0):
+    """Rank jobs. Base = skill/ATS match (vs the user's resume/JD/skills, or
+    generic tech relevance). Then nudge by PREFERENCES — remote, big employers,
+    500+ size, salary >= 7 LPA — and penalise roles that need many more years
+    than the candidate. All soft signals; nothing is hard-filtered out."""
     targets = _labels_in(target_text or "")
     scored = []
     for r in rows:
         title = str(r.get("title") or "")
         desc = str(r.get("description") or "")
+        company = str(r.get("company") or "")
         job_labels = _labels_in(f"{title} {desc}")
         if targets:
             overlap = targets & job_labels
@@ -192,26 +259,46 @@ def _score_and_rank(rows, limit, target_text=None):
         else:
             matched = sorted(job_labels)
             score = min(100, len(job_labels) * 12)
+        base = score
 
-        # Company size is only exposed by a few boards (mostly LinkedIn) and is
-        # usually blank. When present, gently prefer established companies
-        # (>=150 employees) — a soft boost, never a hard filter, so jobs with
-        # unknown size are NEVER dropped.
+        # --- experience fit: penalise roles needing many more years ---
+        req_years = _required_years(f"{title} {desc}")
+        if cand_years and req_years and req_years > cand_years + 1:
+            score -= min(35, (req_years - cand_years) * 6)
+        if _SENIOR_RE.search(title):
+            score -= 18
+
+        # --- preferences (soft boosts) ---
+        is_remote = bool(r.get("is_remote"))
         employees = _employees_min(r.get("company_num_employees"))
-        if employees >= 150:
-            score = score + 5
+        big = _is_big_company(company)
+        lpa = _salary_lpa(r)
+        if is_remote:
+            score += 8
+        if employees >= 500:
+            score += 12
+        elif employees >= 150:
+            score += 6
+        if big:
+            score += 10
+        if lpa >= 7:
+            score += 5
+
         score = max(0, min(100, score))
 
         scored.append({
             "score": score,
+            "base": max(0, min(100, base)),
             "matched": matched,
             "title": title,
-            "company": str(r.get("company") or ""),
+            "company": company,
             "location": str(r.get("location") or ""),
             "site": str(r.get("site") or ""),
             "date_posted": str(r.get("date_posted") or ""),
-            "is_remote": bool(r.get("is_remote")),
+            "is_remote": is_remote,
             "employees": employees,
+            "big": big,
+            "salary_lpa": round(lpa, 1) if lpa else 0,
             "job_url": str(r.get("job_url") or ""),
             "description": desc,
         })
@@ -229,7 +316,7 @@ def _score_and_rank(rows, limit, target_text=None):
 
 
 def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
-               target_text=None, search_terms=None):
+               target_text=None, search_terms=None, cand_years=0):
     """Scrape every board (local only). jobspy is imported lazily.
 
     search_terms drive the board queries (derived from the user's position /
@@ -278,7 +365,8 @@ def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
 
     if not rows:
         return []
-    ranked = _score_and_rank(rows, limit * 3 if remote_only else limit, target_text)
+    ranked = _score_and_rank(rows, limit * 3 if remote_only else limit,
+                             target_text, cand_years)
     if remote_only:
         ranked = [j for j in ranked if j.get("is_remote")][:limit]
     return ranked
@@ -332,6 +420,7 @@ async def api_fetch(
     limit: int = DEFAULT_LIMIT,
     remote: bool = False,
     position: str = Form(""),
+    years: str = Form(""),
     file: UploadFile = File(None),
     jd: str = Form(""),
     skills: str = Form(""),
@@ -362,14 +451,23 @@ async def api_fetch(
     target_text = "\n".join(parts)
     search_terms = _derive_search_terms(position, resume_text)
 
+    # Years of experience: explicit field, else inferred from the resume.
+    try:
+        cand_years = int(re.search(r"\d+", years).group()) if years.strip() else 0
+    except (AttributeError, ValueError):
+        cand_years = 0
+    if not cand_years:
+        cand_years = _infer_years(resume_text)
+
     # fetch_live is blocking and slow (scraping) -> threadpool.
     jobs = await run_in_threadpool(
-        fetch_live, hours_old, limit, remote, target_text, search_terms)
+        fetch_live, hours_old, limit, remote, target_text, search_terms, cand_years)
     payload = save_cache(jobs)
     payload["source"] = "live"
     payload["remote_only"] = remote
     payload["guided"] = bool(target_text.strip())
     payload["search_terms"] = search_terms
+    payload["cand_years"] = cand_years
     return payload
 
 
@@ -652,6 +750,9 @@ INDEX_HTML = r"""<!doctype html>
       </div>
       <div class="bar" style="margin-bottom:0">
         <button id="fetchBtn">Fetch jobs</button>
+        <label class="note">Your experience
+          <input id="years" type="number" value="" min="0" max="30" placeholder="auto" style="width:60px"/> yrs
+        </label>
         <label class="note">Posted within
           <select id="hours"><option value="24">24h</option><option value="48">48h</option><option value="72">72h</option><option value="168">7d</option></select>
         </label>
@@ -660,7 +761,7 @@ INDEX_HTML = r"""<!doctype html>
         <span class="note" id="count"></span>
       </div>
     </div>
-    <p class="note" style="margin:-4px 0 12px">Boards: LinkedIn · Indeed · Google · Glassdoor · ZipRecruiter · Naukri · Bayt · Remotive · RemoteOK — all real, directly-posted listings (MNCs, startups &amp; remote). Company size shows when the board reports it.</p>
+    <p class="note" style="margin:-4px 0 12px">Boards: LinkedIn · Indeed · Google · Glassdoor · ZipRecruiter · Naukri · Bayt · Remotive · RemoteOK · Jobicy · Arbeitnow — all real, directly-posted listings. Ranked by skill/ATS match, then preference for <b>remote</b>, <b>big companies / 500+ employees</b>, and roles that fit your experience (salary ≥ 7 LPA is a small bonus when reported). Remote jobs are always included. <i>Experience auto-detected from your resume if left blank.</i></p>
 
     <table id="jobsTable">
       <thead><tr>
@@ -767,7 +868,7 @@ function renderJobs(){
     return `<tr>
       <td>${i+1}</td>
       <td><span class="score ${scoreClass(j.score)}">${j.score}%</span></td>
-      <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}<div class="chips">${chips}</div></td>
+      <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.salary_lpa>=7?(' <span class="chip">'+j.salary_lpa+' LPA</span>'):''}<div class="chips">${chips}</div></td>
       <td>${esc(j.company)}</td>
       <td class="note">${size}</td>
       <td>${esc(j.location)}</td>
@@ -795,6 +896,7 @@ async function fetchJobs(){
     const fd=new FormData();
     const f=$('#jfFile').files[0]; if(f) fd.append('file', f);
     fd.append('position', $('#jfPosition').value||'');
+    fd.append('years', $('#years').value||'');
     fd.append('jd', $('#jfJD').value||'');
     fd.append('skills', $('#jfSkills').value||'');
     const r=await fetch('/api/fetch?hours_old='+$('#hours').value+'&limit='+($('#limit').value||50),

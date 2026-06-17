@@ -138,15 +138,90 @@ def fetch_remoteok(terms, max_age_hours=0):
     return rows
 
 
-def fetch_extra(terms, per_term=20, max_age_hours=0):
-    """All extra sources combined. Never raises — returns whatever came back."""
+def fetch_jobicy(terms, per_term=20, max_age_hours=0):
+    """Jobicy — free remote-jobs API. Searched per term via the `tag` param."""
+    rows, seen = [], set()
+    for term in terms:
+        tag = term.lower().split()[0] if term.strip() else ""
+        try:
+            r = requests.get("https://jobicy.com/api/v2/remote-jobs",
+                             params={"count": per_term, "tag": tag},
+                             headers=_UA, timeout=_TIMEOUT)
+            r.raise_for_status()
+            jobs = r.json().get("jobs", [])
+        except Exception as e:
+            print(f"  ! jobicy {term!r} failed: {e}", flush=True)
+            continue
+        for j in jobs:
+            url = j.get("url", "")
+            if not url or url in seen:
+                continue
+            date = j.get("pubDate") or j.get("date") or ""
+            if not _within_age(date, max_age_hours):
+                continue
+            seen.add(url)
+            rows.append({
+                "title": j.get("jobTitle", ""),
+                "company": j.get("companyName", ""),
+                "location": j.get("jobGeo") or "Remote",
+                "site": "jobicy",
+                "date_posted": str(date)[:10],
+                "is_remote": True,
+                "job_url": url,
+                "description": _strip_html(j.get("jobDescription") or j.get("jobExcerpt", "")),
+            })
+    return rows
+
+
+def fetch_arbeitnow(terms, max_age_hours=0):
+    """Arbeitnow — free job-board API (global + remote). Filtered to dev roles."""
+    try:
+        r = requests.get("https://www.arbeitnow.com/api/job-board-api",
+                         headers=_UA, timeout=_TIMEOUT)
+        r.raise_for_status()
+        data = r.json().get("data", [])
+    except Exception as e:
+        print(f"  ! arbeitnow failed: {e}", flush=True)
+        return []
     rows = []
-    try:
-        rows += fetch_remotive(terms, per_term=per_term, max_age_hours=max_age_hours)
-    except Exception as e:
-        print(f"  ! remotive source failed: {e}", flush=True)
-    try:
-        rows += fetch_remoteok(terms, max_age_hours=max_age_hours)
-    except Exception as e:
-        print(f"  ! remoteok source failed: {e}", flush=True)
+    for j in data:
+        haystack = (str(j.get("title", "")) + " "
+                    + " ".join(j.get("tags", []) or [])).lower()
+        if not any(tok in haystack for tok in _DEV_TOKENS):
+            continue
+        epoch = j.get("created_at")
+        date_iso = ""
+        try:
+            date_iso = dt.datetime.utcfromtimestamp(int(epoch)).isoformat()
+        except Exception:
+            pass
+        if date_iso and not _within_age(date_iso, max_age_hours):
+            continue
+        rows.append({
+            "title": j.get("title", ""),
+            "company": j.get("company_name", ""),
+            "location": j.get("location") or ("Remote" if j.get("remote") else ""),
+            "site": "arbeitnow",
+            "date_posted": date_iso[:10],
+            "is_remote": bool(j.get("remote")),
+            "job_url": j.get("url", ""),
+            "description": _strip_html(j.get("description", "")),
+        })
+    return rows
+
+
+def fetch_extra(terms, per_term=20, max_age_hours=0):
+    """All extra sources combined. Never raises — returns whatever came back.
+    Real, currently-active free APIs: Remotive, RemoteOK, Jobicy, Arbeitnow."""
+    rows = []
+    for name, fn in (
+        ("remotive", lambda: fetch_remotive(terms, per_term=per_term, max_age_hours=max_age_hours)),
+        ("remoteok", lambda: fetch_remoteok(terms, max_age_hours=max_age_hours)),
+        ("jobicy", lambda: fetch_jobicy(terms, per_term=per_term, max_age_hours=max_age_hours)),
+        ("arbeitnow", lambda: fetch_arbeitnow(terms, max_age_hours=max_age_hours)),
+    ):
+        try:
+            rows += fn()
+        except Exception as e:
+            print(f"  ! {name} source failed: {e}", flush=True)
     return rows
