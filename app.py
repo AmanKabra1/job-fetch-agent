@@ -416,7 +416,7 @@ def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
     # Add real remote roles from free APIs (Remotive + RemoteOK) — startups and
     # established companies that the jobspy boards miss. All remote by nature.
     try:
-        rows += ES.fetch_extra(terms, per_term=15, max_age_hours=hours_old)
+        rows += ES.fetch_extra(terms, per_term=30, max_age_hours=hours_old)
     except Exception as e:
         print(f"  ! extra sources failed: {e}", flush=True)
 
@@ -433,25 +433,34 @@ def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
 
     if not rows:
         return []
-    # Rank a wider pool, then cap any single board's share so Indeed (which
-    # returns by far the most) can't swamp the list — keeps the boards balanced.
+    # Strict best-match order (100% -> 0%). Within each identical % tier we
+    # rotate sources so a single board (Indeed returns the most) doesn't appear
+    # as one block — but the overall order stays highest-match-first.
     ranked = _score_and_rank(rows, limit * 4, target_text, cand_years)
-    return _diversify_by_site(ranked, limit, max_share=0.45)
+    return _diversify_by_site(ranked, limit)
 
 
-def _diversify_by_site(ranked, limit, max_share=0.45):
-    """Keep best-match order but stop one board from filling more than max_share
-    of the list; overflow from a dominant board drops to the bottom."""
-    cap = max(3, int(limit * max_share))
-    primary, overflow, counts = [], [], {}
-    for j in ranked:
-        site = j.get("site") or "?"
-        if counts.get(site, 0) < cap:
-            counts[site] = counts.get(site, 0) + 1
-            primary.append(j)
-        else:
-            overflow.append(j)
-    return (primary + overflow)[:limit]
+def _diversify_by_site(ranked, limit):
+    """Keep strict descending-% order, but round-robin sources inside each equal-%
+    tier so the list reads 100%->0% without one board clustering."""
+    from collections import OrderedDict
+    out, i, n = [], 0, len(ranked)
+    while i < n and len(out) < limit:
+        score = ranked[i]["score"]
+        tier = []
+        while i < n and ranked[i]["score"] == score:
+            tier.append(ranked[i])
+            i += 1
+        by_site = OrderedDict()
+        for j in tier:
+            by_site.setdefault(j.get("site") or "?", []).append(j)
+        while any(by_site.values()) and len(out) < limit:
+            for lst in by_site.values():
+                if lst:
+                    out.append(lst.pop(0))
+                    if len(out) >= limit:
+                        break
+    return out[:limit]
 
 
 def fetch_from_sheet(limit: int):
@@ -981,6 +990,9 @@ async function fetchJobs(){
   if(!LIVE){ toast('Live fetch is off in Vercel mode - showing Google Sheet jobs.'); return loadJobs(); }
   const btn=$('#fetchBtn'); const old=btn.textContent; setBusy(btn,true);
   btn.innerHTML='<span class="spin"></span> Searching (can take ~1 min)…';
+  // Clear the previous results immediately so stale jobs don't linger.
+  jobs=[]; $('#count').textContent='';
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty"><span class="spin"></span> Searching all boards for fresh jobs… (can take ~1 min)</td></tr>';
   try{
     const fd=new FormData();
     const f=$('#jfFile').files[0]; if(f) fd.append('file', f);
@@ -1105,7 +1117,9 @@ $('#refreshResumes').onclick=loadResumes;
 showTab('find');
 $('#modePill').textContent = LIVE ? 'LOCAL · live scrape' : 'VERCEL · Google Sheet';
 if(!LIVE){ $('#fetchBtn').textContent='Load jobs from Sheet'; $('#hours').style.display='none'; }
-loadJobs(); loadResumes();
+// Local: open FRESH every time (don't show the last search). Vercel: show Sheet.
+if(!LIVE){ loadJobs(); }
+loadResumes();
 </script>
 </body>
 </html>
