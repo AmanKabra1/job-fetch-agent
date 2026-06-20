@@ -138,6 +138,38 @@ _LANG_HINTS = [
     (".net", ".NET Developer"), ("php", "PHP Developer"),
 ]
 
+# Industry/domain detection for the matching PROFILE. label -> trigger words.
+_DOMAIN_HINTS = {
+    "fintech": ["fintech", "payments", "banking", "trading", "lending", "insurance", "insurtech", "wealth"],
+    "healthcare": ["healthcare", "health care", "medical", "clinical", "hospital", "pharma", "healthtech", "biotech"],
+    "e-commerce": ["e-commerce", "ecommerce", "retail", "marketplace", "shopping", "d2c"],
+    "edtech": ["edtech", "e-learning", "learning platform", "education technology"],
+    "logistics": ["logistics", "supply chain", "delivery", "shipping", "fleet", "mobility"],
+    "gaming": ["gaming", "game development", "gamedev", "game studio"],
+    "social": ["social media", "social network", "content platform", "creator"],
+    "travel": ["travel", "hospitality", "booking", "tourism", "airline"],
+    "saas": ["saas", "b2b", "enterprise software"],
+    "cybersecurity": ["cybersecurity", "infosec", "security operations", "threat"],
+    "ai/ml": ["ai platform", "ml platform", "computer vision", "nlp", "generative ai"],
+}
+# Degree detection for the PROFILE.education field.
+_DEGREE_RE = re.compile(
+    r"\b(b\.?tech|b\.?e\.?|bachelor|b\.?sc|b\.?c\.?a|m\.?tech|m\.?sc|m\.?c\.?a|"
+    r"master|mba|ph\.?d|b\.?com|diploma)\b", re.I)
+_CERT_RE = re.compile(r"\b(certif|certificate|certification|certified)\b", re.I)
+# Title words too generic to drive a title-relevance match on their own.
+_TITLE_STOP = {"developer", "engineer", "senior", "junior", "sr", "jr", "lead",
+               "staff", "principal", "i", "ii", "iii", "the", "a", "of"}
+_TITLE_FAMILY = {"developer", "engineer", "programmer", "sde", "architect", "dev"}
+
+# Skill-match gate. A job is kept only if at least MIN_SKILL_RATIO of the skills
+# it asks for are skills the PROFILE actually has. If the strict pass leaves too
+# few jobs we re-run at RELAX_SKILL_RATIO (and tell the user we relaxed) so the
+# page is never empty.
+MIN_SKILL_RATIO = 0.6        # >= 60% of a job's required skills must be in profile
+RELAX_SKILL_RATIO = 0.30
+MIN_KEEP_BEFORE_RELAX = 8
+
 # --------------------------------------------------------------------------- #
 # RANKING PREFERENCES
 #   Soft signals that nudge jobs up the list — never hard filters.
@@ -172,6 +204,15 @@ def _required_years(text: str) -> int:
     """Largest 'N years' mentioned in a JD (rough seniority signal). 0 if none."""
     yrs = [int(m) for m in _YEARS_RE.findall(text or "") if int(m) <= 20]
     return max(yrs) if yrs else 0
+
+
+def _min_required_years(text: str) -> int:
+    """Smallest 'N years' a JD asks for — the MINIMUM experience floor. 0 if none.
+    e.g. '3+ years' -> 3, '2-4 years' -> 4 (the regex only matches the number
+    directly before 'years'). Used to reject roles needing many more years than
+    the candidate has."""
+    yrs = [int(m) for m in _YEARS_RE.findall(text or "") if int(m) <= 20]
+    return min(yrs) if yrs else 0
 
 
 def _infer_years(resume_text: str) -> int:
@@ -230,57 +271,318 @@ def _labels_in(text: str) -> set:
             if any(RT._word_in(a, tl) for a in aliases)}
 
 
-def _derive_search_terms(position: str = "", resume_text: str = "",
-                         jd_text: str = "", skills_text: str = ""):
-    """Build the board search queries from what the user sends, in priority order
-    so the title/skills/JD actually drive the search (not just the ranking):
-       1. explicit position(s) the user typed,
-       2. a role title inferred from the pasted JD,
-       3. roles inferred from the typed skills (e.g. 'node' -> Node.js Developer),
-       4. roles inferred from the uploaded resume,
-       5. a broad generic default.
-    """
-    terms, seen = [], set()
+def _ordered_labels(text: str) -> list:
+    """Skill labels recognised in `text`, ordered by where they FIRST appear (so
+    the leading skills in a resume rank as the candidate's primary stack — unlike
+    _labels_in() which returns an unordered set)."""
+    if not text or not text.strip():
+        return []
+    tl = " " + text.lower() + " "
+    hits = []
+    for label, aliases in RT.SKILL_LEXICON.items():
+        positions = [tl.find(a.strip().lower()) for a in aliases]
+        positions = [p for p in positions if p >= 0]
+        if positions and any(RT._word_in(a, tl) for a in aliases):
+            hits.append((min(positions), RT._clean_label(label)))
+    hits.sort()
+    out, seen = [], set()
+    for _, lab in hits:
+        if lab not in seen:
+            seen.add(lab)
+            out.append(lab)
+    return out
 
-    def add(t):
-        t = (t or "").strip()
-        if t and t.lower() not in seen:
-            seen.add(t.lower())
-            terms.append(t)
 
-    # 1. explicit position (highest priority)
-    if position and position.strip():
-        for t in re.split(r"[,\n;]+", position):
-            add(t)
+def _experience_level(years: int) -> str:
+    """Map total years -> level band."""
+    if years <= 2:
+        return "JUNIOR"
+    if years <= 5:
+        return "MID"
+    if years <= 8:
+        return "SENIOR"
+    return "LEAD"
 
-    # 2. a title from the JD
-    jl = (jd_text or "").lower()
+
+def _infer_titles(text: str) -> list:
+    """Ordered, de-duplicated job titles inferred from resume/position text."""
+    low = (text or "").lower()
+    out, seen = [], set()
     for needle, role in _ROLE_HINTS:
-        if needle in jl:
-            add(role)
-            break
+        if needle in low and role not in seen:
+            seen.add(role)
+            out.append(role)
+    if not out:
+        for needle, role in _LANG_HINTS:
+            if needle in low and role not in seen:
+                seen.add(role)
+                out.append(role)
+    return out
 
-    # 3. roles from the typed skills
-    sl = (skills_text or "").lower()
-    for needle, role in _LANG_HINTS:
-        if needle in sl:
-            add(role)
 
-    # 4. roles from the resume
-    rl = (resume_text or "").lower()
-    if rl.strip():
-        for needle, role in _ROLE_HINTS:
-            if needle in rl:
-                add(role)
-        if not terms:
-            for needle, role in _LANG_HINTS:
-                if needle in rl:
-                    add(role)
+def _infer_domains(text: str) -> list:
+    """Industries the candidate has worked in, detected from resume text."""
+    low = (text or "").lower()
+    return [d for d, kws in _DOMAIN_HINTS.items() if any(k in low for k in kws)]
 
-    if not terms:
+
+_EMAIL_RE = re.compile(r"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}")
+_PHONE_RE = re.compile(r"(?<!\d)(\+?\d[\d\s\-()]{7,}\d)(?!\d)")
+# Strong company suffixes only (generic words like "Software"/"Solutions" appear
+# in job titles & section headers, so they're excluded to avoid false matches).
+# Applied PER LINE so a match never spans line breaks.
+_COMPANY_RE = re.compile(
+    r"\b([A-Z][A-Za-z0-9&.'\-]+(?:[ ][A-Z][A-Za-z0-9&.'\-]+){0,3})[ ]+"
+    r"(?:Inc|LLC|Ltd|Pvt\.?(?:[ ]Ltd)?|Limited|Technologies|Labs|Corp|"
+    r"Consulting|GmbH|Systems)\b")
+
+
+def _label_alias_map():
+    """cleaned skill label -> all aliases (so we can count/locate a skill in text
+    even though _ordered_labels returns the cleaned display name)."""
+    m = {}
+    for label, aliases in RT.SKILL_LEXICON.items():
+        m.setdefault(RT._clean_label(label), []).extend(aliases)
+    return m
+
+
+_LABEL_ALIASES = _label_alias_map()
+
+
+def _extract_name(resume_text: str) -> str:
+    """Best-effort: a resume's first non-empty line is almost always the name."""
+    for ln in (resume_text or "").splitlines():
+        s = ln.strip()
+        if not s:
+            continue
+        if "@" in s or "http" in s.lower() or any(c.isdigit() for c in s):
+            return ""
+        words = s.split()
+        if 1 <= len(words) <= 4 and len(s) <= 40 and \
+           all(w[:1].isupper() for w in words if w[:1].isalpha()):
+            return s
+        return ""
+    return ""
+
+
+def _split_resume_skills(resume_text: str):
+    """Split resume skills into PRIMARY (core) vs SECONDARY (mentioned in passing).
+
+    Biased HARD toward primary — wrongly demoting a real skill makes us reject good
+    jobs, which is worse than keeping a weak one (the user can delete it in the
+    editable profile). So a skill is secondary ONLY if it appears exactly once AND
+    its sole mention is in the trailing 20% of the resume. Short resumes (where
+    position is meaningless) keep everything primary."""
+    tl = " " + (resume_text or "").lower() + " "
+    n = max(1, len(tl))
+    labels = _ordered_labels(resume_text)
+    if n < 400:                                   # too short to judge position
+        return labels, []
+    primary, secondary = [], []
+    for lab in labels:
+        aliases = _LABEL_ALIASES.get(lab, [lab.lower()])
+        al = [a.strip().lower() for a in aliases if a.strip()]
+        positions = [tl.find(a) for a in al if tl.find(a) >= 0]
+        count = sum(tl.count(a) for a in al)
+        first = min(positions) if positions else n
+        if count == 1 and first >= 0.80 * n:      # single, trailing mention only
+            secondary.append(lab)
+        else:
+            primary.append(lab)
+    return primary, secondary
+
+
+def build_search_queries(profile: dict) -> list:
+    """Targeted board queries built FROM the profile (not 'software engineer').
+
+      1. current title + top 3 primary skills   -> "Backend Developer NestJS Node.js TypeScript"
+      2. each alternative title + top 2 skills
+      3. skills-only (niche roles)               -> "NestJS Node.js TypeScript Python"
+      4. current title + user-added skills        -> "Backend Developer Kafka GraphQL"
+    """
+    prim = list(profile.get("primary_skills") or [])
+    added = list(profile.get("user_added_skills") or [])
+    titles = [t for t in (profile.get("target_titles")
+                          or profile.get("job_titles") or []) if t]
+    cur = (profile.get("current_title") or (titles[0] if titles else "")).strip()
+
+    queries, seen = [], set()
+
+    def add(q):
+        q = " ".join((q or "").split()).strip()
+        if q and q.lower() not in seen:
+            seen.add(q.lower())
+            queries.append(q)
+
+    if cur:
+        add(f"{cur} {' '.join(prim[:3])}")
+    for t in titles[:2]:
+        add(f"{t} {' '.join(prim[:2])}")
+    if prim:
+        add(" ".join(prim[:4]))
+    if added:
+        add(f"{cur} {' '.join(added[:3])}")
+    if not queries:
         for t in DEFAULT_SEARCH_TERMS:
             add(t)
-    return terms[:6]
+    return queries[:6]
+
+
+def extract_profile_from_resume(resume_text: str = "", skills_text: str = "",
+                                position: str = "", years: int = 0,
+                                location: str = "", remote: bool = False,
+                                preferred_companies: str = "",
+                                min_salary: int = 0) -> dict:
+    """Analyze the resume (+ typed inputs) into a structured PROFILE used for job
+    matching. Runs BEFORE fetching — so we know WHAT to search for and can show
+    (and let the user edit) the profile before any API call.
+
+    Skill tiers:
+      primary_skills    core resume skills (drive the search)
+      secondary_skills  resume skills only mentioned in passing (NOT matched on)
+      user_added_skills skills typed in the skills box (ADDITIONAL)
+      all_searchable_skills = primary + user_added  (what jobs are matched against)
+    """
+    resume_text = resume_text or ""
+    primary, secondary = _split_resume_skills(resume_text)
+
+    # User-typed skills: lexicon labels + raw tokens (respected even if off-lexicon).
+    user_added = _ordered_labels(skills_text)
+    for t in re.split(r"[,\n;|]+", skills_text or ""):
+        t = t.strip()
+        if t and t not in user_added and not any(t.lower() == u.lower() for u in user_added):
+            user_added.append(t)
+
+    searchable, seen = [], set()
+    for s in primary + user_added:                  # NOT secondary
+        if s.lower() not in seen:
+            seen.add(s.lower())
+            searchable.append(s)
+
+    yrs = int(years) if years else _infer_years(resume_text)
+    titles = _infer_titles(position + "\n" + resume_text)
+    current_title = (position.split(",")[0].strip() if position.strip()
+                     else (titles[0] if titles else ""))
+
+    education = ""
+    for ln in resume_text.splitlines():
+        if _DEGREE_RE.search(ln):
+            education = ln.strip()[:160]
+            break
+
+    certs = [s.strip() for ln in resume_text.splitlines()
+             for s in [ln.strip()] if s and _CERT_RE.search(s) and len(s) <= 120]
+
+    companies, cseen = [], set()
+    for ln in resume_text.splitlines():               # per-line: never span breaks
+        m = _COMPANY_RE.search(ln)
+        if not m:
+            continue
+        c = m.group(0).strip()                        # full "Name Suffix"
+        if c.lower() not in cseen and len(c) > 3:
+            cseen.add(c.lower())
+            companies.append(c)
+
+    email_m = _EMAIL_RE.search(resume_text)
+    phone_m = _PHONE_RE.search(resume_text)
+    pref_co = [c.strip() for c in re.split(r"[,\n;]+", preferred_companies or "") if c.strip()]
+
+    profile = {
+        "name": _extract_name(resume_text),
+        "email": email_m.group(0) if email_m else "",
+        "phone": phone_m.group(1).strip() if phone_m else "",
+        "current_title": current_title,
+        "target_titles": titles,
+        "job_titles": titles,                       # alias (search/scoring helpers)
+        "experience_years": yrs,
+        "experience_level": _experience_level(yrs),
+        "max_experience_to_search": yrs + 1,
+        "primary_skills": primary,
+        "secondary_skills": secondary,
+        "user_added_skills": user_added,
+        "all_searchable_skills": searchable,
+        "keywords": searchable,
+        "education": education,
+        "certifications": certs[:6],
+        "domains": _infer_domains(resume_text),
+        "companies_worked_at": companies[:6],
+        "preferred_companies": pref_co,
+        "location": (location or "").strip() or LOCATION,
+        "location_preference": (location or "").strip() or LOCATION,
+        "remote_preference": "remote" if remote else "any",
+        "min_salary": int(min_salary or 0),
+        "search_queries": [],
+    }
+    profile["search_queries"] = build_search_queries(profile)
+    return profile
+
+
+def _normalize_profile(edited: dict) -> dict:
+    """Take a (possibly user-edited / partial) profile and re-derive the dependent
+    fields so the invariants hold no matter what the UI sent."""
+    p = dict(edited or {})
+
+    def _clean(lst):
+        out, seen = [], set()
+        for s in (lst or []):
+            s = str(s).strip()
+            if s and s.lower() not in seen:
+                seen.add(s.lower())
+                out.append(s)
+        return out
+
+    p["primary_skills"] = _clean(p.get("primary_skills"))
+    p["secondary_skills"] = _clean(p.get("secondary_skills"))
+    p["user_added_skills"] = _clean(p.get("user_added_skills"))
+    p["all_searchable_skills"] = _clean(p["primary_skills"] + p["user_added_skills"])
+    p["keywords"] = p["all_searchable_skills"]
+    try:
+        yrs = int(p.get("experience_years") or 0)
+    except (TypeError, ValueError):
+        yrs = 0
+    p["experience_years"] = yrs
+    p["experience_level"] = _experience_level(yrs)
+    p["max_experience_to_search"] = yrs + 1
+    tt = _clean(p.get("target_titles") or p.get("job_titles"))
+    p["target_titles"] = tt
+    p["job_titles"] = tt
+    if not (p.get("current_title") or "").strip():
+        p["current_title"] = tt[0] if tt else ""
+    p.setdefault("domains", [])
+    p.setdefault("companies_worked_at", [])
+    p.setdefault("preferred_companies", [])
+    loc = (p.get("location") or p.get("location_preference") or LOCATION)
+    p["location"] = loc
+    p["location_preference"] = loc
+    p.setdefault("remote_preference", "any")
+    p.setdefault("name", "")
+    p.setdefault("email", "")
+    p.setdefault("phone", "")
+    p.setdefault("education", "")
+    p.setdefault("certifications", [])
+    try:
+        p["min_salary"] = int(p.get("min_salary") or 0)
+    except (TypeError, ValueError):
+        p["min_salary"] = 0
+    p["search_queries"] = build_search_queries(p)
+    return p
+
+
+def _api_search_terms(profile: dict, position: str = "") -> list:
+    """Short, single-concept queries for the free APIs (Remotive/Jobicy/etc.),
+    which return nothing for long multi-word board queries. Titles + top skills,
+    each on its own."""
+    out = []
+    candidates = []
+    if position and position.strip():
+        candidates += [t.strip() for t in re.split(r"[,\n;]+", position) if t.strip()]
+    candidates += list(profile.get("job_titles") or [])[:2]
+    candidates += list(profile.get("primary_skills") or [])[:4]
+    for t in candidates:
+        t = (t or "").strip()
+        if t and t.lower() not in {o.lower() for o in out}:
+            out.append(t)
+    return out[:6] or list(DEFAULT_SEARCH_TERMS)
 
 
 def _score_and_rank(rows, limit, target_text=None, cand_years=0):
@@ -385,20 +687,210 @@ def _score_and_rank(rows, limit, target_text=None, cand_years=0):
     return unique[:limit]
 
 
-def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
-               target_text=None, search_terms=None, cand_years=0):
-    """Scrape every board (local only). jobspy is imported lazily.
+def _job_in_domains(text: str, domains) -> bool:
+    low = (text or "").lower()
+    return any(any(k in low for k in _DOMAIN_HINTS.get(d, [])) for d in (domains or []))
 
-    search_terms drive the board queries (derived from the user's position /
-    resume). jobspy isolates per-board failures internally, so passing the full
-    SITES list in one call means a board that returns nothing (or errors) never
-    aborts the run — the other boards still come back.
+
+def _title_relevance(job_title: str, profile_titles) -> float:
+    """0..1 — how related a job title is to the candidate's titles. 1.0 = same
+    specialty (e.g. 'Backend Engineer' vs 'Backend Developer'); 0.3 = same family
+    (dev/engineer) but different specialty; 0.0 = unrelated (e.g. 'Sales Manager')."""
+    jt = set(re.findall(r"[a-z+#.]+", (job_title or "").lower()))
+    if not profile_titles:
+        return 0.5                                   # no titles to compare -> neutral
+    family = bool(jt & _TITLE_FAMILY)
+    best = 0.0
+    for role in profile_titles:
+        rt = set(re.findall(r"[a-z+#.]+", role.lower())) - _TITLE_STOP
+        if not rt:
+            best = max(best, 0.5 if family else 0.0)
+            continue
+        inter = len(rt & jt) / len(rt)
+        if inter == 0 and family:
+            inter = 0.3                              # same family, different specialty
+        best = max(best, inter)
+    return min(1.0, best)
+
+
+def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
+    """Score ONE job against the PROFILE (0-100) and decide whether to keep it.
+
+    Returns {"reject": True, "reason": str, ...summary} when the job fails a hard
+    filter (too few matching skills / too senior / unrelated title), else
+    {"reject": False, "job": {...full row with match reasoning...}}.
+
+    Breakdown (per the spec): skills 50, experience 20, title 15, domain 10,
+    location 5; small preference nudges (remote / big company / size / salary) on
+    top, then clamped to 0-100.
+    """
+    title = str(r.get("title") or "")
+    desc = str(r.get("description") or "")
+    company = str(r.get("company") or "")
+    blob = f"{title} {desc}"
+    # Match against searchable skills = primary + user-added (NOT secondary).
+    pskills = set((profile.get("all_searchable_skills")
+                   or profile.get("primary_skills") or [])) if profile else set()
+    job_req = _labels_in(blob)
+    matched = sorted(job_req & pskills) if pskills else sorted(job_req)
+    missing = sorted(job_req - pskills) if pskills else []
+    cy = int(profile.get("experience_years") or 0) if profile else 0
+
+    def _summary(extra=None):
+        s = {"title": title, "company": company, "site": str(r.get("site") or ""),
+             "matched": matched, "missing": missing}
+        if extra:
+            s.update(extra)
+        return s
+
+    score = 0.0
+    reasons = []
+
+    # 1. SKILL MATCH (50) + hard gate ------------------------------------------
+    skill_ratio = (len(job_req & pskills) / len(job_req)) if (job_req and pskills) else None
+    if skill_ratio is not None:
+        score += skill_ratio * 50
+        if skill_ratio < min_ratio:
+            return {"reject": True, "reason":
+                    (f"skill match {round(skill_ratio * 100)}% < {round(min_ratio * 100)}% "
+                     f"(have: {', '.join(matched) or 'none'}; lacks: {', '.join(missing[:5])})"),
+                    **_summary({"skill_pct": round(skill_ratio * 100)})}
+    elif not job_req:
+        reasons.append("no recognisable skills in posting")     # thin/3rd-party listing
+        score += 14 if not pskills else 6
+    else:                                                        # no profile skills (sheet mode)
+        score += min(50, len(job_req) * 8)
+
+    # 2. EXPERIENCE (20) + hard gate -------------------------------------------
+    req_floor = _min_required_years(blob)
+    exp_fit = True
+    if req_floor and cy:
+        if req_floor <= cy + 1:
+            score += 20
+        elif req_floor <= cy + 2:
+            score += 10
+            reasons.append("slight experience stretch")
+        else:
+            return {"reject": True, "reason":
+                    f"needs {req_floor}+ yrs, you have {cy} (cap {cy + 1})",
+                    **_summary({"req_years": req_floor})}
+    elif req_floor and not cy:
+        score += 10                                             # unknown candidate years
+    else:
+        score += 12                                             # no requirement stated
+    if _SENIOR_RE.search(title) and cy and cy < 5:
+        score -= 15
+        exp_fit = False
+        reasons.append("senior-titled")
+
+    exp_label = (f"Your {cy}yr · needs {req_floor}+yr" if (cy and req_floor)
+                 else (f"Your {cy}yr · no req stated" if cy
+                       else (f"needs {req_floor}+yr" if req_floor else "no exp info")))
+
+    # 3. TITLE RELEVANCE (15) + unrelated-role gate ----------------------------
+    trel = _title_relevance(title, profile.get("job_titles") if profile else [])
+    score += trel * 15
+    if profile and profile.get("job_titles") and trel == 0:
+        return {"reject": True, "reason":
+                f"title '{title}' unrelated to your roles "
+                f"({', '.join(profile['job_titles'][:2])})",
+                **_summary()}
+
+    # 4. DOMAIN (10) -----------------------------------------------------------
+    if profile and _job_in_domains(blob, profile.get("domains")):
+        score += 10
+        reasons.append("domain match")
+
+    # 5. LOCATION / REMOTE (5) -------------------------------------------------
+    is_remote = bool(r.get("is_remote"))
+    loc = str(r.get("location") or "")
+    locpref = (profile.get("location_preference") if profile else "") or ""
+    if is_remote:
+        score += 5
+    elif locpref and locpref.lower() in loc.lower():
+        score += 5
+
+    # --- soft preference nudges (kept from the product spec) ------------------
+    employees = _employees_min(r.get("company_num_employees"))
+    big = _is_big_company(company)
+    lpa = _salary_lpa(r)
+    if employees >= 500:
+        score += 6
+    elif employees >= 150:
+        score += 3
+    if big:
+        score += 6
+    if lpa >= 7:
+        score += 3
+
+    score = max(0, min(100, round(score)))
+    return {"reject": False, "job": {
+        "score": score,
+        "matched": matched,
+        "missing": missing[:6],
+        "skill_pct": round(skill_ratio * 100) if skill_ratio is not None else None,
+        "title": title,
+        "company": company,
+        "location": loc,
+        "site": str(r.get("site") or ""),
+        "date_posted": str(r.get("date_posted") or ""),
+        "is_remote": is_remote,
+        "employees": employees,
+        "big": big,
+        "exp_fit": exp_fit,
+        "exp_label": exp_label,
+        "salary_lpa": round(lpa, 1) if lpa else 0,
+        "why": reasons,
+        "job_url": str(r.get("job_url") or ""),
+        "description": desc,
+    }}
+
+
+def _rank_jobs(rows, limit, profile, min_ratio, min_score=0):
+    """Score every row, drop the ones that fail the hard filters (collecting WHY
+    for the debug panel) or fall below min_score, de-dup by URL, sort best-match
+    first. Returns (kept_jobs, rejected_reasons)."""
+    kept, rejected, seen = [], [], set()
+    for r in rows:
+        url = str(r.get("job_url") or "")
+        if not url:
+            continue
+        res = calculate_match_score(r, profile, min_ratio)
+        if res.get("reject"):
+            rejected.append({"title": res.get("title", ""), "company": res.get("company", ""),
+                             "site": res.get("site", ""), "reason": res.get("reason", "")})
+            continue
+        job = res["job"]
+        if job["score"] < min_score:
+            rejected.append({"title": job["title"], "company": job["company"],
+                             "site": job["site"],
+                             "reason": f"match {job['score']}% < {min_score}% minimum"})
+            continue
+        if url in seen:
+            continue
+        seen.add(url)
+        kept.append(job)
+    kept.sort(key=lambda s: s["score"], reverse=True)
+    return kept[:limit], rejected
+
+
+def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
+               profile=None, search_terms=None, api_terms=None, career=False):
+    """Scrape every board (local only) and rank against the PROFILE. jobspy is
+    imported lazily.
+
+    search_terms drive the board (jobspy/Google) queries — long, title+skills
+    phrases built from the resume. api_terms are short single-concept queries for
+    the free APIs (which return nothing for long queries). Every job is then
+    matched against `profile`, and jobs that don't fit (too few matching skills,
+    too senior, unrelated title) are filtered OUT. Returns (jobs, debug).
     """
     from jobspy import scrape_jobs  # heavy import, only when actually fetching
     import pandas as pd
     _quiet_jobspy()
 
     terms = list(search_terms) if search_terms else list(DEFAULT_SEARCH_TERMS)
+    api_q = list(api_terms) if api_terms else terms
     location = "Remote" if remote_only else LOCATION
     frames = []
     for term in terms:
@@ -427,9 +919,15 @@ def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
         rows = combined.to_dict("records")
 
     # Add real remote roles from free APIs (Remotive + RemoteOK) — startups and
-    # established companies that the jobspy boards miss. All remote by nature.
+    # established companies that the jobspy boards miss. When `career` is on, also
+    # scrape direct company career pages (Greenhouse/Lever/Ashby ATS) + HN/WWR.
     try:
-        rows += ES.fetch_extra(terms, per_term=30, max_age_hours=hours_old)
+        rows += ES.fetch_extra(
+            api_q, per_term=30, max_age_hours=hours_old,
+            include_career=career,
+            experience_level=(profile or {}).get("experience_level"),
+            location=location,
+        )
     except Exception as e:
         print(f"  ! extra sources failed: {e}", flush=True)
 
@@ -437,20 +935,39 @@ def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
     # (only runs when TAVILY_API_KEY is set — saves free credits).
     if len(rows) < limit:
         try:
-            tav = ES.fetch_tavily(terms, max_results=6, max_age_hours=hours_old)
+            tav = ES.fetch_tavily(api_q, max_results=6, max_age_hours=hours_old)
             if tav:
                 rows += tav
                 print(f"    -> {len(tav)} rows (Tavily fallback)", flush=True)
         except Exception as e:
             print(f"  ! tavily fallback failed: {e}", flush=True)
 
+    total = len(rows)
     if not rows:
-        return []
-    # Strict best-match order (100% -> 0%). Within each identical % tier we
-    # rotate sources so a single board (Indeed returns the most) doesn't appear
-    # as one block — but the overall order stays highest-match-first.
-    ranked = _score_and_rank(rows, limit * 4, target_text, cand_years)
-    return _diversify_by_site(ranked, limit)
+        return [], {"fetched": 0, "kept": 0, "rejected_count": 0, "rejected": [],
+                    "relaxed": False, "min_ratio": MIN_SKILL_RATIO}
+
+    # Strict pass: keep only jobs that fit the profile (hard skill/exp/title
+    # filters) AND score >= 50%. If that leaves too few, relax the skill threshold
+    # and the min score once so the page isn't empty — and flag that we relaxed.
+    ranked, rejected = _rank_jobs(rows, limit * 4, profile, MIN_SKILL_RATIO, min_score=50)
+    relaxed = False
+    used_ratio = MIN_SKILL_RATIO
+    if len(ranked) < min(MIN_KEEP_BEFORE_RELAX, limit):
+        ranked, rejected = _rank_jobs(rows, limit * 4, profile, RELAX_SKILL_RATIO, min_score=0)
+        relaxed = True
+        used_ratio = RELAX_SKILL_RATIO
+
+    jobs = _diversify_by_site(ranked, limit)
+    debug = {
+        "fetched": total,
+        "kept": len(jobs),
+        "rejected_count": len(rejected),
+        "rejected": rejected[:40],          # cap what we ship to the UI
+        "relaxed": relaxed,
+        "min_ratio": used_ratio,
+    }
+    return jobs, debug
 
 
 def _diversify_by_site(ranked, limit):
@@ -528,51 +1045,102 @@ async def api_fetch(
     file: UploadFile = File(None),
     jd: str = Form(""),
     skills: str = Form(""),
+    career: bool = Form(False),
+    profile_json: str = Form(""),
 ):
-    """Live-scrape jobs, score them, cache and return the top matches.
-
-    All inputs are optional. A resume file, JD and/or skills guide the *ranking*
-    (jobs ranked by how well they match the combined text). The position box —
-    or, if blank, roles inferred from the uploaded resume — drives *what we
-    search the boards for*. With nothing provided, a broad default is used.
+    """Build the matching PROFILE from the resume + inputs (or use the user-edited
+    profile sent as profile_json), search the boards FROM that profile, then keep
+    only jobs that fit it. Cache and return the top matches plus the profile and a
+    debug breakdown of what was filtered out.
     """
     if JOBS_SOURCE == "sheet":
         raise HTTPException(400, "Live fetch is disabled in sheet mode (Vercel). "
                                  "Jobs are read from the Google Sheet.")
 
-    # Build the ranking target + read the resume once (used for both ranking and
-    # role inference when no explicit position is given).
+    # If the user previewed & edited their profile, trust those edits; otherwise
+    # build the profile fresh from the resume + inputs.
+    profile = None
+    if profile_json and profile_json.strip():
+        try:
+            profile = _normalize_profile(json.loads(profile_json))
+        except Exception as e:
+            print(f"  ! bad profile_json, re-deriving: {e}", flush=True)
+            profile = None
+
+    if profile is None:
+        resume_text = ""
+        if file is not None and file.filename:
+            try:
+                data = await file.read()
+                if data:
+                    resume_text = RT.extract_text(file.filename, data)
+            except Exception as e:
+                print(f"  ! could not read uploaded resume: {e}", flush=True)
+        try:
+            cand_years = int(re.search(r"\d+", years).group()) if years.strip() else 0
+        except (AttributeError, ValueError):
+            cand_years = 0
+        # Fold the pasted JD's skills into the profile too (sharpens search+match).
+        skills_blob = skills
+        if jd and jd.strip():
+            skills_blob = (skills + "\n" + jd) if skills.strip() else jd
+        profile = extract_profile_from_resume(
+            resume_text=resume_text, skills_text=skills_blob,
+            position=position, years=cand_years, remote=remote,
+            location="Remote" if remote else LOCATION,
+        )
+
+    search_terms = profile.get("search_queries") or build_search_queries(profile)
+    api_terms = _api_search_terms(profile, position)
+
+    # fetch_live is blocking and slow (scraping) -> threadpool.
+    jobs, debug = await run_in_threadpool(
+        fetch_live, hours_old, limit, remote, profile, search_terms, api_terms, career)
+    payload = save_cache(jobs)
+    payload["source"] = "live"
+    payload["remote_only"] = remote
+    payload["guided"] = bool(profile["primary_skills"] or profile["job_titles"])
+    payload["search_terms"] = search_terms
+    payload["cand_years"] = profile["experience_years"]
+    payload["profile"] = profile
+    payload["debug"] = debug
+    return payload
+
+
+@app.post("/api/profile")
+async def api_profile(
+    position: str = Form(""),
+    years: str = Form(""),
+    file: UploadFile = File(None),
+    jd: str = Form(""),
+    skills: str = Form(""),
+    remote: bool = Form(False),
+):
+    """Parse the resume + inputs into the matching PROFILE WITHOUT fetching — so
+    the user can verify (and adjust the fields) before running a search."""
     resume_text = ""
     if file is not None and file.filename:
         try:
             data = await file.read()
             if data:
                 resume_text = RT.extract_text(file.filename, data)
+        except ValueError as e:
+            raise HTTPException(400, str(e))
         except Exception as e:
-            print(f"  ! could not read uploaded resume: {e}", flush=True)
-
-    parts = [p for p in (jd, skills, resume_text) if p and p.strip()]
-    target_text = "\n".join(parts)
-    search_terms = _derive_search_terms(position, resume_text, jd, skills)
-
-    # Years of experience: explicit field, else inferred from the resume.
+            raise HTTPException(400, f"Could not read resume: {e}")
     try:
         cand_years = int(re.search(r"\d+", years).group()) if years.strip() else 0
     except (AttributeError, ValueError):
         cand_years = 0
-    if not cand_years:
-        cand_years = _infer_years(resume_text)
-
-    # fetch_live is blocking and slow (scraping) -> threadpool.
-    jobs = await run_in_threadpool(
-        fetch_live, hours_old, limit, remote, target_text, search_terms, cand_years)
-    payload = save_cache(jobs)
-    payload["source"] = "live"
-    payload["remote_only"] = remote
-    payload["guided"] = bool(target_text.strip())
-    payload["search_terms"] = search_terms
-    payload["cand_years"] = cand_years
-    return payload
+    skills_blob = (skills + "\n" + jd) if (skills.strip() and jd.strip()) else (skills or jd)
+    profile = extract_profile_from_resume(
+        resume_text=resume_text, skills_text=skills_blob,
+        position=position, years=cand_years, remote=remote,
+        location="Remote" if remote else LOCATION,
+    )
+    return {"profile": profile,
+            "search_terms": profile["search_queries"],
+            "api_terms": _api_search_terms(profile, position)}
 
 
 def _save_resume_copy(fname: str, data: bytes):
@@ -855,6 +1423,7 @@ INDEX_HTML = r"""<!doctype html>
       </div>
       <div class="bar" style="margin-bottom:0">
         <button id="fetchBtn">Fetch jobs</button>
+        <button class="secondary" id="previewBtn">Preview my profile</button>
         <label class="note">Your experience
           <input id="years" type="number" value="" min="0" max="30" placeholder="auto" style="width:60px"/> yrs
         </label>
@@ -862,10 +1431,14 @@ INDEX_HTML = r"""<!doctype html>
           <select id="hours"><option value="24">24h</option><option value="48">48h</option><option value="72">72h</option><option value="168">7d</option></select>
         </label>
         <label class="note">Top <input id="limit" type="number" value="50" min="5" max="100" style="width:60px"/></label>
+        <label class="switch note" title="Greenhouse/Lever/Ashby ATS APIs + Hacker News + We Work Remotely"><input type="checkbox" id="jfCareer"/> Search company career pages directly</label>
         <button class="secondary" id="reloadBtn">Reload cached</button>
         <span class="note" id="count"></span>
       </div>
     </div>
+
+    <!-- Matching profile preview (filled by "Preview my profile" / after fetch) -->
+    <div class="card" id="profilePanel" style="display:none"></div>
     <p class="note" style="margin:-4px 0 12px">Boards: LinkedIn · Indeed · Google · Glassdoor · ZipRecruiter · Naukri · Bayt · Remotive · RemoteOK · Jobicy · Arbeitnow — all real, directly-posted listings. Ranked by skill/ATS match, then preference for <b>remote</b>, <b>big companies / 500+ employees</b>, and roles that fit your experience (salary ≥ 7 LPA is a small bonus when reported). Remote jobs are always included. <i>Experience auto-detected from your resume if left blank.</i></p>
 
     <table id="jobsTable">
@@ -875,6 +1448,7 @@ INDEX_HTML = r"""<!doctype html>
       </tr></thead>
       <tbody id="jobsBody"><tr><td colspan="10" class="empty">No jobs yet. Optionally upload your resume (and/or type a role) above, then click <b>Fetch jobs</b> — results are ranked to your skills, best match first.</td></tr></tbody>
     </table>
+    <div id="debugPanel" class="note" style="margin-top:10px"></div>
   </section>
 
   <!-- ============ SECTION 2 — CREATE A RESUME ============ -->
@@ -970,25 +1544,131 @@ function setBusy(btn, busy){
   scope.querySelectorAll('input, select, textarea, button').forEach(el=>{ el.disabled = busy; });
 }
 
+// Live elapsed-time counter. Calls onTick(label) every second with the real
+// elapsed time as m:ss (e.g. "0:05", "0:32", "1:12"); returns a stop() function.
+// Used instead of a hardcoded "~1 min" so the user sees the actual time taken.
+function startTimer(onTick){
+  const t0 = Date.now();
+  const label = ()=>{ const s=Math.floor((Date.now()-t0)/1000);
+                      return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+  onTick(label());
+  const id = setInterval(()=>onTick(label()), 1000);
+  return ()=>clearInterval(id);
+}
+
 function renderJobs(){
   const b=$('#jobsBody');
   if(!jobs.length){ b.innerHTML='<tr><td colspan="10" class="empty">No matching jobs found. Try a different role/position, widen the posting age, or upload a resume to guide the search.</td></tr>'; return; }
   b.innerHTML = jobs.map((j,i)=>{
-    const chips=(j.matched||[]).slice(0,6).map(m=>'<span class="chip">'+esc(m.split(' (')[0])+'</span>').join('');
+    const matched=(j.matched||[]).slice(0,6).map(m=>'<span class="tag have" style="font-size:10px">'+esc(m.split(' (')[0])+'</span>').join('');
+    const missing=(j.missing||[]).slice(0,4).map(m=>'<span class="tag miss" style="font-size:10px">'+esc(m.split(' (')[0])+'</span>').join('');
+    const matchLine = matched ? ('<div class="chips">&#9989; '+matched+'</div>') : '';
+    const missLine = missing ? ('<div class="chips" style="margin-top:2px">&#9888; could learn: '+missing+'</div>') : '';
     const size=j.employees>=150?(j.employees>=1000?(Math.floor(j.employees/1000)+'k+'):(j.employees+'+')):'';
+    const exp=j.exp_label?('<span class="chip" title="experience comparison">'+esc(j.exp_label)+(j.exp_fit?' &#9989;':'')+'</span>'):'';
     return `<tr>
       <td>${i+1}</td>
-      <td><span class="score ${scoreClass(j.score)}">${j.score}%</span></td>
-      <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${j.exp_fit?' <span class="tag have" style="font-size:10px">exp fit</span>':''}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.salary_lpa>=7?(' <span class="chip">'+j.salary_lpa+' LPA</span>'):''}<div class="chips">${chips}</div></td>
+      <td><span class="score ${scoreClass(j.score)}">${j.score}%</span>${j.skill_pct!=null?('<div class="note" style="font-size:10px;margin-top:2px">skills '+j.skill_pct+'%</div>'):''}</td>
+      <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${exp}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.salary_lpa>=7?(' <span class="chip">'+j.salary_lpa+' LPA</span>'):''}${matchLine}${missLine}</td>
       <td>${esc(j.company)}</td>
       <td class="note">${size}</td>
       <td>${esc(j.location)}</td>
-      <td>${esc(j.site)}</td>
+      <td class="note">${j.site?('via '+esc(j.site)):''}</td>
       <td>${esc(j.date_posted)}</td>
       <td>${j.job_url?'<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener">Open</a>':''}</td>
       <td><button class="secondary" onclick="useInTailor(${i})">Tailor to this &#8595;</button></td>
     </tr>`;
   }).join('');
+}
+
+function chiplist(list, cls){ return (list||[]).map(s=>'<span class="tag '+cls+'">'+esc((s+'').split(' (')[0])+'</span>').join(''); }
+
+// Render the EDITABLE matching PROFILE we extracted from your resume + inputs.
+// You can correct titles/skills/experience here before fetching; the edits are
+// what jobs get matched against. Stored in window._profile.
+function renderProfile(p, terms){
+  const el=$('#profilePanel'); if(!p){ el.style.display='none'; window._profile=null; return; }
+  window._profile = p;
+  el.style.display='';
+  const csv = a => (a||[]).join(', ');
+  const ro=(label,val)=> val ? ('<div class="field" style="margin-bottom:6px"><label>'+label+'</label><div class="note">'+esc(val)+'</div></div>') : '';
+  const rotags=(label,list,cls)=> (list&&list.length) ? ('<div class="field" style="margin-bottom:6px"><label>'+label+'</label><div class="tagrow">'+chiplist(list,cls)+'</div></div>') : '';
+  el.innerHTML =
+    '<div class="bar" style="margin-bottom:8px"><strong>We analyzed your resume — here\'s what we found</strong>'
+    + '<span class="note">Correct anything below, then click <b>Fetch jobs</b>. Jobs are matched against this.</span></div>'
+    + '<div class="grid2">'
+    +   '<div>'
+    +     '<div class="field" style="margin-bottom:8px"><label>Target titles (comma-separated)</label>'
+    +       '<textarea id="pf_titles" style="min-height:40px">'+esc(csv(p.target_titles||p.job_titles))+'</textarea></div>'
+    +     '<div class="field" style="margin-bottom:8px"><label>Primary skills — searched &amp; matched (comma-separated)</label>'
+    +       '<textarea id="pf_skills" style="min-height:52px">'+esc(csv(p.primary_skills))+'</textarea></div>'
+    +     '<div class="field" style="margin-bottom:8px"><label>Extra skills you added (comma-separated)</label>'
+    +       '<textarea id="pf_added" style="min-height:40px">'+esc(csv(p.user_added_skills))+'</textarea></div>'
+    +     '<div class="bar" style="margin-bottom:0">'
+    +       '<label class="note">Experience <input id="pf_years" type="number" min="0" max="40" value="'+esc(''+(p.experience_years||0))+'" style="width:60px"/> yrs <span class="pill">'+esc(p.experience_level||'')+'</span></label>'
+    +       '<label class="note">Work mode <select id="pf_remote"><option value="any"'+(p.remote_preference!=='remote'?' selected':'')+'>any</option><option value="remote"'+(p.remote_preference==='remote'?' selected':'')+'>remote</option></select></label>'
+    +     '</div>'
+    +     '<div class="note" style="margin-top:4px">Will reject jobs needing more than <b>'+esc(''+((p.experience_years||0)+1))+' yrs</b>.</div>'
+    +   '</div>'
+    +   '<div>'
+    +     ro('Name', p.name) + ro('Email', p.email) + ro('Phone', p.phone)
+    +     ro('Education', p.education)
+    +     rotags('Secondary skills (mentioned, not matched on)', p.secondary_skills, 'miss')
+    +     rotags('Domains', p.domains, 'add')
+    +     rotags('Companies worked at', p.companies_worked_at, 'add')
+    +     rotags('Certifications', p.certifications, 'add')
+    +   '</div>'
+    + '</div>'
+    + (terms&&terms.length?('<div class="note" style="margin-top:8px">Will search: <b>'+terms.map(esc).join('</b> · <b>')+'</b></div>'):'');
+}
+
+// Merge the user's edits from the profile panel back into window._profile so the
+// fetch matches against the corrected profile. Returns null if never previewed.
+function collectProfileEdits(){
+  const p = window._profile; if(!p) return null;
+  const e = Object.assign({}, p);
+  const csv = id => { const el=$('#'+id); return el ? el.value.split(',').map(s=>s.trim()).filter(Boolean) : undefined; };
+  const tt=csv('pf_titles'); if(tt){ e.target_titles=tt; e.job_titles=tt; }
+  const ps=csv('pf_skills'); if(ps) e.primary_skills=ps;
+  const ua=csv('pf_added'); if(ua) e.user_added_skills=ua;
+  const ye=$('#pf_years'); if(ye) e.experience_years=parseInt(ye.value||'0')||0;
+  const rm=$('#pf_remote'); if(rm) e.remote_preference=rm.value;
+  return e;
+}
+// Changing the source inputs invalidates a previewed profile — force a re-preview.
+function invalidateProfile(){ window._profile=null; const el=$('#profilePanel'); if(el){ el.style.display='none'; el.innerHTML=''; } }
+
+// Show why jobs were filtered OUT (the strict skill/experience/title gates), and
+// whether we had to relax the skill threshold to fill the page.
+function renderDebug(dbg){
+  const el=$('#debugPanel'); if(!dbg){ el.innerHTML=''; return; }
+  let html='Fetched <b>'+dbg.fetched+'</b> · kept <b>'+dbg.kept+'</b> · filtered out <b>'+dbg.rejected_count+'</b> '
+         + '(skill threshold '+Math.round((dbg.min_ratio||0)*100)+'%).';
+  if(dbg.relaxed) html+=' <span style="color:var(--ambt)">&#9888; Few strict matches — relaxed the skill threshold so the page isn\'t empty.</span>';
+  if((dbg.rejected||[]).length){
+    const rows=dbg.rejected.map(x=>'<li>'+esc(x.title||'(untitled)')+(x.company?(' — '+esc(x.company)):'')+(x.site?(' ['+esc(x.site)+']'):'')+': <span class="note">'+esc(x.reason)+'</span></li>').join('');
+    html+='<details style="margin-top:6px"><summary style="cursor:pointer">Show filtered-out jobs ('+dbg.rejected.length+')</summary>'
+        + '<ul style="margin:6px 0 0;padding-left:18px;max-height:240px;overflow:auto">'+rows+'</ul></details>';
+  }
+  el.innerHTML=html;
+}
+
+async function previewProfile(){
+  const btn=$('#previewBtn'); const old=btn.textContent; btn.disabled=true; btn.textContent='Analyzing…';
+  try{
+    const fd=new FormData();
+    const f=$('#jfFile').files[0]; if(f) fd.append('file', f);
+    fd.append('position', $('#jfPosition').value||'');
+    fd.append('years', $('#years').value||'');
+    fd.append('jd', $('#jfJD').value||'');
+    fd.append('skills', $('#jfSkills').value||'');
+    const r=await fetch('/api/profile',{method:'POST', body:fd});
+    const d=await r.json();
+    if(!r.ok){ toast('Profile failed: '+(d.detail||r.status)); return; }
+    renderProfile(d.profile, d.search_terms);
+    toast('Profile extracted — verify it, then Fetch jobs.');
+  }catch(e){ toast('Profile error: '+e); }
+  finally{ btn.disabled=false; btn.textContent=old; }
 }
 
 async function loadJobs(){
@@ -1002,10 +1682,16 @@ async function loadJobs(){
 async function fetchJobs(){
   if(!LIVE){ toast('Live fetch is off in Vercel mode - showing Google Sheet jobs.'); return loadJobs(); }
   const btn=$('#fetchBtn'); const old=btn.textContent; setBusy(btn,true);
-  btn.innerHTML='<span class="spin"></span> Searching (can take ~1 min)…';
+  // Lock the (separate-card) profile panel too, so prefilled data can't be edited mid-fetch.
+  $('#profilePanel').querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=true);
   // Clear the previous results immediately so stale jobs don't linger.
   jobs=[]; $('#count').textContent='';
-  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty"><span class="spin"></span> Searching all boards for fresh jobs… (can take ~1 min)</td></tr>';
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty"><span class="spin"></span> <span id="fetchStatus">Searching all boards for fresh jobs…</span></td></tr>';
+  const stopTimer=startTimer(t=>{
+    btn.innerHTML='<span class="spin"></span> Searching… '+t;
+    const cell=document.getElementById('fetchStatus');
+    if(cell) cell.textContent='Searching all boards for fresh jobs… '+t;
+  });
   try{
     const fd=new FormData();
     const f=$('#jfFile').files[0]; if(f) fd.append('file', f);
@@ -1013,14 +1699,19 @@ async function fetchJobs(){
     fd.append('years', $('#years').value||'');
     fd.append('jd', $('#jfJD').value||'');
     fd.append('skills', $('#jfSkills').value||'');
+    fd.append('career', $('#jfCareer').checked?'true':'false');
+    // If you previewed & edited your profile, send those edits to match against.
+    const edited=collectProfileEdits(); if(edited) fd.append('profile_json', JSON.stringify(edited));
     const r=await fetch('/api/fetch?hours_old='+$('#hours').value+'&limit='+($('#limit').value||50),
                         {method:'POST', body:fd});
     const d=await r.json();
     if(!r.ok){ toast('Fetch failed: '+(d.detail||r.status)); }
     else { jobs=d.jobs||[]; $('#count').textContent=jobs.length+' jobs · fetched '+d.fetched_at; renderJobs();
-           toast(jobs.length+(d.guided?' jobs ranked to your resume/JD/skills.':' jobs ranked by tech relevance.')+(d.search_terms?' Searched: '+d.search_terms.join(', '):'')); }
+           renderProfile(d.profile, d.search_terms); renderDebug(d.debug);
+           toast(jobs.length+(d.guided?' jobs matched to your profile.':' jobs ranked by tech relevance.')+(d.search_terms?' Searched: '+d.search_terms.join(', '):'')); }
   }catch(e){ toast('Fetch error: '+e); }
-  finally{ setBusy(btn,false); btn.textContent=old; }
+  finally{ stopTimer(); setBusy(btn,false); btn.textContent=old;
+           $('#profilePanel').querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=false); }
 }
 
 function showTab(which){
@@ -1042,7 +1733,7 @@ function useInTailor(i){
 
 async function generateResume(){
   const btn=$('#genBtn'); const old=btn.textContent; setBusy(btn,true);
-  btn.innerHTML='<span class="spin"></span> Generating…';
+  const stopTimer=startTimer(t=>{ btn.innerHTML='<span class="spin"></span> Generating… '+t; });
   $('#genResult').textContent='';
   try{
     const r=await fetch('/api/resume/build',{method:'POST',headers:{'Content-Type':'application/json'},
@@ -1058,7 +1749,7 @@ async function generateResume(){
     toast('Resume generated in your format.');
     loadResumes();
   }catch(e){ $('#genResult').textContent='Error: '+e; }
-  finally{ setBusy(btn,false); btn.textContent=old; }
+  finally{ stopTimer(); setBusy(btn,false); btn.textContent=old; }
 }
 
 function b64Download(name, b64, mime){
@@ -1079,7 +1770,7 @@ async function tailorResume(){
   fd.append('skills', $('#tailorSkills').value||'');
   fd.append('fmt', $('#tailorFmt').value);
   const btn=$('#tailorBtn'); const old=btn.textContent; setBusy(btn,true);
-  btn.innerHTML='<span class="spin"></span> Tailoring…';
+  const stopTimer=startTimer(t=>{ btn.innerHTML='<span class="spin"></span> Tailoring… '+t; });
   $('#tailorResult').innerHTML='Working — building your resume'+($('#tailorFmt').value!=='docx'?' (PDF via Word can take a few seconds)':'')+'…';
   try{
     const r=await fetch('/api/resume/tailor',{method:'POST',body:fd});
@@ -1100,7 +1791,7 @@ async function tailorResume(){
     toast('Tailored resume downloaded.');
     loadResumes();
   }catch(e){ $('#tailorResult').textContent='Error: '+e; }
-  finally{ setBusy(btn,false); btn.textContent=old; }
+  finally{ stopTimer(); setBusy(btn,false); btn.textContent=old; }
 }
 
 async function loadResumes(){
@@ -1123,6 +1814,11 @@ async function delResume(name){
 $('#tabFind').onclick=()=>showTab('find');
 $('#tabCreate').onclick=()=>showTab('create');
 $('#fetchBtn').onclick=fetchJobs;
+$('#previewBtn').onclick=previewProfile;
+// Editing a source input invalidates a previewed profile -> re-preview to refresh.
+['jfFile','jfPosition','jfSkills','jfJD','years'].forEach(id=>{
+  const el=$('#'+id); if(el) el.addEventListener('change', invalidateProfile);
+});
 $('#reloadBtn').onclick=loadJobs;
 $('#genBtn').onclick=generateResume;
 $('#tailorBtn').onclick=tailorResume;

@@ -286,22 +286,28 @@ def _bold_in_run(run, regex):
         segments.append((text[pos:], False))
 
     from docx.text.run import Run
+    # Capture the run's ORIGINAL bold BEFORE we mutate it — otherwise a run that
+    # starts with a matched term turns its bold on, and every later (unmatched)
+    # segment then inherits that bold (making the whole run bold).
+    orig_bold = run.bold
     first_text, first_bold = segments[0]
     run.text = first_text
-    if first_bold:
-        run.bold = True
+    run.bold = True if first_bold else orig_bold
     anchor = run._r
     for seg_text, seg_bold in segments[1:]:
         new_r = copy.deepcopy(run._r)          # carries this run's rPr (its style)
         new_run = Run(new_r, run._parent)
         new_run.text = seg_text                # replaces the copied w:t content
-        new_run.bold = True if seg_bold else run.bold
+        new_run.bold = True if seg_bold else orig_bold
         anchor.addnext(new_r)
         anchor = new_r
 
 
-def _insert_key_skills(doc, line: str, label: str = "Key Skills for this Role: "):
-    """Insert a skills paragraph just below the header."""
+def _insert_key_skills(doc, line: str, label: str = "Key Skills for this Role: ",
+                       bold_terms=None):
+    """Insert a skills paragraph just below the header. When bold_terms is given,
+    the matched skills inside the line are bolded (and the JD-added ones left
+    regular) — so the line reads as 'have these (bold) + add these (regular)'."""
     if not line:
         return
     from docx.shared import Pt
@@ -315,7 +321,12 @@ def _insert_key_skills(doc, line: str, label: str = "Key Skills for this Role: "
         new_p = doc.add_paragraph()
     r1 = new_p.add_run(label)
     r1.bold = True
-    new_p.add_run(body)
+    body_run = new_p.add_run(body)
+    # Bold the matched skills inside the body run (label run is left as-is).
+    if bold_terms:
+        regex = _bold_terms_regex(bold_terms)
+        if regex is not None:
+            _bold_in_run(body_run, regex)
     # Keep it compact; inherit document Normal style otherwise.
     try:
         new_p.paragraph_format.space_before = Pt(2)
@@ -344,7 +355,8 @@ def tailor_docx(data: bytes, analysis: dict, ats: bool = False) -> bytes:
                             _bold_in_run(run, regex)
 
     label = "Core Competencies: " if ats else "Key Skills for this Role: "
-    _insert_key_skills(doc, _key_skills_line(analysis, ats=ats), label=label)
+    _insert_key_skills(doc, _key_skills_line(analysis, ats=ats), label=label,
+                       bold_terms=analysis["bold_terms"])
 
     out = io.BytesIO()
     doc.save(out)
@@ -394,37 +406,147 @@ def _is_contact(line: str) -> bool:
             or re.search(r"\+?\d[\d\s\-()]{7,}", line) is not None or "|" in line)
 
 
+def _set_bottom_border(paragraph):
+    """Give a paragraph a thin bottom border (the rule under a section heading)."""
+    from docx.oxml.ns import qn
+    from docx.oxml import OxmlElement
+    pPr = paragraph._p.get_or_add_pPr()
+    pBdr = pPr.find(qn("w:pBdr"))
+    if pBdr is None:
+        pBdr = OxmlElement("w:pBdr")
+        pPr.append(pBdr)
+    bottom = OxmlElement("w:bottom")
+    bottom.set(qn("w:val"), "single")
+    bottom.set(qn("w:sz"), "6")        # ~0.75pt rule
+    bottom.set(qn("w:space"), "2")
+    bottom.set(qn("w:color"), "888888")
+    pBdr.append(bottom)
+
+
+# Base spacing (space_before, space_after, in pt) per block kind, before the
+# density multiplier is applied.
+_BLOCK_SPACING = {
+    "name": (0, 1), "contact": (0, 2), "skillhead": (4, 1), "skills": (0, 2),
+    "heading": (5, 1), "bullet": (0, 0), "body": (0, 0),
+}
+# Density presets tried loosest -> tightest. We pick the FIRST that fits one page;
+# if none do, the tightest is used. This reduces SPACING/font, never content.
+_DENSITY_PRESETS = (
+    {"body": 9.0, "head": 10.0, "name": 17.0, "contact": 8.5, "ls": 1.0,  "sp": 1.0},
+    {"body": 8.5, "head": 9.5,  "name": 16.0, "contact": 8.0, "ls": 1.0,  "sp": 0.7},
+    {"body": 8.0, "head": 9.0,  "name": 15.0, "contact": 8.0, "ls": 0.98, "sp": 0.5},
+    {"body": 7.5, "head": 8.5,  "name": 14.0, "contact": 7.5, "ls": 0.95, "sp": 0.3},
+    {"body": 7.0, "head": 8.0,  "name": 13.0, "contact": 7.0, "ls": 0.92, "sp": 0.15},
+)
+
+
+def _block_size(kind: str, ps: dict) -> float:
+    return {"name": ps["name"], "contact": ps["contact"], "skillhead": ps["head"],
+            "heading": ps["head"], "skills": ps["body"], "bullet": ps["body"],
+            "body": ps["body"]}[kind]
+
+
+def _parse_resume_blocks(resume_text: str, analysis: dict, ats: bool):
+    """Turn extracted PDF text into ordered (kind, text) blocks: the name, up to
+    two contact lines, the inserted skills section, then headings / bullets /
+    body — using _looks_like_heading() and _is_bullet() to detect structure."""
+    lines = [ln.rstrip() for ln in (resume_text or "").splitlines()]
+    nonempty = [ln for ln in lines if ln.strip()]
+    blocks = []
+
+    body_start = 0
+    if nonempty:
+        name_line = nonempty[0]
+        blocks.append(("name", name_line.strip()))
+        body_start = lines.index(name_line) + 1
+        taken = 0
+        while body_start < len(lines) and taken < 2:
+            ln = lines[body_start]
+            if not ln.strip():
+                body_start += 1
+                continue
+            if _is_contact(ln) and not _looks_like_heading(ln):
+                blocks.append(("contact", ln.strip()))
+                body_start += 1
+                taken += 1
+            else:
+                break
+
+    skills_line = _key_skills_line(analysis, ats=ats)
+    if skills_line:
+        blocks.append(("skillhead", "CORE COMPETENCIES" if ats
+                       else "KEY SKILLS FOR THIS ROLE"))
+        blocks.append(("skills", skills_line))
+
+    for ln in lines[body_start:]:
+        if not ln.strip():
+            continue
+        if _looks_like_heading(ln):
+            blocks.append(("heading", ln.strip().rstrip(":").upper()))
+        elif _is_bullet(ln):
+            text = ln.lstrip()
+            text = text[1:].strip() if text[:1] in _BULLET_CHARS else text
+            blocks.append(("bullet", text))
+        else:
+            blocks.append(("body", ln.strip()))
+    return blocks
+
+
+def _estimate_height_pt(blocks, ps, usable_w_pt) -> float:
+    """Rough rendered height (pt) of all blocks at a given density preset. Used to
+    decide whether the resume fits one page (no real renderer in python-docx)."""
+    import math
+    total = 0.0
+    for kind, text in blocks:
+        size = _block_size(kind, ps)
+        # ~0.50*fontsize per char is a deliberately wide estimate (overestimates
+        # lines -> errs toward shrinking, which keeps us on one page).
+        cpl = max(16, usable_w_pt / (0.50 * size))
+        nlines = max(1, math.ceil(len(text) / cpl))
+        line_h = ps["ls"] * 1.18 * size
+        before, after = _BLOCK_SPACING[kind]
+        total += nlines * line_h + (before + after) * ps["sp"]
+    return total
+
+
 def rebuild_docx_from_text(resume_text: str, analysis: dict, ats: bool = False) -> bytes:
     """Rebuild a .docx from extracted PDF text, keeping resume STRUCTURE (name,
     contact, section headings, bullets) and compressing everything onto ONE page.
 
-    PDF text can't be edited in place, but instead of a flat 3-page text dump we
-    reconstruct a tight, structured single-page document: large bold name, a
-    centered contact line, bold/underlined section headers, and real bullets."""
+    A PDF can't be edited in place, so instead of a flat multi-page text dump we
+    reconstruct a tight, structured single-page document: large bold centered
+    name, centered contact line(s), bold UPPERCASE section headings with a bottom
+    rule, real "•" bullets, and matched JD keywords bolded inline. If the content
+    would overflow one page we step through tighter density presets — shrinking
+    spacing and font, never dropping content."""
     from docx import Document
     from docx.shared import Pt, RGBColor
     from docx.enum.text import WD_ALIGN_PARAGRAPH
 
-    lines = [ln.rstrip() for ln in (resume_text or "").splitlines()]
-    nonempty = [ln for ln in lines if ln.strip()]
+    blocks = _parse_resume_blocks(resume_text, analysis, ats)
 
     doc = Document()
     # Tight one-page geometry.
     for section in doc.sections:
         section.top_margin = section.bottom_margin = Pt(28)      # ~0.39"
         section.left_margin = section.right_margin = Pt(40)      # ~0.55"
+    sec = doc.sections[0]
+    usable_w = (sec.page_width - sec.left_margin - sec.right_margin) / 12700.0  # -> pt
+    usable_h = (sec.page_height - sec.top_margin - sec.bottom_margin) / 12700.0
+
+    # Pick the loosest density that still fits one page (fall back to tightest).
+    chosen = _DENSITY_PRESETS[-1]
+    for ps in _DENSITY_PRESETS:
+        if _estimate_height_pt(blocks, ps, usable_w) <= usable_h:
+            chosen = ps
+            break
+
     normal = doc.styles["Normal"]
     normal.font.name = "Calibri"
-    normal.font.size = Pt(9)
+    normal.font.size = Pt(chosen["body"])
     normal.paragraph_format.space_before = Pt(0)
     normal.paragraph_format.space_after = Pt(0)
-    normal.paragraph_format.line_spacing = 1.0
-
-    def _tight(p, before=0, after=0):
-        p.paragraph_format.space_before = Pt(before)
-        p.paragraph_format.space_after = Pt(after)
-        p.paragraph_format.line_spacing = 1.0
-        return p
+    normal.paragraph_format.line_spacing = chosen["ls"]
 
     regex = _bold_terms_regex(analysis["bold_terms"])
 
@@ -434,66 +556,47 @@ def rebuild_docx_from_text(resume_text: str, analysis: dict, ats: bool = False) 
             for run in list(p.runs):
                 _bold_in_run(run, regex)
 
-    # --- Header: name + contact (first 1-3 lines of the resume) ------------- #
-    body_start = 0
-    if nonempty:
-        name_line = nonempty[0]
-        name_p = _tight(doc.add_paragraph(), after=1)
-        name_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
-        r = name_p.add_run(name_line.strip())
-        r.bold = True
-        r.font.size = Pt(17)
-        body_start = lines.index(name_line) + 1
-        # Pull up to two contact lines that immediately follow the name.
-        taken = 0
-        while body_start < len(lines) and taken < 2:
-            ln = lines[body_start]
-            if not ln.strip():
-                body_start += 1
-                continue
-            if _is_contact(ln) and not _looks_like_heading(ln):
-                cp = _tight(doc.add_paragraph(), after=2)
-                cp.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                cr = cp.add_run(ln.strip())
-                cr.font.size = Pt(8.5)
-                cr.font.color.rgb = RGBColor(0x44, 0x44, 0x44)
-                body_start += 1
-                taken += 1
-            else:
-                break
+    def _para(kind):
+        before, after = _BLOCK_SPACING[kind]
+        p = doc.add_paragraph()
+        p.paragraph_format.space_before = Pt(before * chosen["sp"])
+        p.paragraph_format.space_after = Pt(after * chosen["sp"])
+        p.paragraph_format.line_spacing = chosen["ls"]
+        return p
 
-    # --- Inserted key-skills / ATS line, styled as a section --------------- #
-    skills_line = _key_skills_line(analysis, ats=ats)
-    if skills_line:
-        label = "CORE COMPETENCIES" if ats else "KEY SKILLS FOR THIS ROLE"
-        hp = _tight(doc.add_paragraph(), before=4, after=1)
-        hr = hp.add_run(label)
+    def _heading(text, size):
+        hp = _para("heading")
+        hr = hp.add_run(text)
         hr.bold = True
-        hr.font.size = Pt(10)
+        hr.font.size = Pt(size)
         hr.font.color.rgb = RGBColor(0x1a, 0x1a, 0x1a)
-        sp = _tight(doc.add_paragraph(), after=2)
-        _add_text(sp, skills_line)
+        _set_bottom_border(hp)
+        return hp
 
-    # --- Body: reconstruct headings and bullets ---------------------------- #
-    for ln in lines[body_start:]:
-        if not ln.strip():
-            continue
-        if _looks_like_heading(ln):
-            hp = _tight(doc.add_paragraph(), before=5, after=1)
-            hr = hp.add_run(ln.strip().rstrip(":").upper())
-            hr.bold = True
-            hr.font.size = Pt(10)
-            hr.font.color.rgb = RGBColor(0x1a, 0x1a, 0x1a)
-        elif _is_bullet(ln):
-            text = ln.lstrip()
-            text = text[1:].strip() if text[:1] in _BULLET_CHARS else text
-            bp = _tight(doc.add_paragraph(), after=0)
+    for kind, text in blocks:
+        if kind == "name":
+            p = _para("name")
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            r = p.add_run(text)
+            r.bold = True
+            r.font.size = Pt(chosen["name"])
+        elif kind == "contact":
+            p = _para("contact")
+            p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            r = p.add_run(text)
+            r.font.size = Pt(chosen["contact"])
+            r.font.color.rgb = RGBColor(0x44, 0x44, 0x44)
+        elif kind in ("skillhead", "heading"):
+            _heading(text, chosen["head"])
+        elif kind == "skills":
+            _add_text(_para("skills"), text)
+        elif kind == "bullet":
+            bp = _para("bullet")
             bp.paragraph_format.left_indent = Pt(12)
-            bp.add_run("• ")
+            bp.add_run("• ")           # U+2022 bullet
             _add_text(bp, text)
-        else:
-            p = _tight(doc.add_paragraph(), after=0)
-            _add_text(p, ln.strip())
+        else:  # body
+            _add_text(_para("body"), text)
 
     out = io.BytesIO()
     doc.save(out)
