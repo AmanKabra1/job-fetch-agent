@@ -359,8 +359,21 @@ def _score_and_rank(rows, limit, target_text=None, cand_years=0):
             "job_url": str(r.get("job_url") or ""),
             "description": desc,
         })
-    # Keep only real matches (drop near-zero noise) and dedupe by url.
-    scored = [s for s in scored if s["job_url"] and s["score"] >= 10]
+    # Relevance gate. When guided by your resume/skills/JD, only keep jobs that
+    # actually match your profile — at least 2 of your skills, or one very strong
+    # match. Jobs whose skills/keywords don't match are dropped, not shown. If
+    # that's too strict and leaves too few, relax to >=1 match so the page isn't
+    # empty. Without any guidance, just drop near-zero noise.
+    def _relevant(s, min_match):
+        return s["job_url"] and (len(s["matched"]) >= min_match or s["base"] >= 60)
+
+    if targets:
+        scored2 = [s for s in scored if _relevant(s, 2)]
+        if len(scored2) < 5:
+            scored2 = [s for s in scored if _relevant(s, 1)]
+        scored = scored2
+    else:
+        scored = [s for s in scored if s["job_url"] and s["score"] >= 10]
     seen, unique = set(), []
     for s in scored:
         if s["job_url"] in seen:
@@ -1076,7 +1089,7 @@ async function tailorResume(){
     const a=d.analysis||{};
     let html='';
     html+= d.layout_preserved ? '<div class="note">&#10003; Your original Word layout &amp; style were preserved.</div>'
-                              : '<div class="note">&#9888; PDF upload: text was extracted and rebuilt into a clean document (a PDF cannot be edited in place without losing its layout).</div>';
+                              : '<div class="note">&#9888; PDF upload: a PDF cannot be edited in place, so it was rebuilt as a structured one-page document (name, contact, section headings &amp; bullets preserved). For an exact match to your original styling, upload the .docx version.</div>';
     if(d.pdf_note) html+='<div class="note" style="color:var(--ambt)">PDF note: '+esc(d.pdf_note)+'</div>';
     if((a.present||[]).length) html+='<div class="field" style="margin-top:10px"><label>Highlighted (you already have, JD wants)</label><div class="tagrow">'+tags(a.present,'have')+'</div></div>';
     if((a.typed||[]).length) html+='<div class="field"><label>Added from your skills box</label><div class="tagrow">'+tags(a.typed,'add')+'</div></div>';

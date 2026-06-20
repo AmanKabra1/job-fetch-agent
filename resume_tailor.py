@@ -13,9 +13,10 @@ own resume:
       - insert one "Key Skills for this Role" line near the top.
     Nothing in the resume is rewritten or fabricated.
 
-  * For a .pdf upload there is no reliable way to edit a PDF in place without
-    destroying its layout, so we extract the text and rebuild a clean, plain
-    document (the caller is told the original layout is NOT preserved).
+  * For a .pdf upload there is no reliable way to edit a PDF in place, so we
+    extract the text and rebuild a STRUCTURED, single-page document — detecting
+    the name, contact line, section headings and bullets so the result keeps the
+    resume's structure (not a flat text dump) and stays on one page.
 
 Both paths can emit Word (.docx) and PDF. PDF is produced from the tailored
 .docx via Microsoft Word (docx2pdf) so the PDF matches the Word styling exactly;
@@ -351,30 +352,148 @@ def tailor_docx(data: bytes, analysis: dict, ats: bool = False) -> bytes:
 
 
 # --------------------------------------------------------------------------- #
-# PDF UPLOAD -> rebuilt DOCX (layout NOT preserved)
+# PDF UPLOAD -> rebuilt DOCX (structured, one page)
 # --------------------------------------------------------------------------- #
+# Common resume section headings (used to detect headings in extracted text so
+# the rebuilt doc keeps the original's structure instead of a flat text dump).
+_SECTION_WORDS = (
+    "summary", "objective", "profile", "about",
+    "experience", "work experience", "employment", "professional experience",
+    "education", "academic", "skills", "technical skills", "core competencies",
+    "projects", "project", "certifications", "certificates", "courses",
+    "achievements", "accomplishments", "awards", "publications", "languages",
+    "interests", "hobbies", "contact", "references", "volunteer", "activities",
+)
+_BULLET_CHARS = ("•", "◦", "▪", "‣", "·", "-", "–", "—", "*", "")
+
+
+def _looks_like_heading(line: str) -> bool:
+    """A short line that is a section title (ALL CAPS or a known section word)."""
+    s = line.strip().rstrip(":").strip()
+    if not s or len(s) > 40:
+        return False
+    low = s.lower()
+    if low in _SECTION_WORDS:
+        return True
+    # ALL-CAPS (or mostly) short line with no sentence punctuation -> heading.
+    letters = [c for c in s if c.isalpha()]
+    if letters and len(s.split()) <= 5 and sum(c.isupper() for c in letters) / len(letters) >= 0.8:
+        return True
+    return False
+
+
+def _is_bullet(line: str) -> bool:
+    s = line.lstrip()
+    return bool(s) and s[0] in _BULLET_CHARS and s[:2] != "--"
+
+
+def _is_contact(line: str) -> bool:
+    """Email / phone / links line that usually sits under the name."""
+    low = line.lower()
+    return ("@" in line or "http" in low or "linkedin" in low or "github" in low
+            or re.search(r"\+?\d[\d\s\-()]{7,}", line) is not None or "|" in line)
+
+
 def rebuild_docx_from_text(resume_text: str, analysis: dict, ats: bool = False) -> bytes:
-    """Build a clean .docx from extracted PDF text. Original layout is lost."""
+    """Rebuild a .docx from extracted PDF text, keeping resume STRUCTURE (name,
+    contact, section headings, bullets) and compressing everything onto ONE page.
+
+    PDF text can't be edited in place, but instead of a flat 3-page text dump we
+    reconstruct a tight, structured single-page document: large bold name, a
+    centered contact line, bold/underlined section headers, and real bullets."""
     from docx import Document
-    from docx.shared import Pt
+    from docx.shared import Pt, RGBColor
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
+
+    lines = [ln.rstrip() for ln in (resume_text or "").splitlines()]
+    nonempty = [ln for ln in lines if ln.strip()]
 
     doc = Document()
-    doc.styles["Normal"].font.name = "Calibri"
-    doc.styles["Normal"].font.size = Pt(10.5)
+    # Tight one-page geometry.
+    for section in doc.sections:
+        section.top_margin = section.bottom_margin = Pt(28)      # ~0.39"
+        section.left_margin = section.right_margin = Pt(40)      # ~0.55"
+    normal = doc.styles["Normal"]
+    normal.font.name = "Calibri"
+    normal.font.size = Pt(9)
+    normal.paragraph_format.space_before = Pt(0)
+    normal.paragraph_format.space_after = Pt(0)
+    normal.paragraph_format.line_spacing = 1.0
 
-    label = "Core Competencies: " if ats else "Key Skills for this Role: "
-    _insert_key_skills(doc, _key_skills_line(analysis, ats=ats), label=label)
+    def _tight(p, before=0, after=0):
+        p.paragraph_format.space_before = Pt(before)
+        p.paragraph_format.space_after = Pt(after)
+        p.paragraph_format.line_spacing = 1.0
+        return p
 
     regex = _bold_terms_regex(analysis["bold_terms"])
-    for raw in (resume_text or "").splitlines():
-        line = raw.rstrip()
-        if not line.strip():
-            continue
-        p = doc.add_paragraph()
-        p.add_run(line)
+
+    def _add_text(p, text):
+        p.add_run(text)
         if regex is not None:
             for run in list(p.runs):
                 _bold_in_run(run, regex)
+
+    # --- Header: name + contact (first 1-3 lines of the resume) ------------- #
+    body_start = 0
+    if nonempty:
+        name_line = nonempty[0]
+        name_p = _tight(doc.add_paragraph(), after=1)
+        name_p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        r = name_p.add_run(name_line.strip())
+        r.bold = True
+        r.font.size = Pt(17)
+        body_start = lines.index(name_line) + 1
+        # Pull up to two contact lines that immediately follow the name.
+        taken = 0
+        while body_start < len(lines) and taken < 2:
+            ln = lines[body_start]
+            if not ln.strip():
+                body_start += 1
+                continue
+            if _is_contact(ln) and not _looks_like_heading(ln):
+                cp = _tight(doc.add_paragraph(), after=2)
+                cp.alignment = WD_ALIGN_PARAGRAPH.CENTER
+                cr = cp.add_run(ln.strip())
+                cr.font.size = Pt(8.5)
+                cr.font.color.rgb = RGBColor(0x44, 0x44, 0x44)
+                body_start += 1
+                taken += 1
+            else:
+                break
+
+    # --- Inserted key-skills / ATS line, styled as a section --------------- #
+    skills_line = _key_skills_line(analysis, ats=ats)
+    if skills_line:
+        label = "CORE COMPETENCIES" if ats else "KEY SKILLS FOR THIS ROLE"
+        hp = _tight(doc.add_paragraph(), before=4, after=1)
+        hr = hp.add_run(label)
+        hr.bold = True
+        hr.font.size = Pt(10)
+        hr.font.color.rgb = RGBColor(0x1a, 0x1a, 0x1a)
+        sp = _tight(doc.add_paragraph(), after=2)
+        _add_text(sp, skills_line)
+
+    # --- Body: reconstruct headings and bullets ---------------------------- #
+    for ln in lines[body_start:]:
+        if not ln.strip():
+            continue
+        if _looks_like_heading(ln):
+            hp = _tight(doc.add_paragraph(), before=5, after=1)
+            hr = hp.add_run(ln.strip().rstrip(":").upper())
+            hr.bold = True
+            hr.font.size = Pt(10)
+            hr.font.color.rgb = RGBColor(0x1a, 0x1a, 0x1a)
+        elif _is_bullet(ln):
+            text = ln.lstrip()
+            text = text[1:].strip() if text[:1] in _BULLET_CHARS else text
+            bp = _tight(doc.add_paragraph(), after=0)
+            bp.paragraph_format.left_indent = Pt(12)
+            bp.add_run("• ")
+            _add_text(bp, text)
+        else:
+            p = _tight(doc.add_paragraph(), after=0)
+            _add_text(p, ln.strip())
 
     out = io.BytesIO()
     doc.save(out)
