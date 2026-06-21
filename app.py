@@ -1045,7 +1045,7 @@ async def api_fetch(
     file: UploadFile = File(None),
     jd: str = Form(""),
     skills: str = Form(""),
-    career: bool = Form(False),
+    career: bool = Form(True),
     profile_json: str = Form(""),
 ):
     """Build the matching PROFILE from the resume + inputs (or use the user-edited
@@ -1431,7 +1431,7 @@ INDEX_HTML = r"""<!doctype html>
           <select id="hours"><option value="24">24h</option><option value="48">48h</option><option value="72">72h</option><option value="168">7d</option></select>
         </label>
         <label class="note">Top <input id="limit" type="number" value="50" min="5" max="100" style="width:60px"/></label>
-        <label class="switch note" title="Greenhouse/Lever/Ashby ATS APIs + Hacker News + We Work Remotely"><input type="checkbox" id="jfCareer"/> Search company career pages directly</label>
+        <label class="switch note" title="Greenhouse/Lever/Ashby ATS APIs + Hacker News + We Work Remotely"><input type="checkbox" id="jfCareer" checked/> Search company career pages directly</label>
         <button class="secondary" id="reloadBtn">Reload cached</button>
         <span class="note" id="count"></span>
       </div>
