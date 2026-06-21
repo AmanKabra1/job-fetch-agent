@@ -577,8 +577,10 @@ def fetch_hackernews(keywords, max_age_hours=0, max_posts=80):
             continue
         first = re.split(r"\n|<p>", raw, 1)[0]
         title = _strip_html(first)[:140] or text[:140]
+        # HN stores comment HTML with entities (&#x2F; -> /, &amp; -> &), so the
+        # raw href reads like "https:&#x2F;&#x2F;kadoa.com" — unescape it to a real URL.
         m = re.search(r'href="([^"]+)"', raw)
-        url = m.group(1) if m else f"https://news.ycombinator.com/item?id={c.get('id')}"
+        url = html.unescape(m.group(1)) if m else f"https://news.ycombinator.com/item?id={c.get('id')}"
         rows.append({
             "title": title, "company": "(HN Who's Hiring)",
             "location": "—", "site": "Hacker News",

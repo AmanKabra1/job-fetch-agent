@@ -1238,43 +1238,67 @@ async def api_resume_tailor(
     want_pdf = fmt in ("pdf", "both")
     want_docx = fmt in ("docx", "both")
 
-    # tailor_upload is blocking (parses files, launches Word for PDF) -> threadpool.
+    base = _slugify(os.path.splitext(os.path.basename(file.filename or "resume"))[0])
+    base = base or "resume"
+
+    # Build TWO versions from the same upload (tailor_upload is blocking — parses
+    # files and launches Word for PDF — so run each off the event loop):
+    #   A = Standard  (ats=False): only skills you genuinely have + skills you typed
+    #   B = ATS-boost (ats=True):  A + the JD's remaining important keywords appended
+    #                              for maximum ATS keyword coverage / higher ATS score
+    variants = [
+        ("A_standard", False),
+        ("B_ats", True),
+    ]
+
+    out_files = []
+    analysis = None
+    layout_preserved = None
+    pdf_note = None
+    ats_added = 0
     try:
-        result = await run_in_threadpool(
-            RT.tailor_upload, file.filename or "resume", data,
-            jd or "", skills or "", want_pdf, want_docx,
-        )
+        for suffix, ats in variants:
+            result = await run_in_threadpool(
+                RT.tailor_upload, file.filename or "resume", data,
+                jd or "", skills or "", want_pdf, want_docx, ats,
+            )
+            # The analysis (present/typed/suggestions) is identical for both; keep one.
+            analysis = result["analysis"]
+            layout_preserved = result["layout_preserved"]
+            if result.get("pdf_note"):
+                pdf_note = result["pdf_note"]
+            if ats:
+                ats_added = result.get("ats_added", 0)
+
+            vbase = f"{base}_tailored_{suffix}"
+            if result.get("docx"):
+                name = vbase + ".docx"
+                _save_resume_copy(name, result["docx"])
+                out_files.append({
+                    "name": name,
+                    "version": suffix,
+                    "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                    "b64": base64.b64encode(result["docx"]).decode(),
+                })
+            if result.get("pdf"):
+                name = vbase + ".pdf"
+                _save_resume_copy(name, result["pdf"])
+                out_files.append({
+                    "name": name,
+                    "version": suffix,
+                    "mime": "application/pdf",
+                    "b64": base64.b64encode(result["pdf"]).decode(),
+                })
     except ValueError as e:                      # bad/empty/unsupported upload
         raise HTTPException(400, str(e))
     except Exception as e:                        # unexpected
         raise HTTPException(500, f"Tailoring failed: {e}")
 
-    base = _slugify(os.path.splitext(os.path.basename(file.filename or "resume"))[0])
-    base = (base or "resume") + "_tailored"
-
-    out_files = []
-    if result.get("docx"):
-        name = base + ".docx"
-        _save_resume_copy(name, result["docx"])
-        out_files.append({
-            "name": name,
-            "mime": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-            "b64": base64.b64encode(result["docx"]).decode(),
-        })
-    if result.get("pdf"):
-        name = base + ".pdf"
-        _save_resume_copy(name, result["pdf"])
-        out_files.append({
-            "name": name,
-            "mime": "application/pdf",
-            "b64": base64.b64encode(result["pdf"]).decode(),
-        })
-
     return {
-        "analysis": result["analysis"],
-        "layout_preserved": result["layout_preserved"],
-        "pdf_note": result.get("pdf_note"),
-        "ats_added": result.get("ats_added", 0),
+        "analysis": analysis,
+        "layout_preserved": layout_preserved,
+        "pdf_note": pdf_note,
+        "ats_added": ats_added,
         "files": out_files,
     }
 
@@ -1786,7 +1810,12 @@ async function tailorResume(){
     if((a.typed||[]).length) html+='<div class="field"><label>Added from your skills box</label><div class="tagrow">'+tags(a.typed,'add')+'</div></div>';
     if(d.ats_added && (a.suggestions||[]).length) html+='<div class="field"><label>Added for ATS keyword coverage — <b>verify these are truthful before sending</b></label><div class="tagrow">'+tags(a.suggestions,'miss')+'</div></div>';
     if(!a.had_request) html+='<div class="note" style="margin-top:8px">No JD or skills given — returned your resume unchanged in the chosen format(s).</div>';
-    html+='<div class="note" style="margin-top:10px">Downloaded: '+(d.files||[]).map(f=>esc(f.name)).join(', ')+'</div>';
+    const aFiles=(d.files||[]).filter(f=>f.version&&f.version[0]==='A').map(f=>esc(f.name));
+    const bFiles=(d.files||[]).filter(f=>f.version&&f.version[0]==='B').map(f=>esc(f.name));
+    html+='<div class="field" style="margin-top:10px"><label>Two versions downloaded</label>'
+         +'<div class="note"><b>A — Standard:</b> only skills you genuinely have. Safe to send anywhere. '+(aFiles.join(', ')||'—')+'</div>'
+         +'<div class="note"><b>B — ATS-optimized:</b> A plus the JD\'s remaining keywords for a higher ATS score'
+         +(d.ats_added?(' (+'+d.ats_added+' keywords)'):'')+' — <b>verify they\'re truthful before sending.</b> '+(bFiles.join(', ')||'—')+'</div></div>';
     $('#tailorResult').innerHTML=html;
     toast('Tailored resume downloaded.');
     loadResumes();
