@@ -1338,6 +1338,22 @@ def api_delete(name: str):
 # --------------------------------------------------------------------------- #
 # UI  (single self-contained page - no build step, works on Vercel too)
 # --------------------------------------------------------------------------- #
+# Browsers auto-request /favicon.ico; without a route it logs a 404 every load.
+# Serve a tiny inline SVG (briefcase glyph on the app's dark card colour).
+_FAVICON_SVG = (
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">'
+    '<rect width="64" height="64" rx="12" fill="#16203a"/>'
+    '<text x="32" y="44" font-size="38" text-anchor="middle">\U0001F4BC</text>'
+    '</svg>'
+).encode("utf-8")
+
+
+@app.get("/favicon.ico", include_in_schema=False)
+def favicon():
+    from fastapi import Response
+    return Response(content=_FAVICON_SVG, media_type="image/svg+xml")
+
+
 @app.get("/", response_class=HTMLResponse)
 def index():
     live = JOBS_SOURCE != "sheet"
@@ -1350,6 +1366,7 @@ INDEX_HTML = r"""<!doctype html>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>Job Finder & Resume Tailor</title>
+<link rel="icon" href="/favicon.ico" type="image/svg+xml"/>
 <style>
   :root { --bg:#0f1623; --card:#16203140; --line:#27364d; --ink:#e7eef9; --mut:#8aa0bd;
           --accent:#3b82f6; --good:#16331a; --goodt:#9be7a4; --amb:#3a3417; --ambt:#f0d98a;
