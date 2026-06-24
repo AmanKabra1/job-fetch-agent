@@ -65,6 +65,9 @@ RESULTS_WANTED = 30
 OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "jobs.json")
 # Cap the stored feed so the committed file doesn't grow without bound.
 MAX_STORED = 1000
+# Always keep at least this many jobs in the feed (when that many were fetched),
+# even if some fall below the quality gate — so the hosted page is never sparse.
+MIN_FEED = 50
 
 # Columns we keep, in order. (jobspy returns many more; these are the useful ones.)
 COLUMNS = [
@@ -166,6 +169,41 @@ def normalise(jobs: pd.DataFrame) -> pd.DataFrame:
     return jobs.fillna("").astype(str)
 
 
+def rank_for_feed(rows):
+    """Order + quality-filter the raw rows with the SAME rules the dashboard uses
+    (skill/title relevance to the search roles, salary above your current pay,
+    recency, remote, company size), then return the ORIGINAL rows — keeping their
+    salary fields — in ranked, best-first order.
+
+    The dashboard's resume-personalised gates (skill-match %, experience cut-offs)
+    can't run here because the cron has no uploaded resume; every rule that does
+    NOT need a resume is applied. Falls back to the input order if the scorer
+    can't be imported, so the cron never fails over ranking."""
+    try:
+        import app as APP                       # reuse the exact dashboard scorer
+    except Exception as e:                       # never let ranking abort the run
+        print(f"  ! ranking skipped (could not import scorer: {e})", flush=True)
+        return rows[:MAX_STORED]
+
+    terms_text = " ".join(SEARCH_TERMS)
+    ranked = APP._score_and_rank(rows, MAX_STORED, target_text=terms_text)
+    by_url = {str(r.get("job_url", "")): r for r in rows}
+    ordered = [by_url[j["job_url"]] for j in ranked if j.get("job_url") in by_url]
+
+    # Floor: if the quality gate left fewer than MIN_FEED, top up with the
+    # remaining (deduped) raw rows so the feed is never sparse.
+    if len(ordered) < MIN_FEED:
+        seen = {str(r.get("job_url", "")) for r in ordered}
+        for r in rows:
+            u = str(r.get("job_url", ""))
+            if u and u not in seen:
+                ordered.append(r)
+                seen.add(u)
+            if len(ordered) >= MIN_FEED:
+                break
+    return ordered[:MAX_STORED]
+
+
 def main():
     print("Fetching jobs ...", flush=True)
     jobs = fetch_all_jobs()
@@ -182,16 +220,16 @@ def main():
     fresh_rows = fresh.to_dict("records")
 
     if not fresh_rows:
-        print("Nothing new to add. Feed is already up to date.", flush=True)
-        # Still refresh the file's fetched_at timestamp so the app shows a recent run.
-        write_feed(existing)
+        print("Nothing new to add. Re-ranking the existing feed.", flush=True)
+        write_feed(rank_for_feed(existing))
         return
 
-    # Newest first: prepend this run's fresh jobs to the existing feed.
-    combined = fresh_rows + existing
-    write_feed(combined)
-    print(f"Added {len(fresh_rows)} new jobs to {OUTPUT_FILE} "
-          f"(feed now holds {min(len(combined), MAX_STORED)}).", flush=True)
+    # Combine this run's fresh jobs with the existing feed, then rank+filter the
+    # whole set with the dashboard rules so the stored feed is clean and ordered.
+    ranked = rank_for_feed(fresh_rows + existing)
+    write_feed(ranked)
+    print(f"Added {len(fresh_rows)} new jobs; ranked feed now holds "
+          f"{len(ranked)} (kept best-first, floor {MIN_FEED}).", flush=True)
 
 
 if __name__ == "__main__":
