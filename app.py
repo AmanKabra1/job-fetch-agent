@@ -1941,9 +1941,10 @@ $('#tailorBtn').onclick=tailorResume;
 $('#refreshResumes').onclick=loadResumes;
 showTab('find');
 $('#modePill').textContent = LIVE ? 'LOCAL · live scrape' : 'VERCEL · daily feed';
-if(!LIVE){ $('#fetchBtn').textContent='Load latest jobs'; $('#hours').style.display='none'; }
-// Local: open FRESH every time (don't show the last search). Vercel: show Sheet.
-if(!LIVE){ loadJobs(); }
+if(!LIVE){ $('#fetchBtn').textContent='Load latest jobs'; $('#hours').style.display='none';
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty">Click <b>Load latest jobs</b> to show the jobs from the daily feed.</td></tr>'; }
+// Open FRESH every time in BOTH modes — don't auto-show jobs. The user clicks
+// the button ("Load latest jobs" on Vercel, "Fetch jobs" locally) to see them.
 loadResumes();
 </script>
 </body>
