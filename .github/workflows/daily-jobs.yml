@@ -2,8 +2,11 @@ name: Daily Job Fetch
 
 on:
   schedule:
-    # Runs every day at 03:30 UTC == 09:00 IST. Adjust as you like.
-    - cron: "30 3 * * *"
+    # Every 3 hours, so the hosted (Vercel) feed stays fresh — it's the same
+    # all-boards + career-page scrape Vercel can't run itself (datacenter IPs are
+    # blocked). GitHub's runners aren't blocked, so this is where the real scrape
+    # happens. Adjust the interval as you like.
+    - cron: "0 */3 * * *"
   workflow_dispatch: {}   # lets you trigger it manually from the Actions tab
 
 permissions:

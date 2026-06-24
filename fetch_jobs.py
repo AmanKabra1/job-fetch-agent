@@ -170,14 +170,19 @@ def fetch_all_jobs() -> pd.DataFrame:
             frames.append(df)
             print(f"    -> {len(df)} rows", flush=True)
 
-    # Extra real remote sources (Remotive + RemoteOK) — startups & MNCs.
+    # Extra real sources — Remotive + RemoteOK + Jobicy + Arbeitnow AND direct
+    # company career pages (Greenhouse/Lever/Ashby ATS APIs + Hacker News + We
+    # Work Remotely). include_career=True makes the hosted feed match what a local
+    # "Fetch live jobs" with the career-pages toggle returns, so Vercel and local
+    # show the SAME all-websites result.
     try:
-        extra = ES.fetch_extra(SEARCH_TERMS, per_term=20, max_age_hours=HOURS_OLD)
+        extra = ES.fetch_extra(SEARCH_TERMS, per_term=20, max_age_hours=HOURS_OLD,
+                               include_career=True)
         if extra:
             edf = pd.DataFrame(extra)
             edf["search_term"] = "remote-api"
             frames.append(edf)
-            print(f"    -> {len(edf)} rows (Remotive/RemoteOK)", flush=True)
+            print(f"    -> {len(edf)} rows (APIs + career pages)", flush=True)
     except Exception as e:
         print(f"    ! extra sources failed: {e}", flush=True)
 

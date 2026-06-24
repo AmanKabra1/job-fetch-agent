@@ -935,48 +935,56 @@ def _rank_jobs(rows, limit, profile, min_ratio, min_score=0):
 
 
 def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
-               profile=None, search_terms=None, api_terms=None, career=False):
-    """Scrape every board (local only) and rank against the PROFILE. jobspy is
-    imported lazily.
+               profile=None, search_terms=None, api_terms=None, career=False,
+               api_only: bool = False):
+    """Fetch and rank jobs against the PROFILE.
 
-    search_terms drive the board (jobspy/Google) queries — long, title+skills
-    phrases built from the resume. api_terms are short single-concept queries for
-    the free APIs (which return nothing for long queries). Every job is then
-    matched against `profile`, and jobs that don't fit (too few matching skills,
-    too senior, unrelated title) are filtered OUT. Returns (jobs, debug).
+    api_only=True  → skip jobspy board scraping (LinkedIn/Indeed/Google etc.) and
+                     use only the free REST APIs (Remotive, RemoteOK, Jobicy,
+                     Arbeitnow, Greenhouse/Lever/Ashby ATS). This is the Vercel
+                     path: those boards block datacenter IPs, but the free APIs
+                     work everywhere and return results in seconds.
+    api_only=False → run the full jobspy scrape first, then add the extra APIs on
+                     top (local/server path).
+
+    search_terms drive jobspy/Google queries; api_terms are short single-concept
+    queries for the free APIs. Returns (jobs, debug).
     """
-    from jobspy import scrape_jobs  # heavy import, only when actually fetching
-    import pandas as pd
-    _quiet_jobspy()
-
     terms = list(search_terms) if search_terms else list(DEFAULT_SEARCH_TERMS)
     api_q = list(api_terms) if api_terms else terms
     location = "Remote" if remote_only else LOCATION
-    frames = []
-    for term in terms:
-        gst = f"{term} jobs" + (" remote" if remote_only else f" near {LOCATION} since yesterday")
-        try:
-            df = scrape_jobs(
-                site_name=SITES,
-                search_term=(term + " remote") if remote_only else term,
-                google_search_term=gst,
-                location=location,
-                results_wanted=RESULTS_PER_TERM,
-                hours_old=hours_old,
-                country_indeed=COUNTRY_INDEED,
-                is_remote=bool(remote_only),
-                linkedin_fetch_description=True,
-            )
-        except Exception as e:
-            print(f"  ! {term!r} failed: {e}", flush=True)
-            continue
-        if df is not None and not df.empty:
-            frames.append(df)
-
     rows = []
-    if frames:
-        combined = pd.concat(frames, ignore_index=True).fillna("")
-        rows = combined.to_dict("records")
+
+    if not api_only:
+        from jobspy import scrape_jobs  # heavy import, only when actually fetching
+        import pandas as pd
+        _quiet_jobspy()
+
+        frames = []
+        for term in terms:
+            gst = f"{term} jobs" + (" remote" if remote_only else f" near {LOCATION} since yesterday")
+            try:
+                df = scrape_jobs(
+                    site_name=SITES,
+                    search_term=(term + " remote") if remote_only else term,
+                    google_search_term=gst,
+                    location=location,
+                    results_wanted=RESULTS_PER_TERM,
+                    hours_old=hours_old,
+                    country_indeed=COUNTRY_INDEED,
+                    is_remote=bool(remote_only),
+                    linkedin_fetch_description=True,
+                )
+            except Exception as e:
+                print(f"  ! {term!r} failed: {e}", flush=True)
+                continue
+            if df is not None and not df.empty:
+                frames.append(df)
+
+        if frames:
+            import pandas as pd
+            combined = pd.concat(frames, ignore_index=True).fillna("")
+            rows = combined.to_dict("records")
 
     # Add real remote roles from free APIs (Remotive + RemoteOK) — startups and
     # established companies that the jobspy boards miss. When `career` is on, also
@@ -1123,9 +1131,10 @@ async def api_fetch(
     only jobs that fit it. Cache and return the top matches plus the profile and a
     debug breakdown of what was filtered out.
     """
-    if _is_feed_mode():
-        raise HTTPException(400, "Live fetch is disabled in hosted (feed) mode. "
-                                 "Jobs are read from the daily feed (data/jobs.json).")
+    # NOTE: live scraping is allowed everywhere now (including hosted/feed mode), so
+    # the "Fetch live jobs" button works on Vercel too. Boards like LinkedIn/Indeed
+    # may block serverless IPs and functions can time out, so results can be few or
+    # slow on Vercel — "Load latest jobs" (/api/feed/match) stays the reliable path.
 
     # If the user previewed & edited their profile, trust those edits; otherwise
     # build the profile fresh from the resume + inputs.
@@ -1163,9 +1172,12 @@ async def api_fetch(
     search_terms = profile.get("search_queries") or build_search_queries(profile)
     api_terms = _api_search_terms(profile, position)
 
-    # fetch_live is blocking and slow (scraping) -> threadpool.
+    # fetch_live is blocking (scraping) -> run in threadpool.
+    # On Vercel (feed/hosted mode) use api_only=True: skip jobspy which is blocked
+    # by those boards on datacenter IPs; only the free REST APIs (Remotive etc.) work.
     jobs, debug = await run_in_threadpool(
-        fetch_live, hours_old, limit, remote, profile, search_terms, api_terms, career)
+        fetch_live, hours_old, limit, remote, profile, search_terms, api_terms, career,
+        _is_feed_mode())
     payload = save_cache(jobs)
     payload["source"] = "live"
     payload["remote_only"] = remote
@@ -1566,6 +1578,35 @@ INDEX_HTML = r"""<!doctype html>
   .spin { display:inline-block; width:14px; height:14px; border:2px solid #fff5; border-top-color:#fff;
           border-radius:50%; animation:r .8s linear infinite; vertical-align:-2px; }
   @keyframes r { to { transform:rotate(360deg); } }
+  .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  @media (max-width:680px){
+    main { padding:14px 12px; }
+    .bar { gap:7px; }
+    button { padding:8px 11px; font-size:12px; }
+    .grid2 { grid-template-columns:1fr; }
+    /* Convert jobs table to stacked cards */
+    .table-wrap { overflow-x:unset; }
+    #jobsTable thead { display:none; }
+    #jobsTable, #jobsTable tbody { display:block; width:100%; }
+    #jobsTable tr { display:block; background:#0e172680; border:1px solid var(--line);
+                    border-radius:10px; margin-bottom:10px; padding:10px 12px; }
+    #jobsTable td { display:block; border:none; padding:2px 0; font-size:13px; }
+    /* Hide: row-number, Size, Site columns */
+    #jobsTable td:nth-child(1),
+    #jobsTable td:nth-child(5),
+    #jobsTable td:nth-child(7) { display:none; }
+    /* Match score inline before job title */
+    #jobsTable td:nth-child(2) { display:inline-block; margin-right:8px; vertical-align:middle; }
+    #jobsTable td:nth-child(3) { display:inline-block; vertical-align:middle; max-width:calc(100% - 70px); }
+    /* Company + Location on one line */
+    #jobsTable td:nth-child(4) { color:var(--mut); font-size:12px; }
+    #jobsTable td:nth-child(6) { display:inline; color:var(--mut); font-size:12px; }
+    #jobsTable td:nth-child(6)::before { content:" · "; }
+    /* Posted date small */
+    #jobsTable td:nth-child(8) { color:var(--mut); font-size:11px; }
+    /* Apply + Tailor buttons wrap nicely */
+    #jobsTable td:nth-child(9), #jobsTable td:nth-child(10) { display:inline-block; margin-top:6px; margin-right:6px; }
+  }
 </style>
 </head>
 <body>
@@ -1618,7 +1659,6 @@ INDEX_HTML = r"""<!doctype html>
         </label>
         <label class="note">Top <input id="limit" type="number" value="50" min="5" max="100" style="width:60px"/></label>
         <label class="switch note" title="Greenhouse/Lever/Ashby ATS APIs + Hacker News + We Work Remotely"><input type="checkbox" id="jfCareer" checked/> Search company career pages directly</label>
-        <button class="secondary" id="reloadBtn">Reload cached</button>
         <span class="note" id="count"></span>
       </div>
     </div>
@@ -1628,13 +1668,15 @@ INDEX_HTML = r"""<!doctype html>
     <p class="note" style="margin:-4px 0 12px">Boards: LinkedIn · Indeed · Google · Glassdoor · ZipRecruiter · Naukri · Bayt · Remotive · RemoteOK · Jobicy · Arbeitnow — all real, directly-posted listings. Ranked by skill/ATS match and your <b>target role</b>, then preference for <b>remote</b>, <b>big companies / 500+ employees</b>, roles that fit your experience, <b>pay above your current salary</b>, and the <b>freshest postings</b>. Remote jobs are always included. <i>Experience auto-detected from your resume if left blank.</i></p>
     <p class="note" id="feedHint" style="margin:-4px 0 12px;display:none">Hosted mode reads the daily job feed. Upload your resume (and/or type a role/skills) above and click <b>Load latest jobs</b> to rank the feed to your resume — or click it with nothing filled in to see the whole ranked feed.</p>
 
+    <div class="table-wrap">
     <table id="jobsTable">
       <thead><tr>
         <th>#</th><th>Match</th><th>Job</th><th>Company</th><th>Size</th><th>Location</th>
         <th>Site</th><th>Posted</th><th>Apply</th><th>Tailor</th>
       </tr></thead>
-      <tbody id="jobsBody"><tr><td colspan="10" class="empty">No jobs yet. Optionally upload your resume (and/or type a role) above, then click <b>Fetch jobs</b> — results are ranked to your skills, best match first.</td></tr></tbody>
+      <tbody id="jobsBody"><tr><td colspan="10" class="empty">No jobs yet. Optionally upload your resume (and/or type a role) above, then click <b>Fetch live jobs</b> or <b>Load latest jobs</b> — results are ranked to your skills, best match first.</td></tr></tbody>
     </table>
+    </div>
     <div id="loadMoreWrap" style="text-align:center;margin-top:12px;display:none">
       <button class="secondary" id="loadMoreBtn">Load more</button>
     </div>
@@ -1917,6 +1959,10 @@ async function matchFeed(){
 }
 
 async function fetchJobs(){
+  // On Vercel a live scrape can't reach the boards (datacenter IPs are blocked),
+  // so the comprehensive all-websites result is the cron feed — rank THAT to the
+  // resume, identical to what a local scrape produces. Local does a true live scrape.
+  if(!LIVE){ return matchFeed(); }
   const btn=$('#fetchBtn'); const old=btn.textContent; setBusy(btn,true);
   // Lock the (separate-card) profile panel too, so prefilled data can't be edited mid-fetch.
   $('#profilePanel').querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=true);
@@ -2061,23 +2107,23 @@ $('#previewBtn').onclick=previewProfile;
 ['jfFile','jfPosition','jfSkills','jfJD','years'].forEach(id=>{
   const el=$('#'+id); if(el) el.addEventListener('change', invalidateProfile);
 });
-$('#reloadBtn').onclick=loadJobs;
 $('#loadMoreBtn').onclick=showMore;
 $('#genBtn').onclick=generateResume;
 $('#tailorBtn').onclick=tailorResume;
 $('#refreshResumes').onclick=loadResumes;
 showTab('find');
-$('#modePill').textContent = LIVE ? 'LOCAL · live + feed' : 'VERCEL · daily feed';
+// SAME all-websites result everywhere:
+//   The cron scrapes ALL boards (LinkedIn/Indeed/Google/Glassdoor/ZipRecruiter/
+//   Naukri/Bayt) + career pages + free APIs into data/jobs.json, every few hours,
+//   from un-blocked IPs. Both local & Vercel rank that same feed to your resume.
+//   Local additionally offers a true real-time scrape ("Fetch live jobs").
+$('#modePill').textContent = LIVE ? 'LOCAL · live + feed' : 'VERCEL · all-boards feed';
 if(!LIVE){
-  // Hosted (Vercel) mode: live scraping can't reach the boards, so only feed
-  // matching is offered. Hide the live-fetch button and its "Posted within" filter.
-  $('#fetchBtn').style.display='none'; $('#hours').style.display='none';
+  // Hosted: both buttons rank the same comprehensive feed (live scrape is IP-blocked here).
   const fh=$('#feedHint'); if(fh) fh.style.display='';
-  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty">Upload your resume above (optional) and click <b>Load latest jobs</b> — with a resume it matches the feed to you; without, it shows the whole ranked feed.</td></tr>';
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty">Upload your resume (optional) and click <b>Load latest jobs</b> — it ranks the full all-boards feed (LinkedIn, Indeed, Google, career pages &amp; more, refreshed every few hours) to your resume. This is the same result you get locally.</td></tr>';
 } else {
-  // Local mode: BOTH actions available — "Fetch live jobs" scrapes the boards now,
-  // "Load latest jobs" ranks the daily feed (data/jobs.json) to your resume.
-  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty">Optionally upload your resume (and/or type a role) above, then click <b>Fetch live jobs</b> to scrape the boards now, or <b>Load latest jobs</b> to rank the daily feed to your resume.</td></tr>';
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty">Optionally upload your resume (and/or type a role) above, then click <b>Fetch live jobs</b> for a fresh real-time scrape of all boards, or <b>Load latest jobs</b> to rank the shared all-boards feed (same result the hosted site shows).</td></tr>';
 }
 // Open FRESH every time in BOTH modes — don't auto-show jobs. The user clicks a
 // button ("Fetch live jobs" / "Load latest jobs") to see them.
