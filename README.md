@@ -9,62 +9,63 @@ A single-user web app (and optional daily cron):
    keeping its exact format. Output is PDF and/or Word.
 
 Your saved profile is used **only** in *Create a resume → A* — the *Find jobs*
-section never uses it. The optional daily cron can also append fresh listings to
-a Google Sheet.
+section never uses it. The optional daily cron writes fresh listings to a plain
+**JSON feed file** (`data/jobs.json`) that the hosted app reads — **no Google
+Sheet, no service account, no credentials.**
 
 - **Sources:** [`python-jobspy`](https://github.com/Bunsly/JobSpy) (LinkedIn,
   Indeed, Google, Glassdoor, ZipRecruiter, Naukri, Bayt) **+ Remotive & RemoteOK**
-  free APIs — no API key.
-- **Schedule (optional):** GitHub Actions cron (free) → Google Sheets.
+  free APIs — no API key. Optional web-search sources (company career pages,
+  recent LinkedIn *hiring posts*) activate when `TAVILY_API_KEY` is set.
+- **Schedule (optional):** GitHub Actions cron (free) → commits `data/jobs.json`.
 
 ---
 
 ## One-time setup
 
-### 1. Create the Google Sheet
-1. Go to [sheets.google.com](https://sheets.google.com) and create a sheet named exactly **`Job Listings`**.
-   (Change `SHEET_NAME` in `fetch_jobs.py` if you want a different name.)
+There is **no external service to configure** — the feed is just a file in the
+repo. Two steps:
 
-### 2. Create a Google service account (free)
-1. Open the [Google Cloud Console](https://console.cloud.google.com/) → create/select a project.
-2. Enable two APIs: **Google Sheets API** and **Google Drive API**
-   (APIs & Services → Library → search → Enable).
-3. APIs & Services → **Credentials** → *Create Credentials* → **Service account**. Name it anything, click Done.
-4. Click the new service account → **Keys** → *Add Key* → *Create new key* → **JSON**. A `.json` file downloads.
-5. Open that JSON file, copy the `"client_email"` value (looks like `something@project.iam.gserviceaccount.com`).
-6. Back in your **Job Listings** sheet → **Share** → paste that email → give it **Editor** access.
+### 1. Run locally (test it first)
+```bash
+pip install -r requirements.txt
+python fetch_jobs.py
+```
+This scrapes the boards and writes/updates **`data/jobs.json`** (newest first,
+deduped by URL, capped at the 1000 most recent). Open the file to confirm it has
+rows.
 
-### 3a. Run locally (test it first)
-1. Rename the downloaded JSON to `service_account.json` and put it in this folder.
-   > It's already in `.gitignore` — never commit it.
-2. Install deps and run:
-   ```bash
-   pip install -r requirements.txt
-   python fetch_jobs.py
-   ```
-3. Check your sheet — it should now have rows.
-
-### 3b. Run daily on GitHub Actions (free)
+### 2. Run daily on GitHub Actions (free)
 1. Push this folder to a GitHub repo.
-2. Repo → **Settings → Secrets and variables → Actions → New repository secret**.
-   - Name: `GOOGLE_CREDENTIALS`
-   - Value: paste the **entire contents** of `service_account.json`
-3. Go to the **Actions** tab → enable workflows → run **Daily Job Fetch** manually once to confirm.
-4. From then on it runs every day at **09:00 IST** (`30 3 * * *` UTC in the workflow file).
+2. Go to the **Actions** tab → enable workflows → run **Daily Job Fetch** once
+   manually to seed `data/jobs.json`.
+3. From then on it runs **every day at 09:00 IST** (`30 3 * * *` UTC), scrapes,
+   and **commits the refreshed `data/jobs.json` back to the repo** by itself.
+   You don't run it again by hand — manual runs are only for an extra mid-day
+   refresh.
+
+> The workflow commits the feed using the built-in `GITHUB_TOKEN`
+> (`permissions: contents: write` in the workflow) — no secrets needed.
 
 ---
 
-## Customizing
+## Customizing what the cron fetches
+
+> **Important:** the daily cron uses the **fixed search config** below — it does
+> **not** use your uploaded resume/profile. (Resume-based personalized matching
+> runs only in *local live* mode in the dashboard.) Edit these to change what the
+> feed contains.
 
 All knobs are at the top of [`fetch_jobs.py`](fetch_jobs.py):
 
 | Setting | What it does |
 |---|---|
-| `SEARCH_TERMS` | The roles to search for |
-| `LOCATION` / `COUNTRY_INDEED` | Where to search |
-| `SITES` | Which boards to hit (`linkedin`, `indeed`, `google`, `glassdoor`, `zip_recruiter`) |
-| `HOURS_OLD` | Only jobs posted within N hours |
+| `SEARCH_TERMS` | The roles to search for (default: backend / software engineer / software developer) |
+| `LOCATION` / `COUNTRY_INDEED` | Where to search (default: India) |
+| `SITES` | Which boards to hit (`linkedin`, `indeed`, `google`, `glassdoor`, `zip_recruiter`, `naukri`, `bayt`) |
+| `HOURS_OLD` | Only jobs posted within N hours (default 48) |
 | `RESULTS_WANTED` | Results per term per site |
+| `MAX_STORED` | How many of the most recent jobs the feed keeps |
 
 To change the schedule, edit the `cron:` line in `.github/workflows/daily-jobs.yml`.
 
@@ -77,11 +78,12 @@ To change the schedule, edit the `cron:` line in `.github/workflows/daily-jobs.y
 | Mode | When | Jobs come from | Live "Fetch" button |
 |---|---|---|---|
 | **Local** (`JOBS_SOURCE=live`, default) | `python app.py` on your machine | live scrape (python-jobspy) | ✅ yes |
-| **Vercel** (`JOBS_SOURCE=sheet`) | deployed to Vercel | your Google Sheet | ❌ (reads Sheet) |
+| **Hosted** (`JOBS_SOURCE=feed`) | deployed to Vercel | the committed `data/jobs.json` feed | ❌ (reads the feed) |
 
 > **Why two modes?** Job boards block Vercel's datacenter IPs and serverless
-> functions time out on a 60-90s scrape — so scraping must run locally (or via
-> the GitHub Actions cron that fills the Sheet). The hosted page reads that data.
+> functions time out on a 60-90s scrape — so scraping runs locally (or via the
+> GitHub Actions cron that writes the feed). The hosted page reads that data.
+> (`JOBS_SOURCE=sheet` is still accepted as an alias for `feed` for older deploys.)
 
 ### Run the dashboard locally
 
@@ -100,21 +102,24 @@ The page has **two independent sections**:
 - Give nothing and a broad default search runs.
 
 Click **Fetch jobs**. It pulls from **LinkedIn, Indeed, Google, Glassdoor,
-ZipRecruiter, Naukri, Bayt** (via jobspy) **plus Remotive and RemoteOK** (free
-remote-job APIs — startups & MNCs), scores each job 0–100, and shows the
-**top N ranked** in one combined list (match chips + direct apply links). A
-**Size** column shows company headcount when the board reports it; established
-companies (≥150 employees, when known) get a small ranking boost.
-   > LinkedIn / Indeed / Google / Remotive / RemoteOK are the workhorses.
-   > ZipRecruiter is US/Canada-only and Naukri/Bayt/Glassdoor often block
-   > datacenter or repeated requests, so they may return little from a home IP;
-   > a board that blocks us or returns nothing never aborts the run.
-   > **Note:** a hard "150+ employees only" filter isn't possible — job boards
-   > almost never publish headcount — so company size is a soft ranking signal,
-   > not a filter.
+ZipRecruiter, Naukri, Bayt** (via jobspy) **plus Remotive and RemoteOK**, scores
+each job 0–100, and shows the **top N ranked** in one combined list (match chips
++ direct apply links).
 
-Tick **Remote only** to keep just remote jobs. On any job row, **Tailor to this ↓**
-copies that job's description into section ② so you can tailor your resume to it.
+**How jobs are ranked** (all soft signals — nothing except hard skill/experience
+gates is filtered out):
+- **Skill / experience / title match** to your inputs is the base score, and a
+  strong match to your **target role** gets an extra boost (your search
+  preference ranks first).
+- **Pay above your current salary** (`CURRENT_LPA`, default `6.3`) floats jobs up
+  and shows a green **"↑ LPA"** badge. Jobs that don't list pay are **never
+  hidden** (most boards don't publish salary).
+- **Freshness** — the most recently posted jobs sort to the top.
+
+Tick **Remote only** to keep just remote jobs. **Search company career pages
+directly** (on by default) adds Greenhouse/Lever/Ashby ATS boards, Hacker News
+"Who's Hiring", and We Work Remotely. On any job row, **Tailor to this ↓** copies
+that job's description into section ②.
 
 **② Create a tailored resume** — see the next section.
 
@@ -128,9 +133,7 @@ instant.
 [`resume_profile.py`](resume_profile.py) and renders in your own **one-page**
 layout (PDF + Word). Paste a job description and the matching skills are
 reordered to the front of their category and **bolded**, and the summary leads
-with your top matching stack — everything else stays intact. Click **Generate
-resume**. (Edit your details once in `resume_profile.py`; both formats stay in
-sync. This is the only place your saved data is used — *Find jobs* never is.)
+with your top matching stack. Click **Generate resume**.
 
 **B · Tailor a resume you upload (keeps your exact format).** Upload any resume
 and work a job's requirements into it without restyling:
@@ -140,44 +143,50 @@ and work a job's requirements into it without restyling:
    wrecking its layout, so its text is extracted and rebuilt into a clean
    document (you're told when this happens).
 2. Optionally paste a **job description** and/or a comma-separated list of
-   **skills to emphasize** — both are optional.
+   **skills to emphasize**.
 3. Pick **PDF / Word / both** and click **Create resume**.
 
-What it does to the document — and nothing more:
-- **Bolds** the skills your resume *already has* that the job is asking for.
-- Inserts one **"Key Skills for this Role"** line near the top (the matching
-  skills you have, plus any you typed in the skills box).
-- Shows you, but **never silently adds**, the skills the JD wants that your
-  resume is missing — so you decide whether to add them.
+You get **two versions** of every tailored resume:
+- **A — Standard:** bolds the skills your resume *already has* that the job wants,
+  plus any skills you typed. Honest — safe to send anywhere.
+- **B — ATS-optimized:** version A **plus** the JD's remaining important keywords
+  appended for maximum ATS keyword coverage / a higher ATS score. ⚠️ This can
+  list skills your resume didn't originally have — **verify they're truthful
+  before sending.**
 
 PDF output is produced from the tailored Word file via **Microsoft Word**
 (`docx2pdf`) so the PDF matches the Word styling exactly. If Word isn't installed
 the Word file is still produced and the PDF falls back to a basic text render.
 
-> First scrape can take ~1 minute (LinkedIn descriptions are fetched so the
-> resume tailoring has text to match). If a board returns little, Indeed +
-> Google usually carry the run.
-
 ### Deploy the dashboard to Vercel
 
-The hosted page shows the jobs from your Google Sheet (kept fresh by the daily
+The hosted page shows the jobs from `data/jobs.json` (kept fresh by the daily
 GitHub Actions cron) and still builds tailored resumes on demand.
 
 1. Install the CLI and log in: `npm i -g vercel && vercel login`
 2. From this folder: `vercel` (accept defaults). [`vercel.json`](vercel.json)
    routes everything to [`api/index.py`](api/index.py), which loads `app` in
-   **sheet mode**. [`api/requirements.txt`](api/requirements.txt) keeps the
-   function small (no jobspy/pandas).
+   **feed mode**. [`api/requirements.txt`](api/requirements.txt) keeps the
+   function small (no jobspy/pandas/gspread).
 3. In the Vercel project → **Settings → Environment Variables**, add:
-   - `GOOGLE_CREDENTIALS` = the full contents of `service_account.json`
-   - (optional) `SHEET_NAME` / `WORKSHEET_NAME` if you renamed them
-4. `vercel --prod` to publish. Open the URL → **Load jobs from Sheet**.
+   - `JOBS_SOURCE` = `feed`
+   - *(optional)* `TAVILY_API_KEY` = your Tavily key — enables the web-search
+     career-page sources and **recent LinkedIn hiring posts**.
+   - *(optional)* `CURRENT_LPA` = your current pay in LPA (default `6.3`) — jobs
+     paying above this rank higher.
+4. **Connect the project to your GitHub repo** (Vercel → Project → Git) so each
+   cron commit of `data/jobs.json` **auto-redeploys** the site with fresh jobs.
+5. `vercel --prod` to publish. Open the URL → **Load latest jobs**.
 
-> The deployed page has **no live scrape button** by design — it reads the Sheet.
-> Keep running the daily GitHub Actions cron (or `python fetch_jobs.py` locally)
-> to keep the Sheet current.
+> The deployed page has **no live scrape button** by design — it reads the feed.
+> Keep the daily GitHub Actions cron running (or run `python fetch_jobs.py`
+> locally and commit) to keep the feed current.
 
 ## Notes
 - LinkedIn is the most rate-limited board; if it returns few/zero results in CI,
   Indeed + Google usually carry the run.
-- The sheet is **append-only and deduped by `job_url`**, so the same job is never added twice.
+- The feed is **newest-first, deduped by `job_url`, and capped** at `MAX_STORED`,
+  so the same job is never stored twice and the committed file can't grow forever.
+- **LinkedIn *posts*** can't be scraped directly (login + ToS); the "recent
+  hiring posts" source uses public web search (Tavily) instead, so its coverage
+  is partial — only what's publicly indexed.
