@@ -1058,18 +1058,21 @@ def _is_feed_mode() -> bool:
     return JOBS_SOURCE in ("feed", "sheet")
 
 
-def fetch_from_feed(limit: int):
-    """Read jobs from the committed daily feed file (data/jobs.json), refreshed by
-    the GitHub Actions cron. No external service or credentials required."""
+def _read_feed():
+    """Return (raw_rows, fetched_at) from the committed daily feed (data/jobs.json)."""
     if not os.path.exists(JOBS_FEED):
         return [], None
     with open(JOBS_FEED, "r", encoding="utf-8") as f:
         payload = json.load(f)
     if isinstance(payload, dict):
-        rows = payload.get("jobs", [])
-        fetched_at = payload.get("fetched_at")
-    else:                                    # tolerate a bare list of job rows
-        rows, fetched_at = payload, None
+        return payload.get("jobs", []), payload.get("fetched_at")
+    return payload, None                      # tolerate a bare list of job rows
+
+
+def fetch_from_feed(limit: int):
+    """Read + generically rank jobs from the committed daily feed (data/jobs.json),
+    refreshed by the GitHub Actions cron. No external service or credentials."""
+    rows, fetched_at = _read_feed()
     return _score_and_rank(rows, limit), fetched_at
 
 
@@ -1172,6 +1175,78 @@ async def api_fetch(
     payload["profile"] = profile
     payload["debug"] = debug
     return payload
+
+
+@app.post("/api/feed/match")
+async def api_feed_match(
+    limit: int = DEFAULT_LIMIT,
+    remote: bool = False,
+    position: str = Form(""),
+    years: str = Form(""),
+    file: UploadFile = File(None),
+    jd: str = Form(""),
+    skills: str = Form(""),
+    profile_json: str = Form(""),
+):
+    """Hosted (feed) mode can't scrape, but it CAN match: build a PROFILE from the
+    uploaded resume + inputs and rank the EXISTING daily feed against it (same
+    personalised scorer the live fetch uses). Returns the jobs that fit your
+    resume, best-first — no scraping, so it works on Vercel."""
+    rows, fetched_at = _read_feed()
+    if not rows:
+        return {"jobs": [], "fetched_at": fetched_at or "daily feed",
+                "source": "feed-match", "guided": False,
+                "profile": None, "debug": {"fetched": 0, "kept": 0}}
+
+    profile = None
+    if profile_json and profile_json.strip():
+        try:
+            profile = _normalize_profile(json.loads(profile_json))
+        except Exception as e:
+            print(f"  ! bad profile_json, re-deriving: {e}", flush=True)
+            profile = None
+    if profile is None:
+        resume_text = ""
+        if file is not None and file.filename:
+            try:
+                data = await file.read()
+                if data:
+                    resume_text = RT.extract_text(file.filename, data)
+            except Exception as e:
+                print(f"  ! could not read uploaded resume: {e}", flush=True)
+        try:
+            cand_years = int(re.search(r"\d+", years).group()) if years.strip() else 0
+        except (AttributeError, ValueError):
+            cand_years = 0
+        skills_blob = (skills + "\n" + jd) if (skills.strip() and jd.strip()) else (skills or jd)
+        profile = extract_profile_from_resume(
+            resume_text=resume_text, skills_text=skills_blob,
+            position=position, years=cand_years, remote=remote,
+            location="Remote" if remote else LOCATION,
+        )
+
+    if remote:                                   # honour the remote-only toggle
+        rows = [r for r in rows if r.get("is_remote") in (True, "True", "true", 1)]
+
+    # Rank the feed against the profile. Relax the skill gate once if too strict.
+    kept, rejected = _rank_jobs(rows, limit, profile, MIN_SKILL_RATIO, min_score=0)
+    relaxed = False
+    if len(kept) < 5:
+        kept, rejected = _rank_jobs(rows, limit, profile, max(0.3, MIN_SKILL_RATIO - 0.3))
+        relaxed = True
+
+    return {
+        "jobs": kept,
+        "fetched_at": fetched_at or "daily feed",
+        "source": "feed-match",
+        "guided": bool(profile["primary_skills"] or profile["job_titles"]),
+        "search_terms": profile.get("search_queries") or build_search_queries(profile),
+        "cand_years": profile["experience_years"],
+        "profile": profile,
+        "debug": {"fetched": len(rows), "kept": len(kept),
+                  "rejected_count": len(rejected), "rejected": rejected[:40],
+                  "relaxed": relaxed, "min_ratio": MIN_SKILL_RATIO},
+    }
 
 
 @app.post("/api/profile")
@@ -1549,7 +1624,8 @@ INDEX_HTML = r"""<!doctype html>
 
     <!-- Matching profile preview (filled by "Preview my profile" / after fetch) -->
     <div class="card" id="profilePanel" style="display:none"></div>
-    <p class="note" style="margin:-4px 0 12px">Boards: LinkedIn · Indeed · Google · Glassdoor · ZipRecruiter · Naukri · Bayt · Remotive · RemoteOK · Jobicy · Arbeitnow — all real, directly-posted listings. Ranked by skill/ATS match, then preference for <b>remote</b>, <b>big companies / 500+ employees</b>, and roles that fit your experience (salary ≥ 7 LPA is a small bonus when reported). Remote jobs are always included. <i>Experience auto-detected from your resume if left blank.</i></p>
+    <p class="note" style="margin:-4px 0 12px">Boards: LinkedIn · Indeed · Google · Glassdoor · ZipRecruiter · Naukri · Bayt · Remotive · RemoteOK · Jobicy · Arbeitnow — all real, directly-posted listings. Ranked by skill/ATS match and your <b>target role</b>, then preference for <b>remote</b>, <b>big companies / 500+ employees</b>, roles that fit your experience, <b>pay above your current salary</b>, and the <b>freshest postings</b>. Remote jobs are always included. <i>Experience auto-detected from your resume if left blank.</i></p>
+    <p class="note" id="feedHint" style="margin:-4px 0 12px;display:none">Hosted mode reads the daily job feed. Upload your resume (and/or type a role/skills) above and click <b>Load latest jobs</b> to rank the feed to your resume — or click it with nothing filled in to see the whole ranked feed.</p>
 
     <table id="jobsTable">
       <thead><tr>
@@ -1558,6 +1634,9 @@ INDEX_HTML = r"""<!doctype html>
       </tr></thead>
       <tbody id="jobsBody"><tr><td colspan="10" class="empty">No jobs yet. Optionally upload your resume (and/or type a role) above, then click <b>Fetch jobs</b> — results are ranked to your skills, best match first.</td></tr></tbody>
     </table>
+    <div id="loadMoreWrap" style="text-align:center;margin-top:12px;display:none">
+      <button class="secondary" id="loadMoreBtn">Load more</button>
+    </div>
     <div id="debugPanel" class="note" style="margin-top:10px"></div>
   </section>
 
@@ -1643,6 +1722,8 @@ const LIVE = __LIVE__;
 const CURRENT_LPA = __CURRENT_LPA__;
 const $ = s => document.querySelector(s);
 let jobs = [];
+const PAGE = 50;           // show 50 first, then "Load more" reveals 50 at a time
+let shown = PAGE;
 
 function toast(msg, ms=3500){ const t=$('#toast'); t.innerHTML='<div class="toast">'+msg+'</div>';
   clearTimeout(window._tt); window._tt=setTimeout(()=>t.innerHTML='',ms); }
@@ -1667,10 +1748,22 @@ function startTimer(onTick){
   return ()=>clearInterval(id);
 }
 
+function showMore(){ shown += PAGE; renderJobs(); }
+
 function renderJobs(){
   const b=$('#jobsBody');
-  if(!jobs.length){ b.innerHTML='<tr><td colspan="10" class="empty">No matching jobs found. Try a different role/position, widen the posting age, or upload a resume to guide the search.</td></tr>'; return; }
-  b.innerHTML = jobs.map((j,i)=>{
+  const wrap=$('#loadMoreWrap');
+  if(!jobs.length){ b.innerHTML='<tr><td colspan="10" class="empty">No matching jobs found. Try a different role/position, widen the posting age, or upload a resume to guide the search.</td></tr>'; if(wrap) wrap.style.display='none'; return; }
+  const visible = jobs.slice(0, shown);
+  $('#count').textContent = 'showing '+visible.length+' of '+jobs.length+' jobs'
+                            +(window._fetchedAt?(' · '+window._fetchedAt):'');
+  // "Load more" shows up whenever there are more jobs than currently displayed.
+  if(wrap){
+    const more = jobs.length - visible.length;
+    wrap.style.display = more>0 ? '' : 'none';
+    const btn=$('#loadMoreBtn'); if(btn) btn.textContent='Load more ('+more+' more)';
+  }
+  b.innerHTML = visible.map((j,i)=>{
     const matched=(j.matched||[]).slice(0,6).map(m=>'<span class="tag have" style="font-size:10px">'+esc(m.split(' (')[0])+'</span>').join('');
     const missing=(j.missing||[]).slice(0,4).map(m=>'<span class="tag miss" style="font-size:10px">'+esc(m.split(' (')[0])+'</span>').join('');
     const matchLine = matched ? ('<div class="chips">&#9989; '+matched+'</div>') : '';
@@ -1783,15 +1876,47 @@ async function previewProfile(){
 }
 
 async function loadJobs(){
-  const r = await fetch('/api/jobs?limit='+($('#limit').value||50));
+  // Pull the whole ranked feed, then page through it 50 at a time on the client.
+  const r = await fetch('/api/jobs?limit=1000');
   const d = await r.json();
   jobs = d.jobs||[];
-  $('#count').textContent = jobs.length+' jobs'+(d.fetched_at?(' · fetched '+d.fetched_at):'');
+  window._fetchedAt = d.fetched_at?('fetched '+d.fetched_at):'';
+  shown = PAGE;
   renderJobs();
 }
 
+// Hosted (feed) mode: rank the daily feed against an uploaded resume / profile —
+// no scraping, so it works on Vercel. Falls back to the generic feed if nothing
+// was provided to match against.
+async function matchFeed(){
+  const f=$('#jfFile').files[0];
+  const edited=collectProfileEdits();
+  const hasInput = f || $('#jfPosition').value.trim() || $('#jfSkills').value.trim()
+                   || $('#jfJD').value.trim() || edited;
+  if(!hasInput){ return loadJobs(); }
+  const btn=$('#fetchBtn'); const old=btn.textContent; setBusy(btn,true);
+  jobs=[]; $('#count').textContent='';
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty"><span class="spin"></span> Matching the daily feed to your resume…</td></tr>';
+  try{
+    const fd=new FormData();
+    if(f) fd.append('file', f);
+    fd.append('position', $('#jfPosition').value||'');
+    fd.append('years', $('#years').value||'');
+    fd.append('jd', $('#jfJD').value||'');
+    fd.append('skills', $('#jfSkills').value||'');
+    if(edited) fd.append('profile_json', JSON.stringify(edited));
+    const r=await fetch('/api/feed/match?limit=1000',{method:'POST',body:fd});
+    const d=await r.json();
+    if(!r.ok){ toast('Match failed: '+(d.detail||r.status)); }
+    else{ jobs=d.jobs||[]; window._fetchedAt=d.fetched_at?('feed '+d.fetched_at):''; shown=PAGE;
+          renderJobs(); renderProfile(d.profile, d.search_terms); renderDebug(d.debug);
+          toast(jobs.length+(d.guided?' jobs from the feed matched to your resume.':' jobs from the feed.')); }
+  }catch(e){ toast('Match error: '+e); }
+  finally{ setBusy(btn,false); btn.textContent=old; }
+}
+
 async function fetchJobs(){
-  if(!LIVE){ toast('Live fetch is off in Vercel mode - showing jobs from the daily feed.'); return loadJobs(); }
+  if(!LIVE){ return matchFeed(); }
   const btn=$('#fetchBtn'); const old=btn.textContent; setBusy(btn,true);
   // Lock the (separate-card) profile panel too, so prefilled data can't be edited mid-fetch.
   $('#profilePanel').querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=true);
@@ -1817,7 +1942,7 @@ async function fetchJobs(){
                         {method:'POST', body:fd});
     const d=await r.json();
     if(!r.ok){ toast('Fetch failed: '+(d.detail||r.status)); }
-    else { jobs=d.jobs||[]; $('#count').textContent=jobs.length+' jobs · fetched '+d.fetched_at; renderJobs();
+    else { jobs=d.jobs||[]; window._fetchedAt=d.fetched_at?('fetched '+d.fetched_at):''; shown=PAGE; renderJobs();
            renderProfile(d.profile, d.search_terms); renderDebug(d.debug);
            toast(jobs.length+(d.guided?' jobs matched to your profile.':' jobs ranked by tech relevance.')+(d.search_terms?' Searched: '+d.search_terms.join(', '):'')); }
   }catch(e){ toast('Fetch error: '+e); }
@@ -1936,13 +2061,15 @@ $('#previewBtn').onclick=previewProfile;
   const el=$('#'+id); if(el) el.addEventListener('change', invalidateProfile);
 });
 $('#reloadBtn').onclick=loadJobs;
+$('#loadMoreBtn').onclick=showMore;
 $('#genBtn').onclick=generateResume;
 $('#tailorBtn').onclick=tailorResume;
 $('#refreshResumes').onclick=loadResumes;
 showTab('find');
 $('#modePill').textContent = LIVE ? 'LOCAL · live scrape' : 'VERCEL · daily feed';
 if(!LIVE){ $('#fetchBtn').textContent='Load latest jobs'; $('#hours').style.display='none';
-  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty">Click <b>Load latest jobs</b> to show the jobs from the daily feed.</td></tr>'; }
+  const fh=$('#feedHint'); if(fh) fh.style.display='';
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty">Upload your resume above (optional) and click <b>Load latest jobs</b> — with a resume it matches the feed to you; without, it shows the whole ranked feed.</td></tr>'; }
 // Open FRESH every time in BOTH modes — don't auto-show jobs. The user clicks
 // the button ("Load latest jobs" on Vercel, "Fetch jobs" locally) to see them.
 loadResumes();

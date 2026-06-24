@@ -41,10 +41,17 @@ def _quiet_jobspy():
 # CONFIG  -- edit these freely
 # --------------------------------------------------------------------------- #
 SEARCH_TERMS = [
-    "backend developer",
-    "software engineer",
     "software developer",
+    "backend developer",
+    "python developer",
+    "software engineer",        # covers SDE / SDE-1 / SDE I postings
+    "machine learning engineer",
+    "AI engineer",
 ]
+
+# Skills you want emphasised in ranking (not extra board queries — these just
+# push jobs that mention them higher). Edit freely.
+PREFERRED_SKILLS = ["Python", "AI", "LLM", "RAG", "Machine Learning"]
 
 # Where to look. For India keep country_indeed="India".
 LOCATION = "India"
@@ -185,7 +192,7 @@ def rank_for_feed(rows):
         print(f"  ! ranking skipped (could not import scorer: {e})", flush=True)
         return rows[:MAX_STORED]
 
-    terms_text = " ".join(SEARCH_TERMS)
+    terms_text = " ".join(SEARCH_TERMS + PREFERRED_SKILLS)
     ranked = APP._score_and_rank(rows, MAX_STORED, target_text=terms_text)
     by_url = {str(r.get("job_url", "")): r for r in rows}
     ordered = [by_url[j["job_url"]] for j in ranked if j.get("job_url") in by_url]
@@ -211,25 +218,25 @@ def main():
         print("No jobs returned. Exiting.", flush=True)
         return
     jobs = normalise(jobs)
-    print(f"Total unique jobs this run: {len(jobs)}", flush=True)
+    today_rows = jobs.to_dict("records")
+    print(f"Total unique jobs this run: {len(today_rows)}", flush=True)
 
-    # Dedup against URLs already in the feed so we only add genuinely new jobs.
-    existing = load_existing()
-    seen_urls = {row.get("job_url", "") for row in existing}
-    fresh = jobs[~jobs["job_url"].isin(seen_urls)]
-    fresh_rows = fresh.to_dict("records")
+    # REPLACE, not append: each day the feed is just today's latest jobs, ranked.
+    # (Safety only: if today's scrape came back thin — boards block sometimes —
+    # top up from yesterday's feed so the page is never sparse below the floor.)
+    feed_rows = today_rows
+    if len(today_rows) < MIN_FEED:
+        existing = load_existing()
+        seen = {str(r.get("job_url", "")) for r in today_rows}
+        feed_rows = today_rows + [r for r in existing
+                                  if str(r.get("job_url", "")) not in seen]
+        print(f"  thin scrape ({len(today_rows)}); topped up from previous feed "
+              f"to {len(feed_rows)} before ranking.", flush=True)
 
-    if not fresh_rows:
-        print("Nothing new to add. Re-ranking the existing feed.", flush=True)
-        write_feed(rank_for_feed(existing))
-        return
-
-    # Combine this run's fresh jobs with the existing feed, then rank+filter the
-    # whole set with the dashboard rules so the stored feed is clean and ordered.
-    ranked = rank_for_feed(fresh_rows + existing)
+    ranked = rank_for_feed(feed_rows)
     write_feed(ranked)
-    print(f"Added {len(fresh_rows)} new jobs; ranked feed now holds "
-          f"{len(ranked)} (kept best-first, floor {MIN_FEED}).", flush=True)
+    print(f"Replaced feed with today's latest: {len(ranked)} jobs "
+          f"(best-first, floor {MIN_FEED}).", flush=True)
 
 
 if __name__ == "__main__":
