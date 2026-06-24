@@ -17,10 +17,13 @@ import json
 import logging
 from datetime import datetime, timezone
 
+import re
+
 import pandas as pd
 from jobspy import scrape_jobs
 
 import extra_sources as ES
+import resume_profile as RP        # your saved resume drives search + ranking
 
 
 def _quiet_jobspy():
@@ -40,18 +43,40 @@ def _quiet_jobspy():
 # --------------------------------------------------------------------------- #
 # CONFIG  -- edit these freely
 # --------------------------------------------------------------------------- #
+# Roles to query on the job boards. These reflect your resume (backend / Python /
+# Node / full-stack) plus the SDE and AI/ML roles you want. Boards search by role,
+# so we keep these as roles; your detailed SKILLS drive the RANKING below.
 SEARCH_TERMS = [
-    "software developer",
     "backend developer",
+    "software developer",
     "python developer",
+    "node.js developer",
     "software engineer",        # covers SDE / SDE-1 / SDE I postings
     "machine learning engineer",
     "AI engineer",
 ]
 
-# Skills you want emphasised in ranking (not extra board queries — these just
-# push jobs that mention them higher). Edit freely.
+# Extra skills/keywords to emphasise on top of the resume. Edit freely.
 PREFERRED_SKILLS = ["Python", "AI", "LLM", "RAG", "Machine Learning"]
+
+
+def _clean_skill(s: str) -> str:
+    """Drop parenthetical detail so 'Java (Spring Boot)' -> 'Java' for matching."""
+    return re.sub(r"\s*\(.*?\)\s*", " ", s or "").strip()
+
+
+# Your resume's skills (flattened from resume_profile.SKILLS) + titles. These are
+# what the feed is RANKED against, so jobs that fit YOUR resume rank highest.
+RESUME_SKILLS = []
+for _cat, _items in RP.SKILLS.items():
+    for _s in _items:
+        _c = _clean_skill(_s)
+        if _c and _c not in RESUME_SKILLS:
+            RESUME_SKILLS.append(_c)
+
+# Everything the feed ranking matches against: your search roles + your full
+# resume skill set + the extra keywords. This is the "rank mainly by my resume".
+RANK_KEYWORDS = list(dict.fromkeys(SEARCH_TERMS + RESUME_SKILLS + PREFERRED_SKILLS))
 
 # Where to look. For India keep country_indeed="India".
 LOCATION = "India"
@@ -192,7 +217,8 @@ def rank_for_feed(rows):
         print(f"  ! ranking skipped (could not import scorer: {e})", flush=True)
         return rows[:MAX_STORED]
 
-    terms_text = " ".join(SEARCH_TERMS + PREFERRED_SKILLS)
+    # Rank mainly by your resume: match against resume skills + roles + keywords.
+    terms_text = " ".join(RANK_KEYWORDS)
     ranked = APP._score_and_rank(rows, MAX_STORED, target_text=terms_text)
     by_url = {str(r.get("job_url", "")): r for r in rows}
     ordered = [by_url[j["job_url"]] for j in ranked if j.get("job_url") in by_url]
