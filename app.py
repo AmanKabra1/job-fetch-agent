@@ -1607,7 +1607,8 @@ INDEX_HTML = r"""<!doctype html>
         </div>
       </div>
       <div class="bar" style="margin-bottom:0">
-        <button id="fetchBtn">Fetch jobs</button>
+        <button id="fetchBtn">Fetch live jobs</button>
+        <button id="matchBtn">Load latest jobs</button>
         <button class="secondary" id="previewBtn">Preview my profile</button>
         <label class="note">Your experience
           <input id="years" type="number" value="" min="0" max="30" placeholder="auto" style="width:60px"/> yrs
@@ -1894,7 +1895,7 @@ async function matchFeed(){
   const hasInput = f || $('#jfPosition').value.trim() || $('#jfSkills').value.trim()
                    || $('#jfJD').value.trim() || edited;
   if(!hasInput){ return loadJobs(); }
-  const btn=$('#fetchBtn'); const old=btn.textContent; setBusy(btn,true);
+  const btn=$('#matchBtn'); const old=btn.textContent; setBusy(btn,true);
   jobs=[]; $('#count').textContent='';
   $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty"><span class="spin"></span> Matching the daily feed to your resume…</td></tr>';
   try{
@@ -1916,7 +1917,6 @@ async function matchFeed(){
 }
 
 async function fetchJobs(){
-  if(!LIVE){ return matchFeed(); }
   const btn=$('#fetchBtn'); const old=btn.textContent; setBusy(btn,true);
   // Lock the (separate-card) profile panel too, so prefilled data can't be edited mid-fetch.
   $('#profilePanel').querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=true);
@@ -2055,6 +2055,7 @@ async function delResume(name){
 $('#tabFind').onclick=()=>showTab('find');
 $('#tabCreate').onclick=()=>showTab('create');
 $('#fetchBtn').onclick=fetchJobs;
+$('#matchBtn').onclick=matchFeed;
 $('#previewBtn').onclick=previewProfile;
 // Editing a source input invalidates a previewed profile -> re-preview to refresh.
 ['jfFile','jfPosition','jfSkills','jfJD','years'].forEach(id=>{
@@ -2066,12 +2067,20 @@ $('#genBtn').onclick=generateResume;
 $('#tailorBtn').onclick=tailorResume;
 $('#refreshResumes').onclick=loadResumes;
 showTab('find');
-$('#modePill').textContent = LIVE ? 'LOCAL · live scrape' : 'VERCEL · daily feed';
-if(!LIVE){ $('#fetchBtn').textContent='Load latest jobs'; $('#hours').style.display='none';
+$('#modePill').textContent = LIVE ? 'LOCAL · live + feed' : 'VERCEL · daily feed';
+if(!LIVE){
+  // Hosted (Vercel) mode: live scraping can't reach the boards, so only feed
+  // matching is offered. Hide the live-fetch button and its "Posted within" filter.
+  $('#fetchBtn').style.display='none'; $('#hours').style.display='none';
   const fh=$('#feedHint'); if(fh) fh.style.display='';
-  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty">Upload your resume above (optional) and click <b>Load latest jobs</b> — with a resume it matches the feed to you; without, it shows the whole ranked feed.</td></tr>'; }
-// Open FRESH every time in BOTH modes — don't auto-show jobs. The user clicks
-// the button ("Load latest jobs" on Vercel, "Fetch jobs" locally) to see them.
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty">Upload your resume above (optional) and click <b>Load latest jobs</b> — with a resume it matches the feed to you; without, it shows the whole ranked feed.</td></tr>';
+} else {
+  // Local mode: BOTH actions available — "Fetch live jobs" scrapes the boards now,
+  // "Load latest jobs" ranks the daily feed (data/jobs.json) to your resume.
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty">Optionally upload your resume (and/or type a role) above, then click <b>Fetch live jobs</b> to scrape the boards now, or <b>Load latest jobs</b> to rank the daily feed to your resume.</td></tr>';
+}
+// Open FRESH every time in BOTH modes — don't auto-show jobs. The user clicks a
+// button ("Fetch live jobs" / "Load latest jobs") to see them.
 loadResumes();
 </script>
 </body>
