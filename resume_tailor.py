@@ -376,7 +376,13 @@ _SECTION_WORDS = (
     "achievements", "accomplishments", "awards", "publications", "languages",
     "interests", "hobbies", "contact", "references", "volunteer", "activities",
 )
-_BULLET_CHARS = ("•", "◦", "▪", "‣", "·", "-", "–", "—", "*", "")
+# Includes the private-use glyphs Word/Symbol/Wingdings fonts use for bullets
+# ( etc.) — PDF text extraction emits these literally, so if they're not
+# recognised as bullets they'd render as a stray symbol in the rebuilt resume.
+_BULLET_CHARS = (
+    "•", "◦", "▪", "‣", "·", "∙", "●", "○", "*", "-", "–", "—",
+    "", "", "", "", "",
+)
 
 
 def _looks_like_heading(line: str) -> bool:

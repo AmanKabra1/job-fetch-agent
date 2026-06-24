@@ -1,5 +1,4 @@
 python-jobspy>=1.1.80
-gspread>=6.0.0
 pandas>=2.0.0
 
 # Resume tailoring (resume_tailor.py): read/edit .docx, fallback PDF render

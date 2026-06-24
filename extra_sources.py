@@ -538,12 +538,19 @@ def _fetch_ashby(company, slug, keywords, max_age_hours):
             continue
         if not _within_age(j.get("publishedAt", ""), max_age_hours):
             continue
+        # Prefer the canonical posting URL; fall back to applyUrl, then build the
+        # public job-board URL from the id so the link never lands on a 404.
+        job_url = j.get("jobUrl") or j.get("applyUrl") or ""
+        if not job_url and j.get("id"):
+            job_url = f"https://jobs.ashbyhq.com/{slug}/{j['id']}"
+        if not job_url:
+            continue                                  # no usable link -> skip
         rows.append({
             "title": title, "company": company,
             "location": loc or "—", "site": f"{company} careers (Ashby)",
             "date_posted": str(j.get("publishedAt", ""))[:10],
             "is_remote": bool(j.get("isRemote")) or "remote" in (title + " " + loc).lower(),
-            "job_url": j.get("jobUrl") or j.get("applyUrl", ""),
+            "job_url": job_url,
             "description": desc or f"{title} at {company}",
         })
     return rows
@@ -708,6 +715,56 @@ def fetch_tavily_ats(terms, location="", max_results=5, max_age_hours=0):
     return rows
 
 
+def fetch_linkedin_hiring_posts(terms, location="", max_results=6, max_age_hours=0):
+    """Recent LinkedIn *posts* (the feed 'we're hiring for X' posts), NOT the jobs
+    board — those board listings are often stale, while posts are fresh and name a
+    live opening. LinkedIn blocks scraping its feed and it's against their ToS, so
+    we go through public web search (Tavily) for indexed linkedin.com/posts URLs.
+    Best-effort: needs TAVILY_API_KEY and only finds what's publicly indexed.
+
+    Returns job-shaped rows; the post URL is the apply/contact link."""
+    key = os.environ.get("TAVILY_API_KEY")
+    if not key:
+        return []
+    rows, seen = [], set()
+    for term in list(terms)[:3]:
+        q = (f'"hiring" OR "we are hiring" OR "now hiring" {term} {location} '
+             f'site:linkedin.com/posts').strip()
+        try:
+            r = requests.post("https://api.tavily.com/search", json={
+                "api_key": key, "query": q, "max_results": max_results,
+                "search_depth": "basic", "topic": "news", "days": 14,
+                "include_domains": ["linkedin.com"],
+            }, headers=_UA, timeout=_TIMEOUT)
+            r.raise_for_status()
+            results = r.json().get("results", [])
+        except Exception as e:
+            print(f"  ! linkedin-posts {term!r} failed: {e}", flush=True)
+            continue
+        for res in results:
+            url = res.get("url", "")
+            if not url or url in seen:
+                continue
+            if "linkedin.com/posts" not in url.lower() and "linkedin.com/feed" not in url.lower():
+                continue
+            content = res.get("content", "")
+            if not _kw_match(f"{res.get('title','')} {content}", terms):
+                continue
+            seen.add(url)
+            title = (res.get("title", "") or f"{term} — hiring (LinkedIn post)").strip()
+            for sep in (" | ", " - ", " on LinkedIn", " – "):
+                title = title.split(sep)[0]
+            rows.append({
+                "title": title[:120] or f"{term} (hiring post)",
+                "company": "(LinkedIn post)", "location": location or "—",
+                "site": "LinkedIn post (via Tavily)",
+                "date_posted": str(res.get("published_date", ""))[:10],
+                "is_remote": "remote" in (title + " " + content).lower(),
+                "job_url": url, "description": content[:1500],
+            })
+    return rows
+
+
 def _looks_like_job_post(url: str) -> bool:
     """A URL that points at a SPECIFIC opening (not a generic careers/marketing/
     blog page). Drops e.g. 'razorpay.com/careers' or 'pages.razorpay.com/promo'."""
@@ -803,6 +860,9 @@ def scrape_career_pages(keywords, experience_level=None, location="",
         thunks.append(lambda: fetch_company_careers(COMPANY_CAREER_SEARCH, keywords,
                                                     location=location,
                                                     max_age_hours=max_age_hours))
+        # Fresh LinkedIn "we're hiring" posts (latest openings the jobs board misses).
+        thunks.append(lambda: fetch_linkedin_hiring_posts(keywords, location=location,
+                                                          max_age_hours=max_age_hours))
 
     rows = []
     with ThreadPoolExecutor(max_workers=_CAREER_WORKERS) as ex:

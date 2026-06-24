@@ -17,8 +17,11 @@ env/
 *.csv
 *.xlsx
 
-# Dashboard cache + generated resumes
-data/
+# Dashboard cache + generated resumes. The daily job feed (data/jobs.json) IS
+# committed — the cron writes it and the Vercel app reads it — so un-ignore just
+# that one file (the negation also overrides the *.json rule above).
+data/*
+!data/jobs.json
 resume/
 
 # Vercel

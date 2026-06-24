@@ -2,8 +2,10 @@
 Daily job fetcher.
 
 Scrapes LinkedIn / Indeed / Glassdoor / Google / ZipRecruiter via python-jobspy,
-dedupes against what is already in your Google Sheet, and appends only new
-listings (with a direct apply link) to the sheet.
+dedupes against the jobs already in data/jobs.json, and appends only new listings
+(with a direct apply link) to that file. The GitHub Actions cron commits the
+updated file back to the repo; the Vercel app reads it directly — no Google
+Sheet, no service account, no credentials.
 
 Run locally:   python fetch_jobs.py
 Run in CI:      GitHub Actions cron (see .github/workflows/daily-jobs.yml)
@@ -16,7 +18,6 @@ import logging
 from datetime import datetime, timezone
 
 import pandas as pd
-import gspread
 from jobspy import scrape_jobs
 
 import extra_sources as ES
@@ -60,9 +61,10 @@ HOURS_OLD = 48
 # How many results to pull per search term, per site.
 RESULTS_WANTED = 30
 
-# Your Google Sheet. The tab/worksheet is created automatically if missing.
-SHEET_NAME = "Job Listings"
-WORKSHEET_NAME = "jobs"
+# Where the daily feed is written. The Vercel app reads this same file.
+OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "jobs.json")
+# Cap the stored feed so the committed file doesn't grow without bound.
+MAX_STORED = 1000
 
 # Columns we keep, in order. (jobspy returns many more; these are the useful ones.)
 COLUMNS = [
@@ -82,26 +84,30 @@ COLUMNS = [
 # --------------------------------------------------------------------------- #
 
 
-def get_worksheet():
-    """Authenticate with a service account and return the target worksheet."""
-    # Credentials come from env var GOOGLE_CREDENTIALS (JSON string) in CI,
-    # or from a local service_account.json file when running on your machine.
-    creds_json = os.environ.get("GOOGLE_CREDENTIALS")
-    if creds_json:
-        gc = gspread.service_account_from_dict(json.loads(creds_json))
-    else:
-        gc = gspread.service_account(filename="service_account.json")
-
-    sh = gc.open(SHEET_NAME)
+def load_existing() -> list:
+    """Return the job rows already stored in data/jobs.json (empty if none)."""
+    if not os.path.exists(OUTPUT_FILE):
+        return []
     try:
-        ws = sh.worksheet(WORKSHEET_NAME)
-    except gspread.WorksheetNotFound:
-        ws = sh.add_worksheet(title=WORKSHEET_NAME, rows=1000, cols=len(COLUMNS))
-        ws.append_row(COLUMNS)
-    # Make sure a header row exists.
-    if not ws.row_values(1):
-        ws.append_row(COLUMNS)
-    return ws
+        with open(OUTPUT_FILE, "r", encoding="utf-8") as f:
+            payload = json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return []
+    if isinstance(payload, dict):
+        return payload.get("jobs", [])
+    return payload if isinstance(payload, list) else []
+
+
+def write_feed(jobs: list):
+    """Write the combined job list to data/jobs.json (newest first, capped)."""
+    os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
+    payload = {
+        "fetched_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
+        "count": len(jobs),
+        "jobs": jobs[:MAX_STORED],
+    }
+    with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
+        json.dump(payload, f, ensure_ascii=False, indent=0)
 
 
 def fetch_all_jobs() -> pd.DataFrame:
@@ -169,19 +175,23 @@ def main():
     jobs = normalise(jobs)
     print(f"Total unique jobs this run: {len(jobs)}", flush=True)
 
-    ws = get_worksheet()
-
-    # Dedup against URLs already in the sheet so we only append genuinely new jobs.
-    existing = ws.get_all_records()
+    # Dedup against URLs already in the feed so we only add genuinely new jobs.
+    existing = load_existing()
     seen_urls = {row.get("job_url", "") for row in existing}
     fresh = jobs[~jobs["job_url"].isin(seen_urls)]
+    fresh_rows = fresh.to_dict("records")
 
-    if fresh.empty:
-        print("Nothing new to add. Sheet is already up to date.", flush=True)
+    if not fresh_rows:
+        print("Nothing new to add. Feed is already up to date.", flush=True)
+        # Still refresh the file's fetched_at timestamp so the app shows a recent run.
+        write_feed(existing)
         return
 
-    ws.append_rows(fresh.values.tolist(), value_input_option="USER_ENTERED")
-    print(f"Appended {len(fresh)} new jobs to '{SHEET_NAME}' / '{WORKSHEET_NAME}'.", flush=True)
+    # Newest first: prepend this run's fresh jobs to the existing feed.
+    combined = fresh_rows + existing
+    write_feed(combined)
+    print(f"Added {len(fresh_rows)} new jobs to {OUTPUT_FILE} "
+          f"(feed now holds {min(len(combined), MAX_STORED)}).", flush=True)
 
 
 if __name__ == "__main__":

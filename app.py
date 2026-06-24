@@ -96,7 +96,15 @@ RESUME_DIR = "/tmp/resume" if ON_VERCEL else os.path.join(HERE, "resume")
 DATA_DIR = "/tmp/data" if ON_VERCEL else os.path.join(HERE, "data")
 JOBS_CACHE = os.path.join(DATA_DIR, "jobs_latest.json")
 
-JOBS_SOURCE = os.environ.get("JOBS_SOURCE", "live").lower()  # "live" | "sheet"
+# The daily feed committed to the repo by the GitHub Actions cron. It ships
+# inside the deployment bundle, so it's readable on Vercel (only WRITES are
+# restricted there) with no external service — no Google Sheet, no credentials.
+JOBS_FEED = os.path.join(HERE, "data", "jobs.json")
+
+# "live"  -> scrape on demand (local).
+# "feed"  -> read the committed data/jobs.json (Vercel). "sheet" kept as an alias
+#            for older deployments whose env still says JOBS_SOURCE=sheet.
+JOBS_SOURCE = os.environ.get("JOBS_SOURCE", "live").lower()
 
 # Live-scrape defaults.
 # Every board python-jobspy supports. Some (zip_recruiter is US/Canada only,
@@ -244,9 +252,50 @@ def _salary_lpa(r) -> float:
     # Heuristic: large rupee figures -> lakhs; ignore small (likely USD/hourly).
     return amt / 100000.0 if amt >= 100000 else 0.0
 
-# Google Sheet (sheet mode)
-SHEET_NAME = os.environ.get("SHEET_NAME", "Job Listings")
-WORKSHEET_NAME = os.environ.get("WORKSHEET_NAME", "jobs")
+
+# Your current pay (LPA). Jobs that explicitly pay MORE than this are boosted so
+# they float to the top — but jobs with unknown salary are never hidden (most
+# boards don't publish pay). Override with the CURRENT_LPA env var.
+try:
+    CURRENT_LPA = float(os.environ.get("CURRENT_LPA", "6.3"))
+except ValueError:
+    CURRENT_LPA = 6.3
+
+
+def _salary_boost(lpa: float) -> int:
+    """Rank-up jobs paying above your current salary; 0 for unknown/at-or-below
+    (we never penalise or hide unknown-salary jobs)."""
+    if not lpa or lpa <= CURRENT_LPA:
+        return 0
+    return min(15, round((lpa - CURRENT_LPA) * 2))
+
+
+def _days_old(date_posted: str) -> float:
+    """How many days ago a job was posted (best-effort). Returns a large number
+    when the date is missing/unparseable so unknown-date jobs don't rank as fresh."""
+    s = (date_posted or "").strip()[:10]
+    if not s:
+        return 9999.0
+    try:
+        d = dt.datetime.strptime(s, "%Y-%m-%d").date()
+    except ValueError:
+        return 9999.0
+    return max(0.0, (dt.date.today() - d).days)
+
+
+def _recency_boost(date_posted: str) -> int:
+    """Boost the freshest postings so latest openings sort to the top."""
+    d = _days_old(date_posted)
+    if d <= 1:
+        return 12
+    if d <= 3:
+        return 8
+    if d <= 7:
+        return 4
+    if d <= 14:
+        return 1
+    return 0
+
 
 app = FastAPI(title="Job Finder & Resume Tailor")
 
@@ -639,8 +688,8 @@ def _score_and_rank(rows, limit, target_text=None, cand_years=0):
             score += 6
         if big:
             score += 10
-        if lpa >= 7:
-            score += 5
+        score += _salary_boost(lpa)              # pay above your current salary
+        score += _recency_boost(r.get("date_posted"))   # freshest first
 
         score = max(0, min(100, score))
 
@@ -682,8 +731,9 @@ def _score_and_rank(rows, limit, target_text=None, cand_years=0):
             continue
         seen.add(s["job_url"])
         unique.append(s)
-    # Highest match first (100% -> down).
-    unique.sort(key=lambda s: s["score"], reverse=True)
+    # Highest match first; for equal scores, the fresher posting wins.
+    unique.sort(key=lambda s: (s["score"], -_days_old(s.get("date_posted"))),
+                reverse=True)
     return unique[:limit]
 
 
@@ -788,8 +838,14 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
                        else (f"needs {req_floor}+yr" if req_floor else "no exp info")))
 
     # 3. TITLE RELEVANCE (15) + unrelated-role gate ----------------------------
+    # The role you searched for is your top preference, so a strong title match
+    # gets an extra boost on top of the base 15 — it sorts clearly above
+    # loosely-related roles.
     trel = _title_relevance(title, profile.get("job_titles") if profile else [])
     score += trel * 15
+    if trel >= 0.8:
+        score += 10
+        reasons.append("matches your target role")
     if profile and profile.get("job_titles") and trel == 0:
         return {"reject": True, "reason":
                 f"title '{title}' unrelated to your roles "
@@ -820,8 +876,10 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
         score += 3
     if big:
         score += 6
-    if lpa >= 7:
-        score += 3
+    score += _salary_boost(lpa)                       # pay above your current salary
+    score += _recency_boost(r.get("date_posted"))     # freshest postings first
+    if lpa and lpa > CURRENT_LPA:
+        reasons.append(f"pays ~{round(lpa, 1)} LPA (> your {CURRENT_LPA})")
 
     score = max(0, min(100, round(score)))
     return {"reject": False, "job": {
@@ -870,7 +928,9 @@ def _rank_jobs(rows, limit, profile, min_ratio, min_score=0):
             continue
         seen.add(url)
         kept.append(job)
-    kept.sort(key=lambda s: s["score"], reverse=True)
+    # Best match first; for ties, the fresher posting wins.
+    kept.sort(key=lambda s: (s["score"], -_days_old(s.get("date_posted"))),
+              reverse=True)
     return kept[:limit], rejected
 
 
@@ -993,17 +1053,24 @@ def _diversify_by_site(ranked, limit):
     return out[:limit]
 
 
-def fetch_from_sheet(limit: int):
-    """Read jobs from the Google Sheet (Vercel mode)."""
-    import gspread
-    creds_json = os.environ.get("GOOGLE_CREDENTIALS")
-    if creds_json:
-        gc = gspread.service_account_from_dict(json.loads(creds_json))
-    else:
-        gc = gspread.service_account(filename="service_account.json")
-    ws = gc.open(SHEET_NAME).worksheet(WORKSHEET_NAME)
-    rows = ws.get_all_records()
-    return _score_and_rank(rows, limit)
+def _is_feed_mode() -> bool:
+    """Vercel/hosted mode: jobs come from the committed feed, not a live scrape."""
+    return JOBS_SOURCE in ("feed", "sheet")
+
+
+def fetch_from_feed(limit: int):
+    """Read jobs from the committed daily feed file (data/jobs.json), refreshed by
+    the GitHub Actions cron. No external service or credentials required."""
+    if not os.path.exists(JOBS_FEED):
+        return [], None
+    with open(JOBS_FEED, "r", encoding="utf-8") as f:
+        payload = json.load(f)
+    if isinstance(payload, dict):
+        rows = payload.get("jobs", [])
+        fetched_at = payload.get("fetched_at")
+    else:                                    # tolerate a bare list of job rows
+        rows, fetched_at = payload, None
+    return _score_and_rank(rows, limit), fetched_at
 
 
 def load_cache():
@@ -1026,10 +1093,10 @@ def save_cache(jobs):
 # --------------------------------------------------------------------------- #
 @app.get("/api/jobs")
 def api_jobs(limit: int = DEFAULT_LIMIT):
-    """Return the most recently fetched jobs (cached locally, or from the sheet on Vercel)."""
-    if JOBS_SOURCE == "sheet":
-        jobs = fetch_from_sheet(limit)
-        return {"fetched_at": "from Google Sheet", "jobs": jobs, "source": "sheet"}
+    """Return the most recently fetched jobs (cached locally, or from the daily feed on Vercel)."""
+    if _is_feed_mode():
+        jobs, fetched_at = fetch_from_feed(limit)
+        return {"fetched_at": fetched_at or "daily feed", "jobs": jobs, "source": "feed"}
     cache = load_cache()
     cache["source"] = "live-cache"
     return cache
@@ -1053,9 +1120,9 @@ async def api_fetch(
     only jobs that fit it. Cache and return the top matches plus the profile and a
     debug breakdown of what was filtered out.
     """
-    if JOBS_SOURCE == "sheet":
-        raise HTTPException(400, "Live fetch is disabled in sheet mode (Vercel). "
-                                 "Jobs are read from the Google Sheet.")
+    if _is_feed_mode():
+        raise HTTPException(400, "Live fetch is disabled in hosted (feed) mode. "
+                                 "Jobs are read from the daily feed (data/jobs.json).")
 
     # If the user previewed & edited their profile, trust those edits; otherwise
     # build the profile fresh from the resume + inputs.
@@ -1356,8 +1423,10 @@ def favicon():
 
 @app.get("/", response_class=HTMLResponse)
 def index():
-    live = JOBS_SOURCE != "sheet"
-    return HTMLResponse(INDEX_HTML.replace("__LIVE__", "true" if live else "false"))
+    live = not _is_feed_mode()
+    html = INDEX_HTML.replace("__LIVE__", "true" if live else "false")
+    html = html.replace("__CURRENT_LPA__", str(CURRENT_LPA))
+    return HTMLResponse(html)
 
 
 INDEX_HTML = r"""<!doctype html>
@@ -1571,6 +1640,7 @@ INDEX_HTML = r"""<!doctype html>
 
 <script>
 const LIVE = __LIVE__;
+const CURRENT_LPA = __CURRENT_LPA__;
 const $ = s => document.querySelector(s);
 let jobs = [];
 
@@ -1610,7 +1680,7 @@ function renderJobs(){
     return `<tr>
       <td>${i+1}</td>
       <td><span class="score ${scoreClass(j.score)}">${j.score}%</span>${j.skill_pct!=null?('<div class="note" style="font-size:10px;margin-top:2px">skills '+j.skill_pct+'%</div>'):''}</td>
-      <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${exp}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.salary_lpa>=7?(' <span class="chip">'+j.salary_lpa+' LPA</span>'):''}${matchLine}${missLine}</td>
+      <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${exp}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.salary_lpa>0?(' <span class="chip"'+(j.salary_lpa>CURRENT_LPA?' style="background:#1c7c3f;color:#fff" title="above your current pay"':'')+'>'+j.salary_lpa+' LPA'+(j.salary_lpa>CURRENT_LPA?' ↑':'')+'</span>'):''}${matchLine}${missLine}</td>
       <td>${esc(j.company)}</td>
       <td class="note">${size}</td>
       <td>${esc(j.location)}</td>
@@ -1721,7 +1791,7 @@ async function loadJobs(){
 }
 
 async function fetchJobs(){
-  if(!LIVE){ toast('Live fetch is off in Vercel mode - showing Google Sheet jobs.'); return loadJobs(); }
+  if(!LIVE){ toast('Live fetch is off in Vercel mode - showing jobs from the daily feed.'); return loadJobs(); }
   const btn=$('#fetchBtn'); const old=btn.textContent; setBusy(btn,true);
   // Lock the (separate-card) profile panel too, so prefilled data can't be edited mid-fetch.
   $('#profilePanel').querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=true);
@@ -1870,8 +1940,8 @@ $('#genBtn').onclick=generateResume;
 $('#tailorBtn').onclick=tailorResume;
 $('#refreshResumes').onclick=loadResumes;
 showTab('find');
-$('#modePill').textContent = LIVE ? 'LOCAL · live scrape' : 'VERCEL · Google Sheet';
-if(!LIVE){ $('#fetchBtn').textContent='Load jobs from Sheet'; $('#hours').style.display='none'; }
+$('#modePill').textContent = LIVE ? 'LOCAL · live scrape' : 'VERCEL · daily feed';
+if(!LIVE){ $('#fetchBtn').textContent='Load latest jobs'; $('#hours').style.display='none'; }
 // Local: open FRESH every time (don't show the last search). Vercel: show Sheet.
 if(!LIVE){ loadJobs(); }
 loadResumes();
