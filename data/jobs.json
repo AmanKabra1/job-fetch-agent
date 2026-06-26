@@ -1,23 +1,9 @@
 {
-"fetched_at": "2026-06-25 22:16 UTC",
+"fetched_at": "2026-06-26 02:15 UTC",
 "count": 50,
 "jobs": [
 {
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Security Engineer II - Java, AWS, AI/ML Security",
-"company": "JPMorganChase",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=f61900f38129e975",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Python Pyspark and AWS Developer",
 "company": "CGI",
 "location": "TS, IN",
@@ -31,7 +17,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Python, SQL, ETL Developer",
 "company": "Infosys",
 "location": "Bengaluru East, Karnataka, India",
@@ -45,7 +31,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Software Engineer, BizTech(Python, LLM, GenAI, MCP)",
 "company": "Airbnb",
 "location": "Bangalore, India",
@@ -59,7 +45,21 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Lead II - reactjs,javascript,typescript,cicd tools,",
+"company": "UST",
+"location": "KL, IN",
+"site": "indeed",
+"date_posted": "2026-06-25",
+"job_url": "https://in.indeed.com/viewjob?jk=89a7a1c62077256e",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Voice Backend Software Engineer (Node.js and Java) | Remote | US",
 "company": "Sutherland",
 "location": "USA",
@@ -73,7 +73,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Full-Stack Developer (m/w/d) - TypeScript / Node.js / Headless Commerce",
 "company": "Cannaleo Digital GmbH",
 "location": "Saarbrücken",
@@ -87,35 +87,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Python Developer - FASTAPI",
-"company": "Eastvantage",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-06-24",
-"job_url": "https://www.linkedin.com/jobs/view/4431843005",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Java Fullstack ( Angular/React) | Hyderabad",
-"company": "Capgemini",
-"location": "Pune Division, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4420936005",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Software Developer (Java,Python,Golang)",
 "company": "Infosys",
 "location": "Bengaluru East, Karnataka, India",
@@ -129,21 +101,21 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Java AWS - Senior Engineer",
-"company": "Iris Software",
-"location": "UP, IN",
-"site": "indeed",
-"date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=82a3d3743829c479",
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Python Developer - FASTAPI",
+"company": "Eastvantage",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-06-24",
+"job_url": "https://www.linkedin.com/jobs/view/4431843005",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
-"company_num_employees": "1,001 to 5,000",
-"search_term": "software developer"
+"company_num_employees": "",
+"search_term": "python developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Software engineer - Python SQL Cloud",
 "company": "HARMAN India",
 "location": "Bengaluru, Karnataka, India",
@@ -157,7 +129,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "AI Engineer (Gen AI / LLMs) | Python, LangChain, AWS | Kolkata | Up to 30 LPA - Immediate joiners ONLY",
 "company": "datavruti",
 "location": "Kolkata, West Bengal, India",
@@ -171,7 +143,7 @@
 "search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "PrairieLearn (Remote US) — Full-Stack Software Engineer — TypeScript / Postgres / React / AI",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -185,7 +157,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Fusionbox | Python + TypeScript Engineers | United States | Full-time | REMOTE (US-only)",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -199,7 +171,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Senior Java/Angular Fullstack Developer (m/w/d)",
 "company": "FastRocket GmbH",
 "location": "Regen",
@@ -213,7 +185,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Staff Software Engineer, Developer Productivity (CI/CD) - Claude Code",
 "company": "Anthropic",
 "location": "San Francisco, CA",
@@ -227,7 +199,21 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "DE-Java OR Python Senior-GDS",
+"company": "EY",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4413560491",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Starbridge | Senior Engineers (Kotlin/Java/React/Typescript) | NYC or Remote | Full-time |",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -241,7 +227,147 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Software Developer",
+"company": "Oracle",
+"location": "KA, IN",
+"site": "indeed",
+"date_posted": "2026-06-25",
+"job_url": "https://in.indeed.com/viewjob?jk=5da5e82239f2daec",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Analyst | Backend Developer - Java | Delhi | Operations, Industry & Domain Solutions | DigiGov",
+"company": "Deloitte",
+"location": "DL, IN",
+"site": "indeed",
+"date_posted": "2026-06-25",
+"job_url": "https://in.indeed.com/viewjob?jk=23802c8c7b0bf909",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Senior Consultant | Backend Developer - Java | Delhi | Operations, Industry & Domain Solutions",
+"company": "Deloitte",
+"location": "DL, IN",
+"site": "indeed",
+"date_posted": "2026-06-25",
+"job_url": "https://in.indeed.com/viewjob?jk=de87fa9b27c0b2bd",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Senior Software Engineer - Fullstack",
+"company": "BlackLine",
+"location": "KA, IN",
+"site": "indeed",
+"date_posted": "2026-06-25",
+"job_url": "https://in.indeed.com/viewjob?jk=2771b02e2bef4317",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "1,001 to 5,000",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Engineering Manager",
+"company": "",
+"location": "KA, IN",
+"site": "indeed",
+"date_posted": "2026-06-25",
+"job_url": "https://in.indeed.com/viewjob?jk=646f8d9f16ef0935",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Software Engineer 1",
+"company": "PowerSchool Group",
+"location": "TN, IN",
+"site": "indeed",
+"date_posted": "2026-06-25",
+"job_url": "https://in.indeed.com/viewjob?jk=4d7c87a0e73c85a7",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "1,001 to 5,000",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Laravel Developer",
+"company": "Param Software",
+"location": "GJ, IN",
+"site": "indeed",
+"date_posted": "2026-06-25",
+"job_url": "https://in.indeed.com/viewjob?jk=a5e63280c571fc16",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "2 to 10",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Senior Lead Developer – BARX PB",
+"company": "Barclays",
+"location": "MH, IN",
+"site": "indeed",
+"date_posted": "2026-06-25",
+"job_url": "https://in.indeed.com/viewjob?jk=c8668e531778483f",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Senior RPA Developer - Core",
+"company": "HCLTech",
+"location": "UP, IN",
+"site": "indeed",
+"date_posted": "2026-06-25",
+"job_url": "https://in.indeed.com/viewjob?jk=65a0d7feea6aadcc",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": ".NET Developer",
+"company": "HCLTech",
+"location": "UP, IN",
+"site": "indeed",
+"date_posted": "2026-06-25",
+"job_url": "https://in.indeed.com/viewjob?jk=40783ee206200e75",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Engineering Lead Analyst (Python) - Vice President",
 "company": "Citi",
 "location": "MH, IN",
@@ -255,7 +381,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Application Development Lead Analyst (Python) - Vice President",
 "company": "Citi",
 "location": "MH, IN",
@@ -269,7 +395,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Intern",
 "company": "Pitney Bowes",
 "location": "UP, IN",
@@ -283,7 +409,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Senior Software Quality Assurance Engineer",
 "company": "Pitney Bowes",
 "location": "UP, IN",
@@ -297,7 +423,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "CIAM Developer",
 "company": "Ameriprise Financial",
 "location": "AP, IN",
@@ -311,7 +437,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Fullstack – Software Engineer III",
 "company": "Deloitte",
 "location": "KA, IN",
@@ -325,7 +451,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Fullstack – Software Engineer II",
 "company": "Deloitte",
 "location": "KA, IN",
@@ -339,7 +465,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Java Developer",
 "company": "TransUnion",
 "location": "MH, IN",
@@ -353,7 +479,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Senior Advisory Software Quality Assurance Engineer",
 "company": "Pitney Bowes",
 "location": "UP, IN",
@@ -367,7 +493,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Software Quality Assurance Engineer",
 "company": "Pitney Bowes",
 "location": "UP, IN",
@@ -381,7 +507,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Junior Python Developer",
 "company": "AcquireX",
 "location": "MH, IN",
@@ -395,7 +521,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Sr. Developer - Application Development P 4B",
 "company": "Genpact",
 "location": "TS, IN",
@@ -409,7 +535,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Senior Full Stack Developer (Remote, Contractual) [HR187]",
 "company": "Smart Working Solutions",
 "location": "Remote, IN",
@@ -423,7 +549,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Senior Full Stack Developer (Remote, Contractual) [HR187]",
 "company": "Smart Working Solutions",
 "location": "Remote, IN",
@@ -437,7 +563,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Senior Full Stack Developer (Remote, Contractual) [HR187]",
 "company": "Smart Working Solutions",
 "location": "Remote, IN",
@@ -451,7 +577,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Senior Full Stack Developer (Remote, Contractual) [HR187]",
 "company": "Smart Working Solutions",
 "location": "Remote, IN",
@@ -465,7 +591,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Senior Full Stack Developer (Remote, Contractual) [HR187]",
 "company": "Smart Working Solutions",
 "location": "Remote, IN",
@@ -479,41 +605,13 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Senior Full Stack Developer (Remote, Contractual) [HR187]",
-"company": "Smart Working Solutions",
-"location": "Remote, IN",
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Lead Principal Platform Software Engineer",
+"company": "Oracle",
+"location": "IN",
 "site": "indeed",
-"date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=bd3177b47921d86b",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Senior Full Stack Developer (Remote, Contractual) [HR187]",
-"company": "Smart Working Solutions",
-"location": "Remote, IN",
-"site": "indeed",
-"date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=dbaed131bab44c21",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "DE-RCE-Risk Java Full stack SM-GDSN02",
-"company": "EY",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=d142db0eb82f7762",
+"date_posted": "2026-06-24",
+"job_url": "https://in.indeed.com/viewjob?jk=babdfda7f7614111",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -521,27 +619,13 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Laravel Developer",
-"company": "Param Software",
-"location": "GJ, IN",
-"site": "indeed",
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Associate Full Stack Developer",
+"company": "Script Studio Technology Private Limited",
+"location": "Delhi Cantonment, Delhi, India",
+"site": "linkedin",
 "date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=1059e72f109040ea",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "2 to 10",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "iOS Developer",
-"company": "BHS Solution",
-"location": "PB, IN",
-"site": "indeed",
-"date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=61ce062d49d082f9",
+"job_url": "https://www.linkedin.com/jobs/view/4432889961",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -549,105 +633,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "PHP Backend Developer",
-"company": "BHS Solution",
-"location": "PB, IN",
-"site": "indeed",
-"date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=303957a66bdced5b",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Flutter Developer Intern",
-"company": "",
-"location": "Remote, IN",
-"site": "indeed",
-"date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=28e664d12bd65ab4",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Backend Developer",
-"company": "TriEdge Solutions",
-"location": "MH, IN",
-"site": "indeed",
-"date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=45c3be101396e075",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Flutter Developer",
-"company": "",
-"location": "Remote, IN",
-"site": "indeed",
-"date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=3ac540e197564e73",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Web Developer Intern Remote",
-"company": "",
-"location": "Remote, IN",
-"site": "indeed",
-"date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=0bc65677a537701d",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Software Engineer II - UI Developer",
-"company": "JPMorganChase",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=96aab3d10a345f0b",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Senior Software Quality Assurance Engineer",
-"company": "Pitney Bowes",
-"location": "UP, IN",
-"site": "indeed",
-"date_posted": "2026-06-25",
-"job_url": "https://in.indeed.com/viewjob?jk=801caeec842c95d7",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Associate",
 "company": "PwC India",
 "location": "",
@@ -661,7 +647,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
+"date_fetched": "2026-06-26 02:15 UTC",
 "title": "Java Developer",
 "company": "Infosys",
 "location": "Pune Division, Maharashtra, India",
@@ -675,13 +661,13 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Software Engineer - Full Stack",
-"company": "DigiCert",
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Java Software Engineer",
+"company": "Publicis Sapient",
 "location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "2026-06-24",
-"job_url": "https://www.linkedin.com/jobs/view/4423936598",
+"job_url": "https://www.linkedin.com/jobs/view/4432522927",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -689,13 +675,27 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-06-25 22:16 UTC",
-"title": "Java Software Engineer",
-"company": "Publicis Sapient",
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Software Engineer III - Backend, ITC",
+"company": "Nike",
+"location": "Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-06-24",
+"job_url": "https://www.linkedin.com/jobs/view/4432593555",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-06-26 02:15 UTC",
+"title": "Software Engineer - Full Stack",
+"company": "DigiCert",
 "location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "2026-06-24",
-"job_url": "https://www.linkedin.com/jobs/view/4432522927",
+"job_url": "https://www.linkedin.com/jobs/view/4423936598",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
