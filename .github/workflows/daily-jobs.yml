@@ -30,14 +30,29 @@ jobs:
       - name: Fetch jobs and write data/jobs.json
         run: python fetch_jobs.py
 
-      - name: Commit updated feed
+      - name: Publish feed to the 'feed' branch (keeps main clean, no Vercel redeploy)
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Save the freshly written feed, then return main's working copy to its
+          # committed state so we can switch branches cleanly.
+          cp data/jobs.json "$RUNNER_TEMP/jobs.json"
+          git checkout -- data/jobs.json
+          # Switch to (or create) the dedicated 'feed' branch — it holds ONLY the
+          # feed, so the cron never adds commits to main or triggers a deploy.
+          git fetch origin feed || true
+          if git show-ref --verify --quiet refs/remotes/origin/feed; then
+            git checkout -B feed origin/feed
+          else
+            git checkout --orphan feed
+            git rm -rf . >/dev/null 2>&1 || true
+          fi
+          mkdir -p data
+          cp "$RUNNER_TEMP/jobs.json" data/jobs.json
           git add data/jobs.json
           if git diff --staged --quiet; then
             echo "No feed changes to commit."
           else
-            git commit -m "chore: daily job feed update [skip ci]"
-            git push
+            git commit -m "chore: feed update [skip ci]"
+            git push origin feed
           fi

@@ -26,6 +26,7 @@ import re
 import json
 import base64
 import logging
+import time
 import datetime as dt
 
 def _quiet_jobspy():
@@ -100,6 +101,18 @@ JOBS_CACHE = os.path.join(DATA_DIR, "jobs_latest.json")
 # inside the deployment bundle, so it's readable on Vercel (only WRITES are
 # restricted there) with no external service — no Google Sheet, no credentials.
 JOBS_FEED = os.path.join(HERE, "data", "jobs.json")
+
+# The hosted app reads the LIVE feed from a dedicated 'feed' branch at runtime
+# (via raw.githubusercontent.com) so the GitHub Actions cron can refresh jobs
+# WITHOUT committing to main or triggering a Vercel redeploy. It's cached briefly
+# in-process and falls back to the bundled data/jobs.json above if the fetch fails
+# or no URL is set. Override the URL/branch with the FEED_URL env var.
+FEED_URL = os.environ.get(
+    "FEED_URL",
+    "https://raw.githubusercontent.com/AmanKabra1/job-fetch-agent/feed/data/jobs.json",
+)
+_FEED_TTL = 300                       # seconds to cache a fetched feed in-process
+_FEED_CACHE = {"at": 0.0, "data": None}
 
 # "live"  -> scrape on demand (local).
 # "feed"  -> read the committed data/jobs.json (Vercel). "sheet" kept as an alias
@@ -1105,12 +1118,36 @@ def _is_feed_mode() -> bool:
     return JOBS_SOURCE in ("feed", "sheet")
 
 
+def _fetch_feed_payload():
+    """The feed JSON from the remote 'feed' branch (FEED_URL), cached for _FEED_TTL
+    seconds so the hosted app refreshes without a redeploy. Returns None on failure
+    (the caller then falls back to the bundled data/jobs.json)."""
+    if not FEED_URL:
+        return None
+    now = time.time()
+    if _FEED_CACHE["data"] is not None and (now - _FEED_CACHE["at"]) < _FEED_TTL:
+        return _FEED_CACHE["data"]
+    try:
+        import urllib.request
+        with urllib.request.urlopen(FEED_URL, timeout=8) as resp:
+            payload = json.loads(resp.read().decode("utf-8"))
+        _FEED_CACHE["data"] = payload
+        _FEED_CACHE["at"] = now
+        return payload
+    except Exception as e:
+        print(f"  ! live feed fetch failed ({e}); using bundled feed", flush=True)
+        return _FEED_CACHE["data"]            # last good cache if any, else None
+
+
 def _read_feed():
-    """Return (raw_rows, fetched_at) from the committed daily feed (data/jobs.json)."""
-    if not os.path.exists(JOBS_FEED):
+    """Return (raw_rows, fetched_at). Prefer the live 'feed' branch (FEED_URL); fall
+    back to the bundled data/jobs.json when the fetch fails or no URL is configured."""
+    payload = _fetch_feed_payload()
+    if payload is None and os.path.exists(JOBS_FEED):
+        with open(JOBS_FEED, "r", encoding="utf-8") as f:
+            payload = json.load(f)
+    if payload is None:
         return [], None
-    with open(JOBS_FEED, "r", encoding="utf-8") as f:
-        payload = json.load(f)
     if isinstance(payload, dict):
         return payload.get("jobs", []), payload.get("fetched_at")
     return payload, None                      # tolerate a bare list of job rows
