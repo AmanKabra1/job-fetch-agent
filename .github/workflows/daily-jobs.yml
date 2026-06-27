@@ -49,7 +49,10 @@ jobs:
           fi
           mkdir -p data
           cp "$RUNNER_TEMP/jobs.json" data/jobs.json
-          git add data/jobs.json
+          # Carry a deploy-disabling vercel.json ON this branch so Vercel never
+          # tries to build the feed-only branch (it has no app code).
+          printf '%s\n' '{"git":{"deploymentEnabled":false}}' > vercel.json
+          git add data/jobs.json vercel.json
           if git diff --staged --quiet; then
             echo "No feed changes to commit."
           else
