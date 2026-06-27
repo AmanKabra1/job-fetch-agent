@@ -270,10 +270,16 @@ def _salary_boost(lpa: float) -> int:
     return min(15, round((lpa - CURRENT_LPA) * 2))
 
 
-def _days_old(date_posted: str) -> float:
+def _days_old(date_posted) -> float:
     """How many days ago a job was posted (best-effort). Returns a large number
-    when the date is missing/unparseable so unknown-date jobs don't rank as fresh."""
-    s = (date_posted or "").strip()[:10]
+    when the date is missing/unparseable so unknown-date jobs don't rank as fresh.
+    Accepts a string ('YYYY-MM-DD'), a datetime.date, or a datetime.datetime —
+    jobspy and the career-page sources return any of these."""
+    if isinstance(date_posted, dt.datetime):
+        date_posted = date_posted.date()
+    if isinstance(date_posted, dt.date):
+        return max(0.0, (dt.date.today() - date_posted).days)
+    s = (str(date_posted or "")).strip()[:10]
     if not s:
         return 9999.0
     try:
@@ -615,6 +621,36 @@ def _normalize_profile(edited: dict) -> dict:
         p["min_salary"] = 0
     p["search_queries"] = build_search_queries(p)
     return p
+
+
+def build_saved_profile() -> dict:
+    """The app owner's matching PROFILE, derived from the committed resume_profile.py.
+
+    The daily GitHub-Actions cron uses this to GATE & RANK the feed to YOUR resume
+    (skills, experience, target titles) — so data/jobs.json ships already matched to
+    you and the hosted page (mobile, no upload) shows jobs that fit your profile.
+    The live "Fetch jobs" button is unaffected: it still builds its profile from the
+    resume you upload. Falls back to a minimal profile if resume_profile is missing.
+    """
+    try:
+        import resume_profile as RP
+    except Exception:
+        return extract_profile_from_resume()
+    skills, seen = [], set()
+    for items in getattr(RP, "SKILLS", {}).values():
+        for s in items:
+            c = re.sub(r"\s*\(.*?\)\s*", " ", s or "").strip()   # 'Java (Spring Boot)' -> 'Java'
+            if c and c.lower() not in seen:
+                seen.add(c.lower())
+                skills.append(c)
+    exp = getattr(RP, "EXPERIENCE", []) or []
+    exp_blob = "\n".join(b for j in exp for b in j.get("bullets", []))
+    summary = getattr(RP, "SUMMARY_TEMPLATE", "").replace(
+        "{stack}", ", ".join(getattr(RP, "DEFAULT_STACK", [])))
+    title = exp[0].get("title", "") if exp else ""
+    resume_text = "\n".join([getattr(RP, "NAME", ""), summary, exp_blob])
+    return extract_profile_from_resume(
+        resume_text=resume_text, skills_text=", ".join(skills), position=title)
 
 
 def _api_search_terms(profile: dict, position: str = "") -> list:
@@ -989,9 +1025,12 @@ def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
     # Add real remote roles from free APIs (Remotive + RemoteOK) — startups and
     # established companies that the jobspy boards miss. When `career` is on, also
     # scrape direct company career pages (Greenhouse/Lever/Ashby ATS) + HN/WWR.
+    # On Vercel (api_only) the boards are skipped, so the APIs are the ONLY source —
+    # pull more per term there so enough candidates survive ranking to fill `limit`.
+    api_per_term = 60 if api_only else 30
     try:
         rows += ES.fetch_extra(
-            api_q, per_term=30, max_age_hours=hours_old,
+            api_q, per_term=api_per_term, max_age_hours=hours_old,
             include_career=career,
             experience_level=(profile or {}).get("experience_level"),
             location=location,
@@ -1939,7 +1978,12 @@ async function matchFeed(){
   if(!hasInput){ return loadJobs(); }
   const btn=$('#matchBtn'); const old=btn.textContent; setBusy(btn,true);
   jobs=[]; $('#count').textContent='';
-  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty"><span class="spin"></span> Matching the daily feed to your resume…</td></tr>';
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty"><span class="spin"></span> <span id="matchStatus">Matching the daily feed to your resume…</span></td></tr>';
+  const stopTimer=startTimer(t=>{
+    btn.innerHTML='<span class="spin"></span> Matching… '+t;
+    const cell=document.getElementById('matchStatus');
+    if(cell) cell.textContent='Matching the daily feed to your resume… '+t;
+  });
   try{
     const fd=new FormData();
     if(f) fd.append('file', f);
@@ -1955,24 +1999,27 @@ async function matchFeed(){
           renderJobs(); renderProfile(d.profile, d.search_terms); renderDebug(d.debug);
           toast(jobs.length+(d.guided?' jobs from the feed matched to your resume.':' jobs from the feed.')); }
   }catch(e){ toast('Match error: '+e); }
-  finally{ setBusy(btn,false); btn.textContent=old; }
+  finally{ stopTimer(); setBusy(btn,false); btn.textContent=old; }
 }
 
 async function fetchJobs(){
-  // On Vercel a live scrape can't reach the boards (datacenter IPs are blocked),
-  // so the comprehensive all-websites result is the cron feed — rank THAT to the
-  // resume, identical to what a local scrape produces. Local does a true live scrape.
-  if(!LIVE){ return matchFeed(); }
+  // Live fetch in BOTH modes. Local scrapes every board (LinkedIn/Indeed/Google…)
+  // from your un-blocked home IP. Vercel can't reach those boards (datacenter IPs
+  // are blocked), so the backend automatically switches to a LIVE query of the free
+  // REST APIs (Remotive/RemoteOK/Jobicy/Arbeitnow + career pages) — genuinely live,
+  // just narrower coverage. Either way it's ranked to your uploaded resume/profile.
   const btn=$('#fetchBtn'); const old=btn.textContent; setBusy(btn,true);
   // Lock the (separate-card) profile panel too, so prefilled data can't be edited mid-fetch.
   $('#profilePanel').querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=true);
   // Clear the previous results immediately so stale jobs don't linger.
   jobs=[]; $('#count').textContent='';
-  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty"><span class="spin"></span> <span id="fetchStatus">Searching all boards for fresh jobs…</span></td></tr>';
+  const what = LIVE ? 'Searching all boards for fresh jobs'
+                    : 'Searching live job APIs (Remotive, RemoteOK, career pages…)';
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty"><span class="spin"></span> <span id="fetchStatus">'+what+'…</span></td></tr>';
   const stopTimer=startTimer(t=>{
     btn.innerHTML='<span class="spin"></span> Searching… '+t;
     const cell=document.getElementById('fetchStatus');
-    if(cell) cell.textContent='Searching all boards for fresh jobs… '+t;
+    if(cell) cell.textContent=what+'… '+t;
   });
   try{
     const fd=new FormData();
@@ -2117,11 +2164,12 @@ showTab('find');
 //   Naukri/Bayt) + career pages + free APIs into data/jobs.json, every few hours,
 //   from un-blocked IPs. Both local & Vercel rank that same feed to your resume.
 //   Local additionally offers a true real-time scrape ("Fetch live jobs").
-$('#modePill').textContent = LIVE ? 'LOCAL · live + feed' : 'VERCEL · all-boards feed';
+$('#modePill').textContent = LIVE ? 'LOCAL · live + feed' : 'VERCEL · live APIs + feed';
 if(!LIVE){
-  // Hosted: both buttons rank the same comprehensive feed (live scrape is IP-blocked here).
+  // Hosted: "Load latest jobs" ranks the cron feed (already gated to your saved
+  // profile); "Fetch live jobs" does a genuinely live query of the free job APIs.
   const fh=$('#feedHint'); if(fh) fh.style.display='';
-  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty">Upload your resume (optional) and click <b>Load latest jobs</b> — it ranks the full all-boards feed (LinkedIn, Indeed, Google, career pages &amp; more, refreshed every few hours) to your resume. This is the same result you get locally.</td></tr>';
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty"><b>Load latest jobs</b> — instantly ranks the all-boards feed (LinkedIn, Indeed, Google, career pages &amp; more, refreshed every 3h, already matched to your saved resume). <br><b>Fetch live jobs</b> — does a live search of the free job APIs (Remotive, RemoteOK &amp; career pages) right now; upload a resume above to rank it to you. Both work on mobile, no computer needed.</td></tr>';
 } else {
   $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty">Optionally upload your resume (and/or type a role) above, then click <b>Fetch live jobs</b> for a fresh real-time scrape of all boards, or <b>Load latest jobs</b> to rank the shared all-boards feed (same result the hosted site shows).</td></tr>';
 }

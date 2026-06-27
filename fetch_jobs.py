@@ -207,29 +207,40 @@ def normalise(jobs: pd.DataFrame) -> pd.DataFrame:
 
 
 def rank_for_feed(rows):
-    """Order + quality-filter the raw rows with the SAME rules the dashboard uses
-    (skill/title relevance to the search roles, salary above your current pay,
-    recency, remote, company size), then return the ORIGINAL rows — keeping their
-    salary fields — in ranked, best-first order.
+    """Gate + rank the raw rows against the OWNER'S SAVED PROFILE (resume_profile.py)
+    using the SAME personalised scorer the live dashboard uses — skill-match %,
+    experience cut-offs, target-title relevance, plus salary/recency/remote/size
+    nudges. So the committed feed arrives already matched to your resume and the
+    hosted page (mobile, no upload) shows jobs that fit YOU.
 
-    The dashboard's resume-personalised gates (skill-match %, experience cut-offs)
-    can't run here because the cron has no uploaded resume; every rule that does
-    NOT need a resume is applied. Falls back to the input order if the scorer
-    can't be imported, so the cron never fails over ranking."""
+    Returns the ORIGINAL rows (keeping their salary fields) in ranked, best-first
+    order. Relaxes the skill gate once if the strict pass leaves too few, then tops
+    up to MIN_FEED so the page is never sparse. Falls back to input order if the
+    scorer can't be imported, so the cron never fails over ranking."""
     try:
         import app as APP                       # reuse the exact dashboard scorer
     except Exception as e:                       # never let ranking abort the run
         print(f"  ! ranking skipped (could not import scorer: {e})", flush=True)
         return rows[:MAX_STORED]
 
-    # Rank mainly by your resume: match against resume skills + roles + keywords.
-    terms_text = " ".join(RANK_KEYWORDS)
-    ranked = APP._score_and_rank(rows, MAX_STORED, target_text=terms_text)
+    profile = APP.build_saved_profile()          # your resume drives the gate
+    print(f"  ranking against saved profile: "
+          f"{profile.get('experience_years')}yr · "
+          f"{', '.join((profile.get('job_titles') or [])[:2]) or 'no titles'} · "
+          f"{len(profile.get('all_searchable_skills') or [])} skills", flush=True)
+
+    # Strict pass (>= MIN_SKILL_RATIO of a job's skills are yours); relax once if
+    # that leaves too few, so the feed is personalised but never empty.
+    ranked, _ = APP._rank_jobs(rows, MAX_STORED, profile, APP.MIN_SKILL_RATIO, min_score=0)
+    if len(ranked) < max(APP.MIN_KEEP_BEFORE_RELAX, MIN_FEED):
+        ranked, _ = APP._rank_jobs(rows, MAX_STORED, profile, APP.RELAX_SKILL_RATIO, min_score=0)
+        print(f"  relaxed skill gate (strict pass kept {len(ranked)})", flush=True)
+
     by_url = {str(r.get("job_url", "")): r for r in rows}
     ordered = [by_url[j["job_url"]] for j in ranked if j.get("job_url") in by_url]
 
-    # Floor: if the quality gate left fewer than MIN_FEED, top up with the
-    # remaining (deduped) raw rows so the feed is never sparse.
+    # Floor: if the gate left fewer than MIN_FEED, top up with the remaining
+    # (deduped) raw rows so the feed is never sparse.
     if len(ordered) < MIN_FEED:
         seen = {str(r.get("job_url", "")) for r in ordered}
         for r in rows:
