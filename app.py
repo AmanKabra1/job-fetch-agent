@@ -641,29 +641,61 @@ def build_saved_profile() -> dict:
 
     The daily GitHub-Actions cron uses this to GATE & RANK the feed to YOUR resume
     (skills, experience, target titles) — so data/jobs.json ships already matched to
-    you and the hosted page (mobile, no upload) shows jobs that fit your profile.
-    The live "Fetch jobs" button is unaffected: it still builds its profile from the
+    you and the hosted page (no upload) shows jobs that fit your profile.
+    The live 'Fetch jobs' button is unaffected: it still builds its profile from the
     resume you upload. Falls back to a minimal profile if resume_profile is missing.
     """
     try:
         import resume_profile as RP
     except Exception:
         return extract_profile_from_resume()
+
+    # --- Skills: clean every entry from every category -----------------------
     skills, seen = [], set()
     for items in getattr(RP, "SKILLS", {}).values():
         for s in items:
-            c = re.sub(r"\s*\(.*?\)\s*", " ", s or "").strip()   # 'Java (Spring Boot)' -> 'Java'
+            c = re.sub(r"\s*\(.*?\)\s*", " ", s or "").strip()
             if c and c.lower() not in seen:
                 seen.add(c.lower())
                 skills.append(c)
+
+    # --- Experience years: compute from actual dates, don't rely on text -----
+    import datetime as _dt
+    _MON = {"jan":1,"feb":2,"mar":3,"apr":4,"may":5,"jun":6,
+            "jul":7,"aug":8,"sep":9,"oct":10,"nov":11,"dec":12}
     exp = getattr(RP, "EXPERIENCE", []) or []
-    exp_blob = "\n".join(b for j in exp for b in j.get("bullets", []))
+    earliest = None
+    for j in exp:
+        m = re.match(r"([A-Za-z]+)\s+(\d{4})", j.get("dates", ""))
+        if m:
+            mon = _MON.get(m.group(1).lower()[:3])
+            yr = int(m.group(2))
+            if mon:
+                d = _dt.date(yr, mon, 1)
+                if earliest is None or d < earliest:
+                    earliest = d
+    today = _dt.date.today()
+    experience_years = max(1, round((today - earliest).days / 365)) if earliest else 2
+
+    # --- Titles: all distinct titles from every experience entry -------------
+    all_titles = list(dict.fromkeys(j.get("title", "") for j in exp if j.get("title")))
+    position = ", ".join(all_titles)  # e.g. "Software Developer, Full Stack Engineer, ..."
+
+    # --- Resume text: include dates + title headers so inference is richer ---
     summary = getattr(RP, "SUMMARY_TEMPLATE", "").replace(
         "{stack}", ", ".join(getattr(RP, "DEFAULT_STACK", [])))
-    title = exp[0].get("title", "") if exp else ""
-    resume_text = "\n".join([getattr(RP, "NAME", ""), summary, exp_blob])
+    exp_lines = []
+    for j in exp:
+        exp_lines.append(f"{j.get('dates','')} — {j.get('title','')} at {j.get('company','')}")
+        exp_lines.extend(j.get("bullets", []))
+    resume_text = "\n".join([getattr(RP, "NAME", ""), summary] + exp_lines)
+
     return extract_profile_from_resume(
-        resume_text=resume_text, skills_text=", ".join(skills), position=title)
+        resume_text=resume_text,
+        skills_text=", ".join(skills),
+        position=position,
+        years=experience_years,   # explicit: bypasses fragile text inference
+    )
 
 
 def _api_search_terms(profile: dict, position: str = "") -> list:

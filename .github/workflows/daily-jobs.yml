@@ -2,15 +2,14 @@ name: Daily Job Fetch
 
 on:
   schedule:
-    # Every 3 hours, so the hosted (Vercel) feed stays fresh — it's the same
-    # all-boards + career-page scrape Vercel can't run itself (datacenter IPs are
-    # blocked). GitHub's runners aren't blocked, so this is where the real scrape
-    # happens. Adjust the interval as you like.
+    # Every 3 hours — keeps the Vercel-hosted feed fresh. Vercel auto-redeploys
+    # when data/jobs.json changes on main (no [skip ci]), so each cron run
+    # immediately makes fresh all-boards results available at the hosted URL.
     - cron: "0 */3 * * *"
-  workflow_dispatch: {}   # lets you trigger it manually from the Actions tab
+  workflow_dispatch: {}   # trigger manually from the Actions tab any time
 
 permissions:
-  contents: write          # allow the job to commit the refreshed feed back
+  contents: write
 
 jobs:
   fetch:
@@ -30,32 +29,14 @@ jobs:
       - name: Fetch jobs and write data/jobs.json
         run: python fetch_jobs.py
 
-      - name: Publish feed to the 'feed' branch (keeps main clean, no Vercel redeploy)
+      - name: Commit updated feed to main (triggers Vercel redeploy with fresh data)
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # Save the freshly written feed, then return main's working copy to its
-          # committed state so we can switch branches cleanly.
-          cp data/jobs.json "$RUNNER_TEMP/jobs.json"
-          git checkout -- data/jobs.json
-          # Switch to (or create) the dedicated 'feed' branch — it holds ONLY the
-          # feed, so the cron never adds commits to main or triggers a deploy.
-          git fetch origin feed || true
-          if git show-ref --verify --quiet refs/remotes/origin/feed; then
-            git checkout -B feed origin/feed
-          else
-            git checkout --orphan feed
-            git rm -rf . >/dev/null 2>&1 || true
-          fi
-          mkdir -p data
-          cp "$RUNNER_TEMP/jobs.json" data/jobs.json
-          # Carry a deploy-disabling vercel.json ON this branch so Vercel never
-          # tries to build the feed-only branch (it has no app code).
-          printf '%s\n' '{"git":{"deploymentEnabled":false}}' > vercel.json
-          git add data/jobs.json vercel.json
+          git add data/jobs.json
           if git diff --staged --quiet; then
-            echo "No feed changes to commit."
+            echo "No feed changes — nothing to commit."
           else
-            git commit -m "chore: feed update [skip ci]"
-            git push origin feed
+            git commit -m "chore: job feed update"
+            git push origin main
           fi
