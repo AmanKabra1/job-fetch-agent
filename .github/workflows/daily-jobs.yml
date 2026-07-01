@@ -2,9 +2,11 @@ name: Daily Job Fetch
 
 on:
   schedule:
-    # Every 3 hours — keeps the Vercel-hosted feed fresh. Vercel auto-redeploys
-    # when data/jobs.json changes on main (no [skip ci]), so each cron run
-    # immediately makes fresh all-boards results available at the hosted URL.
+    # Every 3 hours. This does NOT touch main and never triggers a Vercel
+    # redeploy — the feed is pushed to the dedicated 'feed' branch, which
+    # carries a deploy-disabling vercel.json. The live app reads the feed
+    # straight from that branch's raw GitHub URL at request time (see
+    # _read_feed() in app.py), so freshness is decoupled from deployment.
     - cron: "0 */3 * * *"
   workflow_dispatch: {}   # trigger manually from the Actions tab any time
 
@@ -29,14 +31,26 @@ jobs:
       - name: Fetch jobs and write data/jobs.json
         run: python fetch_jobs.py
 
-      - name: Commit updated feed to main (triggers Vercel redeploy with fresh data)
+      - name: Publish feed to the 'feed' branch (main untouched, no Vercel deploy)
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/jobs.json
-          if git diff --staged --quiet; then
-            echo "No feed changes — nothing to commit."
+          cp data/jobs.json "$RUNNER_TEMP/jobs.json"
+          git checkout -- data/jobs.json
+          git fetch origin feed || true
+          if git show-ref --verify --quiet refs/remotes/origin/feed; then
+            git checkout -B feed origin/feed
           else
-            git commit -m "chore: job feed update"
-            git push origin main
+            git checkout --orphan feed
+            git rm -rf . >/dev/null 2>&1 || true
+          fi
+          mkdir -p data
+          cp "$RUNNER_TEMP/jobs.json" data/jobs.json
+          printf '%s\n' '{"git":{"deploymentEnabled":false}}' > vercel.json
+          git add data/jobs.json vercel.json
+          if git diff --staged --quiet; then
+            echo "No feed changes to commit."
+          else
+            git commit -m "chore: feed update [skip ci]"
+            git push origin feed
           fi
