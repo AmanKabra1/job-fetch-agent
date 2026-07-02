@@ -120,7 +120,11 @@ SKILLS = {
         "AWS S3", "AWS SES", "Docker", "CI/CD Pipelines", "Git", "GitHub Actions",
         "Jenkins",
     ],
-    "AI/ML": ["LLM Integration", "RAG (Retrieval-Augmented Generation)", "Machine Learning"],
+    "AI/ML": [
+        "Python", "Machine Learning", "LLM Integration",
+        "RAG (Retrieval-Augmented Generation)", "LangChain", "LangGraph",
+        "AI Agents (Agentic AI)",
+    ],
     "Architecture & Patterns": [
         "Microservices", "RESTful APIs", "JWT Authentication", "OAuth 2.0", "MVC",
         "Agile/Scrum",
@@ -220,6 +224,10 @@ SKILL_KEYWORDS = {
     "LLM Integration": ["llm", "large language model", "gpt", "openai", "claude", "gemini"],
     "RAG (Retrieval-Augmented Generation)": ["rag", "retrieval-augmented", "retrieval augmented", "vector"],
     "Machine Learning": ["machine learning", "ml ", "deep learning", "pytorch", "tensorflow"],
+    "LangChain": ["langchain", "lang chain"],
+    "LangGraph": ["langgraph", "lang graph"],
+    "AI Agents (Agentic AI)": ["agentic ai", "agentic", "ai agent", "ai agents",
+                              "autonomous agent", "multi-agent", "multi agent"],
     "n8n": ["n8n", "workflow automation"],
     "Power BI": ["power bi", "powerbi", "tableau", "data visualization"],
     "Agile/Scrum": ["agile", "scrum", "kanban"],

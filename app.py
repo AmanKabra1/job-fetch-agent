@@ -148,6 +148,10 @@ _ROLE_HINTS = [
     ("test engineer", "QA Engineer"), ("cloud engineer", "Cloud Engineer"),
     ("site reliability", "SRE"), ("software engineer", "Software Engineer"),
     ("software developer", "Software Developer"),
+    ("sde 1", "Software Engineer"), ("sde-1", "Software Engineer"),
+    ("sde i", "Software Engineer"), ("sde1", "Software Engineer"),
+    ("langchain", "AI/ML Engineer"), ("langgraph", "AI/ML Engineer"),
+    ("agentic", "AI/ML Engineer"), ("ai engineer", "AI/ML Engineer"),
 ]
 # Fallback: a dominant language -> a sensible search term.
 _LANG_HINTS = [

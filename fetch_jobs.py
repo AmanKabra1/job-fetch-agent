@@ -52,12 +52,16 @@ SEARCH_TERMS = [
     "python developer",
     "node.js developer",
     "software engineer",        # covers SDE / SDE-1 / SDE I postings
+    "SDE 1",
     "machine learning engineer",
     "AI engineer",
+    "LLM engineer",
+    "AI agent engineer",
 ]
 
 # Extra skills/keywords to emphasise on top of the resume. Edit freely.
-PREFERRED_SKILLS = ["Python", "AI", "LLM", "RAG", "Machine Learning"]
+PREFERRED_SKILLS = ["Python", "AI", "LLM", "RAG", "Machine Learning",
+                    "LangChain", "LangGraph", "Agentic AI", "Java", "Spring Boot"]
 
 
 def _clean_skill(s: str) -> str:
