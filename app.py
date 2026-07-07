@@ -221,7 +221,13 @@ BIG_COMPANIES = {
 
 _SENIOR_RE = re.compile(
     r"\b(senior|sr\.?|lead|principal|staff|architect|manager|head\s+of|"
-    r"director|vp|vice\s+president)\b", re.I)
+    r"director|vp|vice\s+president|distinguished|fellow|chief|expert|"
+    r"sde\s*(?:3|iii)|sde-?3)\b", re.I)
+# Junior/mid markers — exempt a role from the senior reject and give it a boost,
+# so initial/mid positions (incl. SDE-1) rank first for a junior/mid candidate.
+_JUNIOR_RE = re.compile(
+    r"\b(junior|jr\.?|entry[- ]?level|entry|graduate|trainee|fresher|intern|"
+    r"sde\s*(?:1|i)\b|sde-?1)\b", re.I)
 _YEARS_RE = re.compile(r"(\d{1,2})\s*\+?\s*(?:years|yrs|yr)\b", re.I)
 
 
@@ -913,10 +919,19 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
         score += 10                                             # unknown candidate years
     else:
         score += 12                                             # no requirement stated
-    if _SENIOR_RE.search(title) and cy and cy < 5:
-        score -= 15
-        exp_fit = False
-        reasons.append("senior-titled")
+    # For a junior/mid candidate (< 5 yrs) a clearly senior-titled role — Senior/
+    # Sr/Staff/Principal/Lead/Manager/Director/Distinguished/SDE-3 — is a poor fit,
+    # so REJECT it (don't just demote) and keep the feed on initial/mid positions.
+    # A junior/entry/SDE-1 title in the same string exempts it.
+    senior_title = bool(_SENIOR_RE.search(title))
+    junior_title = bool(_JUNIOR_RE.search(title))
+    if senior_title and not junior_title and cy and cy < 5:
+        return {"reject": True, "reason":
+                f"senior-level title '{title}' — you have {cy} yrs (targeting junior/mid)",
+                **_summary({"req_years": req_floor})}
+    if junior_title:                                     # initial/mid role — boost
+        score += 8
+        reasons.append("junior/mid-level fit")
 
     exp_label = (f"Your {cy}yr · needs {req_floor}+yr" if (cy and req_floor)
                  else (f"Your {cy}yr · no req stated" if cy
@@ -2032,12 +2047,25 @@ async function previewProfile(){
 
 async function loadJobs(){
   // Pull the whole ranked feed, then page through it 50 at a time on the client.
-  const r = await fetch('/api/jobs?limit=1000');
-  const d = await r.json();
-  jobs = d.jobs||[];
-  window._fetchedAt = d.fetched_at?('fetched '+d.fetched_at):'';
-  shown = PAGE;
-  renderJobs();
+  // Shows the same busy button + live timer as matchFeed/fetchJobs, so a click
+  // never looks like it did nothing while the request is in flight.
+  const btn=$('#matchBtn'); const old=btn?btn.textContent:''; if(btn) setBusy(btn,true);
+  jobs=[]; $('#count').textContent='';
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty"><span class="spin"></span> <span id="loadStatus">Loading the daily feed…</span></td></tr>';
+  const stopTimer=startTimer(t=>{
+    if(btn) btn.innerHTML='<span class="spin"></span> Loading… '+t;
+    const cell=document.getElementById('loadStatus');
+    if(cell) cell.textContent='Loading the daily feed… '+t;
+  });
+  try{
+    const r = await fetch('/api/jobs?limit=1000');
+    const d = await r.json();
+    jobs = d.jobs||[];
+    window._fetchedAt = d.fetched_at?('fetched '+d.fetched_at):'';
+    shown = PAGE;
+    renderJobs();
+  }catch(e){ toast('Load error: '+e); }
+  finally{ stopTimer(); if(btn){ setBusy(btn,false); btn.textContent=old; } }
 }
 
 // Hosted (feed) mode: rank the daily feed against an uploaded resume / profile —

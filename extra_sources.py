@@ -243,6 +243,61 @@ def fetch_arbeitnow(terms, max_age_hours=0):
     return rows
 
 
+def fetch_himalayas(terms, max_age_hours=0):
+    """Himalayas — free, no-auth remote-jobs API (https://himalayas.app/api).
+    Filtered to dev roles; parsed defensively so a schema change just yields []."""
+    try:
+        r = requests.get("https://himalayas.app/jobs/api",
+                         params={"limit": 100},
+                         headers=_UA, timeout=_TIMEOUT)
+        r.raise_for_status()
+        data = r.json()
+        jobs = data.get("jobs") or data.get("data") or []
+    except Exception as e:
+        print(f"  ! himalayas failed: {e}", flush=True)
+        return []
+    rows = []
+    for j in jobs:
+        title = j.get("title") or ""
+        company = j.get("companyName") or j.get("company_name") or ""
+        haystack = title.lower()
+        if not any(tok in haystack for tok in _DEV_TOKENS):
+            continue
+        # Prefer junior/mid roles; keep ones with unknown seniority too.
+        sen = j.get("seniority") or []
+        if isinstance(sen, str):
+            sen = [sen]
+        sen_l = " ".join(str(s).lower() for s in sen)
+        if sen_l and not any(k in sen_l for k in ("junior", "mid", "entry", "associate")):
+            if any(k in sen_l for k in ("senior", "lead", "principal", "staff", "director")):
+                continue                                  # skip clearly-senior remote roles
+        # Date: pubDate/publishedDate as unix epoch or ISO string.
+        raw = j.get("pubDate") or j.get("publishedDate") or j.get("date") or ""
+        date_iso = ""
+        try:
+            date_iso = dt.datetime.utcfromtimestamp(int(raw)).isoformat()
+        except (TypeError, ValueError):
+            date_iso = str(raw)
+        if date_iso and not _within_age(date_iso, max_age_hours):
+            continue
+        url = j.get("applicationLink") or j.get("guid") or j.get("url") or ""
+        if not url:
+            continue
+        locs = j.get("locationRestrictions") or []
+        location = ", ".join(str(x) for x in locs) if isinstance(locs, list) and locs else "Remote"
+        rows.append({
+            "title": title,
+            "company": company or "",
+            "location": location,
+            "site": "himalayas",
+            "date_posted": date_iso[:10],
+            "is_remote": True,
+            "job_url": url,
+            "description": _strip_html(j.get("description") or j.get("excerpt") or ""),
+        })
+    return rows
+
+
 # Domains that are actual job postings (used to filter Tavily web results).
 _JOB_DOMAINS = (
     "linkedin.com/jobs", "indeed.", "glassdoor.", "naukri.com", "lever.co",
@@ -892,6 +947,7 @@ def fetch_extra(terms, per_term=20, max_age_hours=0, include_career=False,
         ("remoteok", lambda: fetch_remoteok(terms, max_age_hours=max_age_hours)),
         ("jobicy", lambda: fetch_jobicy(terms, per_term=per_term, max_age_hours=max_age_hours)),
         ("arbeitnow", lambda: fetch_arbeitnow(terms, max_age_hours=max_age_hours)),
+        ("himalayas", lambda: fetch_himalayas(terms, max_age_hours=max_age_hours)),
     ):
         try:
             rows += fn()
