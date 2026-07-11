@@ -29,6 +29,12 @@ jobs:
           pip install -r requirements.txt
 
       - name: Fetch jobs and write data/jobs.json
+        env:
+          # Optional: add a free Tavily key as a repo secret (Settings → Secrets →
+          # Actions → New secret, name TAVILY_API_KEY) to switch ON LinkedIn
+          # "we're hiring" posts + web-discovered ATS/company career pages.
+          # Empty when the secret isn't set — those sources simply stay off.
+          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
         run: python fetch_jobs.py
 
       - name: Publish feed to the 'feed' branch (main untouched, no Vercel deploy)

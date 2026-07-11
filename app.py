@@ -1518,6 +1518,56 @@ def api_resume_build(payload: dict):
             "ats_keywords": ats_keywords or []}
 
 
+def _build_cover_note(title: str, company: str, matched) -> str:
+    """A short, honest cover note for one job, from the saved profile + the skills
+    that matched this job's description. Template-based (no paid LLM) so it's free
+    and instant; you edit it before sending."""
+    import resume_profile as P
+    try:
+        yrs = build_saved_profile().get("experience_years") or 2
+    except Exception:
+        yrs = 2
+    top = ", ".join(list(matched)[:5]) if matched else "backend and API development"
+    role = (title or "this role").strip()
+    comp = (company or "your team").strip()
+    name = getattr(P, "NAME", ""); email = getattr(P, "EMAIL", ""); phone = getattr(P, "PHONE", "")
+    return (
+        f"Dear Hiring Team at {comp},\n\n"
+        f"I'm excited to apply for the {role} position. I'm a backend-focused software "
+        f"developer with {yrs} years of experience building scalable microservices and "
+        f"REST APIs, with hands-on strengths in {top}. In my current role I've shipped "
+        f"production services with an emphasis on clean architecture, performance, and "
+        f"reliability.\n\n"
+        f"I'd welcome the chance to bring this to {comp}; my tailored resume is attached. "
+        f"Thank you for your time and consideration.\n\n"
+        f"Best regards,\n{name}\n{email} | {phone}"
+    )
+
+
+@app.post("/api/apply/kit")
+def api_apply_kit(payload: dict):
+    """Semi-auto APPLY ASSISTANT for one job: builds a resume tailored to this job's
+    description (reusing /api/resume/build), drafts a matching cover note, and echoes
+    the apply link. You review and submit yourself — nothing is sent automatically."""
+    title = (payload.get("title") or "").strip()
+    company = (payload.get("company") or "").strip()
+    description = (payload.get("description") or "").strip()
+    job_url = (payload.get("job_url") or "").strip()
+    fmt = (payload.get("format") or "pdf").lower()
+    if fmt not in ("pdf", "docx", "both"):
+        fmt = "pdf"
+    built = api_resume_build({"title": title or "Role", "company": company or "Company",
+                              "description": description, "format": fmt})
+    matched = built.get("emphasized") or []
+    return {
+        "files": built.get("files", []),
+        "emphasized": matched,
+        "ats_keywords": built.get("ats_keywords", []),
+        "cover_note": _build_cover_note(title, company, matched),
+        "job_url": job_url, "title": title, "company": company,
+    }
+
+
 @app.post("/api/resume/tailor")
 async def api_resume_tailor(
     file: UploadFile = File(...),
@@ -1731,6 +1781,10 @@ INDEX_HTML = r"""<!doctype html>
   .spin { display:inline-block; width:14px; height:14px; border:2px solid #fff5; border-top-color:#fff;
           border-radius:50%; animation:r .8s linear infinite; vertical-align:-2px; }
   @keyframes r { to { transform:rotate(360deg); } }
+  .modal-bg { position:fixed; inset:0; background:#000a; display:flex; align-items:center;
+              justify-content:center; z-index:60; padding:16px; }
+  .modal { background:#0e1726; border:1px solid var(--line); border-radius:12px;
+           max-width:640px; width:100%; max-height:90vh; overflow:auto; padding:18px 20px; }
   .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
   @media (max-width:680px){
     main { padding:14px 12px; }
@@ -1912,6 +1966,7 @@ INDEX_HTML = r"""<!doctype html>
   </section>
 </main>
 <div id="toast"></div>
+<div id="applyModal"></div>
 
 <script>
 const LIVE = __LIVE__;
@@ -1976,7 +2031,7 @@ function renderJobs(){
       <td class="note">${j.site?('via '+esc(j.site)):''}</td>
       <td>${esc(j.date_posted)}</td>
       <td>${j.job_url?'<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener">Open</a>':''}</td>
-      <td><button class="secondary" onclick="useInTailor(${i})">Tailor to this &#8595;</button></td>
+      <td><button onclick="applyKit(${i})" style="margin-bottom:4px">Apply</button><br><button class="secondary" onclick="useInTailor(${i})">Tailor &#8595;</button></td>
     </tr>`;
   }).join('');
 }
@@ -2185,6 +2240,49 @@ function useInTailor(i){
   $('#genTitle').value = j.title||''; $('#genCompany').value = j.company||'';
   showTab('create');
   toast('Job sent to Create resume — generate from your saved resume (A) or tailor an upload (B).');
+}
+
+// Semi-auto APPLY ASSISTANT: for one job, tailor the resume to it, draft a cover
+// note, and open the apply link — you review and submit yourself. No auto-submit.
+async function applyKit(i){
+  const j=jobs[i]; if(!j) return;
+  toast('Preparing your apply kit — tailoring resume to this job…');
+  try{
+    const r=await fetch('/api/apply/kit',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({title:j.title||'', company:j.company||'',
+                           description:j.description||'', job_url:j.job_url||'', format:'pdf'})});
+    const d=await r.json();
+    if(!r.ok){ toast('Apply kit failed: '+(d.detail||r.status)); return; }
+    window._applyKit=d; showApplyModal(j, d);
+  }catch(e){ toast('Apply kit error: '+e); }
+}
+function showApplyModal(j, d){
+  const files=d.files||[];
+  const emph=(d.emphasized||[]).slice(0,12).map(s=>'<span class="tag have" style="font-size:10px">'+esc(s)+'</span>').join('');
+  const dl=files.map((f,k)=>'<button onclick="dlKitFile('+k+')">Download '+esc(f.name)+'</button>').join(' ');
+  $('#applyModal').innerHTML=
+    '<div class="modal-bg" onclick="if(event.target===this)closeApply()"><div class="modal">'
+    +'<div class="bar" style="justify-content:space-between"><strong>Apply kit — '+esc(j.title||'')+'</strong>'
+    +'<button class="secondary" onclick="closeApply()">Close</button></div>'
+    +'<div class="note" style="margin:-4px 0 14px">'+esc(j.company||'')+(j.location?(' · '+esc(j.location)):'')+'</div>'
+    +'<div class="field"><label>1 · Resume tailored to this job</label>'
+    +'<div class="bar">'+(dl||'<span class="note">No file.</span>')+'</div>'
+    +(emph?('<div class="tagrow" style="margin-top:6px">'+emph+'</div>'):'')+'</div>'
+    +'<div class="field" style="margin-top:12px"><label>2 · Cover note (edit, then copy)</label>'
+    +'<textarea id="coverBox" style="min-height:180px">'+esc(d.cover_note||'')+'</textarea>'
+    +'<div class="bar" style="margin-top:6px"><button class="secondary" onclick="copyCover()">Copy cover note</button></div></div>'
+    +'<div class="field" style="margin-top:12px"><label>3 · Apply on the site</label><div>'
+    +(j.job_url?('<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener"><button>Open job &amp; apply &#8599;</button></a>')
+               :'<span class="note">This listing has no direct apply link.</span>')
+    +'</div><div class="note" style="margin-top:6px">Review the resume &amp; note, then submit on the site yourself.</div></div>'
+    +'</div></div>';
+}
+function closeApply(){ $('#applyModal').innerHTML=''; }
+function dlKitFile(k){ const f=((window._applyKit||{}).files||[])[k]; if(f) b64Download(f.name, f.b64, f.mime); }
+function copyCover(){ const t=$('#coverBox'); if(!t) return; t.select();
+  const done=()=>toast('Cover note copied.');
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(t.value).then(done,()=>{document.execCommand('copy');done();}); }
+  else { document.execCommand('copy'); done(); }
 }
 
 async function generateResume(){
