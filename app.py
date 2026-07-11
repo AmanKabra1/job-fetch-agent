@@ -230,6 +230,24 @@ _JUNIOR_RE = re.compile(
     r"sde\s*(?:1|i)\b|sde-?1)\b", re.I)
 _YEARS_RE = re.compile(r"(\d{1,2})\s*\+?\s*(?:years|yrs|yr)\b", re.I)
 
+# India-location detection — you apply from India, so India-based roles
+# (onsite / hybrid / WFH-in-India) are the most actionable and rank highest;
+# global remote-anywhere roles are still kept but ranked a little lower.
+_INDIA_CITIES = (
+    "india", "bengaluru", "bangalore", "mumbai", "delhi", "noida", "gurgaon",
+    "gurugram", "hyderabad", "pune", "chennai", "kolkata", "ahmedabad", "jaipur",
+    "indore", "chandigarh", "kochi", "coimbatore", "nagpur", "surat", "lucknow",
+    "thiruvananthapuram", "vadodara", "mysuru", "mysore", "gurgaon/gurugram",
+)
+_HYBRID_RE = re.compile(
+    r"\b(hybrid|work[\s-]?from[\s-]?office|wfo|on[\s-]?site|in[\s-]?office)\b", re.I)
+
+
+def _india_location(text: str) -> bool:
+    """True if the text names India or a major Indian city."""
+    t = (text or "").lower()
+    return any(c in t for c in _INDIA_CITIES)
+
 
 def _required_years(text: str) -> int:
     """Largest 'N years' mentioned in a JD (rough seniority signal). 0 if none."""
@@ -957,14 +975,22 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
         score += 10
         reasons.append("domain match")
 
-    # 5. LOCATION / REMOTE (5) -------------------------------------------------
+    # 5. LOCATION / WORK-MODE --------------------------------------------------
+    # You apply from India, so India-based roles (onsite / hybrid / WFH-in-India)
+    # are the most actionable and get the biggest boost; global remote-anywhere is
+    # still welcome but ranked a bit lower.
     is_remote = bool(r.get("is_remote"))
     loc = str(r.get("location") or "")
-    locpref = (profile.get("location_preference") if profile else "") or ""
-    if is_remote:
-        score += 5
-    elif locpref and locpref.lower() in loc.lower():
-        score += 5
+    in_india = _india_location(loc) or _india_location(blob)
+    if in_india:
+        score += 10
+        reasons.append("India-based (apply-ready)")
+        if _HYBRID_RE.search(blob):
+            score += 3
+            reasons.append("hybrid / on-site")
+    elif is_remote:
+        score += 3
+        reasons.append("remote (global)")
 
     # --- soft preference nudges (kept from the product spec) ------------------
     employees = _employees_min(r.get("company_num_employees"))
