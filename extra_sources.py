@@ -802,6 +802,7 @@ def fetch_linkedin_hiring_posts(terms, location="", max_results=12, max_age_hour
         except Exception as e:
             print(f"  ! linkedin-posts {term!r} failed: {e}", flush=True)
             continue
+        _url_ok = _kw_ok = 0
         for res in results:
             url = res.get("url", "")
             if not url or url in seen:
@@ -810,9 +811,11 @@ def fetch_linkedin_hiring_posts(terms, location="", max_results=12, max_age_hour
             if not any(p in u for p in ("linkedin.com/posts", "linkedin.com/feed",
                                         "linkedin.com/pulse")):
                 continue
+            _url_ok += 1
             content = res.get("content", "")
             if not _kw_match(f"{res.get('title','')} {content}", terms):
                 continue
+            _kw_ok += 1
             seen.add(url)
             title = (res.get("title", "") or f"{term} — hiring (LinkedIn post)").strip()
             for sep in (" | ", " - ", " on LinkedIn", " – "):
@@ -825,6 +828,8 @@ def fetch_linkedin_hiring_posts(terms, location="", max_results=12, max_age_hour
                 "is_remote": "remote" in (title + " " + content).lower(),
                 "job_url": url, "description": content[:1500],
             })
+        print(f"  linkedin-posts {term!r}: {len(results)} raw / {_url_ok} post-URL "
+              f"/ {_kw_ok} kept", flush=True)
     return rows
 
 
