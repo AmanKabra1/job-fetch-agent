@@ -770,25 +770,29 @@ def fetch_tavily_ats(terms, location="", max_results=5, max_age_hours=0):
     return rows
 
 
-def fetch_linkedin_hiring_posts(terms, location="", max_results=6, max_age_hours=0):
-    """Recent LinkedIn *posts* (the feed 'we're hiring for X' posts), NOT the jobs
-    board — those board listings are often stale, while posts are fresh and name a
-    live opening. LinkedIn blocks scraping its feed and it's against their ToS, so
-    we go through public web search (Tavily) for indexed linkedin.com/posts URLs.
-    Best-effort: needs TAVILY_API_KEY and only finds what's publicly indexed.
+def fetch_linkedin_hiring_posts(terms, location="", max_results=12, max_age_hours=0):
+    """Recent LinkedIn *posts* — the 'we're hiring for X' / 'DM me' posts that HRs,
+    recruiters and employees write, NOT the jobs board (board listings are often
+    stale; these posts are fresh and name a live opening with a direct contact).
+    LinkedIn blocks scraping its feed and it's against their ToS, so we go through
+    public web search (Tavily) for indexed linkedin.com/posts URLs. Best-effort:
+    needs TAVILY_API_KEY and only finds what's publicly indexed.
 
     Returns job-shaped rows; the post URL is the apply/contact link."""
     key = os.environ.get("TAVILY_API_KEY")
     if not key:
         return []
     rows, seen = [], set()
-    for term in list(terms)[:3]:
-        q = (f'"hiring" OR "we are hiring" OR "now hiring" {term} {location} '
-             f'site:linkedin.com/posts').strip()
+    # More terms + a richer hiring-intent query = more HR/recruiter/employee posts.
+    for term in list(terms)[:5]:
+        q = (f'({term}) ("we are hiring" OR "we\'re hiring" OR "now hiring" OR '
+             f'"hiring for" OR "immediate hiring" OR "open position" OR '
+             f'"open role" OR "join our team" OR "DM me" OR "share your resume") '
+             f'{location} site:linkedin.com/posts').strip()
         try:
             r = requests.post("https://api.tavily.com/search", json={
                 "api_key": key, "query": q, "max_results": max_results,
-                "search_depth": "basic", "topic": "news", "days": 14,
+                "search_depth": "basic", "topic": "news", "days": 21,
                 "include_domains": ["linkedin.com"],
             }, headers=_UA, timeout=_TIMEOUT)
             r.raise_for_status()
@@ -800,7 +804,9 @@ def fetch_linkedin_hiring_posts(terms, location="", max_results=6, max_age_hours
             url = res.get("url", "")
             if not url or url in seen:
                 continue
-            if "linkedin.com/posts" not in url.lower() and "linkedin.com/feed" not in url.lower():
+            u = url.lower()
+            if not any(p in u for p in ("linkedin.com/posts", "linkedin.com/feed",
+                                        "linkedin.com/pulse")):
                 continue
             content = res.get("content", "")
             if not _kw_match(f"{res.get('title','')} {content}", terms):

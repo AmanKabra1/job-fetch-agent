@@ -687,23 +687,7 @@ def build_saved_profile() -> dict:
                 seen.add(c.lower())
                 skills.append(c)
 
-    # --- Experience years: compute from actual dates, don't rely on text -----
-    import datetime as _dt
-    _MON = {"jan":1,"feb":2,"mar":3,"apr":4,"may":5,"jun":6,
-            "jul":7,"aug":8,"sep":9,"oct":10,"nov":11,"dec":12}
     exp = getattr(RP, "EXPERIENCE", []) or []
-    earliest = None
-    for j in exp:
-        m = re.match(r"([A-Za-z]+)\s+(\d{4})", j.get("dates", ""))
-        if m:
-            mon = _MON.get(m.group(1).lower()[:3])
-            yr = int(m.group(2))
-            if mon:
-                d = _dt.date(yr, mon, 1)
-                if earliest is None or d < earliest:
-                    earliest = d
-    today = _dt.date.today()
-    experience_years = max(1, round((today - earliest).days / 365)) if earliest else 2
 
     # --- Titles: all distinct titles from every experience entry -------------
     all_titles = list(dict.fromkeys(j.get("title", "") for j in exp if j.get("title")))
@@ -712,6 +696,28 @@ def build_saved_profile() -> dict:
     # --- Resume text: include dates + title headers so inference is richer ---
     summary = getattr(RP, "SUMMARY_TEMPLATE", "").replace(
         "{stack}", ", ".join(getattr(RP, "DEFAULT_STACK", [])))
+
+    # --- Experience years ----------------------------------------------------
+    # Prefer the years explicitly STATED in the resume summary (your source of
+    # truth, e.g. "2 years") — stable, and you control it by editing the resume.
+    # Only if none is stated, fall back to computing from the earliest role's
+    # start date, FLOORED (int) so a partly-elapsed year never rounds you up.
+    import datetime as _dt
+    _MON = {"jan":1,"feb":2,"mar":3,"apr":4,"may":5,"jun":6,
+            "jul":7,"aug":8,"sep":9,"oct":10,"nov":11,"dec":12}
+    experience_years = _infer_years(summary)          # "N years" in the summary
+    if not experience_years:
+        earliest = None
+        for j in exp:
+            m = re.match(r"([A-Za-z]+)\s+(\d{4})", j.get("dates", ""))
+            if m:
+                mon = _MON.get(m.group(1).lower()[:3])
+                if mon:
+                    d = _dt.date(int(m.group(2)), mon, 1)
+                    if earliest is None or d < earliest:
+                        earliest = d
+        today = _dt.date.today()
+        experience_years = max(1, int((today - earliest).days / 365)) if earliest else 2
     exp_lines = []
     for j in exp:
         exp_lines.append(f"{j.get('dates','')} — {j.get('title','')} at {j.get('company','')}")

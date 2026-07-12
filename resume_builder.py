@@ -178,8 +178,11 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
         return t
 
     def bullets(items):
+        # NOTE: do NOT pass value="bullet" on ListItem — reportlab then renders the
+        # literal word "bullet" as the marker. The ListFlowable's start="•" supplies
+        # the real bullet glyph for every item.
         return ListFlowable(
-            [ListItem(Paragraph(b, bullet_st), value="bullet", leftIndent=12)
+            [ListItem(Paragraph(b, bullet_st), leftIndent=12)
              for b in items],
             bulletType="bullet", bulletFontSize=6.5, start="•",
             leftIndent=12, spaceBefore=0.5, spaceAfter=0.5,
