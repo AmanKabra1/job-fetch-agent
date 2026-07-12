@@ -174,14 +174,21 @@ def fetch_all_jobs() -> pd.DataFrame:
             frames.append(df)
             print(f"    -> {len(df)} rows", flush=True)
 
-    # Extra real sources — Remotive + RemoteOK + Jobicy + Arbeitnow AND direct
-    # company career pages (Greenhouse/Lever/Ashby ATS APIs + Hacker News + We
-    # Work Remotely). include_career=True makes the hosted feed match what a local
-    # "Fetch live jobs" with the career-pages toggle returns, so Vercel and local
-    # show the SAME all-websites result.
+    # Extra real sources — Remotive + RemoteOK + Jobicy + Arbeitnow + Himalayas AND
+    # direct company career pages (Greenhouse/Lever/Ashby ATS APIs + HN + WWR).
+    #
+    # Tavily-billed sources (web-discovered ATS boards, company careers, LinkedIn
+    # hiring posts) only run TWICE A DAY (03:00 & 15:00 UTC) — or on a manual run
+    # with FORCE_TAVILY=1 — so the free Tavily tier (1000 searches/mo) isn't burned
+    # by the every-3h schedule. The free sources still run on every cron run.
+    import datetime as _dt
+    _hour = _dt.datetime.utcnow().hour
+    use_tavily = os.environ.get("FORCE_TAVILY") == "1" or _hour in (3, 15)
+    print(f"  Tavily sources this run: {'ON' if use_tavily else 'off (free sources only)'}",
+          flush=True)
     try:
         extra = ES.fetch_extra(SEARCH_TERMS, per_term=20, max_age_hours=HOURS_OLD,
-                               include_career=True)
+                               include_career=True, use_tavily=use_tavily)
         if extra:
             edf = pd.DataFrame(extra)
             edf["search_term"] = "remote-api"

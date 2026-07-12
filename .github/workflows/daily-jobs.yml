@@ -30,11 +30,12 @@ jobs:
 
       - name: Fetch jobs and write data/jobs.json
         env:
-          # Optional: add a free Tavily key as a repo secret (Settings → Secrets →
-          # Actions → New secret, name TAVILY_API_KEY) to switch ON LinkedIn
-          # "we're hiring" posts + web-discovered ATS/company career pages.
-          # Empty when the secret isn't set — those sources simply stay off.
+          # Free Tavily key (repo secret) switches ON LinkedIn "we're hiring" posts
+          # + web-discovered ATS/company career pages. Empty → those sources stay off.
+          # To stay in the free tier, fetch_jobs.py only calls Tavily at 03:00 & 15:00
+          # UTC on the schedule; FORCE_TAVILY=1 makes a MANUAL run always use it.
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+          FORCE_TAVILY: ${{ github.event_name == 'workflow_dispatch' && '1' || '0' }}
         run: python fetch_jobs.py
 
       - name: Publish feed to the 'feed' branch (main untouched, no Vercel deploy)

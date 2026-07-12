@@ -784,7 +784,9 @@ def fetch_linkedin_hiring_posts(terms, location="", max_results=12, max_age_hour
         return []
     rows, seen = [], set()
     # More terms + a richer hiring-intent query = more HR/recruiter/employee posts.
-    for term in list(terms)[:5]:
+    # topic=general (not news — LinkedIn posts are rarely indexed as news) with a
+    # recent time window is what actually surfaces these posts.
+    for term in list(terms)[:4]:
         q = (f'({term}) ("we are hiring" OR "we\'re hiring" OR "now hiring" OR '
              f'"hiring for" OR "immediate hiring" OR "open position" OR '
              f'"open role" OR "join our team" OR "DM me" OR "share your resume") '
@@ -792,7 +794,7 @@ def fetch_linkedin_hiring_posts(terms, location="", max_results=12, max_age_hour
         try:
             r = requests.post("https://api.tavily.com/search", json={
                 "api_key": key, "query": q, "max_results": max_results,
-                "search_depth": "basic", "topic": "news", "days": 21,
+                "search_depth": "basic", "time_range": "month",
                 "include_domains": ["linkedin.com"],
             }, headers=_UA, timeout=_TIMEOUT)
             r.raise_for_status()
@@ -943,10 +945,15 @@ def scrape_career_pages(keywords, experience_level=None, location="",
 
 
 def fetch_extra(terms, per_term=20, max_age_hours=0, include_career=False,
-                experience_level=None, location=""):
+                experience_level=None, location="", use_tavily=True):
     """All extra sources combined. Never raises — returns whatever came back.
-    Free remote-job APIs (Remotive, RemoteOK, Jobicy, Arbeitnow), plus — when
-    include_career — direct company career pages via scrape_career_pages()."""
+    Free remote-job APIs (Remotive, RemoteOK, Jobicy, Arbeitnow, Himalayas), plus —
+    when include_career — direct company career pages via scrape_career_pages().
+
+    use_tavily gates ONLY the Tavily-billed sources (web-discovered ATS boards,
+    company careers, LinkedIn hiring posts). The free ATS registry + HN/WWR still
+    run when it's False — so the caller can run Tavily less often (free-tier budget)
+    while keeping the free sources on every run."""
     rows = []
     for name, fn in (
         ("remotive", lambda: fetch_remotive(terms, per_term=per_term, max_age_hours=max_age_hours)),
@@ -962,7 +969,8 @@ def fetch_extra(terms, per_term=20, max_age_hours=0, include_career=False,
     if include_career:
         try:
             rows += scrape_career_pages(terms, experience_level=experience_level,
-                                        location=location, max_age_hours=max_age_hours)
+                                        location=location, max_age_hours=max_age_hours,
+                                        use_tavily=use_tavily)
         except Exception as e:
             print(f"  ! career pages failed: {e}", flush=True)
     return rows
