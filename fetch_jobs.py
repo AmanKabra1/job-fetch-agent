@@ -274,13 +274,38 @@ def main():
     today_rows = jobs.to_dict("records")
     print(f"Total unique jobs this run: {len(today_rows)}", flush=True)
 
-    # REPLACE, not append: each day the feed is just today's latest jobs, ranked.
-    # (Safety only: if today's scrape came back thin — boards block sometimes —
-    # top up from yesterday's feed so the page is never sparse below the floor.)
+    # REPLACE, not append: each run the feed is this run's latest jobs, ranked.
+    existing = load_existing()
+    seen = {str(r.get("job_url", "")) for r in today_rows}
+
+    # Carry forward the Tavily-only sources (LinkedIn "we're hiring" posts +
+    # web-discovered career pages) from the previous feed. They're fetched only
+    # twice a day (to stay in the free Tavily tier), so on the ~6 non-Tavily runs
+    # each day they'd otherwise vanish from the feed. Keep the recent ones (by
+    # date_fetched, up to CARRY_DAYS old) so they persist between Tavily runs.
+    CARRY_DAYS = 3
+    now = datetime.now(timezone.utc)
+    def _tavily_row(r):
+        s = (r.get("site") or "").lower()
+        return "linkedin post" in s or "via tavily" in s
+    def _fresh(r):
+        try:
+            d = datetime.strptime(str(r.get("date_fetched", ""))[:16], "%Y-%m-%d %H:%M")
+            return (now.replace(tzinfo=None) - d).days <= CARRY_DAYS
+        except (ValueError, TypeError):
+            return True
+    carried = [r for r in existing
+               if _tavily_row(r) and _fresh(r) and str(r.get("job_url", "")) not in seen]
+    if carried:
+        today_rows = today_rows + carried
+        seen |= {str(r.get("job_url", "")) for r in carried}
+        print(f"  carried forward {len(carried)} Tavily rows (LinkedIn posts / career "
+              f"pages) from the previous feed.", flush=True)
+
+    # Safety: if this run's scrape came back thin — boards block sometimes — top up
+    # from the previous feed so the page is never sparse below the floor.
     feed_rows = today_rows
     if len(today_rows) < MIN_FEED:
-        existing = load_existing()
-        seen = {str(r.get("job_url", "")) for r in today_rows}
         feed_rows = today_rows + [r for r in existing
                                   if str(r.get("job_url", "")) not in seen]
         print(f"  thin scrape ({len(today_rows)}); topped up from previous feed "
