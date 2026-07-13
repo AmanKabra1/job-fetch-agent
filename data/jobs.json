@@ -1,29 +1,15 @@
 {
-"fetched_at": "2026-07-13 04:07 UTC",
-"count": 276,
+"fetched_at": "2026-07-13 06:00 UTC",
+"count": 286,
 "jobs": [
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Java Full Stack Developer",
-"company": "Agiliad",
-"location": "IN",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Development Engineer 3 - Java",
+"company": "Amadeus",
+"location": "KA, IN",
 "site": "indeed",
-"date_posted": "2026-07-12",
-"job_url": "https://in.indeed.com/viewjob?jk=d92100223cf77a1c",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Java Full Stack Developer",
-"company": "Persistent Systems",
-"location": "MH, IN",
-"site": "indeed",
-"date_posted": "2026-07-12",
-"job_url": "https://in.indeed.com/viewjob?jk=f4d91e8a652e05bb",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=15026cc1e4860ff2",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -31,7 +17,21 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Python Full Stack Developer",
+"company": "Gotoz Techno Solution",
+"location": "TN, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=ac68ae77bc8471e1",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Developer, Java, AVP",
 "company": "NatWest Group",
 "location": "HR, IN",
@@ -45,7 +45,21 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Java Full Stack Developer",
+"company": "Agiliad",
+"location": "IN",
+"site": "indeed",
+"date_posted": "2026-07-12",
+"job_url": "https://in.indeed.com/viewjob?jk=d92100223cf77a1c",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "node.js developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Backend Developer (Python, GenAI )",
 "company": "CG-VAK Software & Exports Ltd.",
 "location": "Noida, Uttar Pradesh, India",
@@ -56,10 +70,24 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Backend Developer (Java / Python)",
+"company": "BMC Software",
+"location": "Bengaluru East, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4420900826",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Full Stack Engineer - NodeJS and RoR",
 "company": "SchoolMitra",
 "location": "Gurugram, Haryana, India",
@@ -73,7 +101,21 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer (Java)",
+"company": "Veradigm®",
+"location": "Pune Division, Maharashtra, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4420982880",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Engineer - AI/ML with Python",
 "company": "HARMAN India",
 "location": "Bengaluru, Karnataka, India",
@@ -87,7 +129,7 @@
 "search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python Backend developer",
 "company": "Persistent Systems",
 "location": "Nagpur, Maharashtra, India",
@@ -101,7 +143,21 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "GenAI, Cloud & Backend Development (AWS/Azure, Python, APIs, ServiceNow)",
+"company": "Infosys",
+"location": "Hyderabad, Telangana, India",
+"site": "linkedin",
+"date_posted": "2026-07-12",
+"job_url": "https://www.linkedin.com/jobs/view/4438962412",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "python developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Java Full Stack Developer",
 "company": "Adro Infotech",
 "location": "TS, IN",
@@ -115,7 +171,7 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Development Engineer 2 [Python/Frappe/ERPNext]",
 "company": "BuildNext Construction Solutions (P) Ltd",
 "location": "KL, IN",
@@ -129,7 +185,7 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Backend Developer (Python, GenAI )",
 "company": "optimhire",
 "location": "UP, IN",
@@ -143,7 +199,21 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Python Backend Developer - Immediate Joiner Required",
+"company": "techolution",
+"location": "Hyderabad, Telangana, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439125638",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "python developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python Backend Developer",
 "company": "TECHNIX TECHNOLOGY",
 "location": "Patna, Bihar, India",
@@ -157,7 +227,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python Backend Developer",
 "company": "Avinyaa Ed Tech Private Limited",
 "location": "Surat, Gujarat, India",
@@ -171,7 +241,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Jr. Python Developer",
 "company": "Propel Technology",
 "location": "TN, IN",
@@ -185,7 +255,35 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "HTML Developer Intern",
+"company": "Za Charity Feed Foundation",
+"location": "MH, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=bdb6c775399e6caa",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Node.js Developer Intern",
+"company": "Unikwork",
+"location": "GJ, IN",
+"site": "indeed",
+"date_posted": "2026-07-12",
+"job_url": "https://in.indeed.com/viewjob?jk=8f3dc36cf17d5cdd",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "51 to 200",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "SDE Intern (with Agentic AI)",
 "company": "Capabl from Elite Techno Groups",
 "location": "Remote, IN",
@@ -196,10 +294,10 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "11 to 50",
-"search_term": "backend developer"
+"search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python Developer Intern",
 "company": "Tamizha Media Pvt Ltd",
 "location": "TN, IN",
@@ -213,7 +311,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python Django Developer",
 "company": "Infosys",
 "location": "Bengaluru East, Karnataka, India",
@@ -227,7 +325,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Machine Learning Engineer 5",
 "company": "Adobe",
 "location": "Noida, Uttar Pradesh, India",
@@ -241,7 +339,7 @@
 "search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Full-Stack Product Engineer - Agentic First",
 "company": "Wonderdog",
 "location": "Anywhere in the World",
@@ -255,7 +353,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Lantern ( Series A ) | Software Engineers (Python, Full-Stack) | NYC (Onsite) | Full-time | withlantern.com",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -269,41 +367,13 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Developer - Application Development JAVA N 4A",
-"company": "Genpact",
-"location": "MH, IN",
-"site": "indeed",
-"date_posted": "2026-07-12",
-"job_url": "https://in.indeed.com/viewjob?jk=9fb7f42de6466331",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "10,000+",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Node.Js Developer - Remote",
-"company": "YO IT Consulting",
-"location": "Noida, Uttar Pradesh, India",
-"site": "linkedin",
-"date_posted": "2026-07-12",
-"job_url": "https://www.linkedin.com/jobs/view/4438973183",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Full Stack Developer (Python, Golang, React)",
-"company": "Info Origin Inc.",
-"location": "Pune District, Maharashtra, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Full Stack Developer (React.js, Python, PostgreSQL)",
+"company": "TRANQUIL",
+"location": "Kozhikode, Kerala, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4439534587",
+"job_url": "https://www.linkedin.com/jobs/view/4436509635",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -311,35 +381,21 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Django Developer",
-"company": "Yakwalk",
-"location": "Lalitpur, Uttar Pradesh, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4439580661",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Python/Django Developer (Full time)",
+"company": "Techquadra Software Solutions",
+"location": "MH, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=a136a51a4d945a1b",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
-"company_num_employees": "",
+"company_num_employees": "11 to 50",
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Developer III - Python",
-"company": "UST",
-"location": "Kochi, Kerala, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4361479503",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Node.js Developer",
 "company": "Amantra",
 "location": "Indore, Madhya Pradesh, India",
@@ -350,38 +406,24 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Python Developer",
-"company": "Innefu Labs",
-"location": "Delhi, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4436666713",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Node js developer",
-"company": "We credit",
-"location": "RJ, IN",
-"site": "indeed",
-"date_posted": "2026-07-11",
-"job_url": "https://in.indeed.com/viewjob?jk=6eeb3a4759ba13f8",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Engineer II, AI/Machine Learning",
+"company": "Edwards Lifesciences",
+"location": "Pune City, Maharashtra, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4400402610",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "machine learning engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Machine Learning Engineer",
 "company": "Opniscience",
 "location": "Gurgaon, Haryana, India",
@@ -392,52 +434,38 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "AI engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Engineer II, AI/Machine Learning",
-"company": "Edwards Lifesciences",
-"location": "Pune City, Maharashtra, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "SDE I/SDE II | Node JS",
+"company": "Newton",
+"location": "Gurgaon, Haryana, India",
 "site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4400198652",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439748543",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Machine Learning Engineer III, Monk",
-"company": "ACV Auctions",
-"location": "Chennai, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4377782284",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Python Developer",
+"company": "Webvio Technologies Pvt Ltd",
+"location": "WB, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=8bd3cd8d721f1587",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "RAG AI Developer (LLM + Retrieval) – EdTech",
-"company": "AP Guru",
-"location": "Mumbai, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4436678147",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "LLM engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python Trainer cum developer",
 "company": "",
 "location": "KL, IN",
@@ -451,21 +479,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "QA Engineer - ETL & DWH",
-"company": "KUMARAN SYSTEMS",
-"location": "TN, IN",
-"site": "indeed",
-"date_posted": "2026-07-12",
-"job_url": "https://in.indeed.com/viewjob?jk=3d53aedd0f8b035e",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Ubuntu Linux Kernel Test Engineer",
 "company": "Canonical Ltd.",
 "location": "APAC,  China",
@@ -479,7 +493,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Machine Learning Engineer, Ads Optimization",
 "company": "Reddit",
 "location": "Remote - United States",
@@ -493,21 +507,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Machine Learning Systems Engineer, Ads ML Platform",
-"company": "Reddit",
-"location": "Remote - United Kingdom",
-"site": "Reddit careers (Greenhouse)",
-"date_posted": "2026-07-12",
-"job_url": "https://job-boards.greenhouse.io/reddit/jobs/8022937",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Machine Learning Systems Engineer, Ads ML Platform",
 "company": "Reddit",
 "location": "Remote - The Netherlands",
@@ -521,7 +521,35 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Machine Learning Systems Engineer, Ads ML Platform",
+"company": "Reddit",
+"location": "Remote - United Kingdom",
+"site": "Reddit careers (Greenhouse)",
+"date_posted": "2026-07-12",
+"job_url": "https://job-boards.greenhouse.io/reddit/jobs/8022937",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "True",
+"company_num_employees": "",
+"search_term": "remote-api"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Java Developer",
+"company": "Infosys",
+"location": "Bengaluru East, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439113546",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python Developer",
 "company": "Infosys",
 "location": "Chennai, Tamil Nadu, India",
@@ -535,7 +563,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python Developer",
 "company": "Persistent Systems",
 "location": "Bengaluru, Karnataka, India",
@@ -549,7 +577,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python Developer",
 "company": "Persistent Systems",
 "location": "Pune City, Maharashtra, India",
@@ -563,7 +591,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python, Pyspark Developer",
 "company": "Infosys",
 "location": "Hyderabad, Telangana, India",
@@ -577,49 +605,105 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI/ML Engineer – Agentic AI",
-"company": "Induansh Private Limited",
-"location": "TS, IN",
-"site": "indeed",
-"date_posted": "2026-07-11",
-"job_url": "https://in.indeed.com/viewjob?jk=ba0205b40bbc0e27",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "LLM engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Junior Python Developer @ Dehazelabs",
-"company": "Jobs",
-"location": "",
-"site": "Career page (via Tavily)",
-"date_posted": "",
-"job_url": "https://jobs.ashbyhq.com/dehazelabs/3fc045c8-c43d-4523-b258-80e35b2930ed",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Fullstack Javascript Developer",
-"company": "DocHipo",
-"location": "Rajarhat, West Bengal, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Java Fullstack Developer",
+"company": "Infosys",
+"location": "Bengaluru East, Karnataka, India",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4439757231",
+"job_url": "https://www.linkedin.com/jobs/view/4439110632",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Java Developer",
+"company": "Scoutit",
+"location": "Bangalore Rural, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4438988264",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Java Developer",
+"company": "Scoutit",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4438990160",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Java Developer",
+"company": "Scoutit",
+"location": "Bengaluru Rural District, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4438997042",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Java Developer",
+"company": "Scoutit",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4438987222",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Java Developer",
+"company": "Scoutit",
+"location": "Bengaluru East, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4438983365",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Java Developer, India",
+"company": "AlgoSec",
+"location": "New Delhi, Delhi, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439768699",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python Developer",
 "company": "Recro",
 "location": "Hyderabad, Telangana, India",
@@ -633,13 +717,13 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Python Data Engineer",
-"company": "UST",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Python & AI Developer (MCP)",
+"company": "Lam Research",
 "location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4361711990",
+"job_url": "https://www.linkedin.com/jobs/view/4411711185",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -647,7 +731,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Node.js Developer",
 "company": "Eiosys Private Limited",
 "location": "Mumbai, Maharashtra, India",
@@ -661,7 +745,63 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Javascript Developer",
+"company": "Dev Satva",
+"location": "Ahmedabad, Gujarat, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4437239487",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "node.js developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Fullstack Javascript Developer",
+"company": "DocHipo",
+"location": "Rajarhat, West Bengal, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439757231",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "node.js developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Machine Learning Engineer",
+"company": "CodeStellars",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439128107",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "AI engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Agentic AI Engineer",
+"company": "Prudent Technologies and Consulting, Inc.",
+"location": "Hyderabad, Telangana, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439145116",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "AI engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI/ML Engineer — LLMs & RAG",
 "company": "People's Choice Tech",
 "location": "Itanagar, Arunachal Pradesh, India",
@@ -672,38 +812,10 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Machine Learning Engineer",
-"company": "Data Eminence",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4438981819",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Python Developer",
-"company": "ekhool",
-"location": "Thiruvananthapuram, Kerala, India",
-"site": "LinkedIn (public)",
-"date_posted": "",
-"job_url": "https://in.linkedin.com/jobs/view/python-developer-at-ekhool-4407182030",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python Developer",
 "company": "Arting Digital",
 "location": "Ahmedabad, Gujarat, India",
@@ -717,7 +829,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python Developer",
 "company": "Deqode",
 "location": "Mumbai Metropolitan Region",
@@ -731,7 +843,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "FastAPI Developer",
 "company": "Epergne Solutions",
 "location": "Bhubaneswar, Odisha, India",
@@ -745,7 +857,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Python Developer",
 "company": "Deqode",
 "location": "Indore, Madhya Pradesh, India",
@@ -759,13 +871,13 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Python Developer",
-"company": "DecodeUp (P) Limited",
-"location": "Chorasi, Gujarat, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "FastAPI Developer",
+"company": "Epergne Solutions",
+"location": "Trivandrum, Kerala, India",
 "site": "LinkedIn (public)",
 "date_posted": "",
-"job_url": "https://in.linkedin.com/jobs/view/python-developer-at-decodeup-p-limited-4287324800",
+"job_url": "https://in.linkedin.com/jobs/view/fastapi-developer-at-epergne-solutions-4368637683",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -773,77 +885,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Python Developer — hiring post",
-"company": "QoL Technologies Lab at the University of Geneva…",
-"location": "India",
-"site": "LinkedIn post (via Tavily)",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/posts/katarzynawac_phd-student-in-computer-science-computational-activity-7472194411171393536-Bexy",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Python Developer — hiring post",
-"company": "imsgroup #walkindrive #nowhiring #ahmedabadjobs #recruitment",
-"location": "India",
-"site": "LinkedIn post (via Tavily)",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/posts/ims-group-pvt-ltd_imsgroup-walkindrive-nowhiring-activity-7481687676522524672-kyzr",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Python Developer — hiring post",
-"company": "Anshika Tyagi's Post",
-"location": "India",
-"site": "LinkedIn post (via Tavily)",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/posts/anshika-tyagi-a4648726a_codeflies-walkindrive-hiring-activity-7481565438578196481-Vwfg",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Node.js Developer — hiring post",
-"company": "#freshers #recruitment #freshersjobs #way2freshers ...",
-"location": "India",
-"site": "LinkedIn post (via Tavily)",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/posts/way2fresher_freshers-recruitment-freshersjobs-activity-7481724033546346496-EW-4",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Node.js Developer — hiring post",
-"company": "Kohat Cement Company Ltd's Post",
-"location": "India",
-"site": "LinkedIn post (via Tavily)",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/posts/kohat-cement-company-ltd_kohatcement-hiring-jobsinpakistan-activity-7480497076431175680-rc1E",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "NODEJS DEVELOPER\n(EXP 2 – 4 YEARS)",
 "company": "Betasoft Solutions Pvt. Ltd.",
 "location": "Sahibzada Ajit Singh Nagar, Punjab, India",
@@ -854,10 +896,10 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "PrairieLearn (Remote US) — Full-Stack Software Engineer — TypeScript / Postgres / React / AI",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -871,21 +913,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Golang Developer",
-"company": "KUMARAN SYSTEMS",
-"location": "TS, IN",
-"site": "indeed",
-"date_posted": "2026-06-11",
-"job_url": "https://in.indeed.com/viewjob?jk=cde5c53352280ca3",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "PowerBI Developer",
 "company": "KUMARAN SYSTEMS",
 "location": "TS, IN",
@@ -899,7 +927,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Forward Deployed Engineer (Agentic AI)",
 "company": "Rimini Street",
 "location": "Anywhere in the World",
@@ -913,21 +941,35 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Python Developer",
-"company": "UK (Remote) @ Anyone AI",
-"location": "",
-"site": "Career page (via Tavily)",
-"date_posted": "",
-"job_url": "https://jobs.ashbyhq.com/anyone-ai/ed5d8b4a-e434-4fec-ae71-b813e3a87b19",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Entry level software developer",
+"company": "Pure Apps Information Technologies",
+"location": "Bharuch, Gujarat, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4439590226",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer Intern",
+"company": "Herald Exchange",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4438926002",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Development Engineer",
 "company": "Amazon",
 "location": "Bengaluru, Karnataka, India",
@@ -941,21 +983,49 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Software Engineer",
-"company": "Ecolab",
-"location": "Bengaluru East, Karnataka, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Development Engineer, Global Warehouse",
+"company": "Amazon",
+"location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4420967498",
+"job_url": "https://www.linkedin.com/jobs/view/4431326053",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software engineer"
+"search_term": "SDE 1"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Test Engineer",
+"company": "The Chennai Silks",
+"location": "TN, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=777998deae21b637",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "1,001 to 5,000",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Test Software Engineer - II",
+"company": "Moog, Inc",
+"location": "KA, IN",
+"site": "indeed",
+"date_posted": "2026-07-12",
+"job_url": "https://in.indeed.com/viewjob?jk=9fafa98ae5cf54c5",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Engineer, Payments, Risk, & Premium Merchant Experiences",
 "company": "Stripe",
 "location": "Dublin, Ireland",
@@ -969,21 +1039,21 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Control Software Designer- Development Engineering-Husky (India) Chennai, Guindy",
-"company": "Husky Injection Molding",
-"location": "TN, IN",
-"site": "indeed",
-"date_posted": "2026-07-08",
-"job_url": "https://in.indeed.com/viewjob?jk=6a95af9d7276fb38",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Full Stack Developer (Trainee)",
+"company": "Airocode Technologies",
+"location": "",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4438935363",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
-"company_num_employees": "1,001 to 5,000",
-"search_term": "software developer"
+"company_num_employees": "",
+"search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Backend Developer Intern",
 "company": "Gmaxepay Fintech Solutions Pvt Ltd",
 "location": "KA, IN",
@@ -997,49 +1067,7 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Full Stack Developer Intern",
-"company": "EclTalk powered by BLIG Technologies Pvt Ltd.",
-"location": "UP, IN",
-"site": "indeed",
-"date_posted": "2026-07-11",
-"job_url": "https://in.indeed.com/viewjob?jk=d01ba44646b82098",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Junior Full Stack Developer",
-"company": "eholler Digital Services Private Limited",
-"location": "TN, IN",
-"site": "indeed",
-"date_posted": "2026-07-11",
-"job_url": "https://in.indeed.com/viewjob?jk=834957ea792c4dc3",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Full Stack Developer (Trainee)",
-"company": "Airocode Technologies",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4438935363",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Engineer Trainee (IT)",
 "company": "",
 "location": "KA, IN",
@@ -1053,35 +1081,21 @@
 "search_term": "AI agent engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Backend Systems Engineer",
-"company": "Ur Technology and Computers",
-"location": "Udaipur, Rajasthan, India",
-"site": "linkedin",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Junior Full Stack Developer",
+"company": "eholler Digital Services Private Limited",
+"location": "TN, IN",
+"site": "indeed",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4439519806",
+"job_url": "https://in.indeed.com/viewjob?jk=834957ea792c4dc3",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "AI agent engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Software Engineer(Backend / Full-Stack)",
-"company": "Teravista.io Private Limited",
-"location": "Mumbai, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4439544388",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Backend Engineer- SDE-2",
 "company": "SiteRecon",
 "location": "Noida, Uttar Pradesh, India",
@@ -1095,13 +1109,13 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Software Engineer II, ITC",
-"company": "Nike",
-"location": "Karnataka, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Full Stack Developer",
+"company": "NTT DATA North America",
+"location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4438830240",
+"job_url": "https://www.linkedin.com/jobs/view/4411608817",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -1109,7 +1123,35 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Full Stack Developer",
+"company": "NTT DATA North America",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4411623487",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer, Commerce Backend",
+"company": "Docusign",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4379627081",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Engineer",
 "company": "hackajob",
 "location": "Pune Division, Maharashtra, India",
@@ -1123,7 +1165,7 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Engineer",
 "company": "Workplace Options",
 "location": "Bengaluru, Karnataka, India",
@@ -1137,7 +1179,7 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Engineer 3 - Frontend",
 "company": "eBay",
 "location": "Bengaluru, Karnataka, India",
@@ -1151,13 +1193,13 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Software Engineering (CloudCraze Developer MyCargill)",
-"company": "Cargill",
-"location": "Bengaluru, Karnataka, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer II, ITC",
+"company": "Nike",
+"location": "Karnataka, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4390009554",
+"job_url": "https://www.linkedin.com/jobs/view/4438830240",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -1165,7 +1207,49 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Calling all Software Engineers!",
+"company": "ValGenesis",
+"location": "Hyderabad, Telangana, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4270137700",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Full Stack Engineer - AI Platform",
+"company": "Teradata",
+"location": "Hyderabad, Telangana, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4362143164",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer",
+"company": "GE HealthCare",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4408847913",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Full Stack Developer",
 "company": "The Hustle House",
 "location": "Indore, Madhya Pradesh, India",
@@ -1179,13 +1263,13 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Associate Engineer Software",
-"company": "Vertiv",
-"location": "Pune Division, Maharashtra, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Intermediate Software Engineer",
+"company": "Q2",
+"location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4439574859",
+"job_url": "https://www.linkedin.com/jobs/view/4428259345",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -1193,27 +1277,13 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Full Stack Engineer - AI Platform",
-"company": "Teradata",
-"location": "Hyderabad, Telangana, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Full-stack developer",
+"company": "Amantra",
+"location": "Indore, Madhya Pradesh, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4362143164",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Full Stack Developer",
-"company": "NTT DATA North America",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4411608817",
+"job_url": "https://www.linkedin.com/jobs/view/4439559746",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -1221,13 +1291,13 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Full Stack Developer",
-"company": "NTT DATA North America",
-"location": "Bengaluru, Karnataka, India",
+"company": "UDaaann IT Solutions",
+"location": "Vadodara, Gujarat, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4411623487",
+"job_url": "https://www.linkedin.com/jobs/view/4439545973",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -1235,7 +1305,21 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Full Stack Engineer",
+"company": "Xebia",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4439550282",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "node.js developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Embedded Software Engineer",
 "company": "Meril",
 "location": "Vapi, Gujarat, India",
@@ -1249,7 +1333,7 @@
 "search_term": "software engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Test Engineer",
 "company": "Headout",
 "location": "Bengaluru, Karnataka, India",
@@ -1263,13 +1347,13 @@
 "search_term": "software engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Calling all Software Engineers!",
-"company": "ValGenesis",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer-Runtime",
+"company": "NXP Semiconductors",
 "location": "Hyderabad, Telangana, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4270137700",
+"job_url": "https://www.linkedin.com/jobs/view/4389719312",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -1277,13 +1361,13 @@
 "search_term": "software engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Full Stack Developer",
-"company": "Nishanka Infotech",
-"location": "Bhubaneswar, Odisha, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer",
+"company": "Herald Exchange",
+"location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4438946247",
+"job_url": "https://www.linkedin.com/jobs/view/4438915461",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -1291,7 +1375,7 @@
 "search_term": "software engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Engineer, Ray Core",
 "company": "Anyscale",
 "location": "Bengaluru, Karnataka, India",
@@ -1302,24 +1386,24 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software engineer"
+"search_term": "SDE 1"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Software Developer",
-"company": "STERIS",
-"location": "Pune Division, Maharashtra, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Development Eng - I",
+"company": "XCaliber Health",
+"location": "Bengaluru East, Karnataka, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4417798025",
+"job_url": "https://www.linkedin.com/jobs/view/4439582431",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software engineer"
+"search_term": "SDE 1"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Full Stack Engineer",
 "company": "Elimai.ai",
 "location": "Coimbatore, Tamil Nadu, India",
@@ -1333,7 +1417,7 @@
 "search_term": "AI engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Junior Software Developer",
 "company": "Xylem",
 "location": "Bengaluru, Karnataka, India",
@@ -1347,35 +1431,7 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Full Stack Developer Intern",
-"company": "AzeelaAI Labs",
-"location": "Pune Division, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4437233498",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Software Development Engineer",
-"company": "Amazon",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4431314202",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Development Engineer",
 "company": "Amazon",
 "location": "Bengaluru, Karnataka, India",
@@ -1389,7 +1445,7 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Development Engineer",
 "company": "Amazon",
 "location": "Bengaluru, Karnataka, India",
@@ -1403,21 +1459,35 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Software Specialist Engineer II - Full Stack Software Engineer",
-"company": "Deloitte",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Development Engineer",
+"company": "Amazon",
 "location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4421719373",
+"job_url": "https://www.linkedin.com/jobs/view/4431314202",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "JD_Full Stack Developer (MERN/MEAN)",
+"company": "Nextmeta Labs",
+"location": "Noida, Uttar Pradesh, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439769856",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "node.js developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Engineer, AI/ML",
 "company": "Google",
 "location": "Bengaluru, Karnataka, India",
@@ -1431,21 +1501,91 @@
 "search_term": "software engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Software Developer - MacOS Developer",
-"company": "Check Point Software Technologies",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-07-12",
-"job_url": "https://in.indeed.com/viewjob?jk=f7e4f36e509c0e6b",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Custom Software Engineer",
+"company": "Accenture in India",
+"location": "Ahmedabad, Gujarat, India",
+"site": "LinkedIn (public)",
+"date_posted": "",
+"job_url": "https://in.linkedin.com/jobs/view/custom-software-engineer-at-accenture-in-india-4367477196",
 "min_amount": "",
 "max_amount": "",
-"is_remote": "True",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "remote-api"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Full Stack Developer (MERN Stack)",
+"company": "Spatial alphabet",
+"location": "TS, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=273d902f13d1af5f",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
 "company_num_employees": "",
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Full Stack Developer",
+"company": "WebSenor InfoTech",
+"location": "UP, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=d7cc741f864e3f87",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "True",
+"company_num_employees": "2 to 10",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Full Stack Developer",
+"company": "Ideashacks Coworking",
+"location": "DL, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=15f4f8d190e6025e",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Developer",
+"company": "DBI360",
+"location": "Remote, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=2fa1c1a761870756",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "True",
+"company_num_employees": "",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer",
+"company": "Hawk Aerospace Private Limited",
+"location": "MH, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=f6c887a5f5158caf",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Full Stack Developer - Product Engineering",
 "company": "Avathon",
 "location": "KA, IN",
@@ -1459,7 +1599,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Developer",
 "company": "Gleco Dentistry",
 "location": "Remote, IN",
@@ -1473,7 +1613,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Full Stack Developer",
 "company": "",
 "location": "PB, IN",
@@ -1487,7 +1627,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Freelance Software tester (Magenta TV, Poland)",
 "company": "Testlio",
 "location": "EMEA",
@@ -1501,7 +1641,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Engineer - Customer Success",
 "company": "Feedzai",
 "location": "Portugal",
@@ -1515,7 +1655,21 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Full Stack Developer I",
+"company": "FedEx",
+"location": "",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4401798928",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Full Stack Developer",
 "company": "PTTR LOAD BOARD",
 "location": "Remote, IN",
@@ -1526,10 +1680,10 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Full Stack Developer",
 "company": "Excel India IMF Private Limited",
 "location": "OR, IN",
@@ -1543,7 +1697,7 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Full Stack Developer",
 "company": "Texawave Innovations Pvt Ltd",
 "location": "TN, IN",
@@ -1557,91 +1711,49 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Full Stack Developer",
-"company": "Alobha Technologies Pvt. Ltd",
-"location": "UP, IN",
-"site": "indeed",
-"date_posted": "2026-07-11",
-"job_url": "https://in.indeed.com/viewjob?jk=c6a087b5640f2092",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Software Developer",
-"company": "",
-"location": "Remote, IN",
-"site": "indeed",
-"date_posted": "2026-07-11",
-"job_url": "https://in.indeed.com/viewjob?jk=493417b14efbdb7e",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Mobile app full stack developer",
-"company": "Seven wealth e resources",
-"location": "PB, IN",
-"site": "indeed",
-"date_posted": "2026-07-11",
-"job_url": "https://in.indeed.com/viewjob?jk=cc523f6030bfd0cd",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Full Stack Developer I",
-"company": "FedEx",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer, Backend",
+"company": "Skillz",
 "location": "",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4401798928",
+"job_url": "https://www.linkedin.com/jobs/view/4411627608",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "software engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Full Stack Developer",
-"company": "Netmaxims Technologies Pvt. Ltd.",
-"location": "HR, IN",
-"site": "indeed",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer",
+"company": "SentinelOne",
+"location": "",
+"site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://in.indeed.com/viewjob?jk=3b71fcd954acede4",
+"job_url": "https://www.linkedin.com/jobs/view/4390698719",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "software engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Junior Full Stack Developer – Internship Remote",
-"company": "MediNex Workforce",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Junior Software Developer",
+"company": "avua",
 "location": "",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4438990853",
+"job_url": "https://www.linkedin.com/jobs/view/4439765454",
 "min_amount": "",
 "max_amount": "",
-"is_remote": "True",
+"is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Wildflower Health | Junior Software Engineer | Remote (US) | Full Time",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -1655,49 +1767,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "BackEnd Engineer",
-"company": "Avahi",
-"location": "Pune Division, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4431357089",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Backend Developer, India",
-"company": "AlgoSec",
-"location": "New Delhi, Delhi, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4439770632",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Software Engineer -Backend",
-"company": "Modulr",
-"location": "Pune Division, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4220088070",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Backend Engineer (SDE 2)",
 "company": "Kredivo Group",
 "location": "Bengaluru, Karnataka, India",
@@ -1711,13 +1781,13 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Software Engineer AI",
-"company": "RR Solutions",
-"location": "Indore, Madhya Pradesh, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "BackEnd Engineer",
+"company": "Avahi",
+"location": "Pune Division, Maharashtra, India",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4438976673",
+"job_url": "https://www.linkedin.com/jobs/view/4431357089",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -1725,7 +1795,21 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "SDE - 2 - Backend",
+"company": "GTMfund",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439779580",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Backend Engineer",
 "company": "Recrew AI",
 "location": "Bangalore Urban, Karnataka, India",
@@ -1739,7 +1823,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Developer",
 "company": "Scoutit",
 "location": "Bangalore Rural, Karnataka, India",
@@ -1753,7 +1837,7 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Developer",
 "company": "Scoutit",
 "location": "Bengaluru Rural District, Karnataka, India",
@@ -1767,7 +1851,7 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Developer",
 "company": "Scoutit",
 "location": "Bengaluru, Karnataka, India",
@@ -1781,7 +1865,7 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Developer",
 "company": "Milliman",
 "location": "Navi Mumbai, Maharashtra, India",
@@ -1795,7 +1879,21 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer -Backend",
+"company": "Modulr",
+"location": "Pune Division, Maharashtra, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4220088070",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Developer",
 "company": "Scoutit",
 "location": "Bengaluru South, Karnataka, India",
@@ -1809,7 +1907,7 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Developer",
 "company": "Scoutit",
 "location": "Bengaluru North, Karnataka, India",
@@ -1823,7 +1921,7 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Developer",
 "company": "Milliman",
 "location": "Navi Mumbai, Maharashtra, India",
@@ -1837,7 +1935,7 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Developer",
 "company": "Scoutit",
 "location": "Bengaluru East, Karnataka, India",
@@ -1851,7 +1949,175 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer",
+"company": "Scoutit",
+"location": "Bangalore Rural, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4438996058",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Engineer III, Software",
+"company": "Thermo Fisher Scientific",
+"location": "Hyderabad, Telangana, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4428596132",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "python developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Full Stack Developer",
+"company": "Cyberei",
+"location": "Bengaluru East, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439740879",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "node.js developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Full Stack Engineer",
+"company": "ACROSSTEK™",
+"location": "Hyderabad, Telangana, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4437246279",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "node.js developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Founding engineer, Full stack (AI)",
+"company": "Camarin AI",
+"location": "Noida, Uttar Pradesh, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4438988126",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "node.js developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer",
+"company": "CXO Inc",
+"location": "Hyderabad, Telangana, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4437240341",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer",
+"company": "RiVirtual Inc",
+"location": "Hyderabad, Telangana, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4437234508",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer",
+"company": "Scoutit",
+"location": "Bengaluru Rural District, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4438986287",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer",
+"company": "Scoutit",
+"location": "Bengaluru South, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4438993123",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software UI Engineer",
+"company": "Scoutit",
+"location": "Delhi, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4438976675",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Backend Developer, India",
+"company": "AlgoSec",
+"location": "New Delhi, Delhi, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439770632",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software UI Engineer",
+"company": "Scoutit",
+"location": "Noida, Uttar Pradesh, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4438978499",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Full Stack Software Engineer",
 "company": "Scoutit",
 "location": "Gurugram, Haryana, India",
@@ -1862,24 +2128,24 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "software engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Software Developer II",
-"company": "FedEx ACC",
-"location": "Hyderabad, Telangana, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Developer (Experience and Productivity)",
+"company": "GTMfund",
+"location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4402388504",
+"job_url": "https://www.linkedin.com/jobs/view/4439788122",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software engineer"
+"search_term": "SDE 1"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Engineer (Backend Engineer)",
 "company": "Omnissa",
 "location": "Chakdaha, West Bengal, India",
@@ -1893,49 +2159,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Backend Developer — hiring post",
-"company": "Dasari saikiran's Post",
-"location": "India",
-"site": "LinkedIn post (via Tavily)",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/posts/dasari-saikiran-979592135_wipro-freshershiring-walkindrive-activity-7481364496968613889-5phr",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Backend Developer — hiring post",
-"company": "madhumitha b's Post",
-"location": "India",
-"site": "LinkedIn post (via Tavily)",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/posts/madhumitha-b-128ba8417_hiring-angulardeveloper-walkindrive-activity-7478313859393429504-qfQd",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Software Developer — hiring post",
-"company": "Learn Generative AI the Right Way: A Simple Roadmap",
-"location": "India",
-"site": "LinkedIn post (via Tavily)",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/posts/ansh-bhatnagar-b4b495262_ai-generativeai-artificialintelligence-activity-7474393650521645056-d_FG",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "IN_Senior Associate_AI Engineer_Digital Engineering Transformation_Advisory_Chennai",
 "company": "PwC",
 "location": "TN, IN",
@@ -1949,7 +2173,7 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AUTOMATION ENGINEER L4",
 "company": "Wipro",
 "location": "KA, IN",
@@ -1963,161 +2187,35 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AUTOMATION ENGINEER L4",
-"company": "Wipro",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-07-13",
-"job_url": "https://in.indeed.com/viewjob?jk=c6d4dac703f0c950",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "DEVELOPER L3",
-"company": "Wipro",
-"location": "MH, IN",
-"site": "indeed",
-"date_posted": "2026-07-13",
-"job_url": "https://in.indeed.com/viewjob?jk=b547f1ab02832d63",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "DEVELOPER L3",
-"company": "Wipro",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-07-13",
-"job_url": "https://in.indeed.com/viewjob?jk=996e9c88c0f61b08",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "DEVELOPER L4",
-"company": "Wipro",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-07-13",
-"job_url": "https://in.indeed.com/viewjob?jk=5d073a7b1801ead3",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "DEVELOPER L3",
-"company": "Wipro",
-"location": "MH, IN",
-"site": "indeed",
-"date_posted": "2026-07-13",
-"job_url": "https://in.indeed.com/viewjob?jk=1314dcaf8a56fdd4",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "DEVELOPER L3",
-"company": "Wipro",
-"location": "MH, IN",
-"site": "indeed",
-"date_posted": "2026-07-13",
-"job_url": "https://in.indeed.com/viewjob?jk=9cb7be62463fa0ac",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "DEVELOPER L3",
-"company": "Wipro",
-"location": "MH, IN",
-"site": "indeed",
-"date_posted": "2026-07-13",
-"job_url": "https://in.indeed.com/viewjob?jk=110bc53a05ee8fde",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "DEVELOPER L4",
-"company": "Wipro",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-07-13",
-"job_url": "https://in.indeed.com/viewjob?jk=e4911ac3720f98cc",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "DEVELOPER L3",
-"company": "Wipro",
-"location": "TN, IN",
-"site": "indeed",
-"date_posted": "2026-07-12",
-"job_url": "https://in.indeed.com/viewjob?jk=c98e3221fcfe505b",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "DEVELOPER L3",
-"company": "Wipro",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-07-12",
-"job_url": "https://in.indeed.com/viewjob?jk=3d45ce1ace9d8987",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "DEVELOPER L3",
 "company": "Wipro",
 "location": "Chennai, Tamil Nadu, India",
 "site": "linkedin",
 "date_posted": "2026-07-12",
-"job_url": "https://www.linkedin.com/jobs/view/4439588506",
+"job_url": "https://www.linkedin.com/jobs/view/4439582917",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software engineer"
+"search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "DEVELOPER L3",
+"company": "Wipro",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-07-12",
+"job_url": "https://www.linkedin.com/jobs/view/4439702129",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "python developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "MERN Stack Developer Intern",
 "company": "Tamizha Media Pvt Ltd",
 "location": "TN, IN",
@@ -2131,21 +2229,7 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Web Developer Fresher",
-"company": "Kuber Jee",
-"location": "GJ, IN",
-"site": "indeed",
-"date_posted": "2026-07-11",
-"job_url": "https://in.indeed.com/viewjob?jk=47d59665e428f302",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "MERN Developer Intern",
 "company": "Sarvify Solutions",
 "location": "Pune Division, Maharashtra, India",
@@ -2156,30 +2240,16 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Front End Developer Intern",
-"company": "Benzene Corporation",
-"location": "MH, IN",
-"site": "indeed",
-"date_posted": "2026-07-12",
-"job_url": "https://in.indeed.com/viewjob?jk=191767b2711c432f",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Junior Front End Developer",
-"company": "Cyreton",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Web Developer Intern",
+"company": "",
 "location": "Remote, IN",
 "site": "indeed",
-"date_posted": "2026-07-12",
-"job_url": "https://in.indeed.com/viewjob?jk=0d2c007fb7d2533d",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=e70021ac3acdd007",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "True",
@@ -2187,41 +2257,27 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Web Developer",
-"company": "Tata Consultancy Services (TCS)",
-"location": "MH, IN",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Web Developer Intern",
+"company": "Ethiroli pvt ltd",
+"location": "TN, IN",
 "site": "indeed",
-"date_posted": "2026-07-11",
-"job_url": "https://in.indeed.com/viewjob?jk=13e496c7a36e075f",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI / ML Engineer",
-"company": "Accenture in India",
-"location": "Hyderabad, Telangana, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4428277232",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=b504c0744eb353b9",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Applied AI Engineer & Data Specialist",
-"company": "Reliance Intelligence",
-"location": "Bengaluru, Karnataka, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI / ML Engineer",
+"company": "Accenture in India",
+"location": "Pune City, Maharashtra, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4438912478",
+"job_url": "https://www.linkedin.com/jobs/view/4417634179",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -2229,7 +2285,7 @@
 "search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI / ML Engineer",
 "company": "Accenture in India",
 "location": "Bengaluru, Karnataka, India",
@@ -2240,52 +2296,24 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI / ML Engineer",
-"company": "Accenture in India",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4388886280",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI / ML Engineer",
 "company": "Accenture in India",
 "location": "Pune City, Maharashtra, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4417992168",
+"job_url": "https://www.linkedin.com/jobs/view/4417986415",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI / ML Engineer",
-"company": "Accenture in India",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4388881476",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI / ML Engineer",
 "company": "Accenture in India",
 "location": "Bengaluru, Karnataka, India",
@@ -2296,16 +2324,58 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI / ML Engineer",
 "company": "Accenture in India",
-"location": "Pune City, Maharashtra, India",
+"location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4389199179",
+"job_url": "https://www.linkedin.com/jobs/view/4388886280",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "machine learning engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI / ML Engineer",
+"company": "Accenture in India",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4417987374",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "machine learning engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI / ML Engineer",
+"company": "Accenture in India",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4388881476",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "machine learning engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Applied AI Engineer - DFT Methodology",
+"company": "NVIDIA",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4410403311",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -2313,7 +2383,35 @@
 "search_term": "AI engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI / ML Engineer",
+"company": "Accenture in India",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4417996133",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "AI engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI / ML Engineer",
+"company": "Accenture in India",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4388886275",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "LLM engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "GenAI Developer",
 "company": "Infosys",
 "location": "Bengaluru East, Karnataka, India",
@@ -2327,35 +2425,7 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI / ML Engineer",
-"company": "Accenture in India",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4388886275",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI agent engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "DST Business Analyst and Business Intelligence Developer - Husky (Guindy,Chennai)",
-"company": "Husky Injection Molding",
-"location": "TN, IN",
-"site": "indeed",
-"date_posted": "2026-07-10",
-"job_url": "https://in.indeed.com/viewjob?jk=0f6223c18a0c5211",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "1,001 to 5,000",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software QA Engineer",
 "company": "Xynosoft Solutions",
 "location": "IN",
@@ -2366,38 +2436,24 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
+"search_term": "python developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Developer",
+"company": "Scoutit",
+"location": "",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4438994067",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Backend Engineer",
-"company": "Bergs & Mark",
-"location": "",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4438970726",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Full Stack Developer II",
-"company": "FedEx",
-"location": "",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4402937810",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Engineer",
 "company": "Scoutit",
 "location": "",
@@ -2408,16 +2464,30 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software engineer"
+"search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Full Stack Engineer",
-"company": "iMerge",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Backend Engineer",
+"company": "Bergs & Mark",
 "location": "",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4439739733",
+"job_url": "https://www.linkedin.com/jobs/view/4438970726",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "python developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Software Engineer - Backend",
+"company": "CoverForce",
+"location": "",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4350752081",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -2425,7 +2495,7 @@
 "search_term": "software engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Software Engineer III - AI/ML, Prompt Engineer",
 "company": "hackajob",
 "location": "",
@@ -2436,10 +2506,10 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "AI agent engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Credo Health | Full Stack Engineer | NYC (HYBRID — 1 day/week onsite, otherwise remote) | $125k–$175k + equity | Full-time",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -2453,7 +2523,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Rho | Software Engineer | NYC (Soho) | ONSITE | Full-time | $170K-$270K + equity | https://rho.co/",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -2467,7 +2537,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Kadoa | Software & Data Engineers | Remote | Full-Time | https://kadoa.com",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -2481,7 +2551,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Delta AI | Full Stack / AI Founding Engineer | ONSITE SF Bay Area | $120-140k + 1-1.5% equity + benefits (flexible on comp)",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -2495,7 +2565,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Axle Health (health tech x logistics) | Backend, Interoperability, and DevOps roles | ONSITE: Santa Monica (5 days) | https://www.axlehealth",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -2509,7 +2579,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Enveritas (YC S18, non-profit) | Backend Software Engineer | Remote (Global) | https://enveritas.org/jobs/",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -2523,7 +2593,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "*Y Combinator | Product Engineers | San Francisco (Onsite) | Full-time | https://www.ycombinator.com/software",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -2537,7 +2607,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Cloud Developer",
 "company": "Hewlett Packard Enterprise | HPE",
 "location": "KA, IN",
@@ -2551,35 +2621,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Frontend Developer (m/f/d)",
-"company": "itesign GmbH",
-"location": "Warangal Rural, Telangana, India",
-"site": "linkedin",
-"date_posted": "2026-07-12",
-"job_url": "https://www.linkedin.com/jobs/view/4438953803",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI Automation Engineer",
-"company": "JRP Soft Tech",
-"location": "Biswanath, Assam, India",
-"site": "linkedin",
-"date_posted": "2026-07-12",
-"job_url": "https://www.linkedin.com/jobs/view/4439594842",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Web Developer Intern",
 "company": "First Reach Digital Private Limited",
 "location": "KL, IN",
@@ -2593,7 +2635,7 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI Engineer Intern",
 "company": "Spearmint technologies",
 "location": "Remote, IN",
@@ -2607,7 +2649,21 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "MERN Stack Developer",
+"company": "Seven wealth e resources",
+"location": "PB, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=fc8f71181b2b01cb",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Translation Project Coordinator (Full Remote/Full Time) - Gaming",
 "company": "Side",
 "location": "Canada,  Portugal",
@@ -2621,7 +2677,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Back End Developer",
 "company": "Tata Consultancy Services",
 "location": "Bengaluru, Karnataka, India",
@@ -2635,7 +2691,7 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI/ML Developer",
 "company": "The Hustle House",
 "location": "Indore, Madhya Pradesh, India",
@@ -2649,7 +2705,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Associate Engineer_Aerospace",
 "company": "Eaton",
 "location": "Pune Division, Maharashtra, India",
@@ -2663,7 +2719,21 @@
 "search_term": "SDE 1"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Developer",
+"company": "Bharatiya Yuva Shakti Trust (BYST)",
+"location": "Delhi, Delhi, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4439568392",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI / ML Engineer",
 "company": "Accenture in India",
 "location": "",
@@ -2677,7 +2747,7 @@
 "search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI Engineer",
 "company": "Darwix AI",
 "location": "Gurugram, Haryana, India",
@@ -2691,27 +2761,13 @@
 "search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI/ML Engineer",
-"company": "EXL",
-"location": "Noida, Uttar Pradesh, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4342106788",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Partner Engineer, Generative AI",
-"company": "Meta",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI / ML Engineer",
+"company": "Accenture in India",
 "location": "",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4374841567",
+"job_url": "https://www.linkedin.com/jobs/view/4428277236",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -2719,35 +2775,7 @@
 "search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI Automation Engineer",
-"company": "StockX",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4388959680",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Artificial Intelligence Engineer",
-"company": "ThoughtSol Infotech Ltd.",
-"location": "Noida, Uttar Pradesh, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4436675768",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI / ML Engineer",
 "company": "Accenture in India",
 "location": "",
@@ -2758,24 +2786,10 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI Engineer",
-"company": "Innova ESI",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4439525684",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI / ML Engineer",
 "company": "Accenture in India",
 "location": "",
@@ -2786,52 +2800,94 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
+"search_term": "machine learning engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "ML Engineer I",
+"company": "UST",
+"location": "Noida, Uttar Pradesh, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4361810648",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
 "search_term": "AI engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Associate Engineer",
-"company": "KONE",
-"location": "Chennai, Tamil Nadu, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI/ML Engineer",
+"company": "EXL",
+"location": "Noida, Uttar Pradesh, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4439584163",
+"job_url": "https://www.linkedin.com/jobs/view/4342106788",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "AI engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Associate Engineer",
-"company": "KONE",
-"location": "Chennai, Tamil Nadu, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI/ML Engineer",
+"company": "EXL",
+"location": "Noida, Uttar Pradesh, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4439567763",
+"job_url": "https://www.linkedin.com/jobs/view/4342126549",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "AI engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Engineer - Water",
-"company": "WSP in India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI Automation Engineer",
+"company": "StockX",
 "location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4421410904",
+"job_url": "https://www.linkedin.com/jobs/view/4388959680",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "AI engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Partner Engineer, Generative AI",
+"company": "Meta",
+"location": "",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4374841567",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "AI engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Artificial Intelligence Engineer",
+"company": "ThoughtSol Infotech Ltd.",
+"location": "Noida, Uttar Pradesh, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4436675768",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "AI engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI Modeling Engineer",
 "company": "UST",
 "location": "Bengaluru, Karnataka, India",
@@ -2842,38 +2898,38 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
+"search_term": "AI engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Founding Engineer",
+"company": "SimpleGrid",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-07-11",
+"job_url": "https://www.linkedin.com/jobs/view/4438945126",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI Developer II",
-"company": "RealPage, Inc.",
-"location": "Serilingampalli, Telangana, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Salesfore Agentforce Engineer",
+"company": "Accellor",
+"location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4426912683",
+"job_url": "https://www.linkedin.com/jobs/view/4439547691",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI agent engineer"
+"search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI Developer II",
-"company": "RealPage India",
-"location": "Serilingampalli, Telangana, India",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4427903941",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI agent engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Engineer III, Artificial Intelligence",
 "company": "Thermo Fisher Scientific",
 "location": "KA, IN",
@@ -2887,21 +2943,77 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Web Developer Trainee (Fresher)\nApply Now",
-"company": "Kapair Infotech",
-"location": "Delhi, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "SDE 1",
+"company": "GTMfund",
+"location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4438984010",
+"job_url": "https://www.linkedin.com/jobs/view/4439768982",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "SDE 1"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Dot Net Sharepoint developer",
+"company": "IR2",
+"location": "MH, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=0cded38da5990865",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Front End Developer",
+"company": "",
+"location": "TS, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=a7925a7976255869",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Backstage Developer",
+"company": "Ashra Technology",
+"location": "KA, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=c537da3b868b048b",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "WordPress Developer",
+"company": "LOVEE TECHNOLOGIES",
+"location": "RJ, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=34df124fc086e371",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "True",
+"company_num_employees": "2 to 10",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Web Developer",
 "company": "",
 "location": "TN, IN",
@@ -2915,41 +3027,13 @@
 "search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Mobile App Developer Freelancer",
-"company": "Amig Digital Network",
-"location": "AP, IN",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "DevOps Engineer",
+"company": "Muks Robotics LLP",
+"location": "MH, IN",
 "site": "indeed",
 "date_posted": "2026-07-13",
-"job_url": "https://in.indeed.com/viewjob?jk=6ecd0b07a04f9747",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Web Developer",
-"company": "Aura",
-"location": "Remote, IN",
-"site": "indeed",
-"date_posted": "2026-07-12",
-"job_url": "https://in.indeed.com/viewjob?jk=ed7c9cbc1050b78c",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "11 to 50",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "UI/Front End Developer",
-"company": "Womennnovator",
-"location": "DL, IN",
-"site": "indeed",
-"date_posted": "2026-07-12",
-"job_url": "https://in.indeed.com/viewjob?jk=8406c76a6cd6d07e",
+"job_url": "https://in.indeed.com/viewjob?jk=2489ba798f6bb562",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -2957,7 +3041,77 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "DevOps Platform Engineer",
+"company": "WebSenor",
+"location": "UP, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=3fe6ad4f115cefe1",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "True",
+"company_num_employees": "",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Content Developer",
+"company": "Orell Software Soultions Pvt Ltd",
+"location": "KL, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=60c5a1a4ea4c466e",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Web Developer/Frontend Developer",
+"company": "Pinnacle Alliances",
+"location": "MH, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=e1e11b97dc2a97e2",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Power Platform Developer",
+"company": "BBGC",
+"location": "BR, IN",
+"site": "indeed",
+"date_posted": "2026-07-13",
+"job_url": "https://in.indeed.com/viewjob?jk=d0609569fcda91e1",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "True",
+"company_num_employees": "",
+"search_term": "machine learning engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Android Developer Interns",
+"company": "Unikwork",
+"location": "GJ, IN",
+"site": "indeed",
+"date_posted": "2026-07-12",
+"job_url": "https://in.indeed.com/viewjob?jk=f6ef6868810be058",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "51 to 200",
+"search_term": "software developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Automation Engineer",
 "company": "EDUQUEST",
 "location": "HR, IN",
@@ -2971,7 +3125,7 @@
 "search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Freelance QA Engineer / Application AuditorRole Overview",
 "company": "Payara Innovations Private Limited",
 "location": "Remote, IN",
@@ -2985,7 +3139,7 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI/ML Engineer",
 "company": "",
 "location": "Remote, IN",
@@ -2996,10 +3150,10 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Forward Deploy AI Engineer (SLM)",
 "company": "Avathon",
 "location": "KA, IN",
@@ -3010,24 +3164,10 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Data Engineer - DBT, Snowflake & SSIS",
-"company": "KUMARAN SYSTEMS",
-"location": "TN, IN",
-"site": "indeed",
-"date_posted": "2026-07-12",
-"job_url": "https://in.indeed.com/viewjob?jk=a5dd79567a77a478",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Infrastructure Engineer",
 "company": "CRUTZ LEELA ENTERPRISES",
 "location": "MH, IN",
@@ -3041,7 +3181,7 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "DevOps Engineer",
 "company": "PSI CRO",
 "location": "Latvia",
@@ -3055,7 +3195,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Enterprise Security Engineer",
 "company": "DoorDash",
 "location": "USA",
@@ -3069,7 +3209,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Solution Engineer",
 "company": "Sigma Computing",
 "location": "USA",
@@ -3083,7 +3223,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Enterprise Core Sales Engineer",
 "company": "Samsara",
 "location": "USA",
@@ -3097,7 +3237,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Identity & PAM Security Engineer",
 "company": "Sporty Group",
 "location": "Europe",
@@ -3111,7 +3251,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "GenAI Engineer",
 "company": "NTT DATA",
 "location": "LATAM",
@@ -3125,7 +3265,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Electronics Engineer",
 "company": "ManTech",
 "location": "USA",
@@ -3139,7 +3279,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Forward Deployed Engineer (AI & Creative Transformation) - Marketing",
 "company": "Truelogic",
 "location": "LATAM",
@@ -3153,7 +3293,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Forward Deployed Engineer (AI & Business Transformation) – Technology & Creative Network",
 "company": "Truelogic",
 "location": "LATAM",
@@ -3167,7 +3307,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Test Automation Engineer (Quality Engineering) - Husky (Guindy,Chennai)",
 "company": "Husky Injection Molding",
 "location": "TN, IN",
@@ -3178,10 +3318,10 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "1,001 to 5,000",
-"search_term": "software developer"
+"search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "EKS Engineer",
 "company": "Infosys",
 "location": "Bengaluru East, Karnataka, India",
@@ -3195,27 +3335,41 @@
 "search_term": "software developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Web Developer",
 "company": "Accenture in India",
-"location": "Hyderabad, Telangana, India",
+"location": "Navi Mumbai, Maharashtra, India",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4337803436",
+"job_url": "https://www.linkedin.com/jobs/view/4439787426",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "python developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI / ML Engineer",
 "company": "Accenture in India",
-"location": "Pune City, Maharashtra, India",
+"location": "Coimbatore, Tamil Nadu, India",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4382717809",
+"job_url": "https://www.linkedin.com/jobs/view/4439774991",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "machine learning engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI,ML GEN AI Engineer",
+"company": "Infosys",
+"location": "Bengaluru East, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439100505",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -3223,7 +3377,35 @@
 "search_term": "AI engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI / ML Engineer",
+"company": "Accenture in India",
+"location": "Hyderabad, Telangana, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4384065626",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "LLM engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Power Programmer - Specialist Programmer Data Engineering (Q2-FY-27)",
+"company": "Infosys",
+"location": "Bengaluru East, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439109082",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "LLM engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "MERN Stack Developer",
 "company": "IMAGE MOBILES AND COMPUTERS",
 "location": "KL, IN",
@@ -3237,7 +3419,7 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "MERN Stack Developer",
 "company": "Flourishers Edge",
 "location": "Bhopal, Madhya Pradesh, India",
@@ -3248,10 +3430,10 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Web Developer for FMCG Company",
 "company": "ADAGE PHARMACEUTICALS",
 "location": "BR, IN",
@@ -3265,49 +3447,7 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Frontend Developer",
-"company": "Path-iQ",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4436659988",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Engineer I, AI Engineering",
-"company": "LPL Financial Global Capability Center",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4371020579",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI Engineer  Generative AI  Document Intelligence",
-"company": "SPADTEK SOLUTIONS",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4438913344",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Applied AI Engineer (Up to 30LPA)",
 "company": "CodeRound AI",
 "location": "",
@@ -3321,21 +3461,7 @@
 "search_term": "AI engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "GenAI Engineer",
-"company": "Teamware Solutions",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4439515667",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Generative AI Engineer",
 "company": "Recuitsolve",
 "location": "KA, IN",
@@ -3349,7 +3475,7 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Prompt Engineer",
 "company": "CAP Digisoft Solutions",
 "location": "TN, IN",
@@ -3363,35 +3489,7 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Expediting Engineer",
-"company": "Burns & McDonnell India",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4379662729",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "LLM engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI Engineer",
-"company": "XHawk",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-07-11",
-"job_url": "https://www.linkedin.com/jobs/view/4438920392",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "LLM engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Salesfore Agentforce Engineer",
 "company": "Accellor",
 "location": "KA, IN",
@@ -3405,7 +3503,7 @@
 "search_term": "AI agent engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Salesfore Agentforce Engineer",
 "company": "Accellor",
 "location": "TS, IN",
@@ -3419,7 +3517,7 @@
 "search_term": "AI agent engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Hardware Validation Engineer",
 "company": "Sun King",
 "location": "TS, IN",
@@ -3433,63 +3531,77 @@
 "search_term": "AI agent engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "AI/ML Engineer",
-"company": "WebSenor",
-"location": "UP, IN",
-"site": "indeed",
-"date_posted": "2026-07-11",
-"job_url": "https://in.indeed.com/viewjob?jk=e609bb74cff0e76f",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "AI agent engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Generative AI Engineer",
-"company": "Recruit Solve",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-07-11",
-"job_url": "https://in.indeed.com/viewjob?jk=74f1f93b89c6ac86",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI agent engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Fresher - Front End Developer",
-"company": "Gravitix Tech",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Java+Node Fullstack Developer",
+"company": "Persistent Systems",
 "location": "",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4439117795",
+"job_url": "https://www.linkedin.com/jobs/view/4439520105",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Front End Developer",
-"company": "Flourishers Edge",
-"location": "Bhopal, Madhya Pradesh, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Back End Developer",
+"company": "Duruper",
+"location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4438996400",
+"job_url": "https://www.linkedin.com/jobs/view/4437230940",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Cloud Developer",
+"company": "HPE Aruba Networking",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439778634",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "python developer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "SDE - I",
+"company": "GTMfund",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439770954",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "DEVELOPER L2",
+"company": "Wipro",
+"location": "",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439763492",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI / ML Engineer",
 "company": "YOGIJI DIGI",
 "location": "Faridabad, Haryana, India",
@@ -3503,27 +3615,13 @@
 "search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Data & AI Engineer",
-"company": "EFS Facilities Services India Pvt. Ltd.",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4437224035",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI Engineer",
-"company": "Edgecore Networks Corporation",
+"company": "GTMfund",
 "location": "Bengaluru, Karnataka, India",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4439779521",
+"job_url": "https://www.linkedin.com/jobs/view/4439769971",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -3531,13 +3629,13 @@
 "search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Generative AI Engineer",
-"company": "Tata Consultancy Services",
-"location": "Gurugram, Haryana, India",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI Engineer",
+"company": "Onebridge",
+"location": "Bangalore Urban, Karnataka, India",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4438998517",
+"job_url": "https://www.linkedin.com/jobs/view/4439753731",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -3545,7 +3643,49 @@
 "search_term": "machine learning engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI Engineer",
+"company": "GTMfund",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439776753",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "AI engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI Engineer",
+"company": "GTMfund",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439787175",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "LLM engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "AI Engineer II",
+"company": "GTMfund",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4439783183",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "LLM engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "AI Engineer",
 "company": "Milliman",
 "location": "Navi Mumbai, Maharashtra, India",
@@ -3556,10 +3696,38 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Data & AI Engineer",
+"company": "EFS Facilities Services India Pvt. Ltd.",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4437224035",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "LLM engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Generative AI Engineer",
+"company": "AI Vidya",
+"location": "Hyderabad, Telangana, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4437243289",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "LLM engineer"
+},
+{
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Blaine, WA | CaseLight Systems Inc. (CSI) | Solo Founder | Remote (US Only) | Founding Systems Engineer | FULL EQUITY (30% Stake)",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3573,7 +3741,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Twindo (Formerly Canvas; The Spatial Computing Company) | Full-time | Remote",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3587,7 +3755,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Temporal Technologies | Multiple positions in United States - WORK FROM HOME | FULL-TIME |",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3601,7 +3769,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Hover | https://hover.to | San Francisco, CA & New York, NY | ONSITE | Full-time",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3615,7 +3783,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "MONUMENTAL | https://www.monumental.co/ | Amsterdam, The Netherlands | Full Time | Onsite",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3629,7 +3797,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Conductor | San Francisco, ONSITE | Full-time",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3643,7 +3811,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "PlantingSpace | Full-time | Remote (EU time zone) + Quarterly Meet-ups | https://planting.space",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3657,7 +3825,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Beacon AI | San Carlos, CA | Hybrid (On-Site) | Full-Time | www.beaconai.co",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3671,7 +3839,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "DuckDuckGo | Multiple Roles | Remote | Full-time | $178,500 - $243,800 USD + equity",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3685,7 +3853,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "ChainSecurity | Blockchain Security Engineer | Full-time | INTERNS , HYBRID/REMOTE, Zurich, Switzerland | VISA possible (for an employment) ",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3699,7 +3867,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "CoVar | Durham, NC | https://covar.com/ | Full-time | ONSITE",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3713,7 +3881,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Factory | Security Engineer | ONSITE, San Francisco, CA | Full-Time",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3727,7 +3895,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Mitty | First Engineer| Honolulu, HI or REMOTE | Full-time | Base + Founding equity",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3741,7 +3909,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Quantum Rise | Chicago or NYC (preferred), Remote for the right candidate | Full-time | No visa sponsorship | https://www.quantumrise.com/",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3755,7 +3923,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Kiloforge | Founding Engineer | Early-Stage | Full-time | San Francisco | Onsite",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3769,7 +3937,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Forecasting Research Institute (FRI) | Data Engineer | REMOTE | Full-time",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3783,7 +3951,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
+"date_fetched": "2026-07-13 06:00 UTC",
 "title": "Fluidstack | SWE, SRE, Infrastructure, Security, Product, Design | SFO, SEA, NYC, ATX (Onsite)| Full-time | fluidstack.io",
 "company": "(HN Who's Hiring)",
 "location": "—",
@@ -3797,74 +3965,46 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Production Support Engineer",
-"company": "KUMARAN SYSTEMS",
-"location": "TN, IN",
-"site": "indeed",
-"date_posted": "2026-07-04",
-"job_url": "https://in.indeed.com/viewjob?jk=1f2173f4fbc3bd00",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "DevOps Engineer",
-"company": "KUMARAN SYSTEMS",
-"location": "TN, IN",
-"site": "indeed",
-"date_posted": "2026-06-17",
-"job_url": "https://in.indeed.com/viewjob?jk=6846a697f23b5cec",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Web Developer",
-"company": "Bergs & Mark",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Back End Developer",
+"company": "Path-iQ",
 "location": "",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4438970727",
+"job_url": "https://www.linkedin.com/jobs/view/4437230275",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "backend developer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Website Developer",
-"company": "Orgocloud Enterprises Private Limited - Digital Marketing Agency That Drives Results",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "GTM / Growth Engineer (Founding Team)",
+"company": "SuperDocs",
 "location": "",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4439771045",
+"job_url": "https://www.linkedin.com/jobs/view/4437210321",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "AI agent engineer"
 },
 {
-"date_fetched": "2026-07-13 04:07 UTC",
-"title": "Data Scientist / GenAI Engineer",
-"company": "KnowDis AI",
+"date_fetched": "2026-07-13 06:00 UTC",
+"title": "Snowflake AI / Agent Engineer",
+"company": "Mastech Digital",
 "location": "",
 "site": "linkedin",
 "date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4437219471",
+"job_url": "https://www.linkedin.com/jobs/view/4437209855",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "AI agent engineer"
 }
 ]
 }
