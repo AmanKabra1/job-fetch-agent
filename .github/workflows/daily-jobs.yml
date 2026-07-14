@@ -2,12 +2,14 @@ name: Daily Job Fetch
 
 on:
   schedule:
-    # Every 3 hours. This does NOT touch main and never triggers a Vercel
-    # redeploy — the feed is pushed to the dedicated 'feed' branch, which
-    # carries a deploy-disabling vercel.json. The live app reads the feed
-    # straight from that branch's raw GitHub URL at request time (see
-    # _read_feed() in app.py), so freshness is decoupled from deployment.
-    - cron: "0 */3 * * *"
+    # TWICE A DAY at 03:00 & 15:00 UTC = 08:30 & 20:30 IST — morning and evening,
+    # so each run catches jobs freshly posted during the Indian working day.
+    # This does NOT touch main and never triggers a Vercel redeploy — the feed is
+    # pushed to the dedicated 'feed' branch (deploy disabled there). The live app
+    # reads that branch's raw GitHub URL at request time, so freshness is
+    # decoupled from deployment. Both daily runs pull the Tavily sources (LinkedIn
+    # hiring posts etc.) — 2 runs/day stays well within the free Tavily tier.
+    - cron: "0 3,15 * * *"
   workflow_dispatch: {}   # trigger manually from the Actions tab any time
 
 permissions:
@@ -32,10 +34,9 @@ jobs:
         env:
           # Free Tavily key (repo secret) switches ON LinkedIn "we're hiring" posts
           # + web-discovered ATS/company career pages. Empty → those sources stay off.
-          # To stay in the free tier, fetch_jobs.py only calls Tavily at 03:00 & 15:00
-          # UTC on the schedule; FORCE_TAVILY=1 makes a MANUAL run always use it.
+          # The cron runs only twice a day, so Tavily runs on every run and still
+          # fits the free tier (~2 runs/day × a handful of searches).
           TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
-          FORCE_TAVILY: ${{ github.event_name == 'workflow_dispatch' && '1' || '0' }}
         run: python fetch_jobs.py
 
       - name: Publish feed to the 'feed' branch (main untouched, no Vercel deploy)

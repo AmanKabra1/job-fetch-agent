@@ -177,13 +177,11 @@ def fetch_all_jobs() -> pd.DataFrame:
     # Extra real sources — Remotive + RemoteOK + Jobicy + Arbeitnow + Himalayas AND
     # direct company career pages (Greenhouse/Lever/Ashby ATS APIs + HN + WWR).
     #
-    # Tavily-billed sources (web-discovered ATS boards, company careers, LinkedIn
-    # hiring posts) only run TWICE A DAY (03:00 & 15:00 UTC) — or on a manual run
-    # with FORCE_TAVILY=1 — so the free Tavily tier (1000 searches/mo) isn't burned
-    # by the every-3h schedule. The free sources still run on every cron run.
-    import datetime as _dt
-    _hour = _dt.datetime.utcnow().hour
-    use_tavily = os.environ.get("FORCE_TAVILY") == "1" or _hour in (3, 15)
+    # The cron runs only twice a day (see the workflow schedule), so the Tavily
+    # sources (web-discovered ATS boards, company careers, LinkedIn hiring posts)
+    # run on every run and still stay within the free Tavily tier (1000/mo). Set
+    # DISABLE_TAVILY=1 to force them off (e.g. if you switch to a busier schedule).
+    use_tavily = os.environ.get("DISABLE_TAVILY") != "1"
     print(f"  Tavily sources this run: {'ON' if use_tavily else 'off (free sources only)'}",
           flush=True)
     try:
