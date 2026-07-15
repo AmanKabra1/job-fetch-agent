@@ -1717,6 +1717,79 @@ def favicon():
     return Response(content=_FAVICON_SVG, media_type="image/svg+xml")
 
 
+# ---- PWA: installable "app" on mobile/desktop (manifest + icons + SW) -------
+def _png(b64s):
+    from fastapi import Response
+    return Response(content=base64.b64decode(b64s), media_type="image/png",
+                    headers={"Cache-Control": "public, max-age=86400"})
+
+
+@app.get("/icon-192.png", include_in_schema=False)
+def icon_192():
+    import pwa_assets
+    return _png(pwa_assets.ICON_192_B64)
+
+
+@app.get("/icon-512.png", include_in_schema=False)
+def icon_512():
+    import pwa_assets
+    return _png(pwa_assets.ICON_512_B64)
+
+
+@app.get("/apple-touch-icon.png", include_in_schema=False)
+def apple_icon():
+    import pwa_assets
+    return _png(pwa_assets.APPLE_ICON_B64)
+
+
+@app.get("/manifest.webmanifest", include_in_schema=False)
+def manifest():
+    return JSONResponse({
+        "name": "Job Finder & Resume Tailor",
+        "short_name": "Job Finder",
+        "description": "Fresh jobs matched to your resume, with one-click tailored apply.",
+        "start_url": "/",
+        "scope": "/",
+        "display": "standalone",
+        "orientation": "portrait",
+        "background_color": "#0b111c",
+        "theme_color": "#0b111c",
+        "icons": [
+            {"src": "/icon-192.png", "sizes": "192x192", "type": "image/png",
+             "purpose": "any maskable"},
+            {"src": "/icon-512.png", "sizes": "512x512", "type": "image/png",
+             "purpose": "any maskable"},
+        ],
+    }, media_type="application/manifest+json")
+
+
+# Network-first service worker: always try the live feed; fall back to the cached
+# app shell when offline. Served at root scope so it controls the whole origin.
+_SERVICE_WORKER = """
+const CACHE = 'jobfinder-v1';
+self.addEventListener('install', e => self.skipWaiting());
+self.addEventListener('activate', e => e.waitUntil(self.clients.claim()));
+self.addEventListener('fetch', e => {
+  const req = e.request;
+  if (req.method !== 'GET') return;               // don't cache POST (fetch/match)
+  e.respondWith(
+    fetch(req).then(res => {
+      const copy = res.clone();
+      caches.open(CACHE).then(c => c.put(req, copy)).catch(() => {});
+      return res;
+    }).catch(() => caches.match(req).then(m => m || caches.match('/')))
+  );
+});
+"""
+
+
+@app.get("/sw.js", include_in_schema=False)
+def service_worker():
+    from fastapi import Response
+    return Response(content=_SERVICE_WORKER, media_type="application/javascript",
+                    headers={"Cache-Control": "no-cache"})
+
+
 @app.get("/", response_class=HTMLResponse)
 def index():
     live = not _is_feed_mode()
@@ -1729,15 +1802,24 @@ INDEX_HTML = r"""<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
 <title>Job Finder & Resume Tailor</title>
 <link rel="icon" href="/favicon.ico" type="image/svg+xml"/>
+<!-- PWA: installable app on mobile/desktop -->
+<link rel="manifest" href="/manifest.webmanifest"/>
+<meta name="theme-color" content="#0b111c"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="Job Finder"/>
+<link rel="apple-touch-icon" href="/apple-touch-icon.png"/>
 <style>
   :root { --bg:#0f1623; --card:#16203140; --line:#27364d; --ink:#e7eef9; --mut:#8aa0bd;
           --accent:#3b82f6; --good:#16331a; --goodt:#9be7a4; --amb:#3a3417; --ambt:#f0d98a;
           --bad:#3a1f1f; --badt:#f0a0a0; }
   * { box-sizing:border-box; }
-  body { margin:0; background:#0b111c; color:var(--ink); font:14px/1.5 system-ui,Segoe UI,Roboto,sans-serif; }
+  body { margin:0; background:#0b111c; color:var(--ink); font:14px/1.5 system-ui,Segoe UI,Roboto,sans-serif;
+         overflow-x:hidden; -webkit-text-size-adjust:100%; }
   header { padding:18px 24px; border-bottom:1px solid var(--line); display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
   header h1 { font-size:18px; margin:0; }
   header .sub { color:var(--mut); font-size:12px; }
@@ -1792,17 +1874,28 @@ INDEX_HTML = r"""<!doctype html>
   .modal { background:#0e1726; border:1px solid var(--line); border-radius:12px;
            max-width:640px; width:100%; max-height:90vh; overflow:auto; padding:18px 20px; }
   .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  /* Respect phone notches / rounded corners (viewport-fit=cover) */
+  header { padding-left:max(24px, env(safe-area-inset-left)); padding-right:max(24px, env(safe-area-inset-right)); }
   @media (max-width:680px){
+    header { padding:12px 14px; gap:8px; }
+    header h1 { font-size:16px; }
+    header .sub { width:100%; }
     main { padding:14px 12px; }
     .bar { gap:7px; }
-    button { padding:8px 11px; font-size:12px; }
+    button { padding:9px 12px; font-size:13px; min-height:40px; }   /* comfy tap target */
+    .tabs { gap:6px; margin-bottom:16px; }
+    .tab { flex:1; text-align:center; padding:10px 8px; font-size:13px; }
     .grid2 { grid-template-columns:1fr; }
+    textarea, input, select { font-size:16px; }   /* >=16px stops iOS auto-zoom on focus */
+    /* Keep the small inline controls compact despite the 16px bump */
+    #years, #limit { width:64px; }
+    .card { padding:12px 13px; }
     /* Convert jobs table to stacked cards */
     .table-wrap { overflow-x:unset; }
     #jobsTable thead { display:none; }
     #jobsTable, #jobsTable tbody { display:block; width:100%; }
     #jobsTable tr { display:block; background:#0e172680; border:1px solid var(--line);
-                    border-radius:10px; margin-bottom:10px; padding:10px 12px; }
+                    border-radius:10px; margin-bottom:10px; padding:12px 14px; }
     #jobsTable td { display:block; border:none; padding:2px 0; font-size:13px; }
     /* Hide: row-number, Size, Site columns */
     #jobsTable td:nth-child(1),
@@ -1817,8 +1910,15 @@ INDEX_HTML = r"""<!doctype html>
     #jobsTable td:nth-child(6)::before { content:" · "; }
     /* Posted date small */
     #jobsTable td:nth-child(8) { color:var(--mut); font-size:11px; }
-    /* Apply + Tailor buttons wrap nicely */
-    #jobsTable td:nth-child(9), #jobsTable td:nth-child(10) { display:inline-block; margin-top:6px; margin-right:6px; }
+    /* Apply + Tailor: full-width, easy to tap */
+    #jobsTable td:nth-child(9), #jobsTable td:nth-child(10) { display:block; margin-top:8px; }
+    #jobsTable td:nth-child(9) a, #jobsTable td:nth-child(9) button,
+    #jobsTable td:nth-child(10) button { display:block; width:100%; text-align:center; }
+    #jobsTable td:nth-child(10) br { display:none; }
+    #jobsTable td:nth-child(10) button { margin-bottom:6px; }
+    /* Apply-kit modal fills the small screen comfortably + clears the notch */
+    .modal-bg { padding:10px; padding-bottom:max(10px, env(safe-area-inset-bottom)); }
+    .modal { padding:16px 14px; max-height:92vh; }
   }
 </style>
 </head>
@@ -2407,6 +2507,11 @@ if(!LIVE){
 // Open FRESH every time in BOTH modes — don't auto-show jobs. The user clicks a
 // button ("Fetch live jobs" / "Load latest jobs") to see them.
 loadResumes();
+
+// PWA: register the service worker so the site is installable and works offline.
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+}
 </script>
 </body>
 </html>
