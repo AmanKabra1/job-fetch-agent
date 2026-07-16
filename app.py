@@ -2705,10 +2705,12 @@ function render(){
     }
     const conf=c.confidence>=80?'':(c.confidence>=60?'md':'lo');
     const row=document.createElement('div'); row.className='co'; row.dataset.i=i;
+    const webOnly=!c.latitude;
     row.innerHTML='<span class="conf '+conf+'">'+c.confidence+'</span><div class="nm">'+esc(c.company_name)+'</div>'
       +'<div class="meta">'+esc(c.industry||'')+(c.address?' · '+esc(c.address.slice(0,50)):'')+'</div>'
       +'<div style="margin-top:3px"><span class="tag" style="border-color:'+cc+';color:'+cc+'">'+esc(c.business_type||'')+'</span>'
-      +(c.website?'<span class="tag">🌐 web</span>':'')+(c.phones&&c.phones.length?'<span class="tag">📞</span>':'')+'</div>';
+      +(c.website?'<span class="tag">🌐 web</span>':'')+(c.phones&&c.phones.length?'<span class="tag">📞</span>':'')
+      +(webOnly?'<span class="tag" title="found via web search — no map pin; click opens site">🔗 web-listed</span>':'')+'</div>';
     row.onclick=()=>focusCo(i);
     $('#list').appendChild(row);
   });
@@ -2740,7 +2742,9 @@ function popupHtml(c,i){
 }
 function focusCo(i){
   document.querySelectorAll('.co').forEach(r=>r.classList.toggle('active', r.dataset.i==i));
-  const c=VIEW[i]; if(c.latitude&&markers[i]){ map.flyTo([c.latitude,c.longitude],16); markers[i].openPopup(); }
+  const c=VIEW[i];
+  if(c.latitude&&markers[i]){ map.flyTo([c.latitude,c.longitude],16); markers[i].openPopup(); }
+  else if(c.website){ window.open(c.website,'_blank','noopener'); }  // web-only: no pin
 }
 async function enrich(i, btn){
   const c=VIEW[i]; const box=document.getElementById('enr'+i); if(!box) return;

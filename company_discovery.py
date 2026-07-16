@@ -152,21 +152,23 @@ def geocode_area(area: str):
 def _overpass_query(bbox):
     s, w, n, e = bbox
     b = f"{s},{w},{n},{e}"
-    # Every named office / shop / coworking / company / craft in the box.
+    # Every named business-like entity in the box. `nwr` = node+way+relation, so
+    # we catch far more than nodes alone. Covers offices, shops, crafts, health,
+    # education, coworking, companies AND named commercial/industrial buildings.
     return f"""
-[out:json][timeout:25];
+[out:json][timeout:50];
 (
-  node["name"]["office"]({b});
-  way["name"]["office"]({b});
-  node["name"]["amenity"="coworking_space"]({b});
-  way["name"]["amenity"="coworking_space"]({b});
-  node["name"]["shop"]({b});
-  way["name"]["shop"]({b});
-  node["name"]["company"]({b});
-  way["name"]["company"]({b});
-  node["name"]["craft"]({b});
+  nwr["name"]["office"]({b});
+  nwr["name"]["company"]({b});
+  nwr["name"]["shop"]({b});
+  nwr["name"]["craft"]({b});
+  nwr["name"]["healthcare"]({b});
+  nwr["name"]["amenity"~"^(coworking_space|bank|clinic|hospital|pharmacy|college|university|school|restaurant|cafe|fuel|car_rental|marketplace)$"]({b});
+  nwr["name"]["building"~"^(commercial|office|industrial|retail)$"]({b});
+  nwr["name"]["industrial"]({b});
+  nwr["name"]["landuse"="commercial"]({b});
 );
-out center tags 2000;
+out center tags 4000;
 """
 
 
@@ -184,29 +186,65 @@ def fetch_overpass(bbox):
     return []
 
 
+# Name keywords that strongly imply an IT / software / tech company, so it's
+# classified as IT even when OSM only tags it generically (office=company / a
+# plain named node) — most Indian IT firms aren't tagged office=it in OSM.
+_IT_NAME_HINTS = (
+    "software", "technolog", "infotech", "info tech", "it solution", "it services",
+    "systems", "solutions", "infosys", "cybernetics", "cyber", "datalab",
+    "data systems", "cloud", "websoft", "webtech", "web solution", "app labs",
+    "analytics", "saas", "digital", "infocom", "technosoft", "e-solutions",
+    "esolutions", "technologies", "technova", "infoway", "softtech", "soft tech",
+    "netsol", "software labs", "ai labs", "tech labs",
+)
+
+
+def _looks_it(name: str) -> bool:
+    n = " " + name.lower() + " "
+    return any(h in n for h in _IT_NAME_HINTS)
+
+
 def _classify(tags: dict):
     """Map OSM tags -> (industry, business_type, technical, non_technical)."""
     office = (tags.get("office") or "").lower()
     shop = (tags.get("shop") or "").lower()
     amenity = (tags.get("amenity") or "").lower()
-    name = (tags.get("name") or "").lower()
+    building = (tags.get("building") or "").lower()
+    name = tags.get("name") or ""
 
     is_coworking = (office == "coworking" or amenity == "coworking_space"
-                    or any(c in name for c in _COWORKING))
+                    or any(c in name.lower() for c in _COWORKING))
     if is_coworking:
         return "Coworking Space", "Coworking", False, True
-    if office and office in _OFFICE_INDUSTRY:
+    # Specific, trustworthy office types first (but not the generic office=company).
+    if office and office in _OFFICE_INDUSTRY and office != "company":
         ind, tech = _OFFICE_INDUSTRY[office]
         return ind, "Company / Office", tech, not tech
+    # Name-based IT/software detection for generic offices, companies, or plain
+    # named nodes/buildings (OSM rarely tags Indian IT firms as office=it).
+    if not shop and not amenity and _looks_it(name):
+        return "IT / Software", "Company / Office", True, False
+    if office == "company":
+        return "Company (general)", "Company / Office", False, True
     if office:
         return f"Office ({office})", "Company / Office", False, True
     if shop:
         return f"Retail ({shop})", "Local Business / Retail", False, True
+    if tags.get("healthcare") or amenity in ("clinic", "hospital", "pharmacy"):
+        return "Healthcare", "Healthcare", False, True
+    if amenity in ("college", "university", "school"):
+        return "Education", "Education", False, True
+    if amenity == "bank":
+        return "Finance / Banking", "Company / Office", False, True
     if amenity:
-        return f"{amenity.title()}", "Local Business", False, True
+        return amenity.replace("_", " ").title(), "Local Business", False, True
     if tags.get("craft"):
         return f"Craft ({tags['craft']})", "Small Business", False, True
-    return "Unknown", "Business", False, True
+    if building in ("commercial", "office", "retail") or tags.get("landuse") == "commercial":
+        return "Commercial Building", "Building", False, True
+    if building == "industrial" or tags.get("industrial"):
+        return "Industrial", "Building", False, True
+    return "Business", "Business", False, True
 
 
 def _norm(el):
@@ -311,26 +349,113 @@ def _confidence(r):
     return min(100, score)
 
 
-def discover(area: str, limit: int = 500):
+import os
+
+# Aggregators/social/govt lookup sites — their URLs aren't a company's own site,
+# so we skip them when harvesting company websites from web search.
+_DIRECTORY_DOMAINS = (
+    "justdial", "sulekha", "indiamart", "tradeindia", "linkedin", "indeed",
+    "glassdoor", "ambitionbox", "naukri", "facebook", "instagram", "twitter",
+    "x.com", "youtube", "wikipedia", "google.", "maps.google", "yelp",
+    "crunchbase", "zaubacorp", "tofler", "goodfirms", "clutch.co", "yellowpages",
+    "mca.gov", "quora", "reddit", "medium.com", "slideshare", "pinterest",
+    "whatsapp", "t.me", "bing.com", "duckduckgo", "scribd", "apna.co", "foundit",
+    "monster", "timesjobs", "shine.com", "hirist", "cutshort", "angel.co",
+    "wellfound", "freshersworld", "placementindia", "instahyre", "glassdoor",
+    "6figr", "ambitionbox", "trustpilot", "mouthshut", "issuu", "coursehero",
+)
+
+
+def fetch_tavily_companies(area: str, max_per_query: int = 10):
+    """Extra coverage via Tavily web search (needs TAVILY_API_KEY): find company
+    websites in the area that OSM doesn't map. Returns records WITHOUT coordinates
+    (so they list but don't pin on the map). Skips directory/aggregator domains."""
+    key = os.environ.get("TAVILY_API_KEY")
+    if not key:
+        return []
+    queries = [
+        (f"IT and software companies in {area}", "IT / Software", True),
+        (f"software development company {area} careers", "IT / Software", True),
+        (f"startups in {area}", "Startup", False),
+        (f"companies in {area} office", "Company (general)", False),
+    ]
+    rows, seen = [], set()
+    for q, industry, tech in queries:
+        try:
+            r = requests.post("https://api.tavily.com/search", json={
+                "api_key": key, "query": q, "max_results": max_per_query,
+                "search_depth": "basic",
+            }, headers=_UA, timeout=_TIMEOUT)
+            r.raise_for_status()
+            results = r.json().get("results", [])
+        except Exception as e:
+            print(f"  ! tavily-companies {q!r} failed: {e}", flush=True)
+            continue
+        for res in results:
+            url = res.get("url", "")
+            if not url:
+                continue
+            dom = re.sub(r"^https?://(www\.)?", "", url.lower()).split("/")[0]
+            if dom in seen or any(d in dom for d in _DIRECTORY_DOMAINS):
+                continue
+            seen.add(dom)
+            title = (res.get("title", "") or "").strip()
+            for sep in (" | ", " - ", " – ", " :: ", " — ", ": "):
+                title = title.split(sep)[0]
+            name = title.strip()[:80] or dom
+            rows.append({
+                "company_name": name, "legal_name": "",
+                "website": url.split("?")[0], "linkedin": "", "google_maps": "",
+                "address": "", "city": "", "state": "", "pincode": "",
+                "latitude": None, "longitude": None,
+                "industry": industry, "business_type": "Company / Office",
+                "technical_work": tech, "non_technical_work": not tech,
+                "technologies": [], "employees": "", "founded": "",
+                "careers": "", "hiring": None, "emails": [], "phones": [],
+                "social_links": {}, "ratings": {}, "coworking_name": "",
+                "building_name": "", "office_images": [], "opening_hours": "",
+                "source": ["Web (Tavily)"], "osm_id": "", "confidence": 0,
+            })
+    print(f"    -> tavily web: {len(rows)} company sites", flush=True)
+    return rows
+
+
+def discover(area: str, limit: int = 1000):
     """Main entry: area text -> list of companies (deduped, scored) + geo center."""
     geo = geocode_area(area)
     if not geo:
         return {"error": f"Could not locate '{area}'. Try a more specific area, "
                          f"locality, or pincode.", "companies": []}
     time.sleep(1)                                 # Nominatim politeness
-    elements = fetch_overpass(geo["bbox"])
-    rows = [r for r in (_norm(e) for e in elements) if r]
-    rows = _dedupe(rows)
+    # Two sources in parallel: OpenStreetMap (mapped, with coords) + Tavily web
+    # search (extra company sites OSM misses; no coords). Then merge + dedupe.
+    osm_rows, web_rows = [], []
+    with ThreadPoolExecutor(max_workers=2) as ex:
+        f_osm = ex.submit(fetch_overpass, geo["bbox"])
+        f_web = ex.submit(fetch_tavily_companies, geo["display_name"].split(",")[0] or area)
+        try:
+            osm_rows = [r for r in (_norm(e) for e in f_osm.result()) if r]
+        except Exception as e:
+            print(f"  ! osm failed: {e}", flush=True)
+        try:
+            web_rows = f_web.result()
+        except Exception as e:
+            print(f"  ! tavily failed: {e}", flush=True)
+
+    rows = _dedupe(osm_rows + web_rows)
     for r in rows:
         r["confidence"] = _confidence(r)
-    # Best/most-complete first.
-    rows.sort(key=lambda r: (r["confidence"], bool(r["website"])), reverse=True)
+    # Best/most-complete first; mapped (has coords) above web-only within same score.
+    rows.sort(key=lambda r: (r["confidence"], bool(r.get("latitude")), bool(r["website"])),
+              reverse=True)
+    sources_used = sorted({s for r in rows for s in r.get("source", [])})
     return {
         "area": area,
         "resolved": geo["display_name"],
         "center": {"lat": geo["lat"], "lon": geo["lon"]},
         "count": len(rows[:limit]),
         "total_found": len(rows),
+        "sources": sources_used,
         "companies": rows[:limit],
     }
 
