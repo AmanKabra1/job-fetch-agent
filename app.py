@@ -2654,9 +2654,14 @@ function colorFor(c){
 }
 function esc(s){return (s||'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 
+// Lock every input / filter / export control while a search runs, so the
+// entered data can't be edited mid-fetch. Unlocked again when it finishes.
+const CONTROLS=['area','limit','go','exCsv','exJson','exGeo','fSearch','fType','fIndustry','fWeb','fCowork'];
+function lock(on){ CONTROLS.forEach(id=>{const el=$('#'+id); if(el) el.disabled=on;}); }
+
 async function go(){
   const area=$('#area').value.trim(); if(!area){alert('Enter an area');return;}
-  const btn=$('#go'), old=btn.textContent; btn.disabled=true; btn.innerHTML='<span class="spin"></span> Searching…';
+  const btn=$('#go'), old=btn.textContent; lock(true); btn.innerHTML='<span class="spin"></span> Searching…';
   $('#status').textContent=''; $('#list').innerHTML='<div class="co note"><span class="spin"></span> Querying OpenStreetMap…</div>';
   try{
     const r=await fetch('/api/companies?area='+encodeURIComponent(area)+'&limit='+($('#limit').value||500));
@@ -2667,7 +2672,7 @@ async function go(){
     if(d.center) map.setView([d.center.lat,d.center.lon],14);
     buildFilters(); applyFilters();
   }catch(e){ $('#list').innerHTML='<div class="co note">Error: '+esc(e)+'</div>'; }
-  finally{ btn.disabled=false; btn.textContent=old; }
+  finally{ lock(false); btn.textContent=old; }
 }
 
 function buildFilters(){
@@ -2717,7 +2722,7 @@ function popupHtml(c,i){
   if(c.website) s.push('<div>🌐 <a href="'+esc(c.website)+'" target="_blank" rel="noopener">'+esc(c.website.replace(/^https?:\/\//,''))+'</a></div>');
   if(c.phones&&c.phones.length) s.push('<div>📞 '+esc(c.phones.join(', '))+'</div>');
   s.push('<div id="enr'+i+'"></div>');
-  if(c.website) s.push('<button class="sec" style="margin-top:6px" onclick="enrich('+i+')">Detect tech / contacts</button> ');
+  if(c.website) s.push('<button class="sec" style="margin-top:6px" onclick="enrich('+i+',this)">Detect tech / contacts</button> ');
   if(c.latitude) s.push('<a href="https://www.google.com/maps/dir/?api=1&destination='+c.latitude+','+c.longitude+'" target="_blank"><button class="sec" style="margin-top:6px">Directions</button></a>');
   s.push('<div class="note" style="margin-top:6px">confidence '+c.confidence+' · '+esc((c.source||[]).join(', '))+'</div></div>');
   return s.join('');
@@ -2726,8 +2731,9 @@ function focusCo(i){
   document.querySelectorAll('.co').forEach(r=>r.classList.toggle('active', r.dataset.i==i));
   const c=VIEW[i]; if(c.latitude&&markers[i]){ map.flyTo([c.latitude,c.longitude],16); markers[i].openPopup(); }
 }
-async function enrich(i){
+async function enrich(i, btn){
   const c=VIEW[i]; const box=document.getElementById('enr'+i); if(!box) return;
+  if(btn) btn.disabled=true;
   box.innerHTML='<span class="spin"></span> reading website…';
   try{
     const r=await fetch('/api/company/enrich',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:c.website})});
@@ -2742,7 +2748,7 @@ async function enrich(i){
     if(d.careers) h+='<div style="margin-top:4px">💼 <a href="'+esc(d.careers)+'" target="_blank">Careers page</a></div>';
     if(d.hiring) h+='<div class="tag" style="margin-top:4px;border-color:#22c55e;color:#22c55e">likely hiring</div>';
     box.innerHTML=h||'<div class="note">No extra data found on site.</div>';
-  }catch(e){ box.innerHTML='<div class="note">Enrich error.</div>'; }
+  }catch(e){ box.innerHTML='<div class="note">Enrich error.</div>'; if(btn) btn.disabled=false; }
 }
 
 // ---- Export ----
