@@ -2714,6 +2714,12 @@ function render(){
   });
   $('#status').textContent=$('#status').textContent.split(' · showing')[0]+' · showing '+VIEW.length;
 }
+function jobsUrl(c){
+  // Recent openings: the company's own careers page if we detected it, else a
+  // LinkedIn jobs search for the company, filtered to the past week (India).
+  return c.careers || ('https://www.linkedin.com/jobs/search/?keywords='
+    + encodeURIComponent(c.company_name) + '&location=India&f_TPR=r604800');
+}
 function popupHtml(c,i){
   const s=[];
   s.push('<div class="pp"><b>'+esc(c.company_name)+'</b>');
@@ -2722,8 +2728,13 @@ function popupHtml(c,i){
   if(c.website) s.push('<div>🌐 <a href="'+esc(c.website)+'" target="_blank" rel="noopener">'+esc(c.website.replace(/^https?:\/\//,''))+'</a></div>');
   if(c.phones&&c.phones.length) s.push('<div>📞 '+esc(c.phones.join(', '))+'</div>');
   s.push('<div id="enr'+i+'"></div>');
-  if(c.website) s.push('<button class="sec" style="margin-top:6px" onclick="enrich('+i+',this)">Detect tech / contacts</button> ');
-  if(c.latitude) s.push('<a href="https://www.google.com/maps/dir/?api=1&destination='+c.latitude+','+c.longitude+'" target="_blank"><button class="sec" style="margin-top:6px">Directions</button></a>');
+  // Read-only action buttons (no editable fields in the detail view).
+  const a=[];
+  if(c.website) a.push('<a href="'+esc(c.website)+'" target="_blank" rel="noopener"><button>🌐 Open website</button></a>');
+  a.push('<a href="'+esc(jobsUrl(c))+'" target="_blank" rel="noopener"><button class="sec" id="jobsBtn'+i+'">💼 Recent jobs</button></a>');
+  if(c.website) a.push('<button class="sec" onclick="enrich('+i+',this)">Detect tech / contacts</button>');
+  if(c.latitude) a.push('<a href="https://www.google.com/maps/dir/?api=1&destination='+c.latitude+','+c.longitude+'" target="_blank"><button class="sec">Directions</button></a>');
+  s.push('<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px">'+a.join('')+'</div>');
   s.push('<div class="note" style="margin-top:6px">confidence '+c.confidence+' · '+esc((c.source||[]).join(', '))+'</div></div>');
   return s.join('');
 }
@@ -2740,6 +2751,9 @@ async function enrich(i, btn){
     const d=await r.json();
     if(d.error||d.reachable===false){ box.innerHTML='<div class="note">Website not reachable.</div>'; return; }
     c.technologies=d.technologies||[]; c.emails=d.emails||c.emails; c.careers=d.careers||''; c.hiring=d.hiring;
+    // Point the "Recent jobs" button at the real careers page once found.
+    if(d.careers){ const jb=document.getElementById('jobsBtn'+i);
+      if(jb&&jb.parentElement&&jb.parentElement.tagName==='A') jb.parentElement.href=d.careers; }
     let h='';
     if(d.technologies&&d.technologies.length) h+='<div style="margin-top:4px">🧩 '+d.technologies.map(t=>'<span class="tag">'+esc(t)+'</span>').join('')+'</div>';
     if(d.emails&&d.emails.length) h+='<div style="margin-top:4px">✉️ '+esc(d.emails.slice(0,3).join(', '))+'</div>';
