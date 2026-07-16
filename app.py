@@ -2668,7 +2668,7 @@ async function go(){
     const d=await r.json();
     if(d.error){ $('#list').innerHTML='<div class="co note">'+esc(d.error)+'</div>'; $('#status').textContent=''; return; }
     ALL=d.companies||[];
-    $('#status').textContent=d.resolved? ('📍 '+d.resolved.slice(0,60)+' · '+d.total_found+' found'):'';
+    $('#status').textContent=d.resolved? ('📍 '+d.resolved.slice(0,52)+' · '+d.total_found+' found · '+((d.sources||[]).join(' + '))+(d.cached?' · cached':'')):'';
     if(d.center) map.setView([d.center.lat,d.center.lon],14);
     buildFilters(); applyFilters();
   }catch(e){ $('#list').innerHTML='<div class="co note">Error: '+esc(e)+'</div>'; }

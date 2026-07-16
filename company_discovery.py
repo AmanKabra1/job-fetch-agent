@@ -366,69 +366,154 @@ _DIRECTORY_DOMAINS = (
 )
 
 
-def fetch_tavily_companies(area: str, max_per_query: int = 10):
-    """Extra coverage via Tavily web search (needs TAVILY_API_KEY): find company
-    websites in the area that OSM doesn't map. Returns records WITHOUT coordinates
-    (so they list but don't pin on the map). Skips directory/aggregator domains."""
+# Company names inside directory/listicle page text (e.g. JustDial "Top IT
+# companies") — "<Capitalized words> <company suffix>". One page lists many.
+_COMPANY_NAME_RE = re.compile(
+    r"\b([A-Z][A-Za-z0-9&.'\-]*(?:[ ][A-Z0-9][A-Za-z0-9&.'\-]*){0,4}[ ]"
+    r"(?:Technologies|Technology|Solutions|Software|Softwares|Softech|Systems|"
+    r"Infotech|Infosystems|Labs|Consulting|Consultancy|Consultants|Services|"
+    r"Digital|Networks|Analytics|Innovations|Infoway|Infocom|Pvt\.?[ ]?Ltd|"
+    r"Private[ ]Limited|LLP|Inc\.?|Corporation|Enterprises|Ventures))\b")
+_NAME_STOP = ("top ", "best ", "list ", "companies in", "list of", "the ", "these ",
+              "our ", "software company", "it company", "click ", "read ", "view ")
+# First words that mean it's a job-title / heading fragment, not a company name
+# (e.g. "Backend Software", "Lead Solutions", "Senior Systems").
+_NAME_BAD_FIRST = {
+    "backend", "frontend", "full", "fullstack", "lead", "senior", "junior", "sr",
+    "jr", "principal", "staff", "associate", "software", "web", "mobile", "cloud",
+    "data", "devops", "qa", "ui", "ux", "the", "top", "best", "new", "our", "other",
+    "more", "all", "various", "many", "several", "hire", "hiring", "job", "jobs",
+    "apply", "view", "read", "click", "about", "contact", "home", "leading", "based",
+    "global", "digital", "product", "service", "services", "custom", "enterprise",
+}
+
+
+def _norm_name(n: str) -> str:
+    n = re.sub(r"\b(pvt\.?|private|limited|ltd\.?|llp|inc\.?|corp\.?|the)\b", "",
+               (n or "").lower())
+    return re.sub(r"[^a-z0-9]+", " ", n).strip()
+
+
+def _extract_names(text: str):
+    """Company names harvested from a page's text (dedup, filtered)."""
+    out, seen = [], set()
+    for m in _COMPANY_NAME_RE.finditer(text or ""):
+        name = re.sub(r"\s+", " ", m.group(1)).strip(" .,-")
+        low = name.lower()
+        first = low.split()[0] if low.split() else ""
+        words = name.split()
+        if (len(name) < 5 or len(name) > 60 or low in seen or first in _NAME_BAD_FIRST
+                or len(words) < 2                      # a lone "Technologies" etc.
+                or any(low.startswith(s) or s in low for s in _NAME_STOP)):
+            continue
+        seen.add(low)
+        out.append(name)
+    return out[:40]                                   # cap per page
+
+
+def _web_record(name, website, industry, tech, source="Web (Tavily)"):
+    return {
+        "company_name": name, "legal_name": "", "website": website or "",
+        "linkedin": "", "google_maps": "", "address": "", "city": "", "state": "",
+        "pincode": "", "latitude": None, "longitude": None, "industry": industry,
+        "business_type": "Company / Office", "technical_work": tech,
+        "non_technical_work": not tech, "technologies": [], "employees": "",
+        "founded": "", "careers": "", "hiring": None, "emails": [], "phones": [],
+        "social_links": {}, "ratings": {}, "coworking_name": "", "building_name": "",
+        "office_images": [], "opening_hours": "", "source": [source], "osm_id": "",
+        "confidence": 0,
+    }
+
+
+def _tavily_search(key, q, max_results=10):
+    try:
+        r = requests.post("https://api.tavily.com/search", json={
+            "api_key": key, "query": q, "max_results": max_results,
+            "search_depth": "basic", "include_raw_content": True,
+        }, headers=_UA, timeout=_TIMEOUT)
+        r.raise_for_status()
+        return r.json().get("results", [])
+    except Exception as e:
+        print(f"  ! tavily {q!r} failed: {e}", flush=True)
+        return []
+
+
+def fetch_tavily_companies(area: str):
+    """Extra coverage via Tavily web search (needs TAVILY_API_KEY):
+      1) harvest company OWN websites from results (skip directories), and
+      2) EXTRACT company names from directory/listicle page text (one page lists
+         many) — great for reaching small firms OSM never mapped.
+    Records have no coordinates (list-only, no map pin). Queries run in parallel."""
     key = os.environ.get("TAVILY_API_KEY")
     if not key:
         return []
+    # Developer / IT-focused + general queries — cast a wide net.
     queries = [
         (f"IT and software companies in {area}", "IT / Software", True),
-        (f"software development company {area} careers", "IT / Software", True),
-        (f"startups in {area}", "Startup", False),
-        (f"companies in {area} office", "Company (general)", False),
+        (f"software development company in {area}", "IT / Software", True),
+        (f"web and app development company {area}", "IT / Software", True),
+        (f"companies hiring software developers in {area}", "IT / Software", True),
+        (f"product based software companies {area}", "IT / Software", True),
+        (f"startups in {area} hiring", "Startup", True),
+        (f"list of IT companies in {area}", "IT / Software", True),
+        (f"companies in {area} office address", "Company (general)", False),
     ]
-    rows, seen = [], set()
-    for q, industry, tech in queries:
-        try:
-            r = requests.post("https://api.tavily.com/search", json={
-                "api_key": key, "query": q, "max_results": max_per_query,
-                "search_depth": "basic",
-            }, headers=_UA, timeout=_TIMEOUT)
-            r.raise_for_status()
-            results = r.json().get("results", [])
-        except Exception as e:
-            print(f"  ! tavily-companies {q!r} failed: {e}", flush=True)
-            continue
-        for res in results:
-            url = res.get("url", "")
-            if not url:
-                continue
-            dom = re.sub(r"^https?://(www\.)?", "", url.lower()).split("/")[0]
-            if dom in seen or any(d in dom for d in _DIRECTORY_DOMAINS):
-                continue
-            seen.add(dom)
-            title = (res.get("title", "") or "").strip()
-            for sep in (" | ", " - ", " – ", " :: ", " — ", ": "):
-                title = title.split(sep)[0]
-            name = title.strip()[:80] or dom
-            rows.append({
-                "company_name": name, "legal_name": "",
-                "website": url.split("?")[0], "linkedin": "", "google_maps": "",
-                "address": "", "city": "", "state": "", "pincode": "",
-                "latitude": None, "longitude": None,
-                "industry": industry, "business_type": "Company / Office",
-                "technical_work": tech, "non_technical_work": not tech,
-                "technologies": [], "employees": "", "founded": "",
-                "careers": "", "hiring": None, "emails": [], "phones": [],
-                "social_links": {}, "ratings": {}, "coworking_name": "",
-                "building_name": "", "office_images": [], "opening_hours": "",
-                "source": ["Web (Tavily)"], "osm_id": "", "confidence": 0,
-            })
-    print(f"    -> tavily web: {len(rows)} company sites", flush=True)
+    rows, dom_seen, name_seen = [], set(), set()
+    with ThreadPoolExecutor(max_workers=4) as ex:
+        futs = {ex.submit(_tavily_search, key, q, 10): (ind, tech)
+                for q, ind, tech in queries}
+        for fut in as_completed(futs):
+            industry, tech = futs[fut]
+            for res in fut.result():
+                url = res.get("url", "")
+                dom = re.sub(r"^https?://(www\.)?", "", url.lower()).split("/")[0] if url else ""
+                is_dir = any(d in dom for d in _DIRECTORY_DOMAINS)
+                # (1) company's own website
+                if url and dom and not is_dir and dom not in dom_seen:
+                    dom_seen.add(dom)
+                    title = (res.get("title", "") or "").strip()
+                    for sep in (" | ", " - ", " – ", " :: ", " — ", ": "):
+                        title = title.split(sep)[0]
+                    nm = title.strip()[:80] or dom
+                    name_seen.add(_norm_name(nm))
+                    ind2 = "IT / Software" if _looks_it(nm) else industry
+                    rows.append(_web_record(nm, url.split("?")[0], ind2, tech or _looks_it(nm)))
+                # (2) names harvested from the page text (esp. directory listicles)
+                blob = (res.get("title", "") + "\n" + (res.get("content") or "")
+                        + "\n" + (res.get("raw_content") or ""))
+                for nm in _extract_names(blob):
+                    nn = _norm_name(nm)
+                    if len(nn) < 4 or nn in name_seen:
+                        continue
+                    name_seen.add(nn)
+                    rows.append(_web_record(nm, "", "IT / Software" if _looks_it(nm) else industry,
+                                            _looks_it(nm)))
+    print(f"    -> tavily web: {len(rows)} companies (sites + directory names)", flush=True)
     return rows
 
 
+_DISCOVER_CACHE = {}          # area -> (timestamp, result). Saves Tavily credits.
+_CACHE_TTL = 6 * 3600         # 6 hours
+
+
 def discover(area: str, limit: int = 1000):
-    """Main entry: area text -> list of companies (deduped, scored) + geo center."""
+    """Main entry: area text -> list of companies (deduped, scored) + geo center.
+    Merges OpenStreetMap (mapped, with coords) with Tavily web search (extra
+    company sites + names OSM misses). Cached per area for 6h."""
+    ck = area.strip().lower()
+    hit = _DISCOVER_CACHE.get(ck)
+    if hit and (time.time() - hit[0]) < _CACHE_TTL:
+        res = dict(hit[1])
+        res["cached"] = True
+        res["companies"] = res["companies"][:limit]
+        res["count"] = len(res["companies"])
+        return res
+
     geo = geocode_area(area)
     if not geo:
         return {"error": f"Could not locate '{area}'. Try a more specific area, "
                          f"locality, or pincode.", "companies": []}
     time.sleep(1)                                 # Nominatim politeness
-    # Two sources in parallel: OpenStreetMap (mapped, with coords) + Tavily web
-    # search (extra company sites OSM misses; no coords). Then merge + dedupe.
     osm_rows, web_rows = [], []
     with ThreadPoolExecutor(max_workers=2) as ex:
         f_osm = ex.submit(fetch_overpass, geo["bbox"])
@@ -442,22 +527,38 @@ def discover(area: str, limit: int = 1000):
         except Exception as e:
             print(f"  ! tavily failed: {e}", flush=True)
 
-    rows = _dedupe(osm_rows + web_rows)
+    allr = osm_rows + web_rows
+    # Rich records (have coords and/or a website) dedupe by website/coords.
+    rich = _dedupe([r for r in allr if r.get("latitude") or r.get("website")])
+    rich_names = {_norm_name(r["company_name"]) for r in rich}
+    # Name-only records (from directory listicles): keep those not already present.
+    extra, seen = [], set()
+    for r in allr:
+        if r.get("latitude") or r.get("website"):
+            continue
+        nn = _norm_name(r["company_name"])
+        if len(nn) < 4 or nn in rich_names or nn in seen:
+            continue
+        seen.add(nn)
+        extra.append(r)
+    rows = rich + extra
     for r in rows:
         r["confidence"] = _confidence(r)
-    # Best/most-complete first; mapped (has coords) above web-only within same score.
+    # Best first; mapped (coords) then website then name-only, within same score.
     rows.sort(key=lambda r: (r["confidence"], bool(r.get("latitude")), bool(r["website"])),
               reverse=True)
-    sources_used = sorted({s for r in rows for s in r.get("source", [])})
-    return {
+    result = {
         "area": area,
         "resolved": geo["display_name"],
         "center": {"lat": geo["lat"], "lon": geo["lon"]},
         "count": len(rows[:limit]),
         "total_found": len(rows),
-        "sources": sources_used,
+        "sources": sorted({s for r in rows for s in r.get("source", [])}),
+        "cached": False,
         "companies": rows[:limit],
     }
+    _DISCOVER_CACHE[ck] = (time.time(), result)
+    return result
 
 
 # --------------------------------------------------------------------------- #
