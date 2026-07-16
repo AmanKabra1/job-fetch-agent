@@ -1798,6 +1798,36 @@ def index():
     return HTMLResponse(html)
 
 
+# --------------------------------------------------------------------------- #
+# COMPANY DISCOVERY — every business in a city/locality/sector/pincode.
+# Free data only: OpenStreetMap (Overpass + Nominatim) + on-demand website enrich.
+# --------------------------------------------------------------------------- #
+@app.get("/api/companies")
+async def api_companies(area: str, limit: int = 500):
+    """Discover every named business inside `area` (city/locality/sector/pincode)
+    from OpenStreetMap. Blocking network work -> threadpool."""
+    import company_discovery as CD
+    if not area or not area.strip():
+        raise HTTPException(400, "Provide an area, e.g. 'Noida Sector 62'.")
+    return await run_in_threadpool(CD.discover, area.strip(), limit)
+
+
+@app.post("/api/company/enrich")
+async def api_company_enrich(payload: dict):
+    """On-demand: fetch a company's website and detect tech stack / emails /
+    socials / careers page. Free, best-effort."""
+    import company_discovery as CD
+    url = (payload or {}).get("url", "")
+    if not url:
+        raise HTTPException(400, "Provide a website url.")
+    return await run_in_threadpool(CD.enrich_website, url)
+
+
+@app.get("/companies", response_class=HTMLResponse)
+def companies_page():
+    return HTMLResponse(COMPANIES_HTML)
+
+
 INDEX_HTML = r"""<!doctype html>
 <html lang="en">
 <head>
@@ -1926,6 +1956,7 @@ INDEX_HTML = r"""<!doctype html>
 <header>
   <h1>Job Finder &amp; Resume Tailor</h1>
   <span class="pill" id="modePill">mode</span>
+  <a href="/companies" style="color:#7db0ff;text-decoration:none;font-size:13px">🏢 Company Discovery →</a>
   <span class="sub" id="status"></span>
 </header>
 <main>
@@ -2512,6 +2543,230 @@ loadResumes();
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
 }
+</script>
+</body>
+</html>
+"""
+
+
+# =========================================================================== #
+# COMPANY DISCOVERY PAGE  (/companies) — self-contained: Leaflet map + table +
+# filters + export. Uses OpenStreetMap data via our /api/companies (free).
+# =========================================================================== #
+COMPANIES_HTML = r"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>Company Discovery — every business in an area</title>
+<link rel="icon" href="/favicon.ico" type="image/svg+xml"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+  :root{ --bg:#0b111c; --card:#0e1726; --line:#27364d; --ink:#e7eef9; --mut:#8aa0bd; --accent:#3b82f6; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 system-ui,Segoe UI,Roboto,sans-serif;overflow-x:hidden}
+  header{padding:14px 20px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  header h1{font-size:17px;margin:0}
+  a{color:#7db0ff;text-decoration:none} a:hover{text-decoration:underline}
+  .pill{font-size:11px;padding:2px 9px;border:1px solid var(--line);border-radius:20px;color:var(--mut)}
+  main{padding:16px 20px;max-width:1400px;margin:0 auto}
+  .bar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+  input,select{background:#0e1726;color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:14px}
+  button{background:var(--accent);color:#fff;border:0;padding:9px 15px;border-radius:8px;cursor:pointer;font-size:14px;min-height:40px}
+  button.sec{background:#1e293b;color:var(--ink);border:1px solid var(--line)}
+  button:disabled{opacity:.5;cursor:default}
+  .layout{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:900px){ .layout{grid-template-columns:1fr} #map{height:340px!important} }
+  #map{height:600px;border:1px solid var(--line);border-radius:12px}
+  .panel{border:1px solid var(--line);border-radius:12px;overflow:hidden;display:flex;flex-direction:column;max-height:600px}
+  .filters{display:flex;gap:7px;flex-wrap:wrap;padding:10px;border-bottom:1px solid var(--line)}
+  .filters input,.filters select{padding:6px 8px;font-size:12px}
+  .list{overflow:auto;flex:1}
+  .co{padding:10px 12px;border-bottom:1px solid var(--line);cursor:pointer}
+  .co:hover{background:#10192880}
+  .co.active{background:#14233c}
+  .co .nm{font-weight:600}
+  .co .meta{color:var(--mut);font-size:12px;margin-top:2px}
+  .tag{display:inline-block;font-size:10px;border-radius:10px;padding:1px 7px;border:1px solid var(--line);margin-right:4px;color:var(--mut)}
+  .conf{float:right;font-size:11px;font-weight:700;padding:1px 7px;border-radius:6px;background:#16331a;color:#9be7a4}
+  .conf.lo{background:#3a1f1f;color:#f0a0a0} .conf.md{background:#3a3417;color:#f0d98a}
+  .note{color:var(--mut);font-size:12px}
+  .count{color:var(--mut);font-size:13px}
+  .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#0e1726;color:var(--ink);border:1px solid var(--line)}
+  .leaflet-popup-content{margin:12px 14px;font-size:13px}
+  .pp b{color:var(--ink)}
+  .spin{display:inline-block;width:14px;height:14px;border:2px solid #fff5;border-top-color:#fff;border-radius:50%;animation:r .8s linear infinite;vertical-align:-2px}
+  @keyframes r{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏢 Company Discovery</h1>
+  <span class="pill">free · OpenStreetMap</span>
+  <a href="/">← back to Job Finder</a>
+  <span class="note" id="status"></span>
+</header>
+<main>
+  <div class="bar">
+    <input id="area" placeholder="Area, locality, sector or pincode — e.g. Noida Sector 62" style="flex:1;min-width:240px"/>
+    <label class="note">Max <input id="limit" type="number" value="500" min="20" max="2000" style="width:80px"/></label>
+    <button id="go">Find companies</button>
+    <button class="sec" id="exCsv">CSV</button>
+    <button class="sec" id="exJson">JSON</button>
+    <button class="sec" id="exGeo">GeoJSON</button>
+  </div>
+  <p class="note" style="margin-top:-4px">Fetches every named business on the map in that area — offices, IT/software firms, agencies, shops, coworking spaces & more — with location, website, phone & confidence score. Click a company to see it on the map; click <b>Detect tech / contacts</b> in its popup to pull the tech stack, emails, socials & careers page from its website.</p>
+
+  <div class="layout">
+    <div class="panel">
+      <div class="filters">
+        <input id="fSearch" placeholder="search name / industry…" style="flex:1;min-width:120px"/>
+        <select id="fType"><option value="">All types</option></select>
+        <select id="fIndustry"><option value="">All industries</option></select>
+        <label class="note"><input type="checkbox" id="fWeb"/> has website</label>
+        <label class="note"><input type="checkbox" id="fCowork"/> coworking</label>
+      </div>
+      <div class="list" id="list"><div class="co note">Enter an area and click <b>Find companies</b>.</div></div>
+    </div>
+    <div id="map"></div>
+  </div>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+let ALL=[], VIEW=[], markers=[], map, layer, active=null;
+
+function initMap(){
+  map=L.map('map',{scrollWheelZoom:true}).setView([28.61,77.37],12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+    {maxZoom:19, attribution:'© OpenStreetMap'}).addTo(map);
+  layer=L.layerGroup().addTo(map);
+}
+function colorFor(c){
+  const t=((c.industry||'')+' '+(c.business_type||'')).toLowerCase();
+  if(t.includes('cowork')) return '#a78bfa';
+  if(t.includes('it')||t.includes('software')||c.technical_work) return '#3b82f6';
+  if(t.includes('financ')||t.includes('insur')||t.includes('account')) return '#22c55e';
+  if(t.includes('retail')||t.includes('shop')||t.includes('local')) return '#f59e0b';
+  if(t.includes('market')||t.includes('advert')||t.includes('consult')) return '#ec4899';
+  return '#94a3b8';
+}
+function esc(s){return (s||'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+async function go(){
+  const area=$('#area').value.trim(); if(!area){alert('Enter an area');return;}
+  const btn=$('#go'), old=btn.textContent; btn.disabled=true; btn.innerHTML='<span class="spin"></span> Searching…';
+  $('#status').textContent=''; $('#list').innerHTML='<div class="co note"><span class="spin"></span> Querying OpenStreetMap…</div>';
+  try{
+    const r=await fetch('/api/companies?area='+encodeURIComponent(area)+'&limit='+($('#limit').value||500));
+    const d=await r.json();
+    if(d.error){ $('#list').innerHTML='<div class="co note">'+esc(d.error)+'</div>'; $('#status').textContent=''; return; }
+    ALL=d.companies||[];
+    $('#status').textContent=d.resolved? ('📍 '+d.resolved.slice(0,60)+' · '+d.total_found+' found'):'';
+    if(d.center) map.setView([d.center.lat,d.center.lon],14);
+    buildFilters(); applyFilters();
+  }catch(e){ $('#list').innerHTML='<div class="co note">Error: '+esc(e)+'</div>'; }
+  finally{ btn.disabled=false; btn.textContent=old; }
+}
+
+function buildFilters(){
+  const types=[...new Set(ALL.map(c=>c.business_type).filter(Boolean))].sort();
+  const inds=[...new Set(ALL.map(c=>c.industry).filter(Boolean))].sort();
+  $('#fType').innerHTML='<option value="">All types ('+ALL.length+')</option>'+types.map(t=>'<option>'+esc(t)+'</option>').join('');
+  $('#fIndustry').innerHTML='<option value="">All industries</option>'+inds.map(t=>'<option>'+esc(t)+'</option>').join('');
+}
+function applyFilters(){
+  const q=$('#fSearch').value.toLowerCase(), ty=$('#fType').value, ind=$('#fIndustry').value,
+        web=$('#fWeb').checked, cow=$('#fCowork').checked;
+  VIEW=ALL.filter(c=>{
+    if(ty && c.business_type!==ty) return false;
+    if(ind && c.industry!==ind) return false;
+    if(web && !c.website) return false;
+    if(cow && !((c.business_type||'').toLowerCase().includes('cowork'))) return false;
+    if(q){ const blob=((c.company_name||'')+' '+(c.industry||'')+' '+(c.address||'')).toLowerCase(); if(!blob.includes(q)) return false; }
+    return true;
+  });
+  render();
+}
+function render(){
+  layer.clearLayers(); markers=[];
+  $('#list').innerHTML = VIEW.length? '' : '<div class="co note">No companies match the filters.</div>';
+  VIEW.forEach((c,i)=>{
+    const cc=colorFor(c);
+    if(c.latitude&&c.longitude){
+      const m=L.circleMarker([c.latitude,c.longitude],{radius:7,color:cc,fillColor:cc,fillOpacity:.8,weight:1});
+      m.bindPopup(popupHtml(c,i)); m.addTo(layer); markers[i]=m;
+    }
+    const conf=c.confidence>=80?'':(c.confidence>=60?'md':'lo');
+    const row=document.createElement('div'); row.className='co'; row.dataset.i=i;
+    row.innerHTML='<span class="conf '+conf+'">'+c.confidence+'</span><div class="nm">'+esc(c.company_name)+'</div>'
+      +'<div class="meta">'+esc(c.industry||'')+(c.address?' · '+esc(c.address.slice(0,50)):'')+'</div>'
+      +'<div style="margin-top:3px"><span class="tag" style="border-color:'+cc+';color:'+cc+'">'+esc(c.business_type||'')+'</span>'
+      +(c.website?'<span class="tag">🌐 web</span>':'')+(c.phones&&c.phones.length?'<span class="tag">📞</span>':'')+'</div>';
+    row.onclick=()=>focusCo(i);
+    $('#list').appendChild(row);
+  });
+  $('#status').textContent=$('#status').textContent.split(' · showing')[0]+' · showing '+VIEW.length;
+}
+function popupHtml(c,i){
+  const s=[];
+  s.push('<div class="pp"><b>'+esc(c.company_name)+'</b>');
+  s.push('<div class="note">'+esc(c.industry||'')+' · '+esc(c.business_type||'')+'</div>');
+  if(c.address) s.push('<div>'+esc(c.address)+'</div>');
+  if(c.website) s.push('<div>🌐 <a href="'+esc(c.website)+'" target="_blank" rel="noopener">'+esc(c.website.replace(/^https?:\/\//,''))+'</a></div>');
+  if(c.phones&&c.phones.length) s.push('<div>📞 '+esc(c.phones.join(', '))+'</div>');
+  s.push('<div id="enr'+i+'"></div>');
+  if(c.website) s.push('<button class="sec" style="margin-top:6px" onclick="enrich('+i+')">Detect tech / contacts</button> ');
+  if(c.latitude) s.push('<a href="https://www.google.com/maps/dir/?api=1&destination='+c.latitude+','+c.longitude+'" target="_blank"><button class="sec" style="margin-top:6px">Directions</button></a>');
+  s.push('<div class="note" style="margin-top:6px">confidence '+c.confidence+' · '+esc((c.source||[]).join(', '))+'</div></div>');
+  return s.join('');
+}
+function focusCo(i){
+  document.querySelectorAll('.co').forEach(r=>r.classList.toggle('active', r.dataset.i==i));
+  const c=VIEW[i]; if(c.latitude&&markers[i]){ map.flyTo([c.latitude,c.longitude],16); markers[i].openPopup(); }
+}
+async function enrich(i){
+  const c=VIEW[i]; const box=document.getElementById('enr'+i); if(!box) return;
+  box.innerHTML='<span class="spin"></span> reading website…';
+  try{
+    const r=await fetch('/api/company/enrich',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({url:c.website})});
+    const d=await r.json();
+    if(d.error||d.reachable===false){ box.innerHTML='<div class="note">Website not reachable.</div>'; return; }
+    c.technologies=d.technologies||[]; c.emails=d.emails||c.emails; c.careers=d.careers||''; c.hiring=d.hiring;
+    let h='';
+    if(d.technologies&&d.technologies.length) h+='<div style="margin-top:4px">🧩 '+d.technologies.map(t=>'<span class="tag">'+esc(t)+'</span>').join('')+'</div>';
+    if(d.emails&&d.emails.length) h+='<div style="margin-top:4px">✉️ '+esc(d.emails.slice(0,3).join(', '))+'</div>';
+    const soc=Object.entries(d.social_links||{}).map(([k,v])=>'<a href="'+esc(v)+'" target="_blank">'+k+'</a>').join(' · ');
+    if(soc) h+='<div style="margin-top:4px">'+soc+'</div>';
+    if(d.careers) h+='<div style="margin-top:4px">💼 <a href="'+esc(d.careers)+'" target="_blank">Careers page</a></div>';
+    if(d.hiring) h+='<div class="tag" style="margin-top:4px;border-color:#22c55e;color:#22c55e">likely hiring</div>';
+    box.innerHTML=h||'<div class="note">No extra data found on site.</div>';
+  }catch(e){ box.innerHTML='<div class="note">Enrich error.</div>'; }
+}
+
+// ---- Export ----
+function dl(name,text,mime){const b=new Blob([text],{type:mime});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;a.click();URL.revokeObjectURL(u);}
+function exCsv(){
+  if(!VIEW.length)return; const cols=['company_name','website','industry','business_type','address','city','pincode','latitude','longitude','phones','emails','confidence','source'];
+  const esc2=v=>{v=Array.isArray(v)?v.join('; '):(v==null?'':v);v=(''+v).replace(/"/g,'""');return /[",\n]/.test(v)?'"'+v+'"':v;};
+  const rows=[cols.join(',')].concat(VIEW.map(c=>cols.map(k=>esc2(c[k])).join(',')));
+  dl('companies.csv',rows.join('\n'),'text/csv');
+}
+function exJson(){ if(VIEW.length) dl('companies.json',JSON.stringify(VIEW,null,2),'application/json'); }
+function exGeo(){
+  if(!VIEW.length)return;
+  const fc={type:'FeatureCollection',features:VIEW.filter(c=>c.latitude&&c.longitude).map(c=>({
+    type:'Feature',geometry:{type:'Point',coordinates:[c.longitude,c.latitude]},
+    properties:{name:c.company_name,website:c.website,industry:c.industry,type:c.business_type,address:c.address,confidence:c.confidence}}))};
+  dl('companies.geojson',JSON.stringify(fc,null,2),'application/geo+json');
+}
+
+initMap();
+$('#go').onclick=go;
+$('#area').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
+['fSearch','fType','fIndustry','fWeb','fCowork'].forEach(id=>$('#'+id).addEventListener('input',applyFilters));
+$('#exCsv').onclick=exCsv; $('#exJson').onclick=exJson; $('#exGeo').onclick=exGeo;
 </script>
 </body>
 </html>
