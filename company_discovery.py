@@ -204,6 +204,25 @@ def _looks_it(name: str) -> bool:
     return any(h in n for h in _IT_NAME_HINTS)
 
 
+# AI / ML company signals (word-boundary so "email"/"Dubai" don't match).
+_AI_RE = re.compile(
+    r"\b(a\.?i\.?|artificial intelligence|machine learning|deep learning|"
+    r"data science|genai|generative|neural|computer vision|nlp|mlops|llm)\b", re.I)
+
+
+def _looks_ai(name: str) -> bool:
+    return bool(_AI_RE.search(name or ""))
+
+
+def _industry_for(name: str, default_ind: str, default_tech: bool):
+    """Pick industry for a harvested name: AI/ML > IT/Software > the query default."""
+    if _looks_ai(name):
+        return "AI / ML", True
+    if _looks_it(name):
+        return "IT / Software", True
+    return default_ind, default_tech
+
+
 def _classify(tags: dict):
     """Map OSM tags -> (industry, business_type, technical, non_technical)."""
     office = (tags.get("office") or "").lower()
@@ -220,8 +239,10 @@ def _classify(tags: dict):
     if office and office in _OFFICE_INDUSTRY and office != "company":
         ind, tech = _OFFICE_INDUSTRY[office]
         return ind, "Company / Office", tech, not tech
-    # Name-based IT/software detection for generic offices, companies, or plain
-    # named nodes/buildings (OSM rarely tags Indian IT firms as office=it).
+    # Name-based AI / IT detection for generic offices, companies, or plain named
+    # nodes/buildings (OSM rarely tags Indian IT/AI firms with office=it).
+    if not shop and not amenity and _looks_ai(name):
+        return "AI / ML", "Company / Office", True, False
     if not shop and not amenity and _looks_it(name):
         return "IT / Software", "Company / Office", True, False
     if office == "company":
@@ -363,6 +384,10 @@ _DIRECTORY_DOMAINS = (
     "monster", "timesjobs", "shine.com", "hirist", "cutshort", "angel.co",
     "wellfound", "freshersworld", "placementindia", "instahyre", "glassdoor",
     "6figr", "ambitionbox", "trustpilot", "mouthshut", "issuu", "coursehero",
+    "techbehemoths", "tracxn", "designrush", "sortlist", "f6s", "growjo",
+    "semrush", "similarweb", "owler", "zoominfo", "rocketreach", "yourstory",
+    "inc42", "economictimes", "business-standard", "techmagnate", "manta.com",
+    "goodfirms.co", "clutch.co",
 )
 
 
@@ -385,7 +410,28 @@ _NAME_BAD_FIRST = {
     "more", "all", "various", "many", "several", "hire", "hiring", "job", "jobs",
     "apply", "view", "read", "click", "about", "contact", "home", "leading", "based",
     "global", "digital", "product", "service", "services", "custom", "enterprise",
+    "business", "artificial", "professional", "corporate", "outsourcing",
+    "management", "information", "technology", "technologies", "solution",
+    "solutions", "consulting", "systems", "development", "trusted", "reliable",
 }
+
+
+# A page TITLE that is a listicle/blog heading, not a company name.
+_BAD_TITLE_RE = re.compile(
+    r"(^\s*\d)|(\btop\b)|(\bbest\b)|(\blist\b)|(companies\s+in)|(\bcompanies\b)|"
+    r"(\bguide\b)|(\bblog\b)|(how to)|(\bvs\b)|(\breview)|(\bin\s+noida)|"
+    r"(\bin\s+\w+\s+sector)|(directory)|(\bhiring\b)|(\bjobs?\b)", re.I)
+
+
+def _pick_company_title(title: str):
+    """From a page <title>, return the part that looks like a company name (not a
+    listicle heading), or None if the whole title is heading-ish."""
+    for p in re.split(r"\s[|\-–—:]\s|\s::\s", title or ""):
+        p = p.strip()
+        first = p.split()[0].lower() if p.split() else ""
+        if len(p) >= 3 and first not in _NAME_BAD_FIRST and not _BAD_TITLE_RE.search(p):
+            return p[:80]
+    return None
 
 
 def _norm_name(n: str) -> str:
@@ -408,7 +454,7 @@ def _extract_names(text: str):
             continue
         seen.add(low)
         out.append(name)
-    return out[:40]                                   # cap per page
+    return out[:60]                                   # cap per page
 
 
 def _web_record(name, website, industry, tech, source="Web (Tavily)"):
@@ -425,12 +471,14 @@ def _web_record(name, website, industry, tech, source="Web (Tavily)"):
     }
 
 
-def _tavily_search(key, q, max_results=10):
+def _tavily_search(key, q, max_results=10, include_domains=None):
+    body = {"api_key": key, "query": q, "max_results": max_results,
+            "search_depth": "basic", "include_raw_content": True}
+    if include_domains:
+        body["include_domains"] = include_domains
     try:
-        r = requests.post("https://api.tavily.com/search", json={
-            "api_key": key, "query": q, "max_results": max_results,
-            "search_depth": "basic", "include_raw_content": True,
-        }, headers=_UA, timeout=_TIMEOUT)
+        r = requests.post("https://api.tavily.com/search", json=body,
+                          headers=_UA, timeout=_TIMEOUT)
         r.raise_for_status()
         return r.json().get("results", [])
     except Exception as e:
@@ -440,54 +488,69 @@ def _tavily_search(key, q, max_results=10):
 
 def fetch_tavily_companies(area: str):
     """Extra coverage via Tavily web search (needs TAVILY_API_KEY):
-      1) harvest company OWN websites from results (skip directories), and
-      2) EXTRACT company names from directory/listicle page text (one page lists
-         many) — great for reaching small firms OSM never mapped.
-    Records have no coordinates (list-only, no map pin). Queries run in parallel."""
+      1) harvest company OWN websites from general results (skip directories),
+      2) EXTRACT company names from listicle/directory pages (one page lists many),
+      3) MINE big B2B directories (GoodFirms/Clutch/JustDial) for their long
+         company lists — best for reaching small firms & startups OSM never mapped.
+    Also detects AI/ML companies. Records have no coords (list-only). Parallel."""
     key = os.environ.get("TAVILY_API_KEY")
     if not key:
         return []
-    # Developer / IT-focused + general queries — cast a wide net.
-    queries = [
+    # General web queries — harvest own-site + extract names from the page text.
+    general = [
         (f"IT and software companies in {area}", "IT / Software", True),
         (f"software development company in {area}", "IT / Software", True),
+        (f"AI and machine learning companies in {area}", "AI / ML", True),
         (f"web and app development company {area}", "IT / Software", True),
+        (f"product based software companies and startups in {area}", "Startup", True),
         (f"companies hiring software developers in {area}", "IT / Software", True),
-        (f"product based software companies {area}", "IT / Software", True),
-        (f"startups in {area} hiring", "Startup", True),
-        (f"list of IT companies in {area}", "IT / Software", True),
-        (f"companies in {area} office address", "Company (general)", False),
+        (f"companies in {area} with office address", "Company (general)", False),
+    ]
+    # Directory listicles — mine their long lists (name extraction only).
+    directory = [
+        (f"IT companies in {area}", ["goodfirms.co"], "IT / Software"),
+        (f"software companies in {area}", ["clutch.co"], "IT / Software"),
+        (f"IT software companies {area}", ["justdial.com"], "IT / Software"),
+        (f"AI ML companies {area}", ["goodfirms.co", "clutch.co"], "AI / ML"),
     ]
     rows, dom_seen, name_seen = [], set(), set()
-    with ThreadPoolExecutor(max_workers=4) as ex:
-        futs = {ex.submit(_tavily_search, key, q, 10): (ind, tech)
-                for q, ind, tech in queries}
+
+    def add_names(blob, default_ind, default_tech):
+        for nm in _extract_names(blob):
+            nn = _norm_name(nm)
+            if len(nn) < 4 or nn in name_seen:
+                continue
+            name_seen.add(nn)
+            ind, tech = _industry_for(nm, default_ind, default_tech)
+            rows.append(_web_record(nm, "", ind, tech))
+
+    with ThreadPoolExecutor(max_workers=6) as ex:
+        futs = {}
+        for q, ind, tech in general:
+            futs[ex.submit(_tavily_search, key, q, 10)] = ("gen", ind, tech)
+        for q, doms, ind in directory:
+            futs[ex.submit(_tavily_search, key, q, 8, doms)] = ("dir", ind, True)
         for fut in as_completed(futs):
-            industry, tech = futs[fut]
+            kind, industry, tech = futs[fut]
             for res in fut.result():
                 url = res.get("url", "")
                 dom = re.sub(r"^https?://(www\.)?", "", url.lower()).split("/")[0] if url else ""
-                is_dir = any(d in dom for d in _DIRECTORY_DOMAINS)
-                # (1) company's own website
-                if url and dom and not is_dir and dom not in dom_seen:
+                # (1) company's own website (general queries, non-directory only)
+                if kind == "gen" and url and dom and dom not in dom_seen \
+                        and not any(d in dom for d in _DIRECTORY_DOMAINS):
                     dom_seen.add(dom)
-                    title = (res.get("title", "") or "").strip()
-                    for sep in (" | ", " - ", " – ", " :: ", " — ", ": "):
-                        title = title.split(sep)[0]
-                    nm = title.strip()[:80] or dom
-                    name_seen.add(_norm_name(nm))
-                    ind2 = "IT / Software" if _looks_it(nm) else industry
-                    rows.append(_web_record(nm, url.split("?")[0], ind2, tech or _looks_it(nm)))
-                # (2) names harvested from the page text (esp. directory listicles)
+                    nm = _pick_company_title(res.get("title", ""))
+                    # Only add as its own company if the title is a real company
+                    # name (not a "Top 10…" listicle heading). Either way we still
+                    # extract the individual firms from the page text below.
+                    if nm and _norm_name(nm) not in name_seen:
+                        name_seen.add(_norm_name(nm))
+                        ind2, tech2 = _industry_for(nm, industry, tech)
+                        rows.append(_web_record(nm, url.split("?")[0], ind2, tech2))
+                # (2) names from the page text (listicles / directories)
                 blob = (res.get("title", "") + "\n" + (res.get("content") or "")
                         + "\n" + (res.get("raw_content") or ""))
-                for nm in _extract_names(blob):
-                    nn = _norm_name(nm)
-                    if len(nn) < 4 or nn in name_seen:
-                        continue
-                    name_seen.add(nn)
-                    rows.append(_web_record(nm, "", "IT / Software" if _looks_it(nm) else industry,
-                                            _looks_it(nm)))
+                add_names(blob, industry, tech)
     print(f"    -> tavily web: {len(rows)} companies (sites + directory names)", flush=True)
     return rows
 
