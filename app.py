@@ -2002,6 +2002,7 @@ INDEX_HTML = r"""<!doctype html>
           <select id="hours"><option value="24">24h</option><option value="48">48h</option><option value="72">72h</option><option value="168">7d</option></select>
         </label>
         <label class="note">Top <input id="limit" type="number" value="50" min="5" max="100" style="width:60px"/></label>
+        <label class="note" title="Filter results to a city/area; remote jobs are kept too">📍 <input id="jobLoc" type="text" placeholder="location e.g. Noida" style="width:130px"/></label>
         <label class="switch note" title="Greenhouse/Lever/Ashby ATS APIs + Hacker News + We Work Remotely"><input type="checkbox" id="jfCareer" checked/> Search company career pages directly</label>
         <span class="note" id="count"></span>
       </div>
@@ -2138,16 +2139,32 @@ function startTimer(onTick){
 
 function showMore(){ shown += PAGE; renderJobs(); }
 
+// Location filter + rank: when a location is typed, keep jobs at/near it FIRST,
+// then remote jobs (they work from anywhere), and hide the rest. Empty = all.
+function locFilter(list){
+  const el=$('#jobLoc'); const q=(el?el.value:'').trim().toLowerCase();
+  if(!q) return list;
+  const hit=j=>((j.location||'').toLowerCase().includes(q)
+               || (j.title||'').toLowerCase().includes(q));
+  const inLoc=list.filter(hit);
+  const remote=list.filter(j=>!hit(j) && j.is_remote);
+  return inLoc.concat(remote);           // stable: preserves existing score order
+}
+
 function renderJobs(){
   const b=$('#jobsBody');
   const wrap=$('#loadMoreWrap');
   if(!jobs.length){ b.innerHTML='<tr><td colspan="10" class="empty">No matching jobs found. Try a different role/position, widen the posting age, or upload a resume to guide the search.</td></tr>'; if(wrap) wrap.style.display='none'; return; }
-  const visible = jobs.slice(0, shown);
-  $('#count').textContent = 'showing '+visible.length+' of '+jobs.length+' jobs'
+  const view = locFilter(jobs);
+  window._view = view;                     // row buttons (Tailor/Apply) index into this
+  if(!view.length){ b.innerHTML='<tr><td colspan="10" class="empty">No jobs at "<b>'+esc($("#jobLoc").value)+'</b>" in the current results — try a nearby city or clear the location.</td></tr>'; if(wrap) wrap.style.display='none'; $('#count').textContent='0 of '+jobs.length+' jobs'; return; }
+  const visible = view.slice(0, shown);
+  const locNote=$('#jobLoc')&&$('#jobLoc').value.trim()?(' · 📍 '+esc($('#jobLoc').value.trim())):'';
+  $('#count').textContent = 'showing '+visible.length+' of '+view.length+' jobs'+locNote
                             +(window._fetchedAt?(' · '+window._fetchedAt):'');
   // "Load more" shows up whenever there are more jobs than currently displayed.
   if(wrap){
-    const more = jobs.length - visible.length;
+    const more = view.length - visible.length;
     wrap.style.display = more>0 ? '' : 'none';
     const btn=$('#loadMoreBtn'); if(btn) btn.textContent='Load more ('+more+' more)';
   }
@@ -2371,7 +2388,7 @@ function showTab(which){
 }
 
 function useInTailor(i){
-  const j=jobs[i];
+  const j=(window._view||jobs)[i];
   const jd = j.description || (j.title+' at '+j.company);
   $('#genJD').value = jd; $('#tailorJD').value = jd;
   $('#genTitle').value = j.title||''; $('#genCompany').value = j.company||'';
@@ -2382,7 +2399,7 @@ function useInTailor(i){
 // Semi-auto APPLY ASSISTANT: for one job, tailor the resume to it, draft a cover
 // note, and open the apply link — you review and submit yourself. No auto-submit.
 async function applyKit(i){
-  const j=jobs[i]; if(!j) return;
+  const j=(window._view||jobs)[i]; if(!j) return;
   toast('Preparing your apply kit — tailoring resume to this job…');
   try{
     const r=await fetch('/api/apply/kit',{method:'POST',headers:{'Content-Type':'application/json'},
@@ -2517,6 +2534,8 @@ $('#previewBtn').onclick=previewProfile;
   const el=$('#'+id); if(el) el.addEventListener('change', invalidateProfile);
 });
 $('#loadMoreBtn').onclick=showMore;
+// Location filter: re-rank/filter the current results as you type (reset paging).
+$('#jobLoc').addEventListener('input', ()=>{ shown=PAGE; renderJobs(); });
 $('#genBtn').onclick=generateResume;
 $('#tailorBtn').onclick=tailorResume;
 $('#refreshResumes').onclick=loadResumes;
