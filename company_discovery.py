@@ -653,9 +653,12 @@ def discover(area: str, limit: int = 1000):
     rows = rich + extra
     for r in rows:
         r["confidence"] = _confidence(r)
-    # Best first; mapped (coords) then website then name-only, within same score.
-    rows.sort(key=lambda r: (r["confidence"], bool(r.get("latitude")), bool(r["website"])),
-              reverse=True)
+    # IT/Software & AI/ML companies first (that's where developer roles are), then
+    # by confidence, then mapped (coords) / has-website within the same score.
+    def _it_first(r):
+        return 1 if r.get("industry") in ("IT / Software", "AI / ML") else 0
+    rows.sort(key=lambda r: (_it_first(r), r["confidence"], bool(r.get("latitude")),
+                             bool(r["website"])), reverse=True)
     result = {
         "area": area,
         "resolved": geo["display_name"],

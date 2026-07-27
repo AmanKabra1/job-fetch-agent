@@ -2640,6 +2640,7 @@ COMPANIES_HTML = r"""<!doctype html>
     <div class="panel">
       <div class="filters">
         <input id="fSearch" placeholder="search name / industry…" style="flex:1;min-width:120px"/>
+        <label class="note" style="color:#7db0ff" title="Show only IT / software / AI companies — where developer roles are"><input type="checkbox" id="fIT" checked/> 💻 IT / dev only</label>
         <select id="fType"><option value="">All types</option></select>
         <select id="fIndustry"><option value="">All industries</option></select>
         <label class="note"><input type="checkbox" id="fWeb"/> has website</label>
@@ -2675,7 +2676,7 @@ function esc(s){return (s||'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<'
 
 // Lock every input / filter / export control while a search runs, so the
 // entered data can't be edited mid-fetch. Unlocked again when it finishes.
-const CONTROLS=['area','limit','go','exCsv','exJson','exGeo','fSearch','fType','fIndustry','fWeb','fCowork'];
+const CONTROLS=['area','limit','go','exCsv','exJson','exGeo','fSearch','fType','fIndustry','fWeb','fCowork','fIT'];
 function lock(on){ CONTROLS.forEach(id=>{const el=$('#'+id); if(el) el.disabled=on;}); }
 
 async function go(){
@@ -2702,8 +2703,9 @@ function buildFilters(){
 }
 function applyFilters(){
   const q=$('#fSearch').value.toLowerCase(), ty=$('#fType').value, ind=$('#fIndustry').value,
-        web=$('#fWeb').checked, cow=$('#fCowork').checked;
+        web=$('#fWeb').checked, cow=$('#fCowork').checked, itOnly=$('#fIT').checked;
   VIEW=ALL.filter(c=>{
+    if(itOnly && !['IT / Software','AI / ML'].includes(c.industry)) return false;
     if(ty && c.business_type!==ty) return false;
     if(ind && c.industry!==ind) return false;
     if(web && !c.website) return false;
@@ -2808,7 +2810,7 @@ function exGeo(){
 initMap();
 $('#go').onclick=go;
 $('#area').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
-['fSearch','fType','fIndustry','fWeb','fCowork'].forEach(id=>$('#'+id).addEventListener('input',applyFilters));
+['fSearch','fType','fIndustry','fWeb','fCowork','fIT'].forEach(id=>$('#'+id).addEventListener('input',applyFilters));
 $('#exCsv').onclick=exCsv; $('#exJson').onclick=exJson; $('#exGeo').onclick=exGeo;
 </script>
 </body>
