@@ -163,12 +163,14 @@ def _overpass_query(bbox):
   nwr["name"]["shop"]({b});
   nwr["name"]["craft"]({b});
   nwr["name"]["healthcare"]({b});
-  nwr["name"]["amenity"~"^(coworking_space|bank|clinic|hospital|pharmacy|college|university|school|restaurant|cafe|fuel|car_rental|marketplace)$"]({b});
+  nwr["name"]["amenity"]({b});
+  nwr["name"]["tourism"]({b});
+  nwr["name"]["leisure"]({b});
   nwr["name"]["building"~"^(commercial|office|industrial|retail)$"]({b});
   nwr["name"]["industrial"]({b});
   nwr["name"]["landuse"="commercial"]({b});
 );
-out center tags 4000;
+out center tags 6000;
 """
 
 
@@ -251,14 +253,28 @@ def _classify(tags: dict):
         return f"Office ({office})", "Company / Office", False, True
     if shop:
         return f"Retail ({shop})", "Local Business / Retail", False, True
-    if tags.get("healthcare") or amenity in ("clinic", "hospital", "pharmacy"):
+    if tags.get("healthcare") or amenity in ("clinic", "hospital", "pharmacy", "doctors", "dentist"):
         return "Healthcare", "Healthcare", False, True
-    if amenity in ("college", "university", "school"):
+    if amenity in ("college", "university", "school", "training", "language_school",
+                   "driving_school", "kindergarten"):
         return "Education", "Education", False, True
     if amenity == "bank":
         return "Finance / Banking", "Company / Office", False, True
+    tourism = (tags.get("tourism") or "").lower()
+    if tourism in ("hotel", "motel", "guest_house", "hostel", "resort", "apartment"):
+        return "Hospitality / Hotel", "Local Business", False, True
+    leisure = (tags.get("leisure") or "").lower()
+    if leisure in ("fitness_centre", "sports_centre", "gym") or amenity == "gym":
+        return "Fitness / Leisure", "Local Business", False, True
+    if amenity in ("restaurant", "cafe", "fast_food", "bar", "pub", "food_court",
+                   "ice_cream", "biergarten"):
+        return "Food & Beverage", "Local Business / Retail", False, True
     if amenity:
         return amenity.replace("_", " ").title(), "Local Business", False, True
+    if tourism:
+        return tourism.replace("_", " ").title(), "Local Business", False, True
+    if leisure:
+        return leisure.replace("_", " ").title(), "Local Business", False, True
     if tags.get("craft"):
         return f"Craft ({tags['craft']})", "Small Business", False, True
     if building in ("commercial", "office", "retail") or tags.get("landuse") == "commercial":
@@ -268,11 +284,41 @@ def _classify(tags: dict):
     return "Business", "Business", False, True
 
 
+# Named map features that aren't businesses — drop them (they're not companies).
+_AMENITY_NOISE = {
+    "parking", "parking_space", "parking_entrance", "bench", "waste_basket",
+    "waste_disposal", "toilets", "bicycle_parking", "motorcycle_parking",
+    "drinking_water", "fountain", "bus_station", "shelter", "clock", "post_box",
+    "telephone", "recycling", "grave_yard", "place_of_worship", "fire_station",
+    "police", "townhall", "public_building", "community_centre", "social_facility",
+    "water_point", "charging_station", "taxi", "bicycle_rental", "vending_machine",
+    "atm", "fuel", "ferry_terminal", "bureau_de_change", "hunting_stand",
+}
+# Non-business leisure/tourism (parks, playgrounds, viewpoints…) — not companies.
+_LEISURE_NOISE = {
+    "park", "garden", "playground", "pitch", "common", "nature_reserve", "dog_park",
+    "picnic_table", "track", "recreation_ground", "firepit", "bleachers", "slipway",
+    "swimming_area", "fitness_station", "outdoor_seating", "bird_hide", "beach_resort",
+}
+_TOURISM_NOISE = {
+    "viewpoint", "artwork", "attraction", "information", "picnic_site", "camp_site",
+    "caravan_site", "wilderness_hut",
+}
+
+
 def _norm(el):
     """One raw OSM element -> the output company record (fields we can fill)."""
     tags = el.get("tags", {})
     name = tags.get("name")
     if not name:
+        return None
+    # Skip named-but-not-a-business map features (parking, benches, parks, ATMs,
+    # temples, viewpoints…) — unless they also carry a real business tag.
+    if (not any(tags.get(k) for k in ("office", "shop", "company", "craft",
+                                       "healthcare", "building", "industrial"))
+            and (tags.get("amenity") in _AMENITY_NOISE
+                 or tags.get("leisure") in _LEISURE_NOISE
+                 or tags.get("tourism") in _TOURISM_NOISE)):
         return None
     lat = el.get("lat") or (el.get("center") or {}).get("lat")
     lon = el.get("lon") or (el.get("center") or {}).get("lon")
