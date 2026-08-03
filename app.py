@@ -2455,6 +2455,9 @@ async function generateResume(){
       +(emph?(' · emphasized '+emph+' skills'):'')
       +(ats?(' · '+ats+' ATS keywords added'):'');
     toast('Resume generated in your format.');
+    // Clear the pasted JD / title / company so the next resume starts fresh
+    // (the old JD no longer lingers on the form).
+    $('#genJD').value=''; $('#genTitle').value=''; $('#genCompany').value='';
     loadResumes();
   }catch(e){ $('#genResult').textContent='Error: '+e; }
   finally{ stopTimer(); setBusy(btn,false); btn.textContent=old; }
@@ -2502,6 +2505,8 @@ async function tailorResume(){
          +(d.ats_added?(' (+'+d.ats_added+' keywords)'):'')+' — <b>verify they\'re truthful before sending.</b> '+(bFiles.join(', ')||'—')+'</div></div>';
     $('#tailorResult').innerHTML=html;
     toast('Tailored resume downloaded.');
+    // Clear the pasted JD / skills so the next tailor starts fresh.
+    $('#tailorJD').value=''; $('#tailorSkills').value='';
     loadResumes();
   }catch(e){ $('#tailorResult').textContent='Error: '+e; }
   finally{ stopTimer(); setBusy(btn,false); btn.textContent=old; }

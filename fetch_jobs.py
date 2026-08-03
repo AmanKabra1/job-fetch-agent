@@ -48,11 +48,14 @@ def _quiet_jobspy():
 # so we keep these as roles; your detailed SKILLS drive the RANKING below.
 SEARCH_TERMS = [
     "backend developer",
+    "backend engineer",
     "software developer",
-    "python developer",
-    "node.js developer",
     "software engineer",        # covers SDE / SDE-1 / SDE I postings
     "SDE 1",
+    "python developer",
+    "node.js developer",
+    "java developer",
+    "full stack developer",
     "machine learning engineer",
     "AI engineer",
     "LLM engineer",
