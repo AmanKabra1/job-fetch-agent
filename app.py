@@ -930,14 +930,14 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
     req_floor = _min_required_years(blob)
     exp_fit = True
     if req_floor and cy:
-        if req_floor <= cy + 1:
-            score += 20
-        elif req_floor <= cy + 2:
-            score += 10
+        if req_floor <= cy:
+            score += 20  # perfect match for your level
+        elif req_floor <= cy + 1:
+            score += 8   # one year stretch is OK but penalised heavily
             reasons.append("slight experience stretch")
         else:
             return {"reject": True, "reason":
-                    f"needs {req_floor}+ yrs, you have {cy} (cap {cy + 1})",
+                    f"needs {req_floor}+ yrs, you have {cy} (too senior)",
                     **_summary({"req_years": req_floor})}
     elif req_floor and not cy:
         score += 10                                             # unknown candidate years
