@@ -225,6 +225,9 @@ def rank_for_feed(rows):
     nudges. So the committed feed arrives already matched to your resume and the
     hosted page (mobile, no upload) shows jobs that fit YOU.
 
+    Also uses Claude (job_analyzer.py) to intelligently read job descriptions and
+    adjust ranking if the posting says "5 years" but actually mentors junior devs.
+
     Returns the ORIGINAL rows (keeping their salary fields) in ranked, best-first
     order. Relaxes the skill gate once if the strict pass leaves too few, then tops
     up to MIN_FEED so the page is never sparse. Falls back to input order if the
@@ -250,6 +253,31 @@ def rank_for_feed(rows):
 
     by_url = {str(r.get("job_url", "")): r for r in rows}
     ordered = [by_url[j["job_url"]] for j in ranked if j.get("job_url") in by_url]
+
+    # AI job intelligence: read job descriptions and adjust ranking based on actual fit,
+    # not just posted experience years. E.g., "5 years posted but mentors juniors" -> boost.
+    try:
+        import job_analyzer as JA
+        print(f"  analysing top {min(100, len(ordered))} jobs with Claude ...", flush=True)
+        analyses = JA.batch_analyze(ordered[:100], profile, max_jobs=100)
+        for job in ordered:
+            url = job.get("job_url", "")
+            if url not in analyses:
+                continue
+            analysis = analyses[url]
+            delta = analysis.get("score_delta", 0)
+            if delta:
+                job["_ai_analysis"] = analysis
+                job["_ai_delta"] = delta
+        # Re-rank with AI adjustments
+        ordered.sort(key=lambda j: (j.get("_ai_delta", 0), -APP._days_old(j.get("date_posted"))),
+                     reverse=True)
+        boosted = len([j for j in ordered if j.get("_ai_delta", 0) > 0])
+        penalised = len([j for j in ordered if j.get("_ai_delta", 0) < 0])
+        if boosted or penalised:
+            print(f"  AI analysis: {boosted} boosted, {penalised} penalised", flush=True)
+    except Exception as e:
+        print(f"  ! AI analysis skipped: {e}", flush=True)
 
     # Floor: if the gate left fewer than MIN_FEED, top up with the remaining
     # (deduped) raw rows so the feed is never sparse.

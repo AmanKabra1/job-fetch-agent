@@ -653,6 +653,36 @@ def discover(area: str, limit: int = 1000):
     rows = rich + extra
     for r in rows:
         r["confidence"] = _confidence(r)
+    # Also discover companies in coworking spaces & tech parks (shared office buildings).
+    # These often have 10-100 startups/small companies but aren't individually mapped.
+    coworking_rows = []
+    try:
+        coworking_spaces = _find_coworking_spaces(geo["bbox"])
+        if coworking_spaces:
+            print(f"    found {len(coworking_spaces)} coworking/shared office spaces — "
+                  f"searching for companies in them ...", flush=True)
+            coworking_rows = _fetch_companies_in_spaces(coworking_spaces, area)
+    except Exception as e:
+        print(f"  ! coworking discovery failed: {e}", flush=True)
+
+    # Merge all sources: OSM + Tavily web + coworking spaces.
+    allr = osm_rows + web_rows + coworking_rows
+    # Rich records (have coords and/or a website) dedupe by website/coords.
+    rich = _dedupe([r for r in allr if r.get("latitude") or r.get("website")])
+    rich_names = {_norm_name(r["company_name"]) for r in rich}
+    # Name-only records (from directory listicles): keep those not already present.
+    extra, seen = [], set()
+    for r in allr:
+        if r.get("latitude") or r.get("website"):
+            continue
+        nn = _norm_name(r["company_name"])
+        if len(nn) < 4 or nn in rich_names or nn in seen:
+            continue
+        seen.add(nn)
+        extra.append(r)
+    rows = rich + extra
+    for r in rows:
+        r["confidence"] = _confidence(r)
     # IT/Software & AI/ML companies first (that's where developer roles are), then
     # by confidence, then mapped (coords) / has-website within the same score.
     def _it_first(r):
@@ -671,6 +701,73 @@ def discover(area: str, limit: int = 1000):
     }
     _DISCOVER_CACHE[ck] = (time.time(), result)
     return result
+
+
+def _find_coworking_spaces(bbox) -> list:
+    """Find coworking spaces and shared office buildings in a bounding box using OSM.
+    Returns list of {name, coords} for each space."""
+    s, w, n, e = bbox
+    b = f"{s},{w},{n},{e}"
+    query = f"""
+[out:json][timeout:30];
+(
+  nwr["name"]["office"="coworking"]({b});
+  nwr["name"]["office"~"^(coworking|shared|hotdesk)"]({b});
+  nwr["name"~"(coworking|co-working|shared office|startup hub|tech park|business park)"i]({b});
+);
+out geom;
+"""
+    try:
+        r = requests.post(_OVERPASS, data=query, headers=_UA, timeout=40)
+        r.raise_for_status()
+        data = r.json()
+        spaces = []
+        for elem in data.get("elements", []):
+            tags = elem.get("tags", {})
+            name = tags.get("name", "").strip()
+            if not name or len(name) < 3:
+                continue
+            coords = None
+            if "lat" in elem and "lon" in elem:
+                coords = (elem["lat"], elem["lon"])
+            spaces.append({"name": name, "coords": coords})
+        return spaces
+    except Exception as e:
+        print(f"    ! coworking OSM query failed: {e}", flush=True)
+        return []
+
+
+def _fetch_companies_in_spaces(spaces: list, area: str) -> list:
+    """For each coworking space, use Tavily to search for companies operating there.
+    Returns company rows with a note that they're from coworking spaces."""
+    key = os.environ.get("TAVILY_API_KEY")
+    if not key:
+        return []
+    rows = []
+    seen_names = set()
+    for space in spaces[:5]:  # limit to avoid rate limiting
+        space_name = space.get("name", "")
+        q = f'companies "working at {space_name}" {area}'.strip()
+        try:
+            time.sleep(0.5)  # rate limit
+            r = requests.post("https://api.tavily.com/search", json={
+                "api_key": key, "query": q, "max_results": 8,
+                "search_depth": "basic",
+            }, headers=_UA, timeout=_TIMEOUT)
+            r.raise_for_status()
+            results = r.json().get("results", [])
+            for res in results:
+                text = (res.get("title", "") + "\n" + (res.get("content") or "")).lower()
+                # Extract company names from results
+                matches = re.findall(r'\b([A-Z][A-Za-z0-9&.\-\s]{2,40}(?:Ltd|Inc|Pvt|Corp|Tech|Systems))\b', res.get("title", ""))
+                for company in matches:
+                    nm = company.strip()
+                    if len(nm) >= 4 and _norm_name(nm) not in seen_names:
+                        seen_names.add(_norm_name(nm))
+                        rows.append(_web_record(nm, "", "IT / Software", []))
+        except Exception as e:
+            pass  # silent fail
+    return rows
 
 
 # --------------------------------------------------------------------------- #

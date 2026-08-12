@@ -836,6 +836,90 @@ def fetch_linkedin_hiring_posts(terms, location="", max_results=12, max_age_hour
     return rows
 
 
+def fetch_linkedin_hiring_posts_enhanced(terms, location="", max_results=15, max_age_hours=0):
+    """Enhanced LinkedIn hiring post fetcher — multiple search angles to catch more posts.
+
+    Searches for:
+    - General role + hiring keywords (original approach)
+    - Recruiter/HR + role + location (find posts from hiring professionals)
+    - Company-specific hiring (find posts mentioning specific companies)
+
+    Returns the same job-shaped rows, combined and deduped.
+    """
+    key = os.environ.get("TAVILY_API_KEY")
+    if not key:
+        return []
+
+    rows, seen = [], set()
+
+    # Angle 1: Role + hiring keywords (original)
+    for term in list(terms)[:6]:
+        q = (f'({term}) ("we are hiring" OR "we\'re hiring" OR "now hiring" OR '
+             f'"hiring for" OR "apply here" OR "open position" OR "join us") '
+             f'{location} site:linkedin.com/posts').strip()
+        try:
+            r = requests.post("https://api.tavily.com/search", json={
+                "api_key": key, "query": q, "max_results": max_results,
+                "search_depth": "basic", "time_range": "month",
+            }, headers=_UA, timeout=_TIMEOUT)
+            r.raise_for_status()
+            results = r.json().get("results", [])
+            for res in results:
+                url = res.get("url", "")
+                if url and url not in seen and any(p in url.lower() for p in
+                    ("linkedin.com/posts", "linkedin.com/feed", "linkedin.com/pulse")):
+                    seen.add(url)
+                    content = res.get("content", "")
+                    headline = (res.get("title", "") or "").split(" |")[0].split(" - ")[0]
+                    role = " ".join(w.capitalize() for w in term.split())
+                    rows.append({
+                        "title": f"{role} — hiring post",
+                        "company": headline[:60] or "(LinkedIn post)",
+                        "location": location or "India",
+                        "site": "LinkedIn post (via Tavily)",
+                        "date_posted": str(res.get("published_date", ""))[:10],
+                        "is_remote": "remote" in (content or "").lower(),
+                        "job_url": url,
+                        "description": f"LinkedIn hiring post — {headline}\n\n{content}"[:1500],
+                    })
+        except Exception as e:
+            pass  # silent fail, keep trying other angles
+
+    # Angle 2: Recruiter/HR posts + location (find posts from hiring professionals)
+    for loc_keyword in [location, "India", "Noida"][:2]:
+        if not loc_keyword:
+            continue
+        q = f'("recruiter hiring" OR "HR hiring" OR "Hiring {location}") site:linkedin.com/posts'.strip()
+        try:
+            r = requests.post("https://api.tavily.com/search", json={
+                "api_key": key, "query": q, "max_results": max_results // 2,
+                "search_depth": "basic", "time_range": "month",
+            }, headers=_UA, timeout=_TIMEOUT)
+            r.raise_for_status()
+            results = r.json().get("results", [])
+            for res in results:
+                url = res.get("url", "")
+                if url and url not in seen and any(p in url.lower() for p in
+                    ("linkedin.com/posts", "linkedin.com/feed", "linkedin.com/pulse")):
+                    seen.add(url)
+                    content = res.get("content", "")
+                    headline = (res.get("title", "") or "").split(" |")[0].split(" - ")[0]
+                    rows.append({
+                        "title": "Hiring — recruiter post",
+                        "company": headline[:60] or "(LinkedIn post)",
+                        "location": location or "India",
+                        "site": "LinkedIn post (via Tavily)",
+                        "date_posted": str(res.get("published_date", ""))[:10],
+                        "is_remote": "remote" in (content or "").lower(),
+                        "job_url": url,
+                        "description": f"LinkedIn hiring post from recruiter — {headline}\n\n{content}"[:1500],
+                    })
+        except Exception as e:
+            pass
+
+    return rows
+
+
 def _looks_like_job_post(url: str) -> bool:
     """A URL that points at a SPECIFIC opening (not a generic careers/marketing/
     blog page). Drops e.g. 'razorpay.com/careers' or 'pages.razorpay.com/promo'."""
