@@ -77,6 +77,10 @@ def analyze_job(job: dict, profile: dict) -> dict:
             "score_delta": int, # suggest rank adjustment: +10 if great fit, -15 if misleading
         }
     """
+    # Skip if no API key — cron will work fine without Claude analysis
+    if not os.environ.get("ANTHROPIC_API_KEY"):
+        return {"fit": None, "reason": "no API key", "score_delta": 0}
+
     job_url = str(job.get("job_url", ""))
     if not job_url:
         return {"fit": None, "reason": "no URL", "score_delta": 0}
