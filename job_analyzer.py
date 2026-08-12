@@ -1,20 +1,19 @@
 """
-Smart job analyzer — uses Claude to read job descriptions and match them
-against your actual profile, not just posted experience years.
+Smart job analyzer — uses intelligent heuristics to read job descriptions
+and match them against your profile. NO API KEYS NEEDED — completely free.
 
 A job posting might say "5 years required" but the description might say
-"early career welcome" or "we mentor juniors" — this module reads the full
-text and gives a smarter verdict than keyword matching alone.
+"early career welcome" or "we mentor juniors" — this module reads signals
+like this and adjusts ranking accordingly.
 
 Results are cached (7 days) so we don't re-analyze the same jobs repeatedly.
 """
 
-import os
+import re
 import json
 import hashlib
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from pathlib import Path
-import anthropic
 
 HERE = Path(__file__).parent
 CACHE_DIR = HERE / "data" / "job_analysis_cache"
@@ -65,26 +64,76 @@ def _save_cache(job_url: str, analysis: dict):
         print(f"  ! cache write failed: {e}", flush=True)
 
 
+# Signals that indicate a role is actually junior-friendly despite posted requirements
+_JUNIOR_FRIENDLY_SIGNALS = [
+    r"\bearly\s*career\b",
+    r"\bentry\s*level\b",
+    r"\bjunior\s*(?:engineer|developer|role)\b",
+    r"\bfresh\s*(?:graduate|grad)\b",
+    r"\bwe\s+mentor\b",
+    r"\bwe\s+train\b",
+    r"\bno\s+(?:prior\s+)?experience\s+required\b",
+    r"\bflex(?:ible)?\s+experience\b",
+    r"\bwilling\s+to\s+train\b",
+    r"\bfirst\s*(?:role|position|job)\b",
+    r"\blearning\s+(?:opportunity|environment)\b",
+    r"\bgrowth\s+(?:opportunity|focused)\b",
+    r"\bcareer\s+development\b",
+    r"\bsde\s*-?1\b",
+    r"\b1\s*-\s*2\s*years?\b",
+    r"\b2\s*-\s*3\s*years?\b",
+]
+
+# Signals that indicate a role is TOO SENIOR for a junior candidate
+_SENIOR_SIGNALS = [
+    r"\bsenior\s+(?:engineer|developer|architect|staff)\b",
+    r"\blead\s+(?:engineer|developer)\b",
+    r"\bprinciple?\s+engineer\b",
+    r"\bstaff\s+engineer\b",
+    r"\bvp\s+of\b",
+    r"\bdirector\s+(?:of|level)\b",
+    r"\bhead\s+of\b",
+    r"\b8\+\s*years?\b",
+    r"\b10\+\s*years?\b",
+    r"\b(?:10|8|7)\s*-\s*(?:15|12|10)\s*years?\b",
+]
+
+# Mentorship signals (softens senior requirement)
+_MENTOR_SIGNALS = [
+    r"\bwe\s+(?:mentor|coach|guide)\b",
+    r"\bmentorship\b",
+    r"\btraining\s+program\b",
+    r"\bbootcamp\b",
+    r"\batch\s+house\b",
+    r"\bincubat(?:or|e)\b",
+]
+
+
+def _count_signals(text: str, patterns: list) -> int:
+    """Count how many signals match in the text."""
+    if not text or not patterns:
+        return 0
+    t = text.lower()
+    return sum(1 for p in patterns if re.search(p, t, re.IGNORECASE))
+
+
 def analyze_job(job: dict, profile: dict) -> dict:
     """
     Analyze ONE job to see if it's actually a good fit for the candidate,
-    despite what the posted requirements say.
+    using intelligent heuristics (no API, completely free).
 
     Returns:
         {
-            "fit": True/False,  # is this job a good match for them?
-            "reason": str,      # why (or why not)
-            "score_delta": int, # suggest rank adjustment: +10 if great fit, -15 if misleading
+            "fit": True/False/None,  # is this job a good match?
+            "reason": str,           # why (or why not)
+            "score_delta": int,      # rank adjustment: +10 if great fit, -15 if misleading
         }
     """
-    # Skip if no API key — cron will work fine without Claude analysis
-    if not os.environ.get("ANTHROPIC_API_KEY"):
-        return {"fit": None, "reason": "no API key", "score_delta": 0}
-
     job_url = str(job.get("job_url", ""))
     if not job_url:
         return {"fit": None, "reason": "no URL", "score_delta": 0}
 
+    # Check cache first
     cached = _load_cache(job_url)
     if cached:
         cached.pop("cached_at", None)
@@ -93,97 +142,81 @@ def analyze_job(job: dict, profile: dict) -> dict:
 
     title = str(job.get("title") or "")
     desc = str(job.get("description") or "")
-    company = str(job.get("company") or "")
-    blob = f"{title}\n{desc}"
 
     if not desc or len(desc.strip()) < 50:
-        return {"fit": None, "reason": "job description too short to analyse", "score_delta": 0}
+        return {"fit": None, "reason": "description too short", "score_delta": 0}
 
-    exp_years = profile.get("experience_years", 0)
-    skills = profile.get("all_searchable_skills", [])
+    # Analyze the job description for signals
+    junior_signals = _count_signals(desc, _JUNIOR_FRIENDLY_SIGNALS)
+    senior_signals = _count_signals(desc, _SENIOR_SIGNALS)
+    mentor_signals = _count_signals(desc, _MENTOR_SIGNALS)
 
-    client = anthropic.Anthropic(api_key=os.environ.get("ANTHROPIC_API_KEY"))
+    score_delta = 0
+    reasons = []
 
-    prompt = f"""Analyse this job posting against this 2-year backend developer's profile.
+    # Positive signals: junior-friendly despite posted requirements
+    if junior_signals >= 2:
+        score_delta += 12
+        reasons.append("junior-friendly signals")
+    elif junior_signals == 1:
+        score_delta += 6
+        reasons.append("some junior-friendly language")
 
-CANDIDATE PROFILE:
-- Years of experience: {exp_years}
-- Key titles: {', '.join(profile.get('job_titles', [])[:3])}
-- Primary skills: {', '.join(skills[:10])}
+    # Negative signals: role is too senior
+    if senior_signals >= 3:
+        return {
+            "fit": False,
+            "reason": "appears too senior (multiple senior titles/requirements)",
+            "score_delta": -20,
+        }
+    elif senior_signals >= 2:
+        score_delta -= 10
+        reasons.append("senior-level signals")
 
-JOB POSTING:
-Title: {title}
-Company: {company}
+    # Mentorship softens senior requirement
+    if mentor_signals >= 1 and senior_signals >= 1:
+        score_delta += 8
+        reasons.append("mentors juniors despite senior title")
 
-Description:
-{desc[:2000]}
-
-QUESTION: Does the job description suggest this is actually suitable for a {exp_years}-year junior developer,
-even if the posting says "X+ years required"?
-
-Look for signs like:
-- "early career", "junior", "entry-level", "we mentor"
-- Job is actually junior work (e.g. "Full Stack Junior Developer" despite saying 5 years)
-- Flexible experience ("ideally X but will consider")
-- Emphasis on skills match over years
-- Misleading: senior title but junior-level work, or vice versa
-
-RESPOND in JSON ONLY:
-{{
-  "fit": true/false,
-  "reason": "one sentence why/why not",
-  "score_delta": number from -20 to +15
-}}
-
-Example if it's junior-friendly despite 5yr posted: {{"fit": true, "reason": "job says 5yr but description emphasizes mentoring early-career devs and Python/Node skills match", "score_delta": 10}}
-Example if it's misleadingly senior: {{"fit": false, "reason": "title is 'Senior Staff Engineer' — too senior for your level", "score_delta": -15}}
-"""
-
-    try:
-        response = client.messages.create(
-            model="claude-haiku-4-5-20251001",
-            max_tokens=200,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        text = response.content[0].text.strip()
+    # Salary heuristic: check if salary is reasonable for 2-year level in India
+    salary_match = re.search(r"([0-9]{1,2})\s*(?:lpa|l|lakhs?|rupees?|₹)", desc, re.IGNORECASE)
+    if salary_match:
         try:
-            result = json.loads(text)
-        except json.JSONDecodeError:
-            json_start = text.find("{")
-            json_end = text.rfind("}") + 1
-            if json_start >= 0 and json_end > json_start:
-                result = json.loads(text[json_start:json_end])
-            else:
-                return {"fit": None, "reason": "analysis failed to parse", "score_delta": 0}
+            sal = int(salary_match.group(1))
+            if 5 <= sal <= 12:
+                score_delta += 3
+                reasons.append(f"salary ~{sal}L is junior-appropriate")
+            elif sal > 15:
+                score_delta -= 5
+                reasons.append(f"salary ~{sal}L suggests senior role")
+        except ValueError:
+            pass
 
-        _save_cache(job_url, result)
-        return result
-    except Exception as e:
-        print(f"  ! Claude analysis failed for {title}: {e}", flush=True)
-        return {"fit": None, "reason": f"analysis error: {type(e).__name__}", "score_delta": 0}
+    # Build final verdict
+    fit = None
+    if score_delta > 5:
+        fit = True
+        reason = "; ".join(reasons) if reasons else "good fit signals"
+    elif score_delta < -5:
+        fit = False
+        reason = "; ".join(reasons) if reasons else "senior-level signals"
+    else:
+        fit = None
+        reason = "; ".join(reasons) if reasons else "neutral fit"
+
+    result = {"fit": fit, "reason": reason, "score_delta": max(-20, min(15, score_delta))}
+    _save_cache(job_url, result)
+    return result
 
 
 def batch_analyze(jobs: list, profile: dict, max_jobs: int = 100) -> dict:
     """
-    Analyse multiple jobs in parallel (respecting Claude rate limits).
-
+    Analyze multiple jobs (fast, no API calls, completely free).
     Returns dict: {job_url -> analysis result}
     """
-    import concurrent.futures
-
-    jobs_to_analyse = jobs[:max_jobs]
     results = {}
-
-    def _analyze_one(job):
-        return job.get("job_url"), analyze_job(job, profile)
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-        futures = [executor.submit(_analyze_one, job) for job in jobs_to_analyse]
-        for future in concurrent.futures.as_completed(futures):
-            try:
-                url, analysis = future.result()
-                results[url] = analysis
-            except Exception as e:
-                print(f"  ! batch analysis error: {e}", flush=True)
-
+    for job in jobs[:max_jobs]:
+        url = job.get("job_url", "")
+        if url:
+            results[url] = analyze_job(job, profile)
     return results
