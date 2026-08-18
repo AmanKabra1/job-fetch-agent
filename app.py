@@ -2173,7 +2173,7 @@ INDEX_HTML = r"""<!doctype html>
   </section>
 
   <!-- ============ SECTION 2 — CREATE A RESUME ============ -->
-  <section id="createResume" class="panel">
+  <section id="createResume" class="panel" style="display:none">
     <h2 class="sec-title"><span class="sec-num">2</span> Create a resume</h2>
     <p class="note">Two ways to build a one-page resume (PDF &amp; Word). This section only builds resumes — it does not search jobs.</p>
 
@@ -2639,9 +2639,9 @@ function showTab(which){
   const find = which==='find';
   const create = which==='create';
   const ats = which==='ats';
-  document.getElementById('findJobs').style.display = find?'':'none';
-  document.getElementById('createResume').style.display = create?'':'none';
-  document.getElementById('atsResume').style.display = ats?'':'none';
+  document.getElementById('findJobs').style.display = find?'block':'none';
+  document.getElementById('createResume').style.display = create?'block':'none';
+  document.getElementById('atsResume').style.display = ats?'block':'none';
   $('#tabFind').classList.toggle('active', find);
   $('#tabCreate').classList.toggle('active', create);
   $('#tabATS').classList.toggle('active', ats);
