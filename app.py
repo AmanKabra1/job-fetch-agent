@@ -2910,7 +2910,7 @@ $('#atsApplyBtn').onclick=applyAtsImprovements;
   const el=$('#'+id); if(el) el.addEventListener('change', invalidateProfile);
 });
 // Auto-calculate ATS score when file is uploaded
-const fileInput=$('#jfFile'); if(fileInput){ fileInput.addEventListener('change', async ()=>{ const f=fileInput.files[0]; if(f){ try{ const text=await f.text(); calculateATSScore(text); }catch(e){ console.log('ATS read error:', e); } } }); }
+if(fileInput){ fileInput.addEventListener('change', async ()=>{ const f=fileInput.files[0]; if(f){ try{ const text=await f.text(); calculateATSScore(text); }catch(e){ console.log('ATS read error:', e); } } }); }
 $('#loadMoreBtn').onclick=showMore;
 // Location filter: re-rank/filter the current results as you type (reset paging).
 $('#jobLoc').addEventListener('input', ()=>{ shown=PAGE; renderJobs(); });
