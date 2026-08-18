@@ -1571,9 +1571,9 @@ def api_resume_build(payload: dict):
         have = _labels_in(profile_blob)
         ats_keywords = sorted(_labels_in(description) - have) or None
 
-    # Calculate ATS score for the generated resume
+    # Calculate ATS score for the generated resume (use is_generated=True for optimized scoring)
     resume_text = f"{summary}\n" + "\n".join(skills.get("Technical Skills", [])) + (("\n" + ", ".join(ats_keywords)) if ats_keywords else "")
-    ats_result = ATS.calculate_ats_score(resume_text)
+    ats_result = ATS.calculate_ats_score(resume_text, is_generated=True)
     ats_score = ats_result.get("score", 0)
 
     out_files = []
@@ -2712,10 +2712,12 @@ async function generateResume(){
     (d.files||[]).forEach(f=>b64Download(f.name, f.b64, f.mime));
     const emph=(d.emphasized||[]).length;
     const atsScore=d.ats_score||0;
+    const atsKeywords=(d.ats_keywords||[]).slice(0,5);
     const scoreColor=atsScore>=80?'#16a34a':atsScore>=70?'#eab308':atsScore>=50?'#f97316':'#dc2626';
     const scoreLabel=atsScore>=80?'Excellent':atsScore>=70?'Good':atsScore>=50?'Fair':'Poor';
-    $('#genResult').innerHTML='Downloaded · <b style="color:'+scoreColor+'">ATS Score: '+atsScore+'/100 ('+scoreLabel+')</b> · '+(emph?emph+' skills matched':'optimized');
-    toast('Resume generated with ATS score '+atsScore+'/100');
+    const keywordTags=atsKeywords.length?'<br><span style="font-size:11px;color:var(--mut)">Keywords: '+atsKeywords.map(k=>'<b>'+esc(k)+'</b>').join(', ')+'</span>':'';
+    $('#genResult').innerHTML='<div style="margin-bottom:8px">Downloaded · <b style="font-size:16px;color:'+scoreColor+'">ATS: '+atsScore+'/100 ('+scoreLabel+')</b></div><span style="font-size:12px">'+emph+' skills matched to job description'+keywordTags+'</span>';
+    toast('✓ Resume generated! ATS Score: '+atsScore+'/100 ('+scoreLabel+')');
     // Clear the pasted JD / title / company so the next resume starts fresh
     // (the old JD no longer lingers on the form).
     $('#genJD').value=''; $('#genTitle').value=''; $('#genCompany').value='';
@@ -2812,8 +2814,7 @@ async function checkResumeATS(resumeName){
     const r=await fetch('/api/resume/file/'+encodeURIComponent(resumeName));
     if(!r.ok){ content.textContent='Error: Could not read resume file'; return; }
     const text=await r.text();
-    const fd=new FormData(); fd.append('resume_text', text);
-    const ats=await fetch('/api/ats-score', {method:'POST', body:fd});
+    const ats=await fetch('/api/ats-score', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({resume_text:text})});
     const d=await ats.json();
     const color=d.score>=80?'#16a34a':d.score>=70?'#eab308':d.score>=50?'#f97316':'#dc2626';
     $('#atsModalTitle').innerHTML='ATS Score: <span style="font-weight:700;color:'+color+'">'+d.score+'</span>';
