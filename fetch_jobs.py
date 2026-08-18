@@ -24,6 +24,7 @@ from jobspy import scrape_jobs
 
 import extra_sources as ES
 import resume_profile as RP        # your saved resume drives search + ranking
+import strict_matcher as SM        # strict filtering before ranking
 
 
 def _quiet_jobspy():
@@ -302,6 +303,26 @@ def main():
     jobs = normalise(jobs)
     today_rows = jobs.to_dict("records")
     print(f"Total unique jobs this run: {len(today_rows)}", flush=True)
+
+    # STRICT FILTERING: Apply hard gates before ranking.
+    # This is crucial — filter out jobs that don't match your experience/skills
+    # BEFORE they even enter the feed, not just downranking them.
+    print(f"  applying strict filter (experience: 2yr, core stack: Python/Node/Java/Backend/AI) ...", flush=True)
+    filtered_rows, filter_stats = SM.filter_jobs(today_rows, candidate_experience_years=2)
+    print(f"    strict filter: {filter_stats['kept']}/{filter_stats['total']} kept "
+          f"({filter_stats['rejected']} rejected)", flush=True)
+
+    # Show top rejection reasons
+    reject_reasons = {}
+    for url, info in filter_stats['rejection_reasons'].items():
+        reason = info.get('reason', 'unknown')
+        reject_reasons[reason] = reject_reasons.get(reason, 0) + 1
+    if reject_reasons:
+        top_reasons = sorted(reject_reasons.items(), key=lambda x: x[1], reverse=True)[:3]
+        for reason, count in top_reasons:
+            print(f"      {count}× {reason}", flush=True)
+
+    today_rows = filtered_rows  # Use filtered jobs from now on
 
     # REPLACE, not append: each run the feed is this run's latest jobs, ranked.
     existing = load_existing()
