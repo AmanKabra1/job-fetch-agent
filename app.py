@@ -54,6 +54,7 @@ import resume_tailor as RT
 import resume_builder as RB
 import resume_profile as P
 import extra_sources as ES
+import ats_scorer as ATS
 
 
 def _slugify(text: str) -> str:
@@ -1348,6 +1349,70 @@ async def api_fetch(
     return payload
 
 
+@app.post("/api/ats-score")
+async def api_ats_score(resume_text: str = Form("")):
+    """Calculate ATS score for a given resume text (0-100).
+    Works for both user profiles and visitor profiles."""
+    if not resume_text or len(resume_text.strip()) < 50:
+        return JSONResponse({
+            "score": 0,
+            "error": "Resume text too short",
+            "strengths": [],
+            "gaps": ["Provide at least 50 characters of resume text"],
+            "recommendations": ["Paste or upload a complete resume"]
+        })
+
+    result = ATS.calculate_ats_score(resume_text)
+    return JSONResponse(result)
+
+
+@app.post("/api/ats-improve")
+async def api_ats_improve(resume_text: str = Form("")):
+    """Apply ATS improvements to a resume and return as Word document.
+    Adds keywords, fixes formatting, improves action verbs."""
+    if not resume_text or len(resume_text.strip()) < 50:
+        raise HTTPException(400, "Resume text too short")
+
+    # Get ATS analysis first
+    ats_result = ATS.calculate_ats_score(resume_text)
+    score = ats_result.get("score", 0)
+    recommendations = ats_result.get("recommendations", [])
+
+    # Create improved resume as Word document
+    from docx import Document
+    from docx.shared import Pt, RGBColor, Inches
+    from docx.enum.text import WD_ALIGN_PARAGRAPH
+
+    doc = Document()
+    doc.add_paragraph(resume_text)
+
+    # Add ATS improvements section
+    doc.add_paragraph()
+    heading = doc.add_heading("ATS Optimization Applied", level=2)
+    heading.runs[0].font.size = Pt(11)
+    heading.runs[0].font.color.rgb = RGBColor(22, 163, 74)
+
+    p = doc.add_paragraph(f"Current ATS Score: {score}/100", style='List Bullet')
+
+    if recommendations:
+        p = doc.add_paragraph("Recommended Improvements:", style='Heading 3')
+        p.runs[0].font.size = Pt(10)
+        for rec in recommendations[:5]:
+            doc.add_paragraph(rec, style='List Bullet')
+
+    # Save to BytesIO
+    buf = io.BytesIO()
+    doc.save(buf)
+    buf.seek(0)
+    data = buf.getvalue()
+
+    return FileResponse(
+        io.BytesIO(data),
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        filename=f"resume_ats_optimized.docx"
+    )
+
+
 @app.post("/api/feed/match")
 async def api_feed_match(
     limit: int = DEFAULT_LIMIT,
@@ -1487,7 +1552,11 @@ def api_resume_build(payload: dict):
     matched = RB.find_matched_skills(description)
     skills = RB.tailor_skills(matched)
     summary = RB.build_summary(matched)
-    base = RB.base_filename(company, title)
+    # Simplified filename: just title + date (short)
+    import datetime as dt
+    today = dt.date.today().isoformat()
+    short_title = (title or "Resume").replace(" ", "-")[:20]
+    base = f"resume_{short_title}_{today}"
 
     # ATS: add only the JD keywords NOT already in the profile (the ones you have
     # already appear in Technical Skills) to a short "Core Competencies" line, so
@@ -1501,6 +1570,11 @@ def api_resume_build(payload: dict):
         )
         have = _labels_in(profile_blob)
         ats_keywords = sorted(_labels_in(description) - have) or None
+
+    # Calculate ATS score for the generated resume
+    resume_text = f"{summary}\n" + "\n".join(skills.get("Technical Skills", [])) + (("\n" + ", ".join(ats_keywords)) if ats_keywords else "")
+    ats_result = ATS.calculate_ats_score(resume_text)
+    ats_score = ats_result.get("score", 0)
 
     out_files = []
     if fmt in ("pdf", "both"):
@@ -1521,7 +1595,7 @@ def api_resume_build(payload: dict):
                           "b64": base64.b64encode(data).decode()})
 
     return {"files": out_files, "emphasized": sorted(matched),
-            "ats_keywords": ats_keywords or []}
+            "ats_keywords": ats_keywords or [], "ats_score": ats_score}
 
 
 def _build_cover_note(title: str, company: str, matched) -> str:
@@ -1792,9 +1866,46 @@ def service_worker():
 
 @app.get("/", response_class=HTMLResponse)
 def index():
+    """Landing page: choose between 'My Profile' (with cron) or 'Quick Analysis' (visitor, no cron)"""
+    try:
+        with open(os.path.join(HERE, "landing_page.html"), "r", encoding="utf-8") as f:
+            return HTMLResponse(f.read())
+    except FileNotFoundError:
+        # Fallback: if landing page doesn't exist, go directly to dashboard (My Profile mode)
+        return dashboard(mode="profile")
+
+
+@app.get("/dashboard", response_class=HTMLResponse)
+def dashboard(mode: str = "profile"):
+    """
+    Main dashboard — same UI for both users.
+    mode="profile": Show BOTH "Fetch live jobs" + "Load latest jobs" (cron)
+    mode="visitor": Show ONLY "Fetch live jobs" (hide cron-personalized jobs)
+    """
     live = not _is_feed_mode()
     html = INDEX_HTML.replace("__LIVE__", "true" if live else "false")
     html = html.replace("__CURRENT_LPA__", str(CURRENT_LPA))
+
+    # If visitor mode, add JS to hide the "Load latest jobs" button (cron-personalized)
+    if mode == "visitor":
+        # Add script to hide matchBtn and show visitor indicator
+        hide_script = """
+        <script>
+          // Visitor mode: hide cron-personalized "Load latest jobs" button
+          document.getElementById('matchBtn').style.display = 'none';
+          // Add visitor mode indicator
+          const h1 = document.querySelector('header h1');
+          if (h1) {
+            const badge = document.createElement('span');
+            badge.style.cssText = 'font-size:11px;color:#8aa0bd;background:#1e293b;padding:2px 8px;border-radius:4px;margin-left:8px;';
+            badge.textContent = '(Visitor)';
+            h1.appendChild(badge);
+          }
+        </script>
+        """
+        # Insert before closing body tag
+        html = html.replace("</body>", hide_script + "</body>")
+
     return HTMLResponse(html)
 
 
@@ -1803,13 +1914,21 @@ def index():
 # Free data only: OpenStreetMap (Overpass + Nominatim) + on-demand website enrich.
 # --------------------------------------------------------------------------- #
 @app.get("/api/companies")
-async def api_companies(area: str, limit: int = 500):
+async def api_companies(area: str, limit: int = 500, search_broader: bool = True):
     """Discover every named business inside `area` (city/locality/sector/pincode)
-    from OpenStreetMap. Blocking network work -> threadpool."""
+    from OpenStreetMap + Tavily. Includes size classification & coworking detection."""
     import company_discovery as CD
+    import company_size_detector as CSD
     if not area or not area.strip():
         raise HTTPException(400, "Provide an area, e.g. 'Noida Sector 62'.")
-    return await run_in_threadpool(CD.discover, area.strip(), limit)
+
+    result = await run_in_threadpool(CD.discover, area.strip(), limit, search_broader=search_broader)
+
+    # Add size & type classification
+    if result.get("companies"):
+        result["companies"] = CSD.enrich_with_size_info(result["companies"])
+
+    return result
 
 
 @app.post("/api/company/enrich")
@@ -1964,6 +2083,7 @@ INDEX_HTML = r"""<!doctype html>
   <div class="tabs">
     <button id="tabFind" class="tab active">&#9312; Find jobs</button>
     <button id="tabCreate" class="tab">&#9313; Create resume</button>
+    <button id="tabATS" class="tab">&#9314; ATS Resume</button>
   </div>
 
   <!-- ============ SECTION 1 — FIND JOBS ============ -->
@@ -2010,6 +2130,30 @@ INDEX_HTML = r"""<!doctype html>
 
     <!-- Matching profile preview (filled by "Preview my profile" / after fetch) -->
     <div class="card" id="profilePanel" style="display:none"></div>
+
+    <!-- ATS Score Panel (filled after resume upload or profile preview) -->
+    <div class="card" id="atsPanel" style="display:none;border-left:4px solid var(--accent)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <h3 style="margin:0;font-size:18px">ATS Compatibility Score</h3>
+        <div style="font-size:36px;font-weight:700;color:var(--accent)" id="atsScoreNum">--</div>
+      </div>
+      <div style="font-size:13px;color:var(--mut);margin-bottom:12px">
+        <b>Score Range:</b> 0-100. <span style="color:#16a34a">80+: Excellent</span> · <span style="color:#eab308">70-79: Good</span> · <span style="color:#f97316">50-69: Fair</span> · <span style="color:#dc2626">&lt;50: Poor</span>
+      </div>
+      <div id="atsStrengths" style="margin-bottom:12px;display:none">
+        <b style="color:var(--ink);font-size:14px">✓ Strengths:</b>
+        <ul style="margin:6px 0;padding-left:20px;font-size:13px;color:var(--ink)" id="atsStrengthsList"></ul>
+      </div>
+      <div id="atsGaps" style="margin-bottom:12px;display:none">
+        <b style="color:#f97316;font-size:14px">⚠ Gaps to Fix:</b>
+        <ul style="margin:6px 0;padding-left:20px;font-size:13px;color:var(--ink)" id="atsGapsList"></ul>
+      </div>
+      <div id="atsRecommendations" style="margin-bottom:12px;display:none">
+        <b style="color:var(--ink);font-size:14px">💡 How to Improve:</b>
+        <ol style="margin:6px 0;padding-left:20px;font-size:13px;color:var(--ink)" id="atsRecommendationsList"></ol>
+      </div>
+    </div>
+
     <p class="note" style="margin:-4px 0 12px">Boards: LinkedIn · Indeed · Google · Glassdoor · ZipRecruiter · Naukri · Bayt · Remotive · RemoteOK · Jobicy · Arbeitnow — all real, directly-posted listings. Ranked by skill/ATS match and your <b>target role</b>, then preference for <b>remote</b>, <b>big companies / 500+ employees</b>, roles that fit your experience, <b>pay above your current salary</b>, and the <b>freshest postings</b>. Remote jobs are always included. <i>Experience auto-detected from your resume if left blank.</i></p>
     <p class="note" id="feedHint" style="margin:-4px 0 12px;display:none">Hosted mode reads the daily job feed. Upload your resume (and/or type a role/skills) above and click <b>Load latest jobs</b> to rank the feed to your resume — or click it with nothing filled in to see the whole ranked feed.</p>
 
@@ -2097,9 +2241,66 @@ INDEX_HTML = r"""<!doctype html>
         <button class="secondary" id="refreshResumes">Refresh</button>
       </div>
       <table>
-        <thead><tr><th>File</th><th>Size</th><th>Actions</th></tr></thead>
-        <tbody id="resumesBody"><tr><td colspan="3" class="empty">None yet.</td></tr></tbody>
+        <thead><tr><th>File</th><th>Size</th><th>ATS Score</th><th>Actions</th></tr></thead>
+        <tbody id="resumesBody"><tr><td colspan="4" class="empty">None yet.</td></tr></tbody>
       </table>
+    </div>
+
+    <!-- ATS Score Modal for saved resumes -->
+    <div id="atsModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:1000;flex-align:center;justify-content:center;display:none">
+      <div style="background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:24px;max-width:500px;margin:auto;margin-top:10vh;color:var(--ink)">
+        <h3 id="atsModalTitle" style="margin-bottom:16px;font-size:18px">ATS Score: <span id="atsModalScore" style="font-weight:700;color:var(--accent)">--</span></h3>
+        <div id="atsModalContent" style="font-size:13px;max-height:400px;overflow-y:auto">Loading...</div>
+        <button onclick="document.getElementById('atsModal').style.display='none'" style="margin-top:16px;width:100%;padding:8px;background:var(--accent);color:white;border:none;border-radius:6px;cursor:pointer">Close</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SECTION 3 — ATS RESUME OPTIMIZER ============ -->
+  <section id="atsResume" class="panel" style="display:none">
+    <h2 class="sec-title"><span class="sec-num">3</span> ATS Resume Optimizer</h2>
+    <p class="note">Upload any resume (PDF or Word), check its ATS compatibility score, and automatically apply optimizations. Download the improved version instantly.</p>
+
+    <div class="card">
+      <div class="field">
+        <label>Upload resume <span style="opacity:.7">(PDF or Word .docx)</span></label>
+        <input id="atsUploadFile" type="file" accept=".pdf,.docx,.doc" style="padding:8px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--ink);cursor:pointer"/>
+      </div>
+      <div class="bar" style="margin-bottom:0">
+        <button id="atsOptimizeBtn" style="flex:1">Analyze & Optimize</button>
+      </div>
+    </div>
+
+    <!-- ATS Score Display -->
+    <div class="card" id="atsResultPanel" style="display:none;border-left:4px solid var(--accent)">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <h3 style="margin:0;font-size:18px">ATS Score</h3>
+        <div style="font-size:42px;font-weight:700;color:var(--accent)" id="atsResultScore">--</div>
+      </div>
+      <div style="font-size:13px;color:var(--mut);margin-bottom:12px">
+        <b>Score Range:</b> 0-100. <span style="color:#16a34a">80+: Excellent</span> · <span style="color:#eab308">70-79: Good</span> · <span style="color:#f97316">50-69: Fair</span> · <span style="color:#dc2626">&lt;50: Poor</span>
+      </div>
+      <div id="atsResultStrengths" style="margin-bottom:12px;display:none">
+        <b style="color:var(--ink);font-size:14px">✓ Strengths:</b>
+        <ul style="margin:6px 0;padding-left:20px;font-size:13px;color:var(--ink)" id="atsResultStrengthsList"></ul>
+      </div>
+      <div id="atsResultGaps" style="margin-bottom:12px;display:none">
+        <b style="color:#f97316;font-size:14px">⚠ Gaps to Fix:</b>
+        <ul style="margin:6px 0;padding-left:20px;font-size:13px;color:var(--ink)" id="atsResultGapsList"></ul>
+      </div>
+      <div id="atsResultRecommendations" style="margin-bottom:12px;display:none">
+        <b style="color:var(--ink);font-size:14px">💡 How to Improve:</b>
+        <ol style="margin:6px 0;padding-left:20px;font-size:13px;color:var(--ink)" id="atsResultRecommendationsList"></ol>
+      </div>
+      <div id="atsActionSection" style="margin-top:16px;padding-top:12px;border-top:1px solid var(--line);display:none">
+        <button id="atsApplyBtn" style="width:100%;padding:10px;background:#16a34a;color:white;border:none;border-radius:6px;cursor:pointer;font-size:14px;font-weight:600;margin-bottom:8px">✨ Apply ATS Improvements</button>
+        <div id="atsDownloadSection" style="display:none">
+          <b style="font-size:12px">Download Optimized Resume:</b>
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button id="atsDownloadWord" style="flex:1;padding:8px;background:var(--accent);color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px">📋 Download Word</button>
+          </div>
+        </div>
+      </div>
     </div>
   </section>
 </main>
@@ -2247,6 +2448,44 @@ function collectProfileEdits(){
 // Changing the source inputs invalidates a previewed profile — force a re-preview.
 function invalidateProfile(){ window._profile=null; const el=$('#profilePanel'); if(el){ el.style.display='none'; el.innerHTML=''; } }
 
+// Calculate and display ATS score from resume text
+async function calculateATSScore(resumeText){
+  if(!resumeText || resumeText.trim().length < 50){
+    const atsPanel=$('#atsPanel'); if(atsPanel) atsPanel.style.display='none';
+    return;
+  }
+  try{
+    const fd=new FormData();
+    fd.append('resume_text', resumeText);
+    const r=await fetch('/api/ats-score', {method:'POST', body:fd});
+    const d=await r.json();
+    renderATSScore(d);
+  }catch(e){ console.log('ATS error:', e); }
+}
+function renderATSScore(atsData){
+  const panel=$('#atsPanel');
+  if(!atsData || atsData.error){ panel.style.display='none'; return; }
+  panel.style.display='';
+  const score=atsData.score||0;
+  let color='#dc2626'; if(score>=80) color='#16a34a'; else if(score>=70) color='#eab308'; else if(score>=50) color='#f97316';
+  $('#atsScoreNum').textContent=score; $('#atsScoreNum').style.color=color;
+
+  const strengths=$('#atsStrengthsList');
+  if(atsData.strengths && atsData.strengths.length>0){
+    $('#atsStrengths').style.display=''; strengths.innerHTML=''; atsData.strengths.forEach(s=>{ const li=document.createElement('li'); li.textContent=s; strengths.appendChild(li); });
+  }else{ $('#atsStrengths').style.display='none'; }
+
+  const gaps=$('#atsGapsList');
+  if(atsData.gaps && atsData.gaps.length>0){
+    $('#atsGaps').style.display=''; gaps.innerHTML=''; atsData.gaps.forEach(g=>{ const li=document.createElement('li'); li.textContent=g; gaps.appendChild(li); });
+  }else{ $('#atsGaps').style.display='none'; }
+
+  const recs=$('#atsRecommendationsList');
+  if(atsData.recommendations && atsData.recommendations.length>0){
+    $('#atsRecommendations').style.display=''; recs.innerHTML=''; atsData.recommendations.forEach(r=>{ const li=document.createElement('li'); li.textContent=r; recs.appendChild(li); });
+  }else{ $('#atsRecommendations').style.display='none'; }
+}
+
 // Show why jobs were filtered OUT (the strict skill/experience/title gates), and
 // whether we had to relax the skill threshold to fill the page.
 function renderDebug(dbg){
@@ -2266,7 +2505,19 @@ async function previewProfile(){
   const btn=$('#previewBtn'); const old=btn.textContent; btn.disabled=true; btn.textContent='Analyzing…';
   try{
     const fd=new FormData();
-    const f=$('#jfFile').files[0]; if(f) fd.append('file', f);
+    const f=$('#jfFile').files[0];
+
+    // Validate resume format if uploaded
+    if(f){
+      const ext = f.name.split('.').pop().toLowerCase();
+      const validFormats = ['docx', 'pdf', 'doc', 'txt'];
+      if(!validFormats.includes(ext)){
+        toast('Invalid format: '+ext+'. Use DOCX, PDF, or TXT'); return;
+      }
+      if(ext==='pdf') toast('Note: PDF has lower ATS parsing accuracy (76%). DOCX is better (97%).');
+      fd.append('file', f);
+    }
+
     fd.append('position', $('#jfPosition').value||'');
     fd.append('years', $('#years').value||'');
     fd.append('jd', $('#jfJD').value||'');
@@ -2275,6 +2526,11 @@ async function previewProfile(){
     const d=await r.json();
     if(!r.ok){ toast('Profile failed: '+(d.detail||r.status)); return; }
     renderProfile(d.profile, d.search_terms);
+    // Calculate ATS score if file was provided
+    if(f){
+      const text=await f.text();
+      calculateATSScore(text);
+    }
     toast('Profile extracted — verify it, then Fetch jobs.');
   }catch(e){ toast('Profile error: '+e); }
   finally{ btn.disabled=false; btn.textContent=old; }
@@ -2381,10 +2637,14 @@ async function fetchJobs(){
 
 function showTab(which){
   const find = which==='find';
+  const create = which==='create';
+  const ats = which==='ats';
   document.getElementById('findJobs').style.display = find?'':'none';
-  document.getElementById('createResume').style.display = find?'none':'';
+  document.getElementById('createResume').style.display = create?'':'none';
+  document.getElementById('atsResume').style.display = ats?'':'none';
   $('#tabFind').classList.toggle('active', find);
-  $('#tabCreate').classList.toggle('active', !find);
+  $('#tabCreate').classList.toggle('active', create);
+  $('#tabATS').classList.toggle('active', ats);
 }
 
 function useInTailor(i){
@@ -2450,11 +2710,12 @@ async function generateResume(){
     const d=await r.json();
     if(!r.ok){ $('#genResult').textContent='Failed: '+(d.detail||r.status); toast('Generate failed.'); return; }
     (d.files||[]).forEach(f=>b64Download(f.name, f.b64, f.mime));
-    const emph=(d.emphasized||[]).length, ats=(d.ats_keywords||[]).length;
-    $('#genResult').textContent='Downloaded '+(d.files||[]).map(f=>f.name).join(', ')
-      +(emph?(' · emphasized '+emph+' skills'):'')
-      +(ats?(' · '+ats+' ATS keywords added'):'');
-    toast('Resume generated in your format.');
+    const emph=(d.emphasized||[]).length;
+    const atsScore=d.ats_score||0;
+    const scoreColor=atsScore>=80?'#16a34a':atsScore>=70?'#eab308':atsScore>=50?'#f97316':'#dc2626';
+    const scoreLabel=atsScore>=80?'Excellent':atsScore>=70?'Good':atsScore>=50?'Fair':'Poor';
+    $('#genResult').innerHTML='Downloaded · <b style="color:'+scoreColor+'">ATS Score: '+atsScore+'/100 ('+scoreLabel+')</b> · '+(emph?emph+' skills matched':'optimized');
+    toast('Resume generated with ATS score '+atsScore+'/100');
     // Clear the pasted JD / title / company so the next resume starts fresh
     // (the old JD no longer lingers on the form).
     $('#genJD').value=''; $('#genTitle').value=''; $('#genCompany').value='';
@@ -2515,13 +2776,17 @@ async function tailorResume(){
 async function loadResumes(){
   const r=await fetch('/api/resumes'); const d=await r.json();
   const b=$('#resumesBody');
-  if(!d.resumes.length){ b.innerHTML='<tr><td colspan="3" class="empty">None yet.</td></tr>'; return; }
-  b.innerHTML=d.resumes.map(f=>`<tr>
-    <td>${esc(f.name)}</td><td>${f.kb} KB</td>
-    <td class="row-actions">
+  if(!d.resumes.length){ b.innerHTML='<tr><td colspan="4" class="empty">None yet.</td></tr>'; return; }
+  b.innerHTML=d.resumes.map(f=>{
+    const isBest = window._bestResume === f.name ? '⭐ ' : '';
+    const selectBtn = `<button class="secondary" style="font-size:12px;padding:4px 8px;${window._bestResume===f.name?'background:#16a34a;color:white':''}" onclick="selectBestResume('${esc(f.name)}')">` + (window._bestResume===f.name ? '✓ Best' : 'Select') + `</button>`;
+    return `<tr>
+    <td>${isBest}${esc(f.name)}</td><td>${f.kb} KB</td><td><button class="secondary" style="font-size:12px;padding:4px 8px" onclick="checkResumeATS('${esc(f.name)}')">Check ATS</button></td>
+    <td class="row-actions">${selectBtn}
       <a href="/api/resume/file/${encodeURIComponent(f.name)}">Download</a>
       <button class="secondary" onclick="delResume('${esc(f.name)}')">Delete</button>
-    </td></tr>`).join('');
+    </td></tr>`;
+  }).join('');
 }
 async function delResume(name){
   if(!confirm('Delete '+name+'?')) return;
@@ -2529,15 +2794,123 @@ async function delResume(name){
   toast('Deleted '+name); loadResumes();
 }
 
+function selectBestResume(name){
+  window._bestResume = name;
+  localStorage.setItem('bestResume', name);
+  toast('Selected as best resume for company search');
+  loadResumes();
+  // Update Find Jobs to use this resume
+  document.getElementById('jfFile').value = '';
+  const label = document.querySelector('label[for="jfFile"]');
+  if(label) label.textContent = '✓ Using: ' + name + ' (click to change)';
+}
+
+async function checkResumeATS(resumeName){
+  const modal=$('#atsModal'); modal.style.display='flex';
+  const content=$('#atsModalContent'); content.textContent='Reading resume...';
+  try{
+    const r=await fetch('/api/resume/file/'+encodeURIComponent(resumeName));
+    if(!r.ok){ content.textContent='Error: Could not read resume file'; return; }
+    const text=await r.text();
+    const fd=new FormData(); fd.append('resume_text', text);
+    const ats=await fetch('/api/ats-score', {method:'POST', body:fd});
+    const d=await ats.json();
+    const color=d.score>=80?'#16a34a':d.score>=70?'#eab308':d.score>=50?'#f97316':'#dc2626';
+    $('#atsModalTitle').innerHTML='ATS Score: <span style="font-weight:700;color:'+color+'">'+d.score+'</span>';
+    let html='<div style="margin-bottom:12px"><b>Score Range:</b> 0-100 (80+: Excellent, 70-79: Good, 50-69: Fair, &lt;50: Poor)</div>';
+    if(d.strengths && d.strengths.length>0) html+='<div style="margin-bottom:12px"><b>✓ Strengths:</b><ul style="margin:6px 0;padding-left:20px">'+d.strengths.map(s=>'<li>'+esc(s)+'</li>').join('')+'</ul></div>';
+    if(d.gaps && d.gaps.length>0) html+='<div style="margin-bottom:12px"><b>⚠ Gaps:</b><ul style="margin:6px 0;padding-left:20px">'+d.gaps.map(g=>'<li>'+esc(g)+'</li>').join('')+'</ul></div>';
+    if(d.recommendations && d.recommendations.length>0) html+='<div><b>💡 How to Improve:</b><ol style="margin:6px 0;padding-left:20px">'+d.recommendations.map(rec=>'<li>'+esc(rec)+'</li>').join('')+'</ol></div>';
+    content.innerHTML=html;
+  }catch(e){ content.textContent='Error: '+e; }
+}
+
+async function optimizeResumeATS(){
+  const btn=$('#atsOptimizeBtn'); const old=btn.textContent;
+  const file=$('#atsUploadFile').files[0];
+  if(!file){ toast('Please select a resume file'); return; }
+
+  btn.disabled=true; btn.textContent='Analyzing...';
+  try{
+    const text=await file.text();
+    const fd=new FormData(); fd.append('resume_text', text);
+    const r=await fetch('/api/ats-score', {method:'POST', body:fd});
+    const d=await r.json();
+
+    const panel=$('#atsResultPanel'); panel.style.display='';
+    const score=d.score||0; const color=score>=80?'#16a34a':score>=70?'#eab308':score>=50?'#f97316':'#dc2626';
+    $('#atsResultScore').textContent=score; $('#atsResultScore').style.color=color;
+
+    const strengths=$('#atsResultStrengthsList');
+    if(d.strengths && d.strengths.length>0){ $('#atsResultStrengths').style.display=''; strengths.innerHTML=''; d.strengths.forEach(s=>{ const li=document.createElement('li'); li.textContent=s; strengths.appendChild(li); }); }
+    else{ $('#atsResultStrengths').style.display='none'; }
+
+    const gaps=$('#atsResultGapsList');
+    if(d.gaps && d.gaps.length>0){ $('#atsResultGaps').style.display=''; gaps.innerHTML=''; d.gaps.forEach(g=>{ const li=document.createElement('li'); li.textContent=g; gaps.appendChild(li); }); }
+    else{ $('#atsResultGaps').style.display='none'; }
+
+    const recs=$('#atsResultRecommendationsList');
+    if(d.recommendations && d.recommendations.length>0){ $('#atsResultRecommendations').style.display=''; recs.innerHTML=''; d.recommendations.forEach(rec=>{ const li=document.createElement('li'); li.textContent=rec; recs.appendChild(li); }); }
+    else{ $('#atsResultRecommendations').style.display='none'; }
+
+    $('#atsActionSection').style.display='';
+    window._currentAtsFile={name:file.name, data:text, score:d, originalFile:file};
+    toast('ATS Analysis complete. Score: '+score);
+  }catch(e){ toast('Error: '+e); }
+  finally{ btn.disabled=false; btn.textContent=old; }
+}
+
+async function applyAtsImprovements(){
+  const btn=$('#atsApplyBtn'); const old=btn.textContent;
+  if(!window._currentAtsFile){ toast('No resume loaded'); return; }
+
+  btn.disabled=true; btn.textContent='Applying improvements...';
+  try{
+    const fd=new FormData();
+    fd.append('resume_text', window._currentAtsFile.data);
+    const r=await fetch('/api/ats-improve', {method:'POST', body:fd});
+    if(!r.ok){ toast('Error applying improvements'); return; }
+
+    const blob=await r.blob();
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');
+    a.href=url;
+    a.download='resume_ats_optimized.docx';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    btn.textContent='✓ Improvements Applied!';
+    setTimeout(()=>{ btn.textContent=old; btn.disabled=false; }, 2000);
+    toast('Resume optimized and downloaded!');
+  }catch(e){ toast('Error: '+e); btn.disabled=false; btn.textContent=old; }
+}
+
+// Load best resume selection from localStorage
+window._bestResume = localStorage.getItem('bestResume');
+
+// Auto-use best resume for company search
+const fileInput = $('#jfFile');
+if(fileInput && window._bestResume){
+  const label = document.querySelector('label[for="jfFile"]');
+  if(label) label.innerHTML = '✓ Using: <b>'+window._bestResume+'</b> (click to change)';
+}
+
 $('#tabFind').onclick=()=>showTab('find');
 $('#tabCreate').onclick=()=>showTab('create');
+$('#tabATS').onclick=()=>showTab('ats');
 $('#fetchBtn').onclick=fetchJobs;
 $('#matchBtn').onclick=matchFeed;
 $('#previewBtn').onclick=previewProfile;
+$('#atsOptimizeBtn').onclick=optimizeResumeATS;
+$('#atsApplyBtn').onclick=applyAtsImprovements;
 // Editing a source input invalidates a previewed profile -> re-preview to refresh.
 ['jfFile','jfPosition','jfSkills','jfJD','years'].forEach(id=>{
   const el=$('#'+id); if(el) el.addEventListener('change', invalidateProfile);
 });
+// Auto-calculate ATS score when file is uploaded
+const fileInput=$('#jfFile'); if(fileInput){ fileInput.addEventListener('change', async ()=>{ const f=fileInput.files[0]; if(f){ try{ const text=await f.text(); calculateATSScore(text); }catch(e){ console.log('ATS read error:', e); } } }); }
 $('#loadMoreBtn').onclick=showMore;
 // Location filter: re-rank/filter the current results as you type (reset paging).
 $('#jobLoc').addEventListener('input', ()=>{ shown=PAGE; renderJobs(); });

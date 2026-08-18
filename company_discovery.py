@@ -605,10 +605,37 @@ _DISCOVER_CACHE = {}          # area -> (timestamp, result). Saves Tavily credit
 _CACHE_TTL = 6 * 3600         # 6 hours
 
 
-def discover(area: str, limit: int = 1000):
+def _extract_parent_area(area: str, resolved: str) -> str | None:
+    """
+    Extract parent/broader area from specific location.
+    E.g., "Sector 142, Noida, UP" -> "Noida, UP" (removes sector)
+    E.g., "Noida Sector 62" -> "Noida"
+    """
+    if not resolved:
+        return None
+
+    # Resolved format is usually "Sector X, City, State, Country"
+    parts = resolved.split(",")
+    if len(parts) < 2:
+        return None
+
+    # Remove first part (sector/specific area) and reconstruct
+    parent = ",".join(parts[1:]).strip()  # e.g., "Noida, UP, India"
+
+    # Remove country if present
+    if "india" in parent.lower():
+        parent = ",".join(p.strip() for p in parent.split(",") if "india" not in p.lower())
+
+    return parent.strip() if parent else None
+
+
+def discover(area: str, limit: int = 1000, search_broader: bool = True):
     """Main entry: area text -> list of companies (deduped, scored) + geo center.
     Merges OpenStreetMap (mapped, with coords) with Tavily web search (extra
-    company sites + names OSM misses). Cached per area for 6h."""
+    company sites + names OSM misses).
+
+    If search_broader=True and initial search is thin (<100 results), searches
+    broader area (e.g., "Sector 142" -> "Noida") to get comprehensive coverage."""
     ck = area.strip().lower()
     hit = _DISCOVER_CACHE.get(ck)
     if hit and (time.time() - hit[0]) < _CACHE_TTL:
@@ -636,7 +663,26 @@ def discover(area: str, limit: int = 1000):
         except Exception as e:
             print(f"  ! tavily failed: {e}", flush=True)
 
-    allr = osm_rows + web_rows
+    # Broader search: if thin results, search parent area (e.g., "Sector 142" -> "Noida")
+    broader_osm, broader_web = [], []
+    if search_broader and len(osm_rows) + len(web_rows) < 100:
+        # Extract parent area: "Sector 142, Noida, UP" -> search for "Noida"
+        broader_area = _extract_parent_area(area, geo["display_name"])
+        if broader_area and broader_area != area:
+            print(f"    thin initial search ({len(osm_rows)} + {len(web_rows)}), "
+                  f"searching broader: {broader_area}", flush=True)
+            time.sleep(1)
+            broader_geo = geocode_area(broader_area)
+            if broader_geo:
+                try:
+                    broader_osm = [r for r in (_norm(e) for e in fetch_overpass(broader_geo["bbox"])) if r]
+                    broader_web = fetch_tavily_companies(broader_area)
+                    print(f"    -> broader search: {len(broader_osm)} + {len(broader_web)} from {broader_area}", flush=True)
+                except Exception as e:
+                    print(f"    ! broader search failed: {e}", flush=True)
+
+    # Combine initial + broader search results
+    allr = osm_rows + web_rows + broader_osm + broader_web
     # Rich records (have coords and/or a website) dedupe by website/coords.
     rich = _dedupe([r for r in allr if r.get("latitude") or r.get("website")])
     rich_names = {_norm_name(r["company_name"]) for r in rich}

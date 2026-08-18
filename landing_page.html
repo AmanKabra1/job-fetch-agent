@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Job Finder — Choose Your Path</title>
+    <style>
+        :root {
+            --bg: #0f1623;
+            --card: #16203140;
+            --line: #27364d;
+            --ink: #e7eef9;
+            --mut: #8aa0bd;
+            --accent: #3b82f6;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg);
+            color: var(--ink);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container { max-width: 1000px; width: 100%; }
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid var(--line);
+        }
+        header h1 { font-size: 36px; margin-bottom: 10px; font-weight: 700; }
+        header p { font-size: 16px; color: var(--mut); }
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .option {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 12px;
+            padding: 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            border-top: 3px solid var(--accent);
+        }
+        .option:hover {
+            border-color: var(--accent);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.1);
+            transform: translateY(-4px);
+        }
+        .option.visitor { border-top-color: #764ba2; }
+        .option.visitor:hover { box-shadow: 0 8px 24px rgba(118, 75, 162, 0.1); }
+        .option-icon { font-size: 56px; margin-bottom: 20px; display: block; }
+        .option h2 { font-size: 24px; margin-bottom: 12px; }
+        .option p { color: var(--mut); font-size: 14px; line-height: 1.6; margin-bottom: 24px; }
+        .option-features {
+            text-align: left;
+            background: #0e172680;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            font-size: 13px;
+        }
+        .option-features li {
+            list-style: none;
+            padding: 6px 0;
+            color: var(--ink);
+            display: flex;
+            align-items: center;
+        }
+        .option-features li:before {
+            content: "✓";
+            color: var(--accent);
+            font-weight: bold;
+            margin-right: 10px;
+            display: inline-block;
+            width: 16px;
+        }
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 32px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+        .btn:hover {
+            background: #2563eb;
+            transform: scale(1.02);
+        }
+        .btn:active { transform: scale(0.98); }
+        @media (max-width: 768px) {
+            .options { grid-template-columns: 1fr; gap: 20px; }
+            header h1 { font-size: 28px; }
+            .option { padding: 30px 20px; }
+            .option h2 { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>💼 Job Finder</h1>
+            <p>Smart job matching powered by AI</p>
+        </header>
+
+        <div class="options">
+            <!-- My Profile: Full features with cron -->
+            <div class="option" onclick="window.location.href='/dashboard?mode=profile'">
+                <span class="option-icon">⚙️</span>
+                <h2>My Profile</h2>
+                <p>Personalized job hunting with automation</p>
+                <div class="option-features">
+                    <li>Automated cron (2x/day)</li>
+                    <li>Saved resume profile</li>
+                    <li>All features enabled</li>
+                </div>
+                <button class="btn">Continue</button>
+            </div>
+
+            <!-- Visitor Mode: Same dashboard, no cron -->
+            <div class="option visitor" onclick="window.location.href='/dashboard?mode=visitor'">
+                <span class="option-icon">⚡</span>
+                <h2>Visitor Mode</h2>
+                <p>Explore jobs without signing in</p>
+                <div class="option-features">
+                    <li>No login required</li>
+                    <li>Same features (no cron)</li>
+                    <li>Instant job matching</li>
+                </div>
+                <button class="btn">Start</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
