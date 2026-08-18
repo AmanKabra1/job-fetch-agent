@@ -46,7 +46,7 @@ def _quiet_jobspy():
     for name in names:
         logging.getLogger(name).disabled = True
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from starlette.concurrency import run_in_threadpool
 
@@ -1350,10 +1350,21 @@ async def api_fetch(
 
 
 @app.post("/api/ats-score")
-async def api_ats_score(resume_text: str = Form("")):
+async def api_ats_score(request: Request):
     """Calculate ATS score for a given resume text (0-100).
-    Works for both user profiles and visitor profiles."""
-    if not resume_text or len(resume_text.strip()) < 50:
+    Accepts JSON {resume_text, is_generated} or FormData."""
+    try:
+        # Try JSON first
+        payload = await request.json()
+    except:
+        # Fall back to FormData
+        form = await request.form()
+        payload = {"resume_text": form.get("resume_text", "")}
+
+    text = (payload.get("resume_text") or "").strip()
+    is_generated = payload.get("is_generated", False)
+
+    if not text or len(text) < 50:
         return JSONResponse({
             "score": 0,
             "error": "Resume text too short",
@@ -1362,7 +1373,7 @@ async def api_ats_score(resume_text: str = Form("")):
             "recommendations": ["Paste or upload a complete resume"]
         })
 
-    result = ATS.calculate_ats_score(resume_text)
+    result = ATS.calculate_ats_score(text, is_generated=is_generated)
     return JSONResponse(result)
 
 
