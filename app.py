@@ -2080,8 +2080,11 @@ INDEX_HTML = r"""<!doctype html>
 </header>
 <main>
 
-  <!-- Single page view - no tabs, all sections visible -->
-  <!-- Tabs removed: all sections display together -->
+  <div class="tabs">
+    <button id="tabFind" class="tab active">&#9312; Find jobs</button>
+    <button id="tabCreate" class="tab">&#9313; Create resume</button>
+    <button id="tabATS" class="tab">&#9314; ATS Resume</button>
+  </div>
 
   <!-- ============ SECTION 1 — FIND JOBS ============ -->
   <section id="findJobs">
@@ -2254,7 +2257,7 @@ INDEX_HTML = r"""<!doctype html>
   </section>
 
   <!-- ============ SECTION 3 — ATS RESUME OPTIMIZER ============ -->
-  <section id="atsResume" class="panel">
+  <section id="atsResume" class="panel" style="display:none">
     <h2 class="sec-title"><span class="sec-num">3</span> ATS Resume Optimizer</h2>
     <p class="note">Upload any resume (PDF or Word), check its ATS compatibility score, and automatically apply optimizations. Download the improved version instantly.</p>
 
@@ -2632,8 +2635,17 @@ async function fetchJobs(){
            $('#profilePanel').querySelectorAll('input,select,textarea,button').forEach(el=>el.disabled=false); }
 }
 
-// Tab system removed - all sections visible by default
-// function showTab(which) is no longer needed
+function showTab(which){
+  const find = which==='find';
+  const create = which==='create';
+  const ats = which==='ats';
+  document.getElementById('findJobs').style.display = find?'':'none';
+  document.getElementById('createResume').style.display = create?'':'none';
+  document.getElementById('atsResume').style.display = ats?'':'none';
+  $('#tabFind').classList.toggle('active', find);
+  $('#tabCreate').classList.toggle('active', create);
+  $('#tabATS').classList.toggle('active', ats);
+}
 
 function useInTailor(i){
   const j=(window._view||jobs)[i];
@@ -2885,7 +2897,9 @@ if(fileInput && window._bestResume){
   if(label) label.innerHTML = '✓ Using: <b>'+window._bestResume+'</b> (click to change)';
 }
 
-// Tab system removed - all sections visible on single page
+$('#tabFind').onclick=()=>showTab('find');
+$('#tabCreate').onclick=()=>showTab('create');
+$('#tabATS').onclick=()=>showTab('ats');
 $('#fetchBtn').onclick=fetchJobs;
 $('#matchBtn').onclick=matchFeed;
 $('#previewBtn').onclick=previewProfile;
