@@ -299,9 +299,9 @@ def _salary_lpa(r) -> float:
 # they float to the top — but jobs with unknown salary are never hidden (most
 # boards don't publish pay). Override with the CURRENT_LPA env var.
 try:
-    CURRENT_LPA = float(os.environ.get("CURRENT_LPA", "9"))  # Target 9+ LPA (higher salaries boosted)
+    CURRENT_LPA = float(os.environ.get("CURRENT_LPA", "7"))  # Target 7-9 LPA range (your bracket)
 except ValueError:
-    CURRENT_LPA = 9  # Jobs paying 9+ LPA get priority (top bracket)
+    CURRENT_LPA = 7  # Jobs paying 7+ LPA get boosted (your salary range)
 
 
 def _salary_boost(lpa: float) -> int:
