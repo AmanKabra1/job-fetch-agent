@@ -281,14 +281,19 @@ def rank_for_feed(rows):
         print(f"  ! AI analysis skipped: {e}", flush=True)
 
     # Floor: if the gate left fewer than MIN_FEED, top up with the remaining
-    # (deduped) raw rows so the feed is never sparse.
+    # (deduped) raw rows so the feed is never sparse. But NEVER include jobs with
+    # 0 skill matches (completely irrelevant roles).
     if len(ordered) < MIN_FEED:
         seen = {str(r.get("job_url", "")) for r in ordered}
         for r in rows:
             u = str(r.get("job_url", ""))
             if u and u not in seen:
-                ordered.append(r)
-                seen.add(u)
+                # Only add if it has at least 1 skill match (not completely irrelevant)
+                has_skill_match = any(skill in r.get('description', '').lower()
+                                     for skill in APP.SEARCH_TERMS)
+                if has_skill_match or r.get('search_term') in APP.SEARCH_TERMS:
+                    ordered.append(r)
+                    seen.add(u)
             if len(ordered) >= MIN_FEED:
                 break
     return ordered[:MAX_STORED]

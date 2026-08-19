@@ -193,8 +193,8 @@ _TITLE_FAMILY = {"developer", "engineer", "programmer", "sde", "architect", "dev
 # few jobs we re-run at RELAX_SKILL_RATIO (and tell the user we relaxed) so the
 # page is never empty.
 MIN_SKILL_RATIO = 0.6        # >= 60% of a job's required skills must be in profile
-RELAX_SKILL_RATIO = 0.30
-MIN_KEEP_BEFORE_RELAX = 8
+RELAX_SKILL_RATIO = 0.50     # Relaxed to 50% (was 30%, too loose - filters bad jobs better)
+MIN_KEEP_BEFORE_RELAX = 15   # Need 15+ before relaxing (was 8 - stay strict longer)
 
 # --------------------------------------------------------------------------- #
 # RANKING PREFERENCES
