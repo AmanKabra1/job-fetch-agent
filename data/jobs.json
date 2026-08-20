@@ -1,65 +1,23 @@
 {
-"fetched_at": "2026-08-20 09:30 UTC",
-"count": 494,
+"fetched_at": "2026-08-20 15:30 UTC",
+"count": 490,
 "jobs": [
 {
-"date_fetched": "2026-08-20 09:30 UTC",
-"title": "Junior AI Prompt Engineer (Stable Diffusion / Image Generation)",
-"company": "Aura Digital Media",
-"location": "Remote, IN",
-"site": "indeed",
+"date_fetched": "2026-08-20 15:30 UTC",
+"title": "Junior QA Engineer (m/f/x)",
+"company": "Progyny Global",
+"location": "Berlin",
+"site": "arbeitnow",
 "date_posted": "2026-08-20",
-"job_url": "https://in.indeed.com/viewjob?jk=67919135a42bf35b",
+"job_url": "https://www.arbeitnow.com/jobs/companies/progyny-global/junior-qa-engineer-berlin-439004",
 "min_amount": "",
 "max_amount": "",
-"is_remote": "True",
+"is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-20 09:30 UTC",
-"title": "SDET Automation Test Engineer with Playwright",
-"company": "Capco",
-"location": "TN, IN",
-"site": "indeed",
-"date_posted": "2026-08-20",
-"job_url": "https://in.indeed.com/viewjob?jk=ca902646849b23dc",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "5,001 to 10,000",
-"search_term": "java developer"
-},
-{
-"date_fetched": "2026-08-20 09:30 UTC",
-"title": "SDET Automation Test Engineer with Playwright",
-"company": "Capco",
-"location": "TS, IN",
-"site": "indeed",
-"date_posted": "2026-08-20",
-"job_url": "https://in.indeed.com/viewjob?jk=1486611516a51e0d",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "5,001 to 10,000",
-"search_term": "java developer"
-},
-{
-"date_fetched": "2026-08-20 09:30 UTC",
-"title": "SDET Automation Test Engineer with Playwright",
-"company": "Capco",
-"location": "HR, IN",
-"site": "indeed",
-"date_posted": "2026-08-20",
-"job_url": "https://in.indeed.com/viewjob?jk=a47f73d770f89a0c",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "5,001 to 10,000",
-"search_term": "java developer"
-},
-{
-"date_fetched": "2026-08-20 09:30 UTC",
+"date_fetched": "2026-08-20 15:30 UTC",
 "title": "SDE2",
 "company": "Amazon",
 "location": "Gurugram, Haryana, India",
@@ -70,21 +28,7 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-20 09:30 UTC",
-"title": "SDE2, CHEX",
-"company": "Amazon",
-"location": "Delhi, Delhi, India",
-"site": "linkedin",
-"date_posted": "2026-08-19",
-"job_url": "https://www.linkedin.com/jobs/view/4455913045",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
+"search_term": "SDE 1"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4805,20 +4749,6 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-20 09:30 UTC",
-"title": "Junior Software Developer",
-"company": "Linfox Asia",
-"location": "Maharashtra, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4456445583",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "SDE 1"
-},
-{
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "Jr. Software Platform Engineer",
 "company": "MetLife",
@@ -5155,7 +5085,21 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-20 09:30 UTC",
+"date_fetched": "2026-08-20 15:30 UTC",
+"title": "Junior Software Engineer",
+"company": "CareerXperts Consulting",
+"location": "",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4453885343",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1"
+},
+{
+"date_fetched": "2026-08-20 15:30 UTC",
 "title": "Backend Engineer- SDE-2",
 "company": "SiteRecon",
 "location": "Noida, Uttar Pradesh, India",
@@ -5166,7 +5110,7 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend developer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5939,27 +5883,13 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-20 09:30 UTC",
+"date_fetched": "2026-08-20 15:30 UTC",
 "title": "SDE-1",
 "company": "Snapmint",
 "location": "Gurugram, Haryana, India",
 "site": "linkedin",
 "date_posted": "",
 "job_url": "https://www.linkedin.com/jobs/view/4456705362",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-08-20 09:30 UTC",
-"title": "SDE-1, Automation Engineering",
-"company": "HuntingCube",
-"location": "Gurugram, Haryana, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4456311112",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -6133,6 +6063,20 @@
 "is_remote": "False",
 "company_num_employees": "",
 "search_term": "SDE 1"
+},
+{
+"date_fetched": "2026-08-20 15:30 UTC",
+"title": "SDE-2",
+"company": "Snapmint",
+"location": "Gurugram, Haryana, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4456486427",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6485,7 +6429,7 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-08-20 09:30 UTC",
+"date_fetched": "2026-08-20 15:30 UTC",
 "title": "DualEntry | Full-time | REMOTE",
 "company": "(HN Who's Hiring)",
 "location": "—",
