@@ -1,29 +1,29 @@
 {
-"fetched_at": "2026-08-19 15:26 UTC",
-"count": 493,
+"fetched_at": "2026-08-20 03:43 UTC",
+"count": 490,
 "jobs": [
 {
-"date_fetched": "2026-08-19 15:26 UTC",
-"title": "Junior Software Tester",
-"company": "Siga Systems",
-"location": "MH, IN",
+"date_fetched": "2026-08-20 03:43 UTC",
+"title": "ETL and Automation Test Engineer (SDET)",
+"company": "BIPB",
+"location": "KA, IN",
 "site": "indeed",
 "date_posted": "2026-08-19",
-"job_url": "https://in.indeed.com/viewjob?jk=75ceddba29020ded",
+"job_url": "https://in.indeed.com/viewjob?jk=c545bbd12652abd6",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "java developer"
 },
 {
-"date_fetched": "2026-08-19 15:26 UTC",
-"title": "Junior Engineer (m/w/d) | Network Planning & Optimization",
-"company": "Live Reply GmbH",
-"location": "Düsseldorf",
+"date_fetched": "2026-08-20 03:43 UTC",
+"title": "Junior Software Engineer (m/w/d) - Schwerpunkt iOS",
+"company": "Ottonova",
+"location": "München",
 "site": "arbeitnow",
 "date_posted": "2026-08-19",
-"job_url": "https://www.arbeitnow.com/jobs/companies/live-reply-gmbh/junior-engineer-network-planning-optimization-dusseldorf-41157",
+"job_url": "https://www.arbeitnow.com/jobs/companies/ottonova/junior-software-engineer-schwerpunkt-ios-munchen-426674",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -31,7 +31,21 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-19 15:26 UTC",
+"date_fetched": "2026-08-20 03:43 UTC",
+"title": "Junior Linux Engineer",
+"company": "SightForge Technologies Pvt. Ltd.",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-08-18",
+"job_url": "https://www.linkedin.com/jobs/view/4454706322",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1"
+},
+{
+"date_fetched": "2026-08-20 03:43 UTC",
 "title": "Back End Developer (SDE 1)",
 "company": "TravClan",
 "location": "New Delhi, Delhi, India",
@@ -45,7 +59,7 @@
 "search_term": "backend engineer"
 },
 {
-"date_fetched": "2026-08-19 15:26 UTC",
+"date_fetched": "2026-08-20 03:43 UTC",
 "title": "SDE Intern",
 "company": "Testunity",
 "location": "KA, IN",
@@ -57,48 +71,6 @@
 "is_remote": "True",
 "company_num_employees": "",
 "search_term": "SDE 1"
-},
-{
-"date_fetched": "2026-08-19 15:26 UTC",
-"title": "Junior Software Engineer, Reykjavik",
-"company": "Asana",
-"location": "Reykjavík",
-"site": "Asana careers (Greenhouse)",
-"date_posted": "2026-08-17",
-"job_url": "https://www.asana.com/jobs/apply/7766762?gh_jid=7766762",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-19 15:26 UTC",
-"title": "Software Engineer Backend (SDE 2)",
-"company": "Arcana",
-"location": "Bangalore Urban, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-17",
-"job_url": "https://www.linkedin.com/jobs/view/4325424519",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend engineer"
-},
-{
-"date_fetched": "2026-08-19 15:26 UTC",
-"title": "SDE 2",
-"company": "HuntingCube",
-"location": "Bengaluru East, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-17",
-"job_url": "https://www.linkedin.com/jobs/view/4455329601",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend engineer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -3182,6 +3154,20 @@
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
+"title": "Junior Software Engineer, Reykjavik",
+"company": "Asana",
+"location": "Reykjavík",
+"site": "Asana careers (Greenhouse)",
+"date_posted": "2026-08-10",
+"job_url": "https://www.asana.com/jobs/apply/7766762?gh_jid=7766762",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "remote-api"
+},
+{
+"date_fetched": "2026-08-12 05:31 UTC",
 "title": "Junior Software Engineer, Luxury",
 "company": "Lyft",
 "location": "Mexico City, Mexico",
@@ -5141,6 +5127,20 @@
 "search_term": "remote-api"
 },
 {
+"date_fetched": "2026-08-20 03:43 UTC",
+"title": "Junior Software Engineer",
+"company": "CareerXperts Consulting",
+"location": "",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4453445317",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1"
+},
+{
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "Backend Engineer",
 "company": "Michael Page",
@@ -5911,48 +5911,6 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-19 15:26 UTC",
-"title": "SDE2",
-"company": "Amazon",
-"location": "Gurugram, Haryana, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4455900574",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-19 15:26 UTC",
-"title": "SDE2, CHEX",
-"company": "Amazon",
-"location": "Delhi, Delhi, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4455913045",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-19 15:26 UTC",
-"title": "SDE 2 - AI",
-"company": "slice",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4456192055",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "SDE 1"
-},
-{
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "SDE2",
 "company": "Amazon",
@@ -6471,7 +6429,7 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-08-19 15:26 UTC",
+"date_fetched": "2026-08-20 03:43 UTC",
 "title": "DualEntry | Full-time | REMOTE",
 "company": "(HN Who's Hiring)",
 "location": "—",
