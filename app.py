@@ -1532,6 +1532,20 @@ async def api_profile(
             "api_terms": _api_search_terms(profile, position)}
 
 
+@app.get("/api/saved-profile")
+def api_saved_profile():
+    """Return the saved profile (resume_profile.py) — used by Vercel to auto-rank
+    feed to your profile without requiring a resume upload. Returns 404 if no
+    saved profile is configured."""
+    try:
+        profile = build_saved_profile()
+        if not profile:
+            raise HTTPException(404, "No saved profile configured")
+        return {"profile": profile, "search_terms": profile.get("search_queries", [])}
+    except Exception as e:
+        raise HTTPException(500, f"Could not load saved profile: {e}")
+
+
 def _save_resume_copy(fname: str, data: bytes):
     """Keep a local copy so generated files show up in the 'Generated resumes'
     panel. No-op on Vercel (read-only filesystem)."""
@@ -1894,8 +1908,10 @@ def dashboard(mode: str = "profile"):
     mode="visitor": Show ONLY "Fetch live jobs" (hide cron-personalized jobs)
     """
     live = not _is_feed_mode()
+    feed_mode = _is_feed_mode()
     html = INDEX_HTML.replace("__LIVE__", "true" if live else "false")
     html = html.replace("__CURRENT_LPA__", str(CURRENT_LPA))
+    html = html.replace("__FEED_MODE__", "true" if feed_mode else "false")
 
     # If visitor mode, add JS to hide the "Load latest jobs" button (cron-personalized)
     if mode == "visitor":
@@ -2320,6 +2336,7 @@ INDEX_HTML = r"""<!doctype html>
 
 <script>
 const LIVE = __LIVE__;
+const _isFeedMode = __FEED_MODE__;
 const CURRENT_LPA = __CURRENT_LPA__;
 const $ = s => document.querySelector(s);
 let jobs = [];
@@ -2571,13 +2588,23 @@ async function loadJobs(){
 }
 
 // Hosted (feed) mode: rank the daily feed against an uploaded resume / profile —
-// no scraping, so it works on Vercel. Falls back to the generic feed if nothing
-// was provided to match against.
+// no scraping, so it works on Vercel. Falls back to the saved profile if nothing
+// was provided to match against, so Vercel always shows 100% matching jobs.
 async function matchFeed(){
   const f=$('#jfFile').files[0];
   const edited=collectProfileEdits();
   const hasInput = f || $('#jfPosition').value.trim() || $('#jfSkills').value.trim()
                    || $('#jfJD').value.trim() || edited;
+  // If no custom input, try to load saved profile automatically for 100% matches
+  if(!hasInput && _isFeedMode){
+    try{
+      const r=await fetch('/api/saved-profile');
+      if(r.ok){
+        const d=await r.json();
+        if(d.profile){ return matchFeedWithProfile(d.profile); }
+      }
+    }catch(e){}
+  }
   if(!hasInput){ return loadJobs(); }
   const btn=$('#matchBtn'); const old=btn.textContent; setBusy(btn,true);
   jobs=[]; $('#count').textContent='';
@@ -2601,6 +2628,29 @@ async function matchFeed(){
     else{ jobs=d.jobs||[]; window._fetchedAt=d.fetched_at?('feed '+d.fetched_at):''; shown=PAGE;
           renderJobs(); renderProfile(d.profile, d.search_terms); renderDebug(d.debug);
           toast(jobs.length+(d.guided?' jobs from the feed matched to your resume.':' jobs from the feed.')); }
+  }catch(e){ toast('Match error: '+e); }
+  finally{ stopTimer(); setBusy(btn,false); btn.textContent=old; }
+}
+
+// Helper: Match feed with a profile object (used for auto-loading saved profile)
+async function matchFeedWithProfile(profile){
+  const btn=$('#matchBtn'); const old=btn.textContent; setBusy(btn,true);
+  jobs=[]; $('#count').textContent='';
+  $('#jobsBody').innerHTML='<tr><td colspan="10" class="empty"><span class="spin"></span> <span id="matchStatus">Loading your saved profile…</span></td></tr>';
+  const stopTimer=startTimer(t=>{
+    btn.innerHTML='<span class="spin"></span> Loading… '+t;
+    const cell=document.getElementById('matchStatus');
+    if(cell) cell.textContent='Loading your saved profile… '+t;
+  });
+  try{
+    const fd=new FormData();
+    fd.append('profile_json', JSON.stringify(profile));
+    const r=await fetch('/api/feed/match?limit=1000',{method:'POST',body:fd});
+    const d=await r.json();
+    if(!r.ok){ toast('Match failed: '+(d.detail||r.status)); }
+    else{ jobs=d.jobs||[]; window._fetchedAt=d.fetched_at?('feed '+d.fetched_at):''; shown=PAGE;
+          renderJobs(); renderProfile(d.profile, d.search_terms); renderDebug(d.debug);
+          toast(jobs.length+' jobs from the feed matched to your saved profile.'); }
   }catch(e){ toast('Match error: '+e); }
   finally{ stopTimer(); setBusy(btn,false); btn.textContent=old; }
 }
