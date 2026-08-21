@@ -1,15 +1,29 @@
 {
-"fetched_at": "2026-08-21 03:47 UTC",
-"count": 492,
+"fetched_at": "2026-08-21 09:32 UTC",
+"count": 491,
 "jobs": [
 {
-"date_fetched": "2026-08-21 03:47 UTC",
-"title": "Junior Software Developer",
-"company": "Linfox Asia",
-"location": "Maharashtra, India",
+"date_fetched": "2026-08-21 09:32 UTC",
+"title": "SDE-2",
+"company": "Snapmint",
+"location": "Gurugram, Haryana, India",
 "site": "linkedin",
 "date_posted": "2026-08-20",
-"job_url": "https://www.linkedin.com/jobs/view/4456445583",
+"job_url": "https://www.linkedin.com/jobs/view/4456486427",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-08-21 09:32 UTC",
+"title": "SDE 2 - AI",
+"company": "slice",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-08-19",
+"job_url": "https://www.linkedin.com/jobs/view/4456192055",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -17,18 +31,18 @@
 "search_term": "SDE 1"
 },
 {
-"date_fetched": "2026-08-21 03:47 UTC",
-"title": "SDET Engineer - AI Extensive",
-"company": "Ripplehire",
-"location": "TN, IN",
-"site": "indeed",
-"date_posted": "2026-08-20",
-"job_url": "https://in.indeed.com/viewjob?jk=e2e5d48e4a4238fc",
+"date_fetched": "2026-08-21 09:32 UTC",
+"title": "SDE II",
+"company": "SourcingXPress",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-08-19",
+"job_url": "https://www.linkedin.com/jobs/view/4455352109",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
-"company_num_employees": "11 to 50",
-"search_term": "python developer"
+"company_num_employees": "",
+"search_term": "backend engineer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4343,20 +4357,6 @@
 "search_term": "node.js developer"
 },
 {
-"date_fetched": "2026-08-21 03:47 UTC",
-"title": "Backend Engineer (SDE1)",
-"company": "Kredivo Group",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-08-01",
-"job_url": "https://in.indeed.com/viewjob?jk=e04a4301ab1cd959",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend engineer"
-},
-{
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "Software Development Engineer III (Mobile - Flutter)",
 "company": "HighLevel",
@@ -4525,21 +4525,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-21 03:47 UTC",
-"title": "Junior Java Developer",
-"company": "CodeVyasa",
-"location": "Ahmedabad, Gujarat, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4453876904",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "java developer"
-},
-{
-"date_fetched": "2026-08-21 03:47 UTC",
+"date_fetched": "2026-08-21 09:32 UTC",
 "title": "Junior GenAI / Agentic AI Engineer",
 "company": "Top Gen AI Jobs",
 "location": "Coimbatore, Tamil Nadu, India",
@@ -4791,7 +4777,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-21 03:47 UTC",
+"date_fetched": "2026-08-21 09:32 UTC",
 "title": "Junior Software Engineer - Backend",
 "company": "LogiNext",
 "location": "Mumbai, Maharashtra, India",
@@ -4802,7 +4788,21 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-08-21 09:32 UTC",
+"title": "Backend Engineer (SDE1)",
+"company": "Kredivo Group",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4456014495",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5673,6 +5673,20 @@
 "search_term": "remote-api"
 },
 {
+"date_fetched": "2026-08-21 09:32 UTC",
+"title": "Junior AI Engineer",
+"company": "Infosys",
+"location": "Bengaluru East, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4418200862",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "AI engineer"
+},
+{
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "Software Engineer",
 "company": "Ontic",
@@ -5911,20 +5925,6 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-21 03:47 UTC",
-"title": "SDE-1",
-"company": "Snapmint",
-"location": "Gurugram, Haryana, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4456705362",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "SDE2",
 "company": "Amazon",
@@ -6091,20 +6091,6 @@
 "is_remote": "False",
 "company_num_employees": "",
 "search_term": "SDE 1"
-},
-{
-"date_fetched": "2026-08-21 03:47 UTC",
-"title": "SDE-2",
-"company": "Snapmint",
-"location": "Gurugram, Haryana, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4456486427",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend engineer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6457,7 +6443,7 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-08-21 03:47 UTC",
+"date_fetched": "2026-08-21 09:32 UTC",
 "title": "DualEntry | Full-time | REMOTE",
 "company": "(HN Who's Hiring)",
 "location": "—",
