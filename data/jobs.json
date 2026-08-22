@@ -1,37 +1,23 @@
 {
-"fetched_at": "2026-08-22 03:40 UTC",
-"count": 493,
+"fetched_at": "2026-08-22 09:23 UTC",
+"count": 491,
 "jobs": [
 {
-"date_fetched": "2026-08-22 03:40 UTC",
-"title": "Software Engineer (SDET)",
-"company": "NetApp",
-"location": "KA, IN",
+"date_fetched": "2026-08-22 09:23 UTC",
+"title": "Junior QA & Web Developer (Fresher)",
+"company": "Bhavya Web Technologies Pvt. Ltd.",
+"location": "TS, IN",
 "site": "indeed",
-"date_posted": "2026-08-21",
-"job_url": "https://in.indeed.com/viewjob?jk=2a271fcf839f9c6b",
+"date_posted": "2026-08-22",
+"job_url": "https://in.indeed.com/viewjob?jk=aa4d712c8cabd0a6",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "backend engineer"
+"company_num_employees": "11 to 50",
+"search_term": "software developer"
 },
 {
-"date_fetched": "2026-08-22 03:40 UTC",
-"title": "Junior Android Developer - Retail Banking (x,f,m)",
-"company": "dkbcodefactory",
-"location": "Berlin",
-"site": "arbeitnow",
-"date_posted": "2026-08-21",
-"job_url": "https://www.arbeitnow.com/jobs/companies/dkbcodefactory/junior-android-developer-retail-banking-xfm-berlin-174642",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-22 03:40 UTC",
+"date_fetched": "2026-08-22 09:23 UTC",
 "title": "Junior Java Developer",
 "company": "CodeVyasa",
 "location": "Ahmedabad, Gujarat, India",
@@ -45,7 +31,7 @@
 "search_term": "java developer"
 },
 {
-"date_fetched": "2026-08-22 03:40 UTC",
+"date_fetched": "2026-08-22 09:23 UTC",
 "title": "Junior GenAI / Agentic AI Engineer",
 "company": "Top Gen AI Jobs",
 "location": "Coimbatore, Tamil Nadu, India",
@@ -59,7 +45,7 @@
 "search_term": "AI engineer"
 },
 {
-"date_fetched": "2026-08-22 03:40 UTC",
+"date_fetched": "2026-08-22 09:23 UTC",
 "title": "Backend Engineer (SDE1)",
 "company": "Kredivo Group",
 "location": "Bengaluru, Karnataka, India",
@@ -73,21 +59,7 @@
 "search_term": "SDE 1"
 },
 {
-"date_fetched": "2026-08-22 03:40 UTC",
-"title": "Backend Engineer- SDE-2",
-"company": "SiteRecon",
-"location": "Noida, Uttar Pradesh, India",
-"site": "linkedin",
-"date_posted": "2026-08-20",
-"job_url": "https://www.linkedin.com/jobs/view/4453849451",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-08-22 03:40 UTC",
+"date_fetched": "2026-08-22 09:23 UTC",
 "title": "Junior AI Engineer",
 "company": "Infosys",
 "location": "Bengaluru East, Karnataka, India",
@@ -101,7 +73,7 @@
 "search_term": "AI engineer"
 },
 {
-"date_fetched": "2026-08-22 03:40 UTC",
+"date_fetched": "2026-08-22 09:23 UTC",
 "title": "SDE-2",
 "company": "Snapmint",
 "location": "Gurugram, Haryana, India",
@@ -5939,6 +5911,20 @@
 "search_term": "remote-api"
 },
 {
+"date_fetched": "2026-08-22 09:23 UTC",
+"title": "Junior AI Engineer (Hands-on coder) WFH",
+"company": "Qubrid AI",
+"location": "Kolkata, West Bengal, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4454691009",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "True",
+"company_num_employees": "",
+"search_term": "AI engineer"
+},
+{
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "SDE2",
 "company": "Amazon",
@@ -6100,20 +6086,6 @@
 "site": "linkedin",
 "date_posted": "",
 "job_url": "https://www.linkedin.com/jobs/view/4451648184",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "SDE 1"
-},
-{
-"date_fetched": "2026-08-22 03:40 UTC",
-"title": "Junior Flutter Developer",
-"company": "Drivers4Me",
-"location": "",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4456257169",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -6471,7 +6443,7 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-08-22 03:40 UTC",
+"date_fetched": "2026-08-22 09:23 UTC",
 "title": "DualEntry | Full-time | REMOTE",
 "company": "(HN Who's Hiring)",
 "location": "—",
