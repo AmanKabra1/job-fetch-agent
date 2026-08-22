@@ -1,9 +1,23 @@
 {
-"fetched_at": "2026-08-22 09:23 UTC",
-"count": 491,
+"fetched_at": "2026-08-22 15:18 UTC",
+"count": 494,
 "jobs": [
 {
-"date_fetched": "2026-08-22 09:23 UTC",
+"date_fetched": "2026-08-22 15:18 UTC",
+"title": "Software Development Engineer in Test (SDET)",
+"company": "WebSenor",
+"location": "Remote, IN",
+"site": "indeed",
+"date_posted": "2026-08-22",
+"job_url": "https://in.indeed.com/viewjob?jk=6ced406d34178038",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "True",
+"company_num_employees": "",
+"search_term": "backend engineer"
+},
+{
+"date_fetched": "2026-08-22 15:18 UTC",
 "title": "Junior QA & Web Developer (Fresher)",
 "company": "Bhavya Web Technologies Pvt. Ltd.",
 "location": "TS, IN",
@@ -14,24 +28,52 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "11 to 50",
-"search_term": "software developer"
+"search_term": "full stack developer"
 },
 {
-"date_fetched": "2026-08-22 09:23 UTC",
-"title": "Junior Java Developer",
-"company": "CodeVyasa",
-"location": "Ahmedabad, Gujarat, India",
-"site": "linkedin",
-"date_posted": "2026-08-20",
-"job_url": "https://www.linkedin.com/jobs/view/4453876904",
+"date_fetched": "2026-08-22 15:18 UTC",
+"title": "(Junior) Data Engineer - Data Platform (m/f/d)",
+"company": "1Komma5Grad",
+"location": "Remote",
+"site": "arbeitnow",
+"date_posted": "2026-08-22",
+"job_url": "https://www.arbeitnow.co.uk/jobs/companies/1komma5grad/remote-junior-data-engineer-data-platform-104347",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "java developer"
+"search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-22 09:23 UTC",
+"date_fetched": "2026-08-22 15:18 UTC",
+"title": "QA Automation Engineer(SDET)",
+"company": "WebSenor InfoTech",
+"location": "Remote, IN",
+"site": "indeed",
+"date_posted": "2026-08-22",
+"job_url": "https://in.indeed.com/viewjob?jk=8b2ce08285bab8c2",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "True",
+"company_num_employees": "2 to 10",
+"search_term": "backend developer"
+},
+{
+"date_fetched": "2026-08-22 15:18 UTC",
+"title": "Junior Software Engineer",
+"company": "CareerXperts Consulting",
+"location": "",
+"site": "linkedin",
+"date_posted": "2026-08-21",
+"job_url": "https://www.linkedin.com/jobs/view/4454627312",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1"
+},
+{
+"date_fetched": "2026-08-22 15:18 UTC",
 "title": "Junior GenAI / Agentic AI Engineer",
 "company": "Top Gen AI Jobs",
 "location": "Coimbatore, Tamil Nadu, India",
@@ -42,10 +84,10 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-08-22 09:23 UTC",
+"date_fetched": "2026-08-22 15:18 UTC",
 "title": "Backend Engineer (SDE1)",
 "company": "Kredivo Group",
 "location": "Bengaluru, Karnataka, India",
@@ -57,34 +99,6 @@
 "is_remote": "False",
 "company_num_employees": "",
 "search_term": "SDE 1"
-},
-{
-"date_fetched": "2026-08-22 09:23 UTC",
-"title": "Junior AI Engineer",
-"company": "Infosys",
-"location": "Bengaluru East, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-20",
-"job_url": "https://www.linkedin.com/jobs/view/4418200862",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-08-22 09:23 UTC",
-"title": "SDE-2",
-"company": "Snapmint",
-"location": "Gurugram, Haryana, India",
-"site": "linkedin",
-"date_posted": "2026-08-20",
-"job_url": "https://www.linkedin.com/jobs/view/4456486427",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend engineer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5141,6 +5155,20 @@
 "search_term": "remote-api"
 },
 {
+"date_fetched": "2026-08-22 15:18 UTC",
+"title": "Software Engineer (Junior) / Vibe Coding Specialist",
+"company": "Arcus & Co",
+"location": "",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4457816204",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "full stack developer"
+},
+{
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "Backend Engineer",
 "company": "Michael Page",
@@ -5911,7 +5939,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-22 09:23 UTC",
+"date_fetched": "2026-08-22 15:18 UTC",
 "title": "Junior AI Engineer (Hands-on coder) WFH",
 "company": "Qubrid AI",
 "location": "Kolkata, West Bengal, India",
@@ -6086,6 +6114,20 @@
 "site": "linkedin",
 "date_posted": "",
 "job_url": "https://www.linkedin.com/jobs/view/4451648184",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1"
+},
+{
+"date_fetched": "2026-08-22 15:18 UTC",
+"title": "SDE II - Accounting & Partner Payouts Platform",
+"company": "Urban Company",
+"location": "Gurugram, Haryana, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4455027097",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -6443,7 +6485,7 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-08-22 09:23 UTC",
+"date_fetched": "2026-08-22 15:18 UTC",
 "title": "DualEntry | Full-time | REMOTE",
 "company": "(HN Who's Hiring)",
 "location": "—",
