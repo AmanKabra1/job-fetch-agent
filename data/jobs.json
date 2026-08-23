@@ -1,9 +1,9 @@
 {
-"fetched_at": "2026-08-23 03:48 UTC",
-"count": 494,
+"fetched_at": "2026-08-23 09:24 UTC",
+"count": 493,
 "jobs": [
 {
-"date_fetched": "2026-08-23 03:48 UTC",
+"date_fetched": "2026-08-23 09:24 UTC",
 "title": "Software Development Engineer in Test (SDET)",
 "company": "WebSenor",
 "location": "Remote, IN",
@@ -17,7 +17,7 @@
 "search_term": "backend engineer"
 },
 {
-"date_fetched": "2026-08-23 03:48 UTC",
+"date_fetched": "2026-08-23 09:24 UTC",
 "title": "Junior Space Systems Engineer",
 "company": "Foundational",
 "location": "London",
@@ -31,7 +31,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-23 03:48 UTC",
+"date_fetched": "2026-08-23 09:24 UTC",
 "title": "(Junior) Data Engineer - Data Platform (m/f/d)",
 "company": "1Komma5Grad",
 "location": "Remote",
@@ -45,7 +45,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-23 03:48 UTC",
+"date_fetched": "2026-08-23 09:24 UTC",
 "title": "QA Automation Engineer(SDET)",
 "company": "WebSenor InfoTech",
 "location": "Remote, IN",
@@ -59,7 +59,21 @@
 "search_term": "backend engineer"
 },
 {
-"date_fetched": "2026-08-23 03:48 UTC",
+"date_fetched": "2026-08-23 09:24 UTC",
+"title": "Junior Full Stack Developer — MERN, RAG & Agentic AI",
+"company": "Quanterian",
+"location": "",
+"site": "linkedin",
+"date_posted": "2026-08-21",
+"job_url": "https://www.linkedin.com/jobs/view/4456273511",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "node.js developer"
+},
+{
+"date_fetched": "2026-08-23 09:24 UTC",
 "title": "Software Engineer - Entry",
 "company": "Equifax",
 "location": "",
@@ -73,7 +87,7 @@
 "search_term": "SDE 1"
 },
 {
-"date_fetched": "2026-08-23 03:48 UTC",
+"date_fetched": "2026-08-23 09:24 UTC",
 "title": "Junior AI Engineer (Hands-on coder) WFH",
 "company": "Qubrid AI",
 "location": "Kolkata, West Bengal, India",
@@ -84,7 +98,7 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "LLM engineer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4805,7 +4819,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-23 03:48 UTC",
+"date_fetched": "2026-08-23 09:24 UTC",
 "title": "Backend Developer (SDE1)",
 "company": "Deepsolv(Creative Intelligence)",
 "location": "Bengaluru, Karnataka, India",
@@ -4816,7 +4830,7 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "backend engineer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4831,20 +4845,6 @@
 "is_remote": "False",
 "company_num_employees": "",
 "search_term": "SDE 1"
-},
-{
-"date_fetched": "2026-08-23 03:48 UTC",
-"title": "Software Engineer (SDE-2)",
-"company": "SolarWinds",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4430795306",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software engineer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5169,7 +5169,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-23 03:48 UTC",
+"date_fetched": "2026-08-23 09:24 UTC",
 "title": "Software Engineer (Junior) / Vibe Coding Specialist",
 "company": "Arcus & Co",
 "location": "",
@@ -6121,20 +6121,6 @@
 "search_term": "SDE 1"
 },
 {
-"date_fetched": "2026-08-23 03:48 UTC",
-"title": "SDE II - Accounting & Partner Payouts Platform",
-"company": "Urban Company",
-"location": "Gurugram, Haryana, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4455027097",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "Sofware Development Engineer III",
 "company": "Leena AI",
@@ -6485,7 +6471,7 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-08-23 03:48 UTC",
+"date_fetched": "2026-08-23 09:24 UTC",
 "title": "DualEntry | Full-time | REMOTE",
 "company": "(HN Who's Hiring)",
 "location": "—",
