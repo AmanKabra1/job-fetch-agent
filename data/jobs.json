@@ -1,9 +1,9 @@
 {
-"fetched_at": "2026-08-22 15:18 UTC",
+"fetched_at": "2026-08-23 03:48 UTC",
 "count": 494,
 "jobs": [
 {
-"date_fetched": "2026-08-22 15:18 UTC",
+"date_fetched": "2026-08-23 03:48 UTC",
 "title": "Software Development Engineer in Test (SDET)",
 "company": "WebSenor",
 "location": "Remote, IN",
@@ -17,21 +17,21 @@
 "search_term": "backend engineer"
 },
 {
-"date_fetched": "2026-08-22 15:18 UTC",
-"title": "Junior QA & Web Developer (Fresher)",
-"company": "Bhavya Web Technologies Pvt. Ltd.",
-"location": "TS, IN",
-"site": "indeed",
+"date_fetched": "2026-08-23 03:48 UTC",
+"title": "Junior Space Systems Engineer",
+"company": "Foundational",
+"location": "London",
+"site": "arbeitnow",
 "date_posted": "2026-08-22",
-"job_url": "https://in.indeed.com/viewjob?jk=aa4d712c8cabd0a6",
+"job_url": "https://www.arbeitnow.co.uk/jobs/companies/foundational/junior-space-systems-engineer-london-419587",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
-"company_num_employees": "11 to 50",
-"search_term": "full stack developer"
+"company_num_employees": "",
+"search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-22 15:18 UTC",
+"date_fetched": "2026-08-23 03:48 UTC",
 "title": "(Junior) Data Engineer - Data Platform (m/f/d)",
 "company": "1Komma5Grad",
 "location": "Remote",
@@ -45,7 +45,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-22 15:18 UTC",
+"date_fetched": "2026-08-23 03:48 UTC",
 "title": "QA Automation Engineer(SDET)",
 "company": "WebSenor InfoTech",
 "location": "Remote, IN",
@@ -56,16 +56,16 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "2 to 10",
-"search_term": "backend developer"
+"search_term": "backend engineer"
 },
 {
-"date_fetched": "2026-08-22 15:18 UTC",
-"title": "Junior Software Engineer",
-"company": "CareerXperts Consulting",
+"date_fetched": "2026-08-23 03:48 UTC",
+"title": "Software Engineer - Entry",
+"company": "Equifax",
 "location": "",
 "site": "linkedin",
 "date_posted": "2026-08-21",
-"job_url": "https://www.linkedin.com/jobs/view/4454627312",
+"job_url": "https://www.linkedin.com/jobs/view/4456218695",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
@@ -73,32 +73,18 @@
 "search_term": "SDE 1"
 },
 {
-"date_fetched": "2026-08-22 15:18 UTC",
-"title": "Junior GenAI / Agentic AI Engineer",
-"company": "Top Gen AI Jobs",
-"location": "Coimbatore, Tamil Nadu, India",
+"date_fetched": "2026-08-23 03:48 UTC",
+"title": "Junior AI Engineer (Hands-on coder) WFH",
+"company": "Qubrid AI",
+"location": "Kolkata, West Bengal, India",
 "site": "linkedin",
-"date_posted": "2026-08-20",
-"job_url": "https://www.linkedin.com/jobs/view/4456780602",
+"date_posted": "2026-08-21",
+"job_url": "https://www.linkedin.com/jobs/view/4454691009",
 "min_amount": "",
 "max_amount": "",
-"is_remote": "False",
+"is_remote": "True",
 "company_num_employees": "",
-"search_term": "LLM engineer"
-},
-{
-"date_fetched": "2026-08-22 15:18 UTC",
-"title": "Backend Engineer (SDE1)",
-"company": "Kredivo Group",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-20",
-"job_url": "https://www.linkedin.com/jobs/view/4456014495",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "AI engineer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4819,6 +4805,20 @@
 "search_term": "remote-api"
 },
 {
+"date_fetched": "2026-08-23 03:48 UTC",
+"title": "Backend Developer (SDE1)",
+"company": "Deepsolv(Creative Intelligence)",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4455044307",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1"
+},
+{
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "Jr. Software Platform Engineer",
 "company": "MetLife",
@@ -4831,6 +4831,20 @@
 "is_remote": "False",
 "company_num_employees": "",
 "search_term": "SDE 1"
+},
+{
+"date_fetched": "2026-08-23 03:48 UTC",
+"title": "Software Engineer (SDE-2)",
+"company": "SolarWinds",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4430795306",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software engineer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5155,7 +5169,7 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-22 15:18 UTC",
+"date_fetched": "2026-08-23 03:48 UTC",
 "title": "Software Engineer (Junior) / Vibe Coding Specialist",
 "company": "Arcus & Co",
 "location": "",
@@ -5166,7 +5180,7 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "SDE 1"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5939,20 +5953,6 @@
 "search_term": "remote-api"
 },
 {
-"date_fetched": "2026-08-22 15:18 UTC",
-"title": "Junior AI Engineer (Hands-on coder) WFH",
-"company": "Qubrid AI",
-"location": "Kolkata, West Bengal, India",
-"site": "linkedin",
-"date_posted": "",
-"job_url": "https://www.linkedin.com/jobs/view/4454691009",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "SDE2",
 "company": "Amazon",
@@ -6121,7 +6121,7 @@
 "search_term": "SDE 1"
 },
 {
-"date_fetched": "2026-08-22 15:18 UTC",
+"date_fetched": "2026-08-23 03:48 UTC",
 "title": "SDE II - Accounting & Partner Payouts Platform",
 "company": "Urban Company",
 "location": "Gurugram, Haryana, India",
@@ -6132,7 +6132,7 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "node.js developer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6485,7 +6485,7 @@
 "search_term": "LLM engineer"
 },
 {
-"date_fetched": "2026-08-22 15:18 UTC",
+"date_fetched": "2026-08-23 03:48 UTC",
 "title": "DualEntry | Full-time | REMOTE",
 "company": "(HN Who's Hiring)",
 "location": "—",
