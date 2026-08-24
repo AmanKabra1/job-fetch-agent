@@ -105,15 +105,15 @@ def check_job_expiration(job: dict) -> dict:
         now = datetime.now(timezone.utc).replace(tzinfo=None)
         days_old = (now - posted).days
 
-        # Much longer window: jobs older than 60+ days MIGHT be expired,
-        # but trust the description signals more than the date
-        is_expired = days_old > 90  # Changed from 30 to 90 days
+        # FRESH JOBS ONLY: Filter out postings older than 14 days
+        # After 14 days, jobs are likely filled or no longer actively hiring
+        is_expired = days_old > 14  # Keep only jobs ≤ 14 days old
 
         return {
             "is_expired": is_expired,
             "days_old": days_old,
             "posted_date": date_posted,
-            "reason": f"posted {days_old} days ago" + (" (very old, might be closed)" if is_expired else " (likely still open)")
+            "reason": f"posted {days_old} days ago" + (" (older than 14 days - likely expired)" if is_expired else " (fresh - ≤ 14 days)")
         }
     except Exception as e:
         return {
@@ -372,3 +372,40 @@ def filter_jobs_with_agent(jobs: list, profile: dict, max_assess: int = 200) -> 
     kept.extend(jobs[max_assess:])
 
     return kept, {"stats": stats, "filtered": filtered}
+
+
+def deduplicate_jobs(jobs: list) -> tuple[list, dict]:
+    """
+    Remove duplicate jobs by:
+    1. Exact URL match (same posting)
+    2. Title + Company match (same job on multiple platforms)
+    """
+    seen_urls = set()
+    seen_titles = {}  # {(title, company): first_job}
+    deduped = []
+    duplicates = []
+
+    for job in jobs:
+        url = str(job.get("job_url", "")).strip()
+        title = str(job.get("title", "")).strip().lower()
+        company = str(job.get("company", "")).strip().lower()
+        title_company_key = (title, company)
+
+        # Check URL duplicate
+        if url and url in seen_urls:
+            duplicates.append({"url": url, "title": job.get("title", ""), "type": "URL"})
+            continue
+
+        # Check title+company duplicate (same job on different platforms)
+        if title and company and title_company_key in seen_titles:
+            duplicates.append({"url": url, "title": job.get("title", ""), "type": "Title+Company"})
+            continue
+
+        # New unique job
+        if url:
+            seen_urls.add(url)
+        if title and company:
+            seen_titles[title_company_key] = job
+        deduped.append(job)
+
+    return deduped, {"deduped_count": len(deduped), "duplicate_count": len(duplicates)}
