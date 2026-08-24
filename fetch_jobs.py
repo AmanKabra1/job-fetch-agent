@@ -221,6 +221,30 @@ def normalise(jobs: pd.DataFrame) -> pd.DataFrame:
     return jobs.fillna("").astype(str)
 
 
+def add_date_category(rows):
+    """Categorize jobs by posting date: TODAY (3 days), THIS_WEEK (7 days), RECENT (14 days)"""
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+
+    for row in rows:
+        date_posted = str(row.get("date_posted", "")).strip()
+        try:
+            posted = datetime.strptime(date_posted[:10], "%Y-%m-%d")
+            days_old = (now - posted).days
+
+            if days_old <= 3:
+                row["_date_category"] = "TODAY"
+            elif days_old <= 7:
+                row["_date_category"] = "THIS_WEEK"
+            elif days_old <= 14:
+                row["_date_category"] = "RECENT"
+            else:
+                row["_date_category"] = "OLD"  # Will be filtered out
+        except (ValueError, TypeError):
+            row["_date_category"] = "UNKNOWN"
+
+    return rows
+
+
 def rank_for_feed(rows):
     """Gate + rank the raw rows against the OWNER'S SAVED PROFILE (resume_profile.py)
     using the SAME personalised scorer the live dashboard uses — skill-match %,
@@ -399,10 +423,24 @@ def main():
         print(f"  thin scrape ({len(today_rows)}); topped up from previous feed "
               f"to {len(feed_rows)} before ranking.", flush=True)
 
+    # ADD DATE CATEGORIES: TODAY (3d), THIS_WEEK (7d), RECENT (14d)
+    print(f"  categorizing jobs by posting date ...", flush=True)
+    feed_rows = add_date_category(feed_rows)
+
+    # Count jobs per category
+    today_count = sum(1 for r in feed_rows if r.get("_date_category") == "TODAY")
+    week_count = sum(1 for r in feed_rows if r.get("_date_category") == "THIS_WEEK")
+    recent_count = sum(1 for r in feed_rows if r.get("_date_category") == "RECENT")
+    old_count = sum(1 for r in feed_rows if r.get("_date_category") == "OLD")
+    print(f"    categories: {today_count} TODAY, {week_count} THIS_WEEK, {recent_count} RECENT, {old_count} OLD (filtered)", flush=True)
+
+    # Filter out jobs older than 14 days
+    feed_rows = [r for r in feed_rows if r.get("_date_category") != "OLD"]
+
     ranked = rank_for_feed(feed_rows)
     write_feed(ranked)
     print(f"Replaced feed with today's latest: {len(ranked)} jobs "
-          f"(best-first, floor {MIN_FEED}).", flush=True)
+          f"(organized by date freshness + match score, floor {MIN_FEED}).", flush=True)
 
 
 if __name__ == "__main__":

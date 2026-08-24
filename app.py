@@ -2385,38 +2385,55 @@ function renderJobs(){
   const wrap=$('#loadMoreWrap');
   if(!jobs.length){ b.innerHTML='<tr><td colspan="10" class="empty">No matching jobs found. Try a different role/position, widen the posting age, or upload a resume to guide the search.</td></tr>'; if(wrap) wrap.style.display='none'; return; }
   const view = locFilter(jobs);
-  window._view = view;                     // row buttons (Tailor/Apply) index into this
+  window._view = view;
   if(!view.length){ b.innerHTML='<tr><td colspan="10" class="empty">No jobs at "<b>'+esc($("#jobLoc").value)+'</b>" in the current results — try a nearby city or clear the location.</td></tr>'; if(wrap) wrap.style.display='none'; $('#count').textContent='0 of '+jobs.length+' jobs'; return; }
-  const visible = view.slice(0, shown);
+
+  // Group jobs by date category
+  const byDate = {TODAY: [], THIS_WEEK: [], RECENT: []};
+  view.forEach(j => {
+    const cat = j._date_category || 'RECENT';
+    if(byDate[cat]) byDate[cat].push(j);
+  });
+
   const locNote=$('#jobLoc')&&$('#jobLoc').value.trim()?(' · 📍 '+esc($('#jobLoc').value.trim())):'';
-  $('#count').textContent = 'showing '+visible.length+' of '+view.length+' jobs'+locNote
+  $('#count').textContent = 'showing '+view.length+' of '+view.length+' jobs'+locNote
                             +(window._fetchedAt?(' · '+window._fetchedAt):'');
-  // "Load more" shows up whenever there are more jobs than currently displayed.
-  if(wrap){
-    const more = view.length - visible.length;
-    wrap.style.display = more>0 ? '' : 'none';
-    const btn=$('#loadMoreBtn'); if(btn) btn.textContent='Load more ('+more+' more)';
-  }
-  b.innerHTML = visible.map((j,i)=>{
-    const matched=(j.matched||[]).slice(0,6).map(m=>'<span class="tag have" style="font-size:10px">'+esc(m.split(' (')[0])+'</span>').join('');
-    const missing=(j.missing||[]).slice(0,4).map(m=>'<span class="tag miss" style="font-size:10px">'+esc(m.split(' (')[0])+'</span>').join('');
-    const matchLine = matched ? ('<div class="chips">&#9989; '+matched+'</div>') : '';
-    const missLine = missing ? ('<div class="chips" style="margin-top:2px">&#9888; could learn: '+missing+'</div>') : '';
-    const size=j.employees>=150?(j.employees>=1000?(Math.floor(j.employees/1000)+'k+'):(j.employees+'+')):'';
-    const exp=j.exp_label?('<span class="chip" title="experience comparison">'+esc(j.exp_label)+(j.exp_fit?' &#9989;':'')+'</span>'):'';
-    return `<tr>
-      <td>${i+1}</td>
-      <td><span class="score ${scoreClass(j.score)}">${j.score}%</span>${j.skill_pct!=null?('<div class="note" style="font-size:10px;margin-top:2px">skills '+j.skill_pct+'%</div>'):''}</td>
-      <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${exp}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.salary_lpa>0?(' <span class="chip"'+(j.salary_lpa>CURRENT_LPA?' style="background:#1c7c3f;color:#fff" title="above your current pay"':'')+'>'+j.salary_lpa+' LPA'+(j.salary_lpa>CURRENT_LPA?' ↑':'')+'</span>'):''}${matchLine}${missLine}</td>
-      <td>${esc(j.company)}</td>
-      <td class="note">${size}</td>
-      <td>${esc(j.location)}</td>
-      <td class="note">${j.site?('via '+esc(j.site)):''}</td>
-      <td>${esc(j.date_posted)}</td>
-      <td>${j.job_url?'<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener">Open</a>':''}</td>
-      <td><button onclick="applyKit(${i})" style="margin-bottom:4px">Apply</button><br><button class="secondary" onclick="useInTailor(${i})">Tailor &#8595;</button></td>
-    </tr>`;
-  }).join('');
+  if(wrap) wrap.style.display='none';
+
+  // Render three sections: TODAY, THIS_WEEK, RECENT
+  const renderSection = (title, jobs, offset) => {
+    if(!jobs.length) return '';
+    const rows = jobs.map((j,i)=>{
+      const matched=(j.matched||[]).slice(0,6).map(m=>'<span class="tag have" style="font-size:10px">'+esc(m.split(' (')[0])+'</span>').join('');
+      const missing=(j.missing||[]).slice(0,4).map(m=>'<span class="tag miss" style="font-size:10px">'+esc(m.split(' (')[0])+'</span>').join('');
+      const matchLine = matched ? ('<div class="chips">&#9989; '+matched+'</div>') : '';
+      const missLine = missing ? ('<div class="chips" style="margin-top:2px">&#9888; could learn: '+missing+'</div>') : '';
+      const size=j.employees>=150?(j.employees>=1000?(Math.floor(j.employees/1000)+'k+'):(j.employees+'+')):'';
+      const exp=j.exp_label?('<span class="chip" title="experience comparison">'+esc(j.exp_label)+(j.exp_fit?' &#9989;':'')+'</span>'):'';
+      const idx = offset + i + 1;
+      return `<tr>
+        <td>${idx}</td>
+        <td><span class="score ${scoreClass(j.score)}">${j.score}%</span>${j.skill_pct!=null?('<div class="note" style="font-size:10px;margin-top:2px">skills '+j.skill_pct+'%</div>'):''}</td>
+        <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${exp}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.salary_lpa>0?(' <span class="chip"'+(j.salary_lpa>CURRENT_LPA?' style="background:#1c7c3f;color:#fff" title="above your current pay"':'')+'>'+j.salary_lpa+' LPA'+(j.salary_lpa>CURRENT_LPA?' ↑':'')+'</span>'):''}${matchLine}${missLine}</td>
+        <td>${esc(j.company)}</td>
+        <td class="note">${size}</td>
+        <td>${esc(j.location)}</td>
+        <td class="note">${j.site?('via '+esc(j.site)):''}</td>
+        <td>${esc(j.date_posted)}</td>
+        <td>${j.job_url?'<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener">Open</a>':''}</td>
+        <td><button onclick="applyKit(${offset+i})" style="margin-bottom:4px">Apply</button><br><button class="secondary" onclick="useInTailor(${offset+i})">Tailor &#8595;</button></td>
+      </tr>`;
+    }).join('');
+    return `<tr style="background:#f5f5f5;font-weight:bold"><td colspan="10" style="padding:8px">📅 ${title}</td></tr>${rows}`;
+  };
+
+  let html = '';
+  let offset = 0;
+  if(byDate.TODAY.length) { html += renderSection("TODAY'S JOBS (Posted last 3 days)", byDate.TODAY, offset); offset += byDate.TODAY.length; }
+  if(byDate.THIS_WEEK.length) { html += renderSection("THIS WEEK'S JOBS (Posted 3-7 days ago)", byDate.THIS_WEEK, offset); offset += byDate.THIS_WEEK.length; }
+  if(byDate.RECENT.length) { html += renderSection("RECENT JOBS (Posted 7-14 days ago)", byDate.RECENT, offset); }
+
+  b.innerHTML = html;
 }
 
 function chiplist(list, cls){ return (list||[]).map(s=>'<span class="tag '+cls+'">'+esc((s+'').split(' (')[0])+'</span>').join(''); }
