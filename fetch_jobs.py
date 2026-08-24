@@ -25,6 +25,7 @@ from jobspy import scrape_jobs
 import extra_sources as ES
 import resume_profile as RP        # your saved resume drives search + ranking
 import strict_matcher as SM        # strict filtering before ranking
+import job_analyzer as JA          # free heuristic-based job analysis (no API needed)
 
 
 def _quiet_jobspy():
@@ -328,6 +329,16 @@ def main():
             print(f"      {count}× {reason}", flush=True)
 
     today_rows = filtered_rows  # Use filtered jobs from now on
+
+    # DEDUPLICATION: Remove jobs with duplicate URLs from previous feed runs
+    print(f"  deduplicating against previous feed ...", flush=True)
+    existing = load_existing()
+    existing_urls = {str(r.get("job_url", "")) for r in existing}
+    today_rows = [r for r in today_rows if str(r.get("job_url", "")) not in existing_urls]
+    dedup_removed = len(filtered_rows) - len(today_rows)
+    if dedup_removed > 0:
+        print(f"    deduplication: removed {dedup_removed} duplicate jobs from previous runs", flush=True)
+    print(f"    now have {len(today_rows)} new unique jobs", flush=True)
 
     # REPLACE, not append: each run the feed is this run's latest jobs, ranked.
     existing = load_existing()

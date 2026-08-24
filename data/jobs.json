@@ -1,7 +1,77 @@
 {
-"fetched_at": "2026-08-12 05:31 UTC",
-"count": 484,
+"fetched_at": "2026-08-20 03:43 UTC",
+"count": 490,
 "jobs": [
+{
+"date_fetched": "2026-08-20 03:43 UTC",
+"title": "ETL and Automation Test Engineer (SDET)",
+"company": "BIPB",
+"location": "KA, IN",
+"site": "indeed",
+"date_posted": "2026-08-19",
+"job_url": "https://in.indeed.com/viewjob?jk=c545bbd12652abd6",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "java developer"
+},
+{
+"date_fetched": "2026-08-20 03:43 UTC",
+"title": "Junior Software Engineer (m/w/d) - Schwerpunkt iOS",
+"company": "Ottonova",
+"location": "München",
+"site": "arbeitnow",
+"date_posted": "2026-08-19",
+"job_url": "https://www.arbeitnow.com/jobs/companies/ottonova/junior-software-engineer-schwerpunkt-ios-munchen-426674",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "remote-api"
+},
+{
+"date_fetched": "2026-08-20 03:43 UTC",
+"title": "Junior Linux Engineer",
+"company": "SightForge Technologies Pvt. Ltd.",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-08-18",
+"job_url": "https://www.linkedin.com/jobs/view/4454706322",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1"
+},
+{
+"date_fetched": "2026-08-20 03:43 UTC",
+"title": "Back End Developer (SDE 1)",
+"company": "TravClan",
+"location": "New Delhi, Delhi, India",
+"site": "linkedin",
+"date_posted": "2026-08-18",
+"job_url": "https://www.linkedin.com/jobs/view/4454490507",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend engineer"
+},
+{
+"date_fetched": "2026-08-20 03:43 UTC",
+"title": "SDE Intern",
+"company": "Testunity",
+"location": "KA, IN",
+"site": "indeed",
+"date_posted": "2026-08-18",
+"job_url": "https://in.indeed.com/viewjob?jk=488878fadea52ccf",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "True",
+"company_num_employees": "",
+"search_term": "SDE 1"
+},
 {
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "Software Engineer (Linux)",
@@ -550,20 +620,6 @@
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer I ( Java + UI ) full stack developer",
-"company": "CME Group",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-11",
-"job_url": "https://www.linkedin.com/jobs/view/4451611743",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "SDE 1"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
 "title": "DE-AWS Cloud Native -Full Stack Engineer-GDSF02",
 "company": "EY",
 "location": "MH, IN",
@@ -574,20 +630,6 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Java Backend Developer",
-"company": "Techila Global Services",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-08-11",
-"job_url": "https://in.indeed.com/viewjob?jk=96659e15524d3edf",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
 "search_term": "node.js developer"
 },
 {
@@ -603,6 +645,34 @@
 "is_remote": "False",
 "company_num_employees": "10,000+",
 "search_term": "java developer"
+},
+{
+"date_fetched": "2026-08-12 05:31 UTC",
+"title": "Software Engineer III - Python, AWS, GenAI",
+"company": "JPMorganChase",
+"location": "KA, IN",
+"site": "indeed",
+"date_posted": "2026-08-11",
+"job_url": "https://in.indeed.com/viewjob?jk=222a3ddb410632b9",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "LLM engineer"
+},
+{
+"date_fetched": "2026-08-12 05:31 UTC",
+"title": "Software Engineer I ( Java + UI ) full stack developer",
+"company": "CME Group",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-08-11",
+"job_url": "https://www.linkedin.com/jobs/view/4451611743",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -634,17 +704,17 @@
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer III - Python, AWS, GenAI",
-"company": "JPMorganChase",
+"title": "Java Backend Developer",
+"company": "Techila Global Services",
 "location": "KA, IN",
 "site": "indeed",
 "date_posted": "2026-08-11",
-"job_url": "https://in.indeed.com/viewjob?jk=222a3ddb410632b9",
+"job_url": "https://in.indeed.com/viewjob?jk=96659e15524d3edf",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "LLM engineer"
+"company_num_employees": "",
+"search_term": "node.js developer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -718,20 +788,6 @@
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
-"title": "Python Cloud AI Engineer I",
-"company": "UST",
-"location": "TS, IN",
-"site": "indeed",
-"date_posted": "2026-08-11",
-"job_url": "https://in.indeed.com/viewjob?jk=80129af54d98762f",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "backend engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
 "title": "Python Engineer",
 "company": "Intugine - Logistics through Innovation",
 "location": "Bengaluru, Karnataka, India",
@@ -757,20 +813,6 @@
 "is_remote": "False",
 "company_num_employees": "",
 "search_term": "python developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "FGPP Java Developer 5-8",
-"company": "Zensar Technologies",
-"location": "MH, IN",
-"site": "indeed",
-"date_posted": "2026-08-11",
-"job_url": "https://in.indeed.com/viewjob?jk=9216b73935124f61",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "5,001 to 10,000",
-"search_term": "java developer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -813,6 +855,34 @@
 "is_remote": "False",
 "company_num_employees": "",
 "search_term": "LLM engineer"
+},
+{
+"date_fetched": "2026-08-12 05:31 UTC",
+"title": "Python Cloud AI Engineer I",
+"company": "UST",
+"location": "TS, IN",
+"site": "indeed",
+"date_posted": "2026-08-11",
+"job_url": "https://in.indeed.com/viewjob?jk=80129af54d98762f",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "backend engineer"
+},
+{
+"date_fetched": "2026-08-12 05:31 UTC",
+"title": "FGPP Java Developer 5-8",
+"company": "Zensar Technologies",
+"location": "MH, IN",
+"site": "indeed",
+"date_posted": "2026-08-11",
+"job_url": "https://in.indeed.com/viewjob?jk=9216b73935124f61",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "5,001 to 10,000",
+"search_term": "java developer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2104,6 +2174,20 @@
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
+"title": "AI / ML Engineer",
+"company": "Accenture in India",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-08-11",
+"job_url": "https://www.linkedin.com/jobs/view/4452152973",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "LLM engineer"
+},
+{
+"date_fetched": "2026-08-12 05:31 UTC",
 "title": "Infrastructure Engineer",
 "company": "Accenture",
 "location": "RJ, IN",
@@ -2146,20 +2230,6 @@
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
-"title": "AI / ML Engineer",
-"company": "Accenture in India",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-11",
-"job_url": "https://www.linkedin.com/jobs/view/4452152973",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "LLM engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
 "title": "iOS Developer Intern",
 "company": "Unikwork",
 "location": "GJ, IN",
@@ -2185,20 +2255,6 @@
 "is_remote": "False",
 "company_num_employees": "",
 "search_term": "SDE 1"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Developer Advocate",
-"company": "Roche",
-"location": "TS, IN",
-"site": "indeed",
-"date_posted": "2026-08-11",
-"job_url": "https://in.indeed.com/viewjob?jk=215052077c19d1e2",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "full stack developer"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2230,20 +2286,6 @@
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
-"title": "ML Engineer I :: AI Engineer",
-"company": "UST",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-08-11",
-"job_url": "https://in.indeed.com/viewjob?jk=4c5fa032e49572dd",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "LLM engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
 "title": "Technical Support Engineer (Inference) - India Weekends",
 "company": "Together AI",
 "location": "MH, IN",
@@ -2254,6 +2296,34 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
+"search_term": "LLM engineer"
+},
+{
+"date_fetched": "2026-08-12 05:31 UTC",
+"title": "Developer Advocate",
+"company": "Roche",
+"location": "TS, IN",
+"site": "indeed",
+"date_posted": "2026-08-11",
+"job_url": "https://in.indeed.com/viewjob?jk=215052077c19d1e2",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "full stack developer"
+},
+{
+"date_fetched": "2026-08-12 05:31 UTC",
+"title": "ML Engineer I :: AI Engineer",
+"company": "UST",
+"location": "KA, IN",
+"site": "indeed",
+"date_posted": "2026-08-11",
+"job_url": "https://in.indeed.com/viewjob?jk=4c5fa032e49572dd",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
 "search_term": "LLM engineer"
 },
 {
@@ -5057,6 +5127,20 @@
 "search_term": "remote-api"
 },
 {
+"date_fetched": "2026-08-20 03:43 UTC",
+"title": "Junior Software Engineer",
+"company": "CareerXperts Consulting",
+"location": "",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4453445317",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1"
+},
+{
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "Backend Engineer",
 "company": "Michael Page",
@@ -6345,6 +6429,20 @@
 "search_term": "LLM engineer"
 },
 {
+"date_fetched": "2026-08-20 03:43 UTC",
+"title": "DualEntry | Full-time | REMOTE",
+"company": "(HN Who's Hiring)",
+"location": "—",
+"site": "Hacker News",
+"date_posted": "",
+"job_url": "https://news.ycombinator.com/item?id=49159519",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "True",
+"company_num_employees": "",
+"search_term": "remote-api"
+},
+{
 "date_fetched": "2026-08-12 05:31 UTC",
 "title": "Snout https://snout.com/ | Multiple Engineering + Product Roles | Remote US or Ontario, Canada | Full Time",
 "company": "(HN Who's Hiring)",
@@ -6492,20 +6590,6 @@
 "site": "Hacker News",
 "date_posted": "",
 "job_url": "https://jobs.ashbyhq.com/duck-duck-go/a447e823-fd8f-438f-909e-db1f6ced8c97?utm_source=1DKZJgG9d9",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "DualEntry | Full-time | REMOTE",
-"company": "(HN Who's Hiring)",
-"location": "—",
-"site": "Hacker News",
-"date_posted": "",
-"job_url": "https://news.ycombinator.com/item?id=49159519",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "True",
