@@ -26,6 +26,7 @@ import extra_sources as ES
 import resume_profile as RP        # your saved resume drives search + ranking
 import strict_matcher as SM        # strict filtering before ranking
 import job_analyzer as JA          # free heuristic-based job analysis (no API needed)
+import job_requirement_agent as JRA  # LangGraph agent: check JD + expiration
 
 
 def _quiet_jobspy():
@@ -339,6 +340,22 @@ def main():
     if dedup_removed > 0:
         print(f"    deduplication: removed {dedup_removed} duplicate jobs from previous runs", flush=True)
     print(f"    now have {len(today_rows)} new unique jobs", flush=True)
+
+    # REQUIREMENT AGENT: Use LangGraph to verify:
+    # 1. Job is still open (not expired > 30 days)
+    # 2. Job truly meets requirements (not misleading)
+    print(f"  verifying job requirements & expiration (top {min(100, len(today_rows))} jobs) ...", flush=True)
+    profile_dict = {
+        "experience_years": 2,
+        "job_titles": getattr(RP, "TARGET_TITLES", ["Backend Developer", "Software Engineer"]),
+        "all_searchable_skills": [s for items in RP.SKILLS.values() for s in items],
+    }
+    verified_rows, req_stats = JRA.filter_jobs_with_agent(today_rows, profile_dict, max_assess=100)
+    stats = req_stats["stats"]
+    if stats["filtered_expired"] > 0 or stats["filtered_requirements"] > 0:
+        print(f"    verification: kept {stats['kept']}, "
+              f"filtered {stats['filtered_expired']} expired + {stats['filtered_requirements']} don't meet requirements", flush=True)
+    today_rows = verified_rows
 
     # REPLACE, not append: each run the feed is this run's latest jobs, ranked.
     existing = load_existing()

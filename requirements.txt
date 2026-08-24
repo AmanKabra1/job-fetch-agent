@@ -1,5 +1,7 @@
 python-jobspy>=1.1.80
 pandas>=2.0.0
+groq>=0.4.0                        # free API: job requirement agent (needs GROQ_API_KEY from .env)
+langgraph>=0.0.60                  # optional: for job requirement agent
 
 # Resume tailoring (resume_tailor.py): read/edit .docx, fallback PDF render
 reportlab>=4.0.0
