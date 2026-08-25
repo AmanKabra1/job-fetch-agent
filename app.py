@@ -2396,6 +2396,27 @@ function renderJobs(){
     if(byDate[cat]) byDate[cat].push(j);
   });
 
+  // Add dropdown filter if not already present
+  let filterDropdown = $('#dateFilter');
+  if(!filterDropdown) {
+    const filterHtml = `
+      <div style="margin-bottom:16px;display:flex;gap:12px;align-items:center">
+        <label style="font-weight:bold">📅 Filter by date:</label>
+        <select id="dateFilter" style="padding:8px 12px;border:1px solid #ccc;border-radius:4px;font-size:14px;cursor:pointer">
+          <option value="ALL">All Jobs (${view.length})</option>
+          <option value="TODAY">📅 Today (${byDate.TODAY.length})</option>
+          <option value="THIS_WEEK">⏰ This Week (${byDate.THIS_WEEK.length})</option>
+          <option value="RECENT">📆 Recent (${byDate.RECENT.length})</option>
+        </select>
+      </div>
+    `;
+    const filterDiv = document.createElement('div');
+    filterDiv.innerHTML = filterHtml;
+    b.parentElement.insertBefore(filterDiv, b);
+    filterDropdown = $('#dateFilter');
+    filterDropdown.addEventListener('change', ()=>{ window._selectedDateFilter = filterDropdown.value; renderJobs(); });
+  }
+
   const locNote=$('#jobLoc')&&$('#jobLoc').value.trim()?(' · 📍 '+esc($('#jobLoc').value.trim())):'';
   $('#count').textContent = 'showing '+view.length+' of '+view.length+' jobs'+locNote
                             +(window._fetchedAt?(' · '+window._fetchedAt):'');
@@ -2428,12 +2449,21 @@ function renderJobs(){
     return `<tr style="background:linear-gradient(135deg, #2a5ccc 0%, #1a3c9c 100%);color:#fff;font-weight:bold;cursor:pointer;height:40px"><td colspan="10" style="padding:12px;text-align:left;vertical-align:middle">${emoji} <strong>${title}</strong> <span style="float:right;font-size:12px;margin-right:16px">${count} jobs</span></td></tr>${rows}`;
   };
 
+  const selectedFilter = window._selectedDateFilter || 'ALL';
   let html = '';
   let offset = 0;
-  if(byDate.TODAY.length) { html += renderSection("TODAY'S JOBS (Posted last 3 days)", byDate.TODAY.length, byDate.TODAY, offset, '📅'); offset += byDate.TODAY.length; }
-  if(byDate.THIS_WEEK.length) { html += renderSection("THIS WEEK'S JOBS (Posted 3-7 days ago)", byDate.THIS_WEEK.length, byDate.THIS_WEEK, offset, '⏰'); offset += byDate.THIS_WEEK.length; }
-  if(byDate.RECENT.length) { html += renderSection("RECENT JOBS (Posted 7-14 days ago)", byDate.RECENT.length, byDate.RECENT, offset, '📆'); }
 
+  if(selectedFilter==='ALL' || selectedFilter==='TODAY') {
+    if(byDate.TODAY.length) { html += renderSection("TODAY'S JOBS (Posted last 3 days)", byDate.TODAY.length, byDate.TODAY, offset, '📅'); offset += byDate.TODAY.length; }
+  }
+  if(selectedFilter==='ALL' || selectedFilter==='THIS_WEEK') {
+    if(byDate.THIS_WEEK.length) { html += renderSection("THIS WEEK'S JOBS (Posted 3-7 days ago)", byDate.THIS_WEEK.length, byDate.THIS_WEEK, offset, '⏰'); offset += byDate.THIS_WEEK.length; }
+  }
+  if(selectedFilter==='ALL' || selectedFilter==='RECENT') {
+    if(byDate.RECENT.length) { html += renderSection("RECENT JOBS (Posted 7-14 days ago)", byDate.RECENT.length, byDate.RECENT, offset, '📆'); }
+  }
+
+  if(!html) html = '<tr><td colspan="10" class="empty">No jobs in this category.</td></tr>';
   b.innerHTML = html;
 }
 
