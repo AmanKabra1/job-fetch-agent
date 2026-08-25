@@ -1,7 +1,231 @@
 {
-"fetched_at": "2026-08-24 15:36 UTC",
-"count": 490,
+"fetched_at": "2026-08-25 03:45 UTC",
+"count": 373,
 "jobs": [
+{
+"date_fetched": "2026-08-24 05:22 UTC",
+"title": "Junior Software Engineer (m/f/d) - focus on iOS",
+"company": "Ottonova",
+"location": "München",
+"site": "arbeitnow",
+"date_posted": "2026-08-24",
+"job_url": "https://www.arbeitnow.com/jobs/companies/ottonova/junior-software-engineer-focus-on-ios-munchen-455964",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "remote-api",
+"_requirement_assessment": {
+"verdict": "KEEP",
+"reason": "Job is open and meets requirements (unknown match)",
+"is_expired": false,
+"meets_requirements": true,
+"requirement_match": "unknown",
+"key_matches": [],
+"concerns": [
+"groq unavailable for deep analysis"
+],
+"expiration_info": {
+"is_expired": false,
+"days_old": 0,
+"posted_date": "2026-08-24",
+"reason": "posted 0 days ago (likely still open)"
+}
+},
+"_date_category": "TODAY"
+},
+{
+"date_fetched": "2026-08-24 05:22 UTC",
+"title": "Junior Dot Net Developer",
+"company": "Codemines Solutions Pvt Ltd",
+"location": "MH, IN",
+"site": "indeed",
+"date_posted": "2026-08-24",
+"job_url": "https://in.indeed.com/viewjob?jk=3476dc5f00777eec",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer",
+"_requirement_assessment": {
+"verdict": "KEEP",
+"reason": "Job is open and meets requirements (unknown match)",
+"is_expired": false,
+"meets_requirements": true,
+"requirement_match": "unknown",
+"key_matches": [],
+"concerns": [
+"groq unavailable for deep analysis"
+],
+"expiration_info": {
+"is_expired": false,
+"days_old": 0,
+"posted_date": "2026-08-24",
+"reason": "posted 0 days ago (likely still open)"
+}
+},
+"_date_category": "TODAY"
+},
+{
+"date_fetched": "2026-08-24 05:22 UTC",
+"title": "(Junior) AI Go-to-Market Engineer (w/m/d)",
+"company": "FTAPI GmbH",
+"location": "München",
+"site": "arbeitnow",
+"date_posted": "2026-08-23",
+"job_url": "https://www.arbeitnow.com/jobs/companies/ftapi-gmbh/junior-ai-go-to-market-engineer-munchen-89563",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "remote-api",
+"_requirement_assessment": {
+"verdict": "KEEP",
+"reason": "Job is open and meets requirements (unknown match)",
+"is_expired": false,
+"meets_requirements": true,
+"requirement_match": "unknown",
+"key_matches": [],
+"concerns": [
+"groq unavailable for deep analysis"
+],
+"expiration_info": {
+"is_expired": false,
+"days_old": 1,
+"posted_date": "2026-08-23",
+"reason": "posted 1 days ago (likely still open)"
+}
+},
+"_date_category": "TODAY"
+},
+{
+"date_fetched": "2026-08-24 05:22 UTC",
+"title": "Backend Developer (SDE1)",
+"company": "Deepsolv(Creative Intelligence)",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-08-22",
+"job_url": "https://www.linkedin.com/jobs/view/4455044307",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1",
+"_requirement_assessment": {
+"verdict": "KEEP",
+"reason": "Job is open and meets requirements (unknown match)",
+"is_expired": false,
+"meets_requirements": true,
+"requirement_match": "unknown",
+"key_matches": [],
+"concerns": [
+"groq unavailable for deep analysis"
+],
+"expiration_info": {
+"is_expired": false,
+"days_old": 2,
+"posted_date": "2026-08-22",
+"reason": "posted 2 days ago (likely still open)"
+}
+},
+"_date_category": "TODAY"
+},
+{
+"date_fetched": "2026-08-24 05:22 UTC",
+"title": "Software Engineer (SDE-2)",
+"company": "SolarWinds",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "2026-08-22",
+"job_url": "https://www.linkedin.com/jobs/view/4430795306",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1",
+"_requirement_assessment": {
+"verdict": "KEEP",
+"reason": "Job is open and meets requirements (unknown match)",
+"is_expired": false,
+"meets_requirements": true,
+"requirement_match": "unknown",
+"key_matches": [],
+"concerns": [
+"groq unavailable for deep analysis"
+],
+"expiration_info": {
+"is_expired": false,
+"days_old": 2,
+"posted_date": "2026-08-22",
+"reason": "posted 2 days ago (likely still open)"
+}
+},
+"_date_category": "TODAY"
+},
+{
+"date_fetched": "2026-08-24 05:22 UTC",
+"title": "Software Engineer (Junior) / Vibe Coding Specialist",
+"company": "Arcus & Co",
+"location": "",
+"site": "linkedin",
+"date_posted": "2026-08-22",
+"job_url": "https://www.linkedin.com/jobs/view/4457816204",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "software engineer",
+"_requirement_assessment": {
+"verdict": "KEEP",
+"reason": "Job is open and meets requirements (unknown match)",
+"is_expired": false,
+"meets_requirements": true,
+"requirement_match": "unknown",
+"key_matches": [],
+"concerns": [
+"groq unavailable for deep analysis"
+],
+"expiration_info": {
+"is_expired": false,
+"days_old": 2,
+"posted_date": "2026-08-22",
+"reason": "posted 2 days ago (likely still open)"
+}
+},
+"_date_category": "TODAY"
+},
+{
+"date_fetched": "2026-08-24 05:22 UTC",
+"title": "SDE II - Accounting & Partner Payouts Platform",
+"company": "Urban Company",
+"location": "Gurugram, Haryana, India",
+"site": "linkedin",
+"date_posted": "2026-08-22",
+"job_url": "https://www.linkedin.com/jobs/view/4455027097",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer",
+"_requirement_assessment": {
+"verdict": "KEEP",
+"reason": "Job is open and meets requirements (unknown match)",
+"is_expired": false,
+"meets_requirements": true,
+"requirement_match": "unknown",
+"key_matches": [],
+"concerns": [
+"groq unavailable for deep analysis"
+],
+"expiration_info": {
+"is_expired": false,
+"days_old": 2,
+"posted_date": "2026-08-22",
+"reason": "posted 2 days ago (likely still open)"
+}
+},
+"_date_category": "TODAY"
+},
 {
 "date_fetched": "2026-08-20 03:43 UTC",
 "title": "ETL and Automation Test Engineer (SDET)",
@@ -14,7 +238,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "THIS_WEEK"
 },
 {
 "date_fetched": "2026-08-20 03:43 UTC",
@@ -28,7 +253,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "THIS_WEEK"
 },
 {
 "date_fetched": "2026-08-20 03:43 UTC",
@@ -42,7 +268,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "THIS_WEEK"
 },
 {
 "date_fetched": "2026-08-20 03:43 UTC",
@@ -56,7 +283,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "THIS_WEEK"
 },
 {
 "date_fetched": "2026-08-20 03:43 UTC",
@@ -70,7 +298,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "THIS_WEEK"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -84,7 +313,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -98,7 +328,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -112,7 +343,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -126,7 +358,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -140,7 +373,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "51 to 200",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -154,7 +388,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -168,7 +403,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -182,7 +418,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -196,7 +433,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -210,7 +448,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -224,7 +463,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -238,7 +478,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -252,7 +493,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -266,7 +508,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -280,7 +523,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -294,7 +538,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -308,7 +553,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -322,7 +568,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -336,7 +583,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -350,7 +598,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -364,7 +613,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -378,7 +628,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -392,7 +643,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -406,7 +658,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -420,7 +673,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -434,7 +688,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "5,001 to 10,000",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -448,7 +703,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -462,7 +718,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -476,7 +733,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -490,7 +748,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -504,7 +763,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -518,7 +778,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -532,7 +793,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -546,7 +808,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -560,7 +823,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -574,7 +838,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -588,7 +853,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -602,7 +868,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -616,7 +883,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -630,7 +898,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -644,7 +913,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -658,7 +928,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -672,7 +943,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -686,7 +958,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -700,7 +973,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -714,7 +988,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -728,7 +1003,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -742,7 +1018,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "10,000+",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -756,7 +1033,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -770,7 +1048,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "51 to 200",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -784,7 +1063,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -798,7 +1078,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -812,7 +1093,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -826,7 +1108,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -840,7 +1123,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -854,7 +1138,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -868,7 +1153,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -882,7 +1168,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "5,001 to 10,000",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -896,7 +1183,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -910,7 +1198,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -924,7 +1213,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -938,7 +1228,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -952,7 +1243,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -966,7 +1258,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -980,7 +1273,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -994,7 +1288,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1008,7 +1303,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1022,7 +1318,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1036,7 +1333,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1050,7 +1348,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1064,7 +1363,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1078,7 +1378,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1092,7 +1393,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1106,7 +1408,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1120,7 +1423,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1134,7 +1438,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1148,7 +1453,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1162,7 +1468,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1176,7 +1483,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1190,7 +1498,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1204,7 +1513,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1218,7 +1528,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1232,7 +1543,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1246,7 +1558,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1260,7 +1573,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1274,7 +1588,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1288,7 +1603,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1302,7 +1618,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1316,7 +1633,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1330,7 +1648,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1344,7 +1663,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1358,7 +1678,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1372,7 +1693,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1386,7 +1708,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1400,7 +1723,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1414,7 +1738,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1428,7 +1753,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1442,7 +1768,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1456,7 +1783,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1470,7 +1798,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1484,7 +1813,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1498,7 +1828,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1512,7 +1843,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1526,7 +1858,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1540,7 +1873,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1554,7 +1888,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1568,7 +1903,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1582,7 +1918,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1596,7 +1933,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1610,7 +1948,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1624,7 +1963,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1638,7 +1978,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1652,7 +1993,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1666,7 +2008,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1680,7 +2023,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1694,7 +2038,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1708,7 +2053,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1722,7 +2068,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1736,7 +2083,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1750,7 +2098,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1764,7 +2113,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1778,7 +2128,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1792,7 +2143,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1806,7 +2158,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1820,7 +2173,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "11 to 50",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1834,7 +2188,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1848,7 +2203,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1862,7 +2218,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1876,7 +2233,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1890,7 +2248,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1904,7 +2263,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1918,7 +2278,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1932,7 +2293,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1946,7 +2308,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1960,7 +2323,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1974,7 +2338,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -1988,7 +2353,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2002,7 +2368,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2016,7 +2383,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2030,7 +2398,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2044,7 +2413,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2058,7 +2428,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2072,7 +2443,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2086,7 +2458,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2100,7 +2473,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2114,7 +2488,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2128,7 +2503,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2142,7 +2518,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2156,7 +2533,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2170,7 +2548,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2184,7 +2563,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2198,7 +2578,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2212,7 +2593,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2226,7 +2608,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2240,7 +2623,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "51 to 200",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2254,7 +2638,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2268,7 +2653,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2282,7 +2668,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2296,7 +2683,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2310,7 +2698,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2324,7 +2713,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2338,7 +2728,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2352,7 +2743,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2366,7 +2758,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "51 to 200",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2380,7 +2773,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "51 to 200",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2394,7 +2788,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "51 to 200",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2408,7 +2803,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "11 to 50",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2422,7 +2818,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2436,7 +2833,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2450,7 +2848,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "51 to 200",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2464,7 +2863,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2478,7 +2878,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2492,7 +2893,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2506,7 +2908,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2520,7 +2923,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2534,7 +2938,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2548,7 +2953,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2562,7 +2968,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2576,7 +2983,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2590,7 +2998,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2604,7 +3013,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -2618,1799 +3028,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Python Developer - Software Engineer",
-"company": "Citi",
-"location": "Chennai, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451417214",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Python Backend Developer",
-"company": "Surescout.in",
-"location": "Chennai, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451115604",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Python Backend Developer",
-"company": "TekSalt Solutions",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451520784",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer - Python",
-"company": "Millennium",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4442027880",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Full-Stack NestJS Developer",
-"company": "Technource",
-"location": "Dholera, Gujarat, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451814542",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer (Node.js, Python & AI Integrations)",
-"company": "Enterprise Bot",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4449569253",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Full Stack Java Developer",
-"company": "Parakore Enterprises Private Limited",
-"location": "Dehradun, Uttarakhand, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451125421",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "java developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer- Java Backend (Fulfilment)",
-"company": "IKEA",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451420153",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "java developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer - Java Full Stack",
-"company": "Societe Generale Global Solution Centre",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4452031857",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "java developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer (Golang)",
-"company": "E-Solutions",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451521997",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Java Backend Software Engineer",
-"company": "Bluehost",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4442549466",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Python backend Engineer",
-"company": "Rao IIT Academy",
-"location": "MH, IN",
-"site": "indeed",
-"date_posted": "2026-08-10",
-"job_url": "https://in.indeed.com/viewjob?jk=4e892dae99fb5a2b",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "SDE 1"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Java AI Developer",
-"company": "Infosys",
-"location": "Pune Division, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4441788146",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "java developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "AI Engineer (LLM & Agent Systems)",
-"company": "ADScholars",
-"location": "Hyderabad, Telangana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451192395",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI agent engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Python Developer",
-"company": "Appglide Solutions",
-"location": "Chennai, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4445088430",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Python Developer",
-"company": "YASH Technologies",
-"location": "Pune District, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4449548664",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Python Developer",
-"company": "Tata Consultancy Services",
-"location": "Mumbai, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451413657",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Python Developer",
-"company": "SII Group India",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4442962832",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Python Cloud Engineer",
-"company": "Crescent Techservices",
-"location": "Chennai, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4449547084",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Java AWS Developer",
-"company": "Virtusa",
-"location": "Andhra Pradesh, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4431072953",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "java developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "AI/ML Engineer – Agentic AI",
-"company": "WNS",
-"location": "Vishakhapatnam, Andhra Pradesh, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4449559929",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Machine Learning Engineer",
-"company": "Twilio",
-"location": "Remote - Ireland",
-"site": "Twilio careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://job-boards.greenhouse.io/twilio/jobs/7996774",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Machine Learning Engineer",
-"company": "Twilio",
-"location": "Remote - Spain",
-"site": "Twilio careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://job-boards.greenhouse.io/twilio/jobs/8007455",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Node.js & QA Automation Engineer – Corporate ...",
-"company": "Calitii",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451409464",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Node.js & QA Automation Engineer – Corporate Banking",
-"company": "Synechron",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451104676",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Agentic AI Engineer",
-"company": "Elastic",
-"location": "United States",
-"site": "Elastic careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.elastic.co/jobs?gh_jid=8079636&gh_jid=8079636",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Custom Software Engineer",
-"company": "Accenture in India",
-"location": "Chennai, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451894092",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Custom Software Engineer",
-"company": "Accenture services Pvt Ltd",
-"location": "Gurugram, Haryana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451456175",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Custom Software Engineer",
-"company": "Accenture in India",
-"location": "Chennai, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451879972",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Ignition – Software Engineer II",
-"company": "Deloitte",
-"location": "Chennai, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451401329",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Custom Software Engineer",
-"company": "Accenture in India",
-"location": "Gurugram, Haryana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4452002037",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "SDE 1"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer",
-"company": "InCred Financial Services",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451182817",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Custom Software Engineer",
-"company": "Accenture in India",
-"location": "Chennai, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451883927",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "java developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Custom Software Engineer",
-"company": "Accenture in India",
-"location": "Hyderabad, Telangana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451881989",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "java developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Intermediate Backend Engineer - Platform Integrations (Monetization)",
-"company": "GitLab",
-"location": "Bangalore, India",
-"site": "GitLab careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://job-boards.greenhouse.io/gitlab/jobs/8615332002",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Development Engineer , Concessions Tech",
-"company": "Amazon.com",
-"location": "TS, IN",
-"site": "indeed",
-"date_posted": "2026-08-10",
-"job_url": "https://in.indeed.com/viewjob?jk=93da97ac0124f0a4",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "backend engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer Intern (Fall 2026)",
-"company": "Cloudflare",
-"location": "In-Office",
-"site": "Cloudflare careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://boards.greenhouse.io/cloudflare/jobs/8118845?gh_jid=8118845",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer Intern (Winter 2027)",
-"company": "Figma",
-"location": "San Francisco, CA • New York, NY",
-"site": "Figma careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://boards.greenhouse.io/figma/jobs/6131089004?gh_jid=6131089004",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Junior Software Engineer, Reykjavik",
-"company": "Asana",
-"location": "Reykjavík",
-"site": "Asana careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://www.asana.com/jobs/apply/7766762?gh_jid=7766762",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Junior Software Engineer, Luxury",
-"company": "Lyft",
-"location": "Mexico City, Mexico",
-"site": "Lyft careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://app.careerpuck.com/job-board/lyft/job/8649345002?gh_jid=8649345002",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer",
-"company": "Addepar",
-"location": "Pune District, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451526400",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer",
-"company": "Priceline",
-"location": "Mumbai, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4414733156",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer (Backend Engineer)",
-"company": "Omnissa",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4432220581",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Backend Engineer",
-"company": "Recrew AI",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451195971",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "SDE - 2 (Backend)",
-"company": "ShopDeck",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4449534892",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Developer - GT Core",
-"company": "Emapta Global",
-"location": "Coimbatore, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451505728",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer - D&DC Land Systems",
-"company": "Larsen & Toubro",
-"location": "Hadgaon, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4442572724",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Development Engineer",
-"company": "Clearwater Analytics",
-"location": "Noida, Uttar Pradesh, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4414752650",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Developer",
-"company": "SGS & Co",
-"location": "Chennai, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4442027554",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer",
-"company": "The Depository Trust & Clearing Corporation (DTCC)",
-"location": "Hyderabad, Telangana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4442574854",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Developer - Interfacing",
-"company": "Emapta Global",
-"location": "Coimbatore, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451503597",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer Intermediate",
-"company": "Gentrack Ltd (Global)",
-"location": "Pune Division, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4449562282",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software / Platform Engineer II",
-"company": "MetLife",
-"location": "Hyderabad, Telangana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4448195329",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer - Core Insurance System",
-"company": "Emapta Global",
-"location": "Coimbatore, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451510135",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer",
-"company": "Bajaj Finserv",
-"location": "Pune Division, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451542119",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "SDE 1"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer II",
-"company": "Diligent",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4442592099",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Full Stack Engineer",
-"company": "Adstia Agency",
-"location": "Gurugram, Haryana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451178470",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "full stack developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Development Engineer",
-"company": "GROWLOC",
-"location": "Pune Division, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451173448",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "full stack developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Full Stack Engineer",
-"company": "StarZen",
-"location": "Gurugram, Haryana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451528131",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "full stack developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Full Stack Developer",
-"company": "Wissen Technology",
-"location": "Telangana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451110848",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "full stack developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Development Engineer II",
-"company": "JioStar",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4449543642",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Full Stack Engineer",
-"company": "Accenture in India",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451869948",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "full stack developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Backend Engineer, Core Technology",
-"company": "Stripe",
-"location": "Dublin",
-"site": "Stripe careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://stripe.com/jobs/search?gh_jid=6686634",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Development Engineer (L3)",
-"company": "Twilio",
-"location": "Remote - Colombia",
-"site": "Twilio careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://job-boards.greenhouse.io/twilio/jobs/8102950",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer",
-"company": "Twilio",
-"location": "Remote - Estonia",
-"site": "Twilio careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://job-boards.greenhouse.io/twilio/jobs/7647708",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer ",
-"company": "Twilio",
-"location": "Remote - Ireland",
-"site": "Twilio careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://job-boards.greenhouse.io/twilio/jobs/7785202",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer (L3) Data Substrate",
-"company": "Twilio",
-"location": "Remote - US",
-"site": "Twilio careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://job-boards.greenhouse.io/twilio/jobs/7954715",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Intermediate Backend Engineer, Platform Readiness",
-"company": "GitLab",
-"location": "Remote, Canada; Remote, United States",
-"site": "GitLab careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://job-boards.greenhouse.io/gitlab/jobs/8644569002",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Developer",
-"company": "TÜV SÜD",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4431082282",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Full Stack Engineer",
-"company": "Vastika Inc",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451134268",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer II - Full Stack - Web Engineering",
-"company": "Elastic",
-"location": "Spain",
-"site": "Elastic careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.elastic.co/jobs?gh_jid=8080263&gh_jid=8080263",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer II - Full Stack - Web Engineering",
-"company": "Elastic",
-"location": "Portugal",
-"site": "Elastic careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.elastic.co/jobs?gh_jid=8080260&gh_jid=8080260",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer II - Full Stack - Web Engineering",
-"company": "Elastic",
-"location": "Greece",
-"site": "Elastic careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.elastic.co/jobs?gh_jid=8080264&gh_jid=8080264",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer II - Full Stack - Web Engineering",
-"company": "Elastic",
-"location": "Ireland",
-"site": "Elastic careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.elastic.co/jobs?gh_jid=8097064&gh_jid=8097064",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer II - Platform Infrastructure (Orchestration)",
-"company": "Elastic",
-"location": "Greece",
-"site": "Elastic careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.elastic.co/jobs?gh_jid=8025625&gh_jid=8025625",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer II - Platform Infrastructure (Orchestration)",
-"company": "Elastic",
-"location": "Norway",
-"site": "Elastic careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.elastic.co/jobs?gh_jid=8025629&gh_jid=8025629",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer II - Platform Infrastructure (Orchestration)",
-"company": "Elastic",
-"location": "Portugal",
-"site": "Elastic careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.elastic.co/jobs?gh_jid=8025626&gh_jid=8025626",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer II - Platform Infrastructure (Orchestration)",
-"company": "Elastic",
-"location": "Spain",
-"site": "Elastic careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.elastic.co/jobs?gh_jid=7976542&gh_jid=7976542",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Full Stack Engineer - Internal Audit",
-"company": "Cloudflare",
-"location": "Hybrid",
-"site": "Cloudflare careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://boards.greenhouse.io/cloudflare/jobs/8014902?gh_jid=8014902",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer, Network Firewall",
-"company": "Cloudflare",
-"location": "Hybrid",
-"site": "Cloudflare careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://boards.greenhouse.io/cloudflare/jobs/8106815?gh_jid=8106815",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Backend Software Engineer",
-"company": "Asana",
-"location": "Reykjavík",
-"site": "Asana careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://www.asana.com/jobs/apply/7964297?gh_jid=7964297",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer",
-"company": "Asana",
-"location": "New York City",
-"site": "Asana careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://www.asana.com/jobs/apply/7961475?gh_jid=7961475",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer, AI Developer Experience",
-"company": "Asana",
-"location": "New York City",
-"site": "Asana careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://www.asana.com/jobs/apply/7964275?gh_jid=7964275",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer, APIs",
-"company": "Asana",
-"location": "Vancouver, BC",
-"site": "Asana careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://www.asana.com/jobs/apply/7968162?gh_jid=7968162",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer, Communications Integrations",
-"company": "Asana",
-"location": "Vancouver, BC",
-"site": "Asana careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://www.asana.com/jobs/apply/7979618?gh_jid=7979618",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer, Product",
-"company": "Asana",
-"location": "Vancouver, BC",
-"site": "Asana careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://www.asana.com/jobs/apply/7961454?gh_jid=7961454",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer, ML Platform",
-"company": "Gusto",
-"location": "Denver, CO, United States; New York, New York, United States; San Francisco, CA, United States",
-"site": "Gusto careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://job-boards.greenhouse.io/gusto/jobs/8073232",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Forward Deployed Software Engineer, Internship - Commercial",
-"company": "Palantir",
-"location": "Seoul, South Korea",
-"site": "Palantir careers (Lever)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.lever.co/palantir/2ad0ab10-34c3-410d-883b-8052864a95cd",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Forward Deployed Software Engineer, New Grad - Commercial",
-"company": "Palantir",
-"location": "Seoul, South Korea",
-"site": "Palantir careers (Lever)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.lever.co/palantir/341d5cae-a473-4813-9a6c-0f67fcc1b253",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Forward Deployed Engineer - Software Engineer - France",
-"company": "ElevenLabs",
-"location": "France",
-"site": "ElevenLabs careers (Ashby)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.ashbyhq.com/elevenlabs/38e0b741-5bfa-4481-891e-e95b503d4aff",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Forward Deployed Engineer - Software Engineer - Belgium",
-"company": "ElevenLabs",
-"location": "Belgium",
-"site": "ElevenLabs careers (Ashby)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.ashbyhq.com/elevenlabs/44c6b5f3-e135-4f3b-b286-7baccf782912",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Forward Deployed Engineer - Software Engineer - Canada",
-"company": "ElevenLabs",
-"location": "Canada",
-"site": "ElevenLabs careers (Ashby)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.ashbyhq.com/elevenlabs/a4ccd185-8576-4f69-aa8d-454f323cc024",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Forward Deployed Engineer - Software Engineer - Netherlands",
-"company": "ElevenLabs",
-"location": "Netherlands",
-"site": "ElevenLabs careers (Ashby)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.ashbyhq.com/elevenlabs/50d20869-819d-4ae3-be8d-71c3c9bf3394",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Forward Deployed Engineer - Software Engineer - Italy",
-"company": "ElevenLabs",
-"location": "Italy",
-"site": "ElevenLabs careers (Ashby)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.ashbyhq.com/elevenlabs/cd610558-4a8e-4746-81c1-10e3902f5576",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Forward Deployed Engineer - Software Engineer - Sweden",
-"company": "ElevenLabs",
-"location": "Sweden",
-"site": "ElevenLabs careers (Ashby)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.ashbyhq.com/elevenlabs/c6fc071f-c80e-4d3b-921a-3ec02a2ad25d",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer, Collections Infra",
-"company": "Notion",
-"location": "San Francisco, California",
-"site": "Notion careers (Ashby)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.ashbyhq.com/notion/ca74504a-9b91-4ce3-b0df-97919b46e749",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Engineer, Expansion (all levels)",
-"company": "Render",
-"location": "Remote: United States",
-"site": "Render careers (Ashby)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.ashbyhq.com/render/06377f8a-a255-412a-8032-18ace1d005a5",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "RDKV Developer",
-"company": "Infosys",
-"location": "Trivandrum, Kerala, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4433469850",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "AI Engineer",
-"company": "Capgemini",
-"location": "Pune Division, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4449578541",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "AI Engineer",
-"company": "Capgemini",
-"location": "Hyderabad, Telangana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4449575728",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "LLM engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Engineer (Gen AI) IRC279034",
-"company": "GlobalLogic",
-"location": "Gurgaon, Haryana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4372324788",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "LLM engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Intermediate Fullstack Engineer - Data Products",
-"company": "GitLab",
-"location": "Bangalore, India",
-"site": "GitLab careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://job-boards.greenhouse.io/gitlab/jobs/8623751002",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Mern Stack Developer",
-"company": "Wrathcode Technology Pvt. Ltd.",
-"location": "Jaipur, Rajasthan, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4450088975",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "SDE II",
-"company": "Setu",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4449527775",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Developer",
-"company": "Tata Consultancy Services",
-"location": "Chennai, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451505175",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Developer",
-"company": "L&T Technology Services",
-"location": "Pune City, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451161865",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "software developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "SW Engineer",
-"company": "KLA",
-"location": "Chennai, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4411537334",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "SDE 1"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Back End Developer",
-"company": "Andor Tech",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451511358",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "java developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Applied AI Engineer",
-"company": "Cloutflow",
-"location": "Gurugram, Haryana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4450999473",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "AI ENGINEER",
-"company": "Saint-Gobain Group in India",
-"location": "Chennai, Tamil Nadu, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451522782",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Artificial Intelligence Engineer",
-"company": "Atna.AI",
-"location": "New Delhi, Delhi, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451112673",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Artificial Intelligence Engineer",
-"company": "Tata Consultancy Services",
-"location": "Hyderabad, Telangana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451417400",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Artificial Intelligence Engineer",
-"company": "Pixeldust Technologies",
-"location": "Mumbai, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4447364723",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "ML Engineer",
-"company": "Training Basket",
-"location": "Noida, Uttar Pradesh, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451112626",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Artificial Intelligence Engineer",
-"company": "Aventra.AI",
-"location": "Gurugram, Haryana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451518480",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "AML-AI / ML Modelling Engineer",
-"company": "BNP Paribas",
-"location": "Mumbai, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451394911",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "machine learning engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Artificial Intelligence Engineer",
-"company": "Vahan.ai",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451396851",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Gen AI Developer",
-"company": "UST",
-"location": "Mumbai, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4449541785",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Artificial Intelligence Engineer",
-"company": "NEXTHIRE",
-"location": "Bengaluru, Karnataka, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451135381",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "LLM engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Prompt Engineer",
-"company": "Synechron",
-"location": "Mumbai, Maharashtra, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4449571694",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "LLM engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Engineer - Generative AI",
-"company": "United Airlines India Knowledge Center",
-"location": "Gurugram, Haryana, India",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451574388",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI agent engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "MERN Stack Developer",
-"company": "Naapbooks Limited",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4451523065",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "AI Engineer",
-"company": "Ryan Specialty",
-"location": "",
-"site": "linkedin",
-"date_posted": "2026-08-10",
-"job_url": "https://www.linkedin.com/jobs/view/4449567088",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Fullstack Engineer",
-"company": "Asana",
-"location": "Warsaw",
-"site": "Asana careers (Greenhouse)",
-"date_posted": "2026-08-10",
-"job_url": "https://www.asana.com/jobs/apply/7979882?gh_jid=7979882",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Enterprise Solutions Engineer - Sweden",
-"company": "ElevenLabs",
-"location": "Sweden",
-"site": "ElevenLabs careers (Ashby)",
-"date_posted": "2026-08-10",
-"job_url": "https://jobs.ashbyhq.com/elevenlabs/4738893a-de4f-4a06-b104-315c6a4d366c",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "remote-api"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Customer Tech-Adobe-Adobe Commerce Backend Developer",
-"company": "EY",
-"location": "TN, IN",
-"site": "indeed",
-"date_posted": "2026-08-07",
-"job_url": "https://in.indeed.com/viewjob?jk=33cc3331a60fa521",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "node.js developer"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software Development Engineer III (Mobile - Flutter)",
-"company": "HighLevel",
-"location": "Remote, IN",
-"site": "indeed",
-"date_posted": "2026-06-30",
-"job_url": "https://in.indeed.com/viewjob?jk=814599a3dff9a1d5",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "SDE 1"
-},
-{
-"date_fetched": "2026-08-12 05:31 UTC",
-"title": "Software QA Engineer",
-"company": "Xynosoft Solutions",
-"location": "IN",
-"site": "indeed",
-"date_posted": "2026-04-20",
-"job_url": "https://in.indeed.com/viewjob?jk=b355aee7a6f9e4c9",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "python developer"
+"search_term": "remote-api",
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4424,7 +3043,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4438,7 +3058,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4452,7 +3073,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4466,7 +3088,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4480,7 +3103,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4494,7 +3118,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4508,7 +3133,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4522,7 +3148,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4536,7 +3163,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4550,7 +3178,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4564,7 +3193,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4578,7 +3208,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4592,7 +3223,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4606,7 +3238,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4620,7 +3253,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4634,7 +3268,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4648,7 +3283,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4662,7 +3298,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4676,7 +3313,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4690,7 +3328,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4704,7 +3343,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4718,7 +3358,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4732,7 +3373,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4746,7 +3388,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4760,7 +3403,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4774,7 +3418,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4788,7 +3433,104 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
+},
+{
+"date_fetched": "2026-08-24 05:22 UTC",
+"title": "SDE I (Backend)",
+"company": "Navi",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4456814308",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1",
+"_requirement_assessment": {
+"verdict": "KEEP",
+"reason": "Job is open and meets requirements (unknown match)",
+"is_expired": false,
+"meets_requirements": true,
+"requirement_match": "unknown",
+"key_matches": [],
+"concerns": [
+"groq unavailable for deep analysis"
+],
+"expiration_info": {
+"is_expired": false,
+"days_old": null,
+"posted_date": null,
+"reason": "no posting date, but no closed signals detected"
+}
+},
+"_date_category": "UNKNOWN"
+},
+{
+"date_fetched": "2026-08-24 05:22 UTC",
+"title": "Backend Engineer (SDE 1)",
+"company": "Kredivo Group",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4456861392",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "backend developer",
+"_requirement_assessment": {
+"verdict": "KEEP",
+"reason": "Job is open and meets requirements (unknown match)",
+"is_expired": false,
+"meets_requirements": true,
+"requirement_match": "unknown",
+"key_matches": [],
+"concerns": [
+"groq unavailable for deep analysis"
+],
+"expiration_info": {
+"is_expired": false,
+"days_old": null,
+"posted_date": null,
+"reason": "no posting date, but no closed signals detected"
+}
+},
+"_date_category": "UNKNOWN"
+},
+{
+"date_fetched": "2026-08-24 05:22 UTC",
+"title": "Junior Software Developer",
+"company": "Xylem",
+"location": "Bengaluru, Karnataka, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4225303717",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1",
+"_requirement_assessment": {
+"verdict": "KEEP",
+"reason": "Job is open and meets requirements (unknown match)",
+"is_expired": false,
+"meets_requirements": true,
+"requirement_match": "unknown",
+"key_matches": [],
+"concerns": [
+"groq unavailable for deep analysis"
+],
+"expiration_info": {
+"is_expired": false,
+"days_old": null,
+"posted_date": null,
+"reason": "no posting date, but no closed signals detected"
+}
+},
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4802,7 +3544,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4816,7 +3559,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4830,7 +3574,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4844,7 +3589,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4858,7 +3604,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4872,7 +3619,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4886,7 +3634,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4900,7 +3649,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4914,7 +3664,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4928,7 +3679,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4942,7 +3694,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4956,7 +3709,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software engineer"
+"search_term": "software engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4970,7 +3724,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4984,7 +3739,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -4998,7 +3754,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5012,7 +3769,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5026,7 +3784,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5040,7 +3799,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5054,7 +3814,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5068,7 +3829,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5082,7 +3844,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5096,7 +3859,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5110,7 +3874,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5124,7 +3889,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-20 03:43 UTC",
@@ -5138,7 +3904,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5152,7 +3919,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5166,7 +3934,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5180,7 +3949,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5194,7 +3964,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5208,7 +3979,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5222,7 +3994,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5236,7 +4009,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5250,7 +4024,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5264,7 +4039,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5278,7 +4054,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5292,7 +4069,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5306,7 +4084,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5320,7 +4099,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5334,7 +4114,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software engineer"
+"search_term": "software engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5348,7 +4129,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5362,7 +4144,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5376,7 +4159,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5390,7 +4174,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5404,7 +4189,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5418,7 +4204,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5432,7 +4219,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5446,7 +4234,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "java developer"
+"search_term": "java developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5460,7 +4249,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5474,7 +4264,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5488,7 +4279,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5502,7 +4294,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5516,7 +4309,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5530,7 +4324,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5544,7 +4339,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5558,7 +4354,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5572,7 +4369,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5586,7 +4384,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI agent engineer"
+"search_term": "AI agent engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5600,7 +4399,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5614,7 +4414,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5628,7 +4429,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5642,7 +4444,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5656,7 +4459,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5670,7 +4474,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5684,7 +4489,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5698,7 +4504,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5712,7 +4519,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend engineer"
+"search_term": "backend engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5726,7 +4534,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5740,7 +4549,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "node.js developer"
+"search_term": "node.js developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5754,7 +4564,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5768,7 +4579,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5782,7 +4594,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5796,7 +4609,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5810,7 +4624,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5824,7 +4639,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5838,7 +4654,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5852,7 +4669,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5866,7 +4684,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5880,7 +4699,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5894,7 +4714,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5908,7 +4729,40 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
+},
+{
+"date_fetched": "2026-08-24 05:22 UTC",
+"title": "SDE-1",
+"company": "HuntingCube",
+"location": "Gurugram, Haryana, India",
+"site": "linkedin",
+"date_posted": "",
+"job_url": "https://www.linkedin.com/jobs/view/4458145250",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "SDE 1",
+"_requirement_assessment": {
+"verdict": "KEEP",
+"reason": "Job is open and meets requirements (unknown match)",
+"is_expired": false,
+"meets_requirements": true,
+"requirement_match": "unknown",
+"key_matches": [],
+"concerns": [
+"groq unavailable for deep analysis"
+],
+"expiration_info": {
+"is_expired": false,
+"days_old": null,
+"posted_date": null,
+"reason": "no posting date, but no closed signals detected"
+}
+},
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5922,7 +4776,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5936,7 +4791,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5950,7 +4806,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5964,7 +4821,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5978,7 +4836,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI agent engineer"
+"search_term": "AI agent engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -5992,7 +4851,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI agent engineer"
+"search_term": "AI agent engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6006,7 +4866,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI agent engineer"
+"search_term": "AI agent engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6020,7 +4881,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI agent engineer"
+"search_term": "AI agent engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6034,7 +4896,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI agent engineer"
+"search_term": "AI agent engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6048,7 +4911,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6062,7 +4926,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6076,7 +4941,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6090,7 +4956,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6104,7 +4971,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "backend developer"
+"search_term": "backend developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6118,7 +4986,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6132,7 +5001,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software developer"
+"search_term": "software developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6146,7 +5016,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "software engineer"
+"search_term": "software engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6160,7 +5031,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "SDE 1"
+"search_term": "SDE 1",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6174,7 +5046,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6188,7 +5061,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "python developer"
+"search_term": "python developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6202,7 +5076,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6216,7 +5091,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "full stack developer"
+"search_term": "full stack developer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6230,7 +5106,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6244,7 +5121,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6258,7 +5136,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6272,7 +5151,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6286,7 +5166,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6300,7 +5181,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6314,7 +5196,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6328,7 +5211,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6342,7 +5226,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6356,7 +5241,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6370,7 +5256,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6384,7 +5271,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6398,7 +5286,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6412,7 +5301,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6426,7 +5316,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "LLM engineer"
+"search_term": "LLM engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-20 03:43 UTC",
@@ -6440,7 +5331,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6454,7 +5346,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6468,7 +5361,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6482,7 +5376,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6496,7 +5391,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6510,7 +5406,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6524,7 +5421,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6538,7 +5436,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6552,7 +5451,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6566,7 +5466,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6580,7 +5481,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6594,7 +5496,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6608,7 +5511,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6622,7 +5526,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6636,7 +5541,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6650,7 +5556,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6664,7 +5571,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6678,7 +5586,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6692,7 +5601,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6706,7 +5616,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6720,7 +5631,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6734,7 +5646,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6748,7 +5661,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6762,7 +5676,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6776,7 +5691,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6790,7 +5706,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6804,7 +5721,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6818,7 +5736,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "machine learning engineer"
+"search_term": "machine learning engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6832,7 +5751,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6846,7 +5766,8 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer"
+"search_term": "AI engineer",
+"_date_category": "UNKNOWN"
 },
 {
 "date_fetched": "2026-08-12 05:31 UTC",
@@ -6860,7 +5781,8 @@
 "max_amount": "",
 "is_remote": "True",
 "company_num_employees": "",
-"search_term": "remote-api"
+"search_term": "remote-api",
+"_date_category": "UNKNOWN"
 }
 ]
 }
