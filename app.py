@@ -825,6 +825,7 @@ def _score_and_rank(rows, limit, target_text=None, cand_years=0):
             "salary_lpa": round(lpa, 1) if lpa else 0,
             "job_url": str(r.get("job_url") or ""),
             "description": desc,
+            "_date_category": r.get("_date_category"),
         })
     # Relevance gate. When guided by your resume/skills/JD, only keep jobs that
     # actually match your profile — at least 2 of your skills, or one very strong
