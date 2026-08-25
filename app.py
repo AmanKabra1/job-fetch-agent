@@ -2393,29 +2393,40 @@ function renderJobs(){
   const byDate = {TODAY: [], THIS_WEEK: [], RECENT: []};
   view.forEach(j => {
     const cat = j._date_category || 'RECENT';
-    if(byDate[cat]) byDate[cat].push(j);
+    if(byDate[cat]) {
+      byDate[cat].push(j);
+    } else {
+      // Fallback: unknown categories go to RECENT
+      byDate.RECENT.push(j);
+    }
   });
 
-  // Add dropdown filter if not already present
-  let filterDropdown = $('#dateFilter');
-  if(!filterDropdown) {
-    const filterHtml = `
-      <div style="margin-bottom:16px;display:flex;gap:12px;align-items:center">
-        <label style="font-weight:bold">📅 Filter by date:</label>
-        <select id="dateFilter" style="padding:8px 12px;border:1px solid #ccc;border-radius:4px;font-size:14px;cursor:pointer">
-          <option value="ALL">All Jobs (${view.length})</option>
-          <option value="TODAY">📅 Today (${byDate.TODAY.length})</option>
-          <option value="THIS_WEEK">⏰ This Week (${byDate.THIS_WEEK.length})</option>
-          <option value="RECENT">📆 Recent (${byDate.RECENT.length})</option>
-        </select>
-      </div>
-    `;
-    const filterDiv = document.createElement('div');
+  // Update or create dropdown filter
+  let filterDiv = $('#dateFilterDiv');
+  const filterHtml = `
+    <div id="dateFilterDiv" style="margin-bottom:16px;display:flex;gap:12px;align-items:center">
+      <label style="font-weight:bold">📅 Filter by date:</label>
+      <select id="dateFilter" style="padding:8px 12px;border:1px solid #ccc;border-radius:4px;font-size:14px;cursor:pointer">
+        <option value="ALL">All Jobs (${view.length})</option>
+        <option value="TODAY">📅 Today (${byDate.TODAY.length})</option>
+        <option value="THIS_WEEK">⏰ This Week (${byDate.THIS_WEEK.length})</option>
+        <option value="RECENT">📆 Recent (${byDate.RECENT.length})</option>
+      </select>
+    </div>
+  `;
+  if(!filterDiv) {
+    filterDiv = document.createElement('div');
     filterDiv.innerHTML = filterHtml;
     b.parentElement.insertBefore(filterDiv, b);
-    filterDropdown = $('#dateFilter');
+  } else {
+    filterDiv.innerHTML = filterHtml;
+  }
+  const filterDropdown = $('#dateFilter');
+  if(filterDropdown && !filterDropdown._hasListener) {
+    filterDropdown._hasListener = true;
     filterDropdown.addEventListener('change', ()=>{ window._selectedDateFilter = filterDropdown.value; renderJobs(); });
   }
+  if(filterDropdown) filterDropdown.value = window._selectedDateFilter || 'ALL';
 
   const locNote=$('#jobLoc')&&$('#jobLoc').value.trim()?(' · 📍 '+esc($('#jobLoc').value.trim())):'';
   $('#count').textContent = 'showing '+view.length+' of '+view.length+' jobs'+locNote
