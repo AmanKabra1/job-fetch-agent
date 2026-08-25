@@ -2401,8 +2401,8 @@ function renderJobs(){
                             +(window._fetchedAt?(' · '+window._fetchedAt):'');
   if(wrap) wrap.style.display='none';
 
-  // Render three sections: TODAY, THIS_WEEK, RECENT
-  const renderSection = (title, jobs, offset) => {
+  // Render three sections: TODAY, THIS_WEEK, RECENT with styled headers
+  const renderSection = (title, count, jobs, offset, emoji) => {
     if(!jobs.length) return '';
     const rows = jobs.map((j,i)=>{
       const matched=(j.matched||[]).slice(0,6).map(m=>'<span class="tag have" style="font-size:10px">'+esc(m.split(' (')[0])+'</span>').join('');
@@ -2425,14 +2425,14 @@ function renderJobs(){
         <td><button onclick="applyKit(${offset+i})" style="margin-bottom:4px">Apply</button><br><button class="secondary" onclick="useInTailor(${offset+i})">Tailor &#8595;</button></td>
       </tr>`;
     }).join('');
-    return `<tr style="background:#f5f5f5;font-weight:bold"><td colspan="10" style="padding:8px">📅 ${title}</td></tr>${rows}`;
+    return `<tr style="background:linear-gradient(135deg, #2a5ccc 0%, #1a3c9c 100%);color:#fff;font-weight:bold;cursor:pointer;height:40px"><td colspan="10" style="padding:12px;text-align:left;vertical-align:middle">${emoji} <strong>${title}</strong> <span style="float:right;font-size:12px;margin-right:16px">${count} jobs</span></td></tr>${rows}`;
   };
 
   let html = '';
   let offset = 0;
-  if(byDate.TODAY.length) { html += renderSection("TODAY'S JOBS (Posted last 3 days)", byDate.TODAY, offset); offset += byDate.TODAY.length; }
-  if(byDate.THIS_WEEK.length) { html += renderSection("THIS WEEK'S JOBS (Posted 3-7 days ago)", byDate.THIS_WEEK, offset); offset += byDate.THIS_WEEK.length; }
-  if(byDate.RECENT.length) { html += renderSection("RECENT JOBS (Posted 7-14 days ago)", byDate.RECENT, offset); }
+  if(byDate.TODAY.length) { html += renderSection("TODAY'S JOBS (Posted last 3 days)", byDate.TODAY.length, byDate.TODAY, offset, '📅'); offset += byDate.TODAY.length; }
+  if(byDate.THIS_WEEK.length) { html += renderSection("THIS WEEK'S JOBS (Posted 3-7 days ago)", byDate.THIS_WEEK.length, byDate.THIS_WEEK, offset, '⏰'); offset += byDate.THIS_WEEK.length; }
+  if(byDate.RECENT.length) { html += renderSection("RECENT JOBS (Posted 7-14 days ago)", byDate.RECENT.length, byDate.RECENT, offset, '📆'); }
 
   b.innerHTML = html;
 }
