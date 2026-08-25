@@ -97,11 +97,13 @@ COUNTRY_INDEED = "India"
 # that blocks us or returns nothing never aborts the run).
 SITES = ["linkedin", "indeed", "google", "glassdoor", "zip_recruiter", "naukri", "bayt"]
 
-# Only jobs posted within this many hours (24 = last day, since this runs daily).
-HOURS_OLD = 48
+# Only jobs posted within this many hours (24 = last day, 3x daily cron = max 8 hours old).
+# Changed from 48 to 24 to ensure FRESH jobs for TODAY/THIS_WEEK sections
+HOURS_OLD = 24
 
 # How many results to pull per search term, per site.
-RESULTS_WANTED = 30
+# Increased from 30 to 50 to get more fresh jobs on each cron run
+RESULTS_WANTED = 50
 
 # Where the daily feed is written. The Vercel app reads this same file.
 OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "jobs.json")
