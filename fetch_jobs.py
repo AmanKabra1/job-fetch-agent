@@ -418,12 +418,26 @@ def main():
 
     # Safety: if this run's scrape came back thin — boards block sometimes — top up
     # from the previous feed so the page is never sparse below the floor.
+    # BUT: Only top up with FRESH jobs (< 14 days old) to keep the feed current!
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+    def _is_fresh(r, max_days=14):
+        try:
+            date_str = str(r.get("date_posted", "")).strip()
+            if not date_str:
+                return False
+            posted = datetime.strptime(date_str[:10], "%Y-%m-%d")
+            age_days = (now - posted).days
+            return age_days <= max_days
+        except (ValueError, TypeError):
+            return False
+
     feed_rows = today_rows
     if len(today_rows) < MIN_FEED:
-        feed_rows = today_rows + [r for r in existing
-                                  if str(r.get("job_url", "")) not in seen]
-        print(f"  thin scrape ({len(today_rows)}); topped up from previous feed "
-              f"to {len(feed_rows)} before ranking.", flush=True)
+        fresh_old = [r for r in existing
+                     if str(r.get("job_url", "")) not in seen and _is_fresh(r)]
+        feed_rows = today_rows + fresh_old
+        print(f"  thin scrape ({len(today_rows)}); topped up with {len(fresh_old)} fresh jobs "
+              f"(< 14 days old) to {len(feed_rows)} before ranking.", flush=True)
 
     # ADD DATE CATEGORIES: TODAY (3d), THIS_WEEK (7d), RECENT (14d)
     print(f"  categorizing jobs by posting date ...", flush=True)
