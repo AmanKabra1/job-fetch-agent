@@ -50,19 +50,34 @@ def _quiet_jobspy():
 # Node / full-stack) plus the SDE and AI/ML roles you want. Boards search by role,
 # so we keep these as roles; your detailed SKILLS drive the RANKING below.
 SEARCH_TERMS = [
+    # Backend roles (primary focus)
     "backend developer",
     "backend engineer",
+    "Python backend",
+    "Node.js backend",
+    "Java backend",
+    "Go backend",
+    "API developer",
+
+    # General software roles
     "software developer",
-    "software engineer",        # covers SDE / SDE-1 / SDE I postings
+    "software engineer",
     "SDE 1",
-    "python developer",
-    "node.js developer",
-    "java developer",
+    "junior engineer",
+    "associate engineer",
+    "entry level developer",
+
+    # Full stack
     "full stack developer",
+    "full stack engineer",
+
+    # Specialized roles (AI/ML boom in 2026)
     "machine learning engineer",
     "AI engineer",
     "LLM engineer",
     "AI agent engineer",
+    "GenAI engineer",
+    "data engineer",
 ]
 
 # Extra skills/keywords to emphasise on top of the resume. Edit freely.
@@ -102,16 +117,18 @@ SITES = ["linkedin", "indeed", "google", "glassdoor", "zip_recruiter", "naukri",
 HOURS_OLD = 24
 
 # How many results to pull per search term, per site.
-# Increased from 30 to 50 to get more fresh jobs on each cron run
-RESULTS_WANTED = 50
+# Increased to 75 for aggressive job discovery across all boards
+RESULTS_WANTED = 75
 
 # Where the daily feed is written. The Vercel app reads this same file.
 OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "jobs.json")
 # Cap the stored feed so the committed file doesn't grow without bound.
 MAX_STORED = 1000
-# Always keep at least this many jobs in the feed (when that many were fetched),
+# Always keep at least this many fresh jobs in the feed (when that many were fetched).
+# Increased from 50 to 200 to ensure plenty of options
+MIN_KEEP_BEFORE_RELAX = 200
 # even if some fall below the quality gate — so the hosted page is never sparse.
-MIN_FEED = 50
+MIN_FEED = 150  # Increased from 50 to 150 - always keep plenty of fresh jobs
 
 # Columns we keep, in order. (jobspy returns many more; these are the useful ones.)
 COLUMNS = [
