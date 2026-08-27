@@ -299,25 +299,30 @@ def assess_job_requirement(job: dict, profile: dict) -> dict:
     jd_analysis = analyze_jd_requirements(job, profile)
 
     # Step 3: Make final verdict
-    if not jd_analysis.get("meets_requirements", True):
+    # RELAXED: Only FILTER if job is clearly bad (low match + concerning).
+    # Otherwise KEEP for ranking to decide - let frontend filter, not backend.
+    requirement_match = jd_analysis.get("requirement_match", "medium")
+
+    # Only filter if BOTH low match AND has serious concerns
+    if requirement_match == "low" and len(jd_analysis.get("concerns", [])) >= 2:
         return {
             "verdict": "FILTER",
-            "reason": f"JD doesn't match requirements: {jd_analysis.get('reason', '')}",
+            "reason": f"Low match + concerns: {jd_analysis.get('reason', '')}",
             "is_expired": False,
             "meets_requirements": False,
-            "requirement_match": jd_analysis.get("requirement_match", "low"),
+            "requirement_match": requirement_match,
             "key_matches": jd_analysis.get("key_matches", []),
             "concerns": jd_analysis.get("concerns", []),
             "expiration_info": expiration_check,
         }
 
-    # Step 4: Job is OPEN and meets requirements
+    # Step 4: Job is OPEN - KEEP IT for ranking (relaxed approach)
     return {
         "verdict": "KEEP",
-        "reason": f"Job is open and meets requirements ({jd_analysis.get('requirement_match', 'medium')} match)",
+        "reason": f"Job kept for ranking ({requirement_match} match)",
         "is_expired": False,
-        "meets_requirements": True,
-        "requirement_match": jd_analysis.get("requirement_match", "medium"),
+        "meets_requirements": True,  # Assume true unless proven otherwise
+        "requirement_match": requirement_match,
         "key_matches": jd_analysis.get("key_matches", []),
         "concerns": jd_analysis.get("concerns", []),
         "expiration_info": expiration_check,
