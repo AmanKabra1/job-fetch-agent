@@ -128,7 +128,7 @@ MAX_STORED = 1000
 # Increased from 50 to 200 to ensure plenty of options
 MIN_KEEP_BEFORE_RELAX = 200
 # even if some fall below the quality gate — so the hosted page is never sparse.
-MIN_FEED = 150  # Increased from 50 to 150 - always keep plenty of fresh jobs
+MIN_FEED = 300  # Increased to 300 - aggressive job discovery for maximum options
 
 # Columns we keep, in order. (jobspy returns many more; these are the useful ones.)
 COLUMNS = [
@@ -335,8 +335,8 @@ def rank_for_feed(rows):
             if u and u not in seen:
                 # Only add if it has at least 1 skill match (not completely irrelevant)
                 has_skill_match = any(skill in r.get('description', '').lower()
-                                     for skill in APP.SEARCH_TERMS)
-                if has_skill_match or r.get('search_term') in APP.SEARCH_TERMS:
+                                     for skill in SEARCH_TERMS)
+                if has_skill_match or r.get('search_term') in SEARCH_TERMS:
                     ordered.append(r)
                     seen.add(u)
             if len(ordered) >= MIN_FEED:

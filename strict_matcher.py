@@ -130,62 +130,31 @@ def _get_role_category(title: str) -> str | None:
 
 def should_include_job(job: dict, candidate_experience_years: int = 2) -> tuple[bool, str]:
     """
-    Determine if a job should be included in the feed for this candidate.
+    RELAXED filtering: Keep jobs for ranking to decide, only hard-reject wrong field/too senior.
 
     Returns: (should_include: bool, reason: str)
     """
     title = str(job.get("title") or "")
     desc = str(job.get("description") or "")
 
-    # Gate 1: Reject if clearly the wrong field
+    # HARD GATE 1: Reject if clearly the wrong field (sales, marketing, etc.)
     if any(kw in title.lower() for kw in REJECT_KEYWORDS):
         return False, f"role is {title} (not backend/dev)"
 
-    # Gate 2: Reject if asks for too much experience
+    # HARD GATE 2: Only reject if asks for MUCH more experience (5+ years more)
     req_years = _extract_required_years(desc)
-    if req_years > candidate_experience_years + 1:  # only allow 1 year stretch
+    if req_years > candidate_experience_years + 4:  # allow up to 4-year stretch (2yr → 6yr max)
         return False, f"asks for {req_years}+ years (you have {candidate_experience_years})"
 
-    # Gate 3: Reject if completely unrelated role
-    role = _get_role_category(title)
-    if not role:
-        return False, f"role '{title}' not in target categories"
+    # RELAXED: Keep everything else for ranking to decide
+    # Even if:
+    # - Role not in target categories (ranking will downrank)
+    # - No skill match found (ranking will downrank)
+    # - Only 1 skill match (ranking will score it appropriately)
+    # - Senior title (ranking will downrank)
 
-    # Gate 4: Check skill match
-    job_skills = _extract_required_skills(desc)
-    if not job_skills:
-        # No recognizable skills extracted — might be thin posting or role description without tech details
-        # Don't hard-reject, but note it as a potential issue
-        # Example: "SDE-1 role" with no specific tech listed — probably junior-friendly
-        # Let title/description heuristics decide
-        if "sde" in title.lower() or "entry" in title.lower() or "junior" in title.lower():
-            job_skills = {"Backend"}  # default assumption for junior backend roles
-        else:
-            return False, "job description has no recognizable skills"
-
-    # Find how many user core skills match
-    matched = CORE_STACK & job_skills
-
-    # Gate 5: Reject if NO skill matches
-    if not matched:
-        missing = ", ".join(sorted(job_skills)[:3])
-        return False, f"no skill overlap (needs: {missing})"
-
-    # Gate 6: Soft gate — if only 1 skill matches, require it to be a major skill
-    if len(matched) == 1:
-        # Only include if the one match is critical (backend, python, java, node, etc.)
-        major_skills = {"Python", "Java", "Node.js", "Backend", "Full Stack"}
-        if not (matched & major_skills):
-            return False, f"only 1 skill matches ({matched}), and not a major one"
-
-    # Gate 7: Reject if senior title without mentoring signals
-    if "senior" in title.lower() and "lead" in title.lower():
-        mentors = any(s in desc.lower() for s in ["mentor", "train", "junior", "entry"])
-        if not mentors and candidate_experience_years < 5:
-            return False, "senior/lead title without mentoring signals"
-
-    # Passed all gates
-    return True, "matches experience and core skills"
+    # Only return True (KEEP) with a brief reason
+    return True, "kept for ranking"
 
 
 def filter_jobs(jobs: list, candidate_experience_years: int = 2) -> tuple[list, dict]:
