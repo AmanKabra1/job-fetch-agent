@@ -1036,6 +1036,51 @@ def scrape_career_pages(keywords, experience_level=None, location="",
     return rows
 
 
+def fetch_google_jobs(terms, max_age_hours=24):
+    """Fetch jobs from Google Custom Search API using GOOGLE_API_KEY."""
+    rows = []
+    api_key = os.environ.get("GOOGLE_API_KEY")
+    if not api_key:
+        return rows
+
+    for term in terms[:3]:  # Limit to first 3 terms to avoid API quota
+        try:
+            # Search for jobs matching the term from job boards
+            url = "https://www.googleapis.com/customsearch/v1"
+            query = f'{term} jobs remote backend developer engineer'
+
+            params = {
+                "q": query,
+                "key": api_key,
+                "num": 10,
+                "sort": "date",  # Sort by date
+            }
+
+            resp = requests.get(url, params=params, headers=_UA, timeout=_TIMEOUT)
+            resp.raise_for_status()
+            data = resp.json()
+
+            for item in data.get("items", []):
+                if not _within_age(item.get("date_posted", ""), max_age_hours):
+                    continue
+
+                rows.append({
+                    "title": item.get("title", "")[:100],
+                    "company": urlparse(item.get("link", "")).netloc.replace("www.", ""),
+                    "location": "Remote",
+                    "site": "google-search",
+                    "date_posted": dt.date.today().isoformat(),
+                    "is_remote": True,
+                    "job_url": item.get("link", ""),
+                    "description": item.get("snippet", "")[:500],
+                })
+        except Exception as e:
+            print(f"  ! Google Search failed for '{term}': {e}", flush=True)
+            pass
+
+    return rows
+
+
 def fetch_extra(terms, per_term=20, max_age_hours=0, include_career=False,
                 experience_level=None, location="", use_tavily=True):
     """All extra sources combined. Never raises — returns whatever came back.
@@ -1053,6 +1098,7 @@ def fetch_extra(terms, per_term=20, max_age_hours=0, include_career=False,
         ("jobicy", lambda: fetch_jobicy(terms, per_term=per_term, max_age_hours=max_age_hours)),
         ("arbeitnow", lambda: fetch_arbeitnow(terms, max_age_hours=max_age_hours)),
         ("himalayas", lambda: fetch_himalayas(terms, max_age_hours=max_age_hours)),
+        ("google-search", lambda: fetch_google_jobs(terms, max_age_hours=max_age_hours)),
     ):
         try:
             rows += fn()
