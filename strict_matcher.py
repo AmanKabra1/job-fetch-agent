@@ -130,7 +130,13 @@ def _get_role_category(title: str) -> str | None:
 
 def should_include_job(job: dict, candidate_experience_years: int = 2) -> tuple[bool, str]:
     """
-    RELAXED filtering: Keep jobs for ranking to decide, only hard-reject wrong field/too senior.
+    SMART filtering: Hard gates on experience + core skill requirements.
+
+    For a 2-year junior developer:
+    1. REJECT if asks for 5+ years (too senior)
+    2. REJECT if 0 core skill matches (completely irrelevant)
+    3. REJECT if skill match < 40% (insufficient overlap)
+    4. REJECT if clearly wrong field (sales, marketing, etc.)
 
     Returns: (should_include: bool, reason: str)
     """
@@ -139,22 +145,33 @@ def should_include_job(job: dict, candidate_experience_years: int = 2) -> tuple[
 
     # HARD GATE 1: Reject if clearly the wrong field (sales, marketing, etc.)
     if any(kw in title.lower() for kw in REJECT_KEYWORDS):
-        return False, f"role is {title} (not backend/dev)"
+        return False, f"wrong field: {title} (not backend/dev)"
 
-    # HARD GATE 2: Only reject if asks for MUCH more experience (5+ years more)
+    # HARD GATE 2: Experience filter - reject if asks for 5+ years
     req_years = _extract_required_years(desc)
-    if req_years > candidate_experience_years + 4:  # allow up to 4-year stretch (2yr → 6yr max)
-        return False, f"asks for {req_years}+ years (you have {candidate_experience_years})"
+    if req_years >= 5:
+        return False, f"too senior: asks for {req_years}+ years (you have {candidate_experience_years})"
 
-    # RELAXED: Keep everything else for ranking to decide
-    # Even if:
-    # - Role not in target categories (ranking will downrank)
-    # - No skill match found (ranking will downrank)
-    # - Only 1 skill match (ranking will score it appropriately)
-    # - Senior title (ranking will downrank)
+    # HARD GATE 3: Skill matching - must have meaningful overlap with CORE_STACK
+    job_required_skills = _extract_required_skills(desc)
 
-    # Only return True (KEEP) with a brief reason
-    return True, "kept for ranking"
+    # Skill overlap calculation
+    matched_skills = job_required_skills & CORE_STACK
+
+    # REJECT: 0 matching skills (completely irrelevant)
+    if len(matched_skills) == 0:
+        missing_skills = sorted(job_required_skills)[:3]
+        return False, f"no core skill match (needs: {', '.join(missing_skills) or 'unknown'})"
+
+    # Calculate skill match percentage (matched / required skills)
+    skill_match_pct = (len(matched_skills) / len(job_required_skills)) * 100 if job_required_skills else 0
+
+    # REJECT: Less than 40% skill match
+    if skill_match_pct < 40:
+        return False, f"low skill match: {round(skill_match_pct)}% (needs {len(job_required_skills)} skills, you have {len(matched_skills)})"
+
+    # PASS: Has meaningful skill overlap and reasonable experience requirement
+    return True, f"kept for ranking (skill match: {round(skill_match_pct)}%, matches: {', '.join(sorted(matched_skills))})"
 
 
 def filter_jobs(jobs: list, candidate_experience_years: int = 2) -> tuple[list, dict]:

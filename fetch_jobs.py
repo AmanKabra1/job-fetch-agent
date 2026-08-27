@@ -241,20 +241,25 @@ def normalise(jobs: pd.DataFrame) -> pd.DataFrame:
 
 
 def add_date_category(rows):
-    """Categorize jobs by posting date: TODAY (3 days), THIS_WEEK (7 days), RECENT (14 days)"""
+    """Categorize jobs by posting date: TODAY (same calendar day), THIS_WEEK (1-6 days ago), RECENT (7-14 days ago)"""
     now = datetime.now(timezone.utc).replace(tzinfo=None)
+    today_date = now.date()
 
     for row in rows:
         date_posted = str(row.get("date_posted", "")).strip()
         try:
             posted = datetime.strptime(date_posted[:10], "%Y-%m-%d")
+            posted_date = posted.date()
             days_old = (now - posted).days
 
-            if days_old <= 3:
+            # TODAY = posted on same calendar day (0 days old)
+            if posted_date == today_date:
                 row["_date_category"] = "TODAY"
-            elif days_old <= 7:
+            # THIS_WEEK = posted within last 6 days (1-6 days old)
+            elif days_old >= 1 and days_old <= 6:
                 row["_date_category"] = "THIS_WEEK"
-            elif days_old <= 14:
+            # RECENT = posted 7-14 days ago
+            elif days_old >= 7 and days_old <= 14:
                 row["_date_category"] = "RECENT"
             else:
                 row["_date_category"] = "OLD"  # Will be filtered out
@@ -392,13 +397,14 @@ def main():
     # REQUIREMENT AGENT: Use LangGraph to verify:
     # 1. Job is still open (not expired > 30 days)
     # 2. Job truly meets requirements (not misleading)
-    print(f"  verifying job requirements & expiration (top {min(100, len(today_rows))} jobs) ...", flush=True)
+    # NOTE: Limited to top 50 jobs to stay within free Groq API quota
+    print(f"  verifying job requirements & expiration (top 50 jobs) ...", flush=True)
     profile_dict = {
         "experience_years": 2,
         "job_titles": getattr(RP, "TARGET_TITLES", ["Backend Developer", "Software Engineer"]),
         "all_searchable_skills": [s for items in RP.SKILLS.values() for s in items],
     }
-    verified_rows, req_stats = JRA.filter_jobs_with_agent(today_rows, profile_dict, max_assess=100)
+    verified_rows, req_stats = JRA.filter_jobs_with_agent(today_rows, profile_dict, max_assess=50)
     stats = req_stats["stats"]
     if stats["filtered_expired"] > 0 or stats["filtered_requirements"] > 0:
         print(f"    verification: kept {stats['kept']}, "

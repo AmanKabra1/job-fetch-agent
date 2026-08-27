@@ -128,12 +128,18 @@ def analyze_jd_requirements(job: dict, profile: dict) -> dict:
     """
     Use Groq (free API) to deeply analyze if job truly meets candidate's requirements.
 
+    Specifically checks:
+    1. Does the job truly need the candidate's tech stack?
+    2. Is the experience level a good match (2-year junior level)?
+    3. Is the job misleading (e.g., says junior but requires 5+ years)?
+
     Returns:
         {
             "meets_requirements": bool,
             "requirement_match": str,  # "high" | "medium" | "low"
             "key_matches": [str],
             "concerns": [str],
+            "skill_match_percentage": float (0-100),
             "reason": str,
         }
     """
@@ -144,6 +150,7 @@ def analyze_jd_requirements(job: dict, profile: dict) -> dict:
             "requirement_match": "unknown",
             "key_matches": [],
             "concerns": ["groq unavailable for deep analysis"],
+            "skill_match_percentage": 0,
             "reason": "fallback - groq not available"
         }
 
@@ -156,18 +163,20 @@ def analyze_jd_requirements(job: dict, profile: dict) -> dict:
             "requirement_match": "low",
             "key_matches": [],
             "concerns": ["insufficient job description"],
+            "skill_match_percentage": 0,
             "reason": "JD too short to assess"
         }
 
-    # Build candidate profile summary
+    # Build candidate profile summary with clear tech stack
     candidate_summary = f"""
-Experience: {profile.get('experience_years', 2)} years
+Experience: {profile.get('experience_years', 2)} years (JUNIOR level - MUST match!)
 Target Roles: {', '.join(profile.get('job_titles', [])[:3])}
+Core Tech Stack: Python, Node.js, Java, Backend, Full Stack, AI, Machine Learning, LLM
 Key Skills: {', '.join(profile.get('all_searchable_skills', [])[:10])}
 Location: India (open to remote)
 """
 
-    prompt = f"""Analyze if this job truly meets the candidate's requirements.
+    prompt = f"""Analyze if this job truly meets the candidate's requirements. Be STRICT.
 
 CANDIDATE PROFILE:
 {candidate_summary}
@@ -177,19 +186,23 @@ Title: {title}
 Description (first 2000 chars):
 {description[:2000]}
 
-ASSESSMENT CHECKLIST:
-1. Experience Required: Does this job match the 2-year level? YES/NO
-2. Tech Stack: Does it align with their skills? YES/NO
-3. Role Type: Is this a backend/AI/full-stack role? YES/NO
-4. Misleading?: Does it say junior but require 5+ years? YES/NO
-5. Location: Is it remote or India-based? YES/NO
+STRICT ASSESSMENT:
+1. Tech Stack Match: Does the job TRULY require Python/Node.js/Java/Backend/Full Stack/AI/ML/LLM?
+   (If it only mentions generic skills or unrelated tech, answer NO)
+2. Experience Fit: For 2-year junior level, is this appropriate?
+   (REJECT if senior-titled or asks 5+ years)
+3. Misleading?: Does title say one thing but requirements say another?
+4. Overall Fit: Is this a GOOD match for the candidate?
 
-RESPOND WITH ONLY JSON (no markdown, no code blocks):
+RESPOND WITH ONLY JSON (no markdown):
 {{
-  "meets_requirements": true or false,
+  "meets_requirements": true or false (only true if STRONG match),
   "requirement_match": "high" or "medium" or "low",
-  "key_matches": ["what aligns well"],
+  "tech_stack_match": true or false (does it NEED candidate's core stack?),
+  "experience_fit": "good" or "stretch" or "senior",
+  "key_matches": ["which skills/roles align"],
   "concerns": ["red flags or mismatches"],
+  "skill_match_percentage": 0-100 (how many of candidate's core skills are required),
   "reason": "brief assessment"
 }}"""
 
@@ -200,7 +213,8 @@ RESPOND WITH ONLY JSON (no markdown, no code blocks):
                 "meets_requirements": True,
                 "requirement_match": "medium",
                 "key_matches": [],
-                "concerns": ["GROQ_API_KEY not set in environment"],
+                "concerns": ["GROQ_API_KEY not set"],
+                "skill_match_percentage": 0,
                 "reason": "fallback - no API key"
             }
 
@@ -209,7 +223,7 @@ RESPOND WITH ONLY JSON (no markdown, no code blocks):
             model="mixtral-8x7b-32768",  # Free model from Groq
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
-            max_tokens=300,
+            max_tokens=400,
         )
 
         response_text = message.choices[0].message.content.strip()
@@ -223,13 +237,15 @@ RESPOND WITH ONLY JSON (no markdown, no code blocks):
         # Clean JSON if needed
         response_text = response_text.strip()
         if not response_text.startswith("{"):
-            # Try to find JSON in response
             start = response_text.find("{")
             end = response_text.rfind("}") + 1
             if start >= 0 and end > start:
                 response_text = response_text[start:end]
 
         assessment = json.loads(response_text)
+        # Ensure skill_match_percentage exists
+        if "skill_match_percentage" not in assessment:
+            assessment["skill_match_percentage"] = 0
         return assessment
 
     except json.JSONDecodeError as e:
@@ -238,6 +254,7 @@ RESPOND WITH ONLY JSON (no markdown, no code blocks):
             "requirement_match": "medium",
             "key_matches": [],
             "concerns": [f"json parse error: {str(e)}"],
+            "skill_match_percentage": 0,
             "reason": "fallback - groq response parse error"
         }
     except Exception as e:
@@ -246,6 +263,7 @@ RESPOND WITH ONLY JSON (no markdown, no code blocks):
             "requirement_match": "medium",
             "key_matches": [],
             "concerns": [f"groq error: {str(e)}"],
+            "skill_match_percentage": 0,
             "reason": "fallback - groq api error"
         }
 
@@ -329,9 +347,12 @@ def assess_job_requirement(job: dict, profile: dict) -> dict:
     }
 
 
-def filter_jobs_with_agent(jobs: list, profile: dict, max_assess: int = 200) -> tuple[list, dict]:
+def filter_jobs_with_agent(jobs: list, profile: dict, max_assess: int = 50) -> tuple[list, dict]:
     """
-    Filter jobs using LangGraph agent.
+    Filter jobs using LangGraph agent (Groq verification).
+
+    IMPORTANT: max_assess defaults to 50 to stay within free Groq API quota.
+    Only the top jobs are deeply verified; remaining jobs pass through.
 
     Returns: (kept_jobs, stats)
     """
@@ -346,6 +367,7 @@ def filter_jobs_with_agent(jobs: list, profile: dict, max_assess: int = 200) -> 
         "filtered_other": 0,
     }
 
+    # Only assess top 50 jobs to stay within Groq free tier quota
     for job in jobs[:max_assess]:
         url = job.get("job_url", "")
 
@@ -373,7 +395,8 @@ def filter_jobs_with_agent(jobs: list, profile: dict, max_assess: int = 200) -> 
             else:
                 stats["filtered_other"] += 1
 
-    # Keep remaining unassessed jobs
+    # Keep remaining unassessed jobs (passed through without Groq verification)
+    # This is intentional - we only verify top 50 to stay within quota
     kept.extend(jobs[max_assess:])
 
     return kept, {"stats": stats, "filtered": filtered}

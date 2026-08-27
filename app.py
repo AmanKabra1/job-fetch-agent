@@ -1016,11 +1016,20 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
         reasons.append(f"pays ~{round(lpa, 1)} LPA (> your {CURRENT_LPA})")
 
     score = max(0, min(100, round(score)))
+
+    # Calculate skill match percentage for display
+    skill_pct = round(skill_ratio * 100) if skill_ratio is not None else 0
+
+    # Flag jobs with dangerously low skill match (<40%) as red flag
+    is_red_flag = skill_pct > 0 and skill_pct < 40
+
     return {"reject": False, "job": {
         "score": score,
         "matched": matched,
         "missing": missing[:6],
-        "skill_pct": round(skill_ratio * 100) if skill_ratio is not None else None,
+        "skill_pct": skill_pct,
+        "skill_match_percentage": skill_pct,
+        "is_red_flag": is_red_flag,
         "title": title,
         "company": company,
         "location": loc,
@@ -1035,6 +1044,7 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
         "why": reasons,
         "job_url": str(r.get("job_url") or ""),
         "description": desc,
+        "_date_category": r.get("_date_category", "UNKNOWN"),
     }}
 
 
