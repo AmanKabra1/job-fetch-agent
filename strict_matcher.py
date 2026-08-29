@@ -130,12 +130,12 @@ def _get_role_category(title: str) -> str | None:
 
 def should_include_job(job: dict, candidate_experience_years: int = 2) -> tuple[bool, str]:
     """
-    SMART filtering: Hard gates on experience + core skill requirements.
+    BALANCED filtering: Keep jobs IN YOUR FIELD even with lower match %, reject completely unrelated.
 
     For a 2-year junior developer:
     1. REJECT if asks for 5+ years (too senior)
-    2. REJECT if 0 core skill matches (completely irrelevant)
-    3. REJECT if skill match < 40% (insufficient overlap)
+    2. REJECT if 0 core skill matches (completely wrong field)
+    3. KEEP if 1+ core skill match (in your field, even if lower %)
     4. REJECT if clearly wrong field (sales, marketing, etc.)
 
     Returns: (should_include: bool, reason: str)
@@ -152,26 +152,20 @@ def should_include_job(job: dict, candidate_experience_years: int = 2) -> tuple[
     if req_years >= 5:
         return False, f"too senior: asks for {req_years}+ years (you have {candidate_experience_years})"
 
-    # HARD GATE 3: Skill matching - must have meaningful overlap with CORE_STACK
+    # GATE 3: Skill matching - check if job is IN YOUR FIELD
     job_required_skills = _extract_required_skills(desc)
-
-    # Skill overlap calculation
     matched_skills = job_required_skills & CORE_STACK
 
-    # REJECT: 0 matching skills (completely irrelevant)
+    # REJECT only if 0 matching skills (completely wrong field like C++/Rust/Blockchain when you do Python/Node)
     if len(matched_skills) == 0:
         missing_skills = sorted(job_required_skills)[:3]
-        return False, f"no core skill match (needs: {', '.join(missing_skills) or 'unknown'})"
+        return False, f"not your field (needs: {', '.join(missing_skills) or 'unknown'}, not Python/Node/Java/Backend/AI)"
 
-    # Calculate skill match percentage (matched / required skills)
+    # KEEP: Has 1+ core skill match — IN YOUR FIELD
+    # Even if skill_match_pct is low (e.g., needs 5 skills, you have 1)
+    # Let ranking decide the order. Show 250+ jobs this way.
     skill_match_pct = (len(matched_skills) / len(job_required_skills)) * 100 if job_required_skills else 0
-
-    # REJECT: Less than 40% skill match
-    if skill_match_pct < 40:
-        return False, f"low skill match: {round(skill_match_pct)}% (needs {len(job_required_skills)} skills, you have {len(matched_skills)})"
-
-    # PASS: Has meaningful skill overlap and reasonable experience requirement
-    return True, f"kept for ranking (skill match: {round(skill_match_pct)}%, matches: {', '.join(sorted(matched_skills))})"
+    return True, f"kept for ranking ({round(skill_match_pct)}% match, {len(matched_skills)}/{len(job_required_skills)} skills)"
 
 
 def filter_jobs(jobs: list, candidate_experience_years: int = 2) -> tuple[list, dict]:
