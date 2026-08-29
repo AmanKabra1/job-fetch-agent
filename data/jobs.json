@@ -1,5 +1,5 @@
 {
-"fetched_at": "2026-08-28 15:01 UTC",
+"fetched_at": "2026-08-29 00:02 UTC",
 "count": 12,
 "jobs": [
 {
@@ -128,7 +128,7 @@
 "reason": "posted 2 days ago (likely still open)"
 }
 },
-"_date_category": "THIS_WEEK"
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-24 05:22 UTC",
@@ -160,7 +160,7 @@
 "reason": "posted 2 days ago (likely still open)"
 }
 },
-"_date_category": "THIS_WEEK"
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-24 05:22 UTC",
@@ -192,7 +192,7 @@
 "reason": "posted 2 days ago (likely still open)"
 }
 },
-"_date_category": "THIS_WEEK"
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-24 05:22 UTC",
@@ -224,7 +224,7 @@
 "reason": "posted 2 days ago (likely still open)"
 }
 },
-"_date_category": "THIS_WEEK"
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-20 03:43 UTC",
