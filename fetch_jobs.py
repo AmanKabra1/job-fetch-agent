@@ -51,33 +51,23 @@ def _quiet_jobspy():
 # so we keep these as roles; your detailed SKILLS drive the RANKING below.
 SEARCH_TERMS = [
     # Backend roles (primary focus)
-    "backend developer",
-    "backend engineer",
-    "Python backend",
-    "Node.js backend",
-    "Java backend",
-    "Go backend",
-    "API developer",
+    "backend developer", "backend engineer", "Python backend", "Node.js backend",
+    "Java backend", "Go backend", "API developer", "web developer",
 
     # General software roles
-    "software developer",
-    "software engineer",
-    "SDE 1",
-    "junior engineer",
-    "associate engineer",
-    "entry level developer",
+    "software developer", "software engineer", "SDE 1", "SDE-1",
+    "junior engineer", "junior developer", "associate engineer", "entry level developer",
 
     # Full stack
-    "full stack developer",
-    "full stack engineer",
+    "full stack developer", "full stack engineer",
 
     # Specialized roles (AI/ML boom in 2026)
-    "machine learning engineer",
-    "AI engineer",
-    "LLM engineer",
-    "AI agent engineer",
-    "GenAI engineer",
-    "data engineer",
+    "machine learning engineer", "ML engineer", "AI engineer", "LLM engineer",
+    "AI agent engineer", "GenAI engineer", "data engineer", "data scientist",
+
+    # Additional high-volume searches
+    "Python developer", "Node developer", "JavaScript developer",
+    "REST API developer", "microservices developer", "cloud engineer",
 ]
 
 # Extra skills/keywords to emphasise on top of the resume. Edit freely.
@@ -117,18 +107,18 @@ SITES = ["linkedin", "indeed", "google", "glassdoor", "zip_recruiter", "naukri",
 HOURS_OLD = 72
 
 # How many results to pull per search term, per site.
-# Increased to 75 for aggressive job discovery across all boards
-RESULTS_WANTED = 75
+# Increased to 150 for VERY aggressive job discovery to ensure TODAY's jobs appear
+RESULTS_WANTED = 150
 
 # Where the daily feed is written. The Vercel app reads this same file.
 OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "jobs.json")
 # Cap the stored feed so the committed file doesn't grow without bound.
 MAX_STORED = 1000
 # Always keep at least this many fresh jobs in the feed (when that many were fetched).
-# Increased from 50 to 200 to ensure plenty of options
-MIN_KEEP_BEFORE_RELAX = 200
+# Increased to 300 to ensure plenty of options
+MIN_KEEP_BEFORE_RELAX = 300
 # even if some fall below the quality gate — so the hosted page is never sparse.
-MIN_FEED = 300  # Increased to 300 - aggressive job discovery for maximum options
+MIN_FEED = 500  # Increased to 500 - VERY aggressive job discovery to ensure TODAY's jobs
 
 # Columns we keep, in order. (jobspy returns many more; these are the useful ones.)
 COLUMNS = [
