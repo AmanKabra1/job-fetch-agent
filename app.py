@@ -56,6 +56,12 @@ import resume_profile as P
 import extra_sources as ES
 import ats_scorer as ATS
 
+# NEW: API and project management modules
+import api_handlers as AH
+import projects_manager as PM
+import jd_project_matcher as JPM
+import dynamic_resume_generator as DRG
+
 
 def _slugify(text: str) -> str:
     text = re.sub(r"[^A-Za-z0-9]+", "-", str(text or "")).strip("-")
