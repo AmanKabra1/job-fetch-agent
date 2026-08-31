@@ -2338,62 +2338,85 @@ INDEX_HTML = r"""<!doctype html>
         });
     }
 
-    // Load projects on page load
-    displayProjectsList();
+    // Setup event handlers when DOM is ready
+    function setupProjectsHandlers() {
+      console.log('Setting up project handlers...');
 
-    // GitHub button handler
-    const githubBtn = document.getElementById('github-refresh-btn');
-    if (githubBtn) {
-      githubBtn.addEventListener('click', async function() {
-        const status = document.getElementById('github-status');
-        if (status) status.textContent = '⏳ Fetching...';
-        try {
-          const res = await fetch('/api/projects/fetch-github', {method: 'POST'});
-          const data = await res.json();
-          if (status) {
+      // GitHub button handler
+      const githubBtn = document.getElementById('github-refresh-btn');
+      if (githubBtn) {
+        console.log('Found GitHub button, attaching click handler');
+        githubBtn.onclick = async function() {
+          console.log('GitHub button clicked');
+          const status = document.getElementById('github-status');
+          if (status) status.textContent = '⏳ Fetching...';
+          try {
+            const res = await fetch('/api/projects/fetch-github', {method: 'POST'});
+            const data = await res.json();
+            console.log('GitHub fetch response:', data);
+            if (status) {
+              if (data.success) {
+                status.textContent = `✓ Fetched ${data.new_projects_added || 0} new`;
+                setTimeout(() => displayProjectsList(), 500);
+              } else {
+                status.textContent = data.message || 'Fetch failed';
+              }
+            }
+          } catch (e) {
+            console.error('GitHub fetch error:', e);
+            if (status) status.textContent = 'Error: ' + e.message;
+          }
+        };
+      } else {
+        console.warn('GitHub button not found');
+      }
+
+      // Add project form handler
+      const projectForm = document.getElementById('project-form-submit');
+      if (projectForm) {
+        console.log('Found project form, attaching submit handler');
+        projectForm.onsubmit = async function(e) {
+          console.log('Project form submitted');
+          e.preventDefault();
+          const form = new FormData(this);
+          const skills = (form.get('skills') || '').split(',').map(s => s.trim()).filter(s => s);
+          try {
+            const res = await fetch('/api/projects/add', {
+              method: 'POST',
+              headers: {'Content-Type': 'application/json'},
+              body: JSON.stringify({
+                name: form.get('name'),
+                skills: skills,
+                description: form.get('description'),
+                github_url: form.get('github_url') || ''
+              })
+            });
+            const data = await res.json();
+            console.log('Add project response:', data);
             if (data.success) {
-              status.textContent = `✓ Fetched ${data.new_projects_added || 0} new`;
+              alert('✓ Project added!');
+              this.reset();
               setTimeout(() => displayProjectsList(), 500);
             } else {
-              status.textContent = data.message || 'Fetch failed';
+              alert('Error: ' + (data.error || 'Unknown error'));
             }
+          } catch (e) {
+            console.error('Add project error:', e);
+            alert('Error: ' + e.message);
           }
-        } catch (e) {
-          if (status) status.textContent = 'Error: ' + e.message;
-        }
-      });
+        };
+      } else {
+        console.warn('Project form not found');
+      }
     }
 
-    // Add project form handler
-    const projectForm = document.getElementById('project-form-submit');
-    if (projectForm) {
-      projectForm.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const form = new FormData(this);
-        const skills = (form.get('skills') || '').split(',').map(s => s.trim()).filter(s => s);
-        try {
-          const res = await fetch('/api/projects/add', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-              name: form.get('name'),
-              skills: skills,
-              description: form.get('description'),
-              github_url: form.get('github_url') || ''
-            })
-          });
-          const data = await res.json();
-          if (data.success) {
-            alert('✓ Project added!');
-            this.reset();
-            setTimeout(() => displayProjectsList(), 500);
-          } else {
-            alert('Error: ' + (data.error || 'Unknown error'));
-          }
-        } catch (e) {
-          alert('Error: ' + e.message);
-        }
-      });
+    // Load projects and setup handlers immediately
+    displayProjectsList();
+    setupProjectsHandlers();
+
+    // Also setup when DOM is fully ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupProjectsHandlers);
     }
     </script>
 
