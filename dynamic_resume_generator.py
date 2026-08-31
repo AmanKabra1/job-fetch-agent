@@ -93,8 +93,12 @@ def generate_tailored_resume(job: dict, user_resume: dict = None, format_type: s
     # Update summary to match job
     tailored["summary"] = _generate_summary(jd_title, matched_skills[:3])
 
-    # Swap projects: Keep 1 project, use the best match
-    if best_project and best_project.get("name"):
+    # Swap projects: Only swap if match score >= 40%
+    # Otherwise keep original project and focus on keywords/ATS
+    best_match_score = best_project.get("match_score", 0) if best_project else 0
+
+    if best_project and best_project.get("name") and best_match_score >= 40:
+        # Good match found - swap project
         tailored["projects"] = [
             {
                 "name": best_project.get("name", ""),
@@ -102,6 +106,11 @@ def generate_tailored_resume(job: dict, user_resume: dict = None, format_type: s
                 "description": best_project.get("description", "")
             }
         ]
+        project_action = "swapped"
+    else:
+        # No good match - keep original project, focus on keywords
+        project_action = "kept (no good match)"
+        # Keep existing projects as-is
 
     # Update skills to match JD (but keep user's core skills)
     core_skills = ["Python", "Node.js", "TypeScript", "Java"]
@@ -121,12 +130,13 @@ def generate_tailored_resume(job: dict, user_resume: dict = None, format_type: s
 
     return {
         "resume": tailored,
-        "best_project": best_project,
-        "project_match_score": best_project.get("match_score", 0),
+        "best_project": best_project if best_match_score >= 40 else None,
+        "project_action": project_action,  # "swapped" or "kept (no good match)"
+        "project_match_score": best_match_score,
         "ats_score": ats_score,
         "matched_skills": matched_skills,
         "summary": f"Tailored for {jd_title} at {jd_company}",
-        "resume_points": project_match.get("resume_points", [])
+        "resume_points": project_match.get("resume_points", []) if best_match_score >= 40 else []
     }
 
 
