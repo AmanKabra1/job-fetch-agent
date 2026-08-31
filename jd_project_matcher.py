@@ -185,34 +185,38 @@ def _score_projects_heuristic(projects: list, jd_text: str) -> list:
         score = 0
         tech_stack = project.get("tech_stack", [])
         name = project.get("name", "").lower()
-        desc = project.get("description", "").lower()
+        desc = project.get("description", "").lower() if project.get("description") else ""
 
-        # 1. TECH STACK MATCH (40 points max)
+        # 1. TECH STACK MATCH (40 points max) - CRITICAL
         tech_matches = 0
         for skill in tech_stack:
             skill_lower = skill.lower()
-            if any(tech in skill_lower for tech in jd_tech_terms):
-                tech_matches += 1
-        tech_score = min(tech_matches * 8, 40)  # Max 40 points
+            for tech in jd_tech_terms:
+                if tech.lower() in skill_lower:
+                    tech_matches += 1
+                    break
+        tech_score = min(tech_matches * 10, 40)  # Max 40 points
 
-        # 2. ROLE RELEVANCE (30 points max)
-        role_keywords = ["backend", "fullstack", "frontend", "api", "microservice", "database", "agent", "ai"]
-        role_match = sum(10 for keyword in role_keywords if keyword in jd_lower and keyword in desc)
-        role_score = min(role_match, 30)  # Max 30 points
+        # 2. ROLE RELEVANCE (30 points max) - IMPORTANT
+        # Match role keywords ONLY if they appear in description
+        role_keywords = ["backend", "fullstack", "frontend", "api", "microservice", "database", "agent", "ai", "rest"]
+        role_score = 0
+        for keyword in role_keywords:
+            if keyword in jd_lower and keyword in desc:
+                role_score += 10
+        role_score = min(role_score, 30)
 
-        # 3. DESCRIPTION QUALITY (20 points max)
-        # Check if description mentions relevant terms
+        # 3. DESCRIPTION QUALITY (20 points max) - HELPS DIFFERENTIATE
         desc_quality = 0
-        if len(desc) > 50:  # Good description
+        if len(desc) > 100:
+            desc_quality += 5  # Has substantial description
+        desc_tech_matches = sum(1 for kw in jd_tech_terms if kw.lower() in desc)
+        desc_quality += min(desc_tech_matches * 3, 10)  # Points for tech match in desc
+        if any(kw in desc for kw in ["production", "scalable", "optimize", "integrate", "enterprise", "framework"]):
             desc_quality += 5
-        if any(kw in desc for kw in jd_tech_terms):
-            desc_quality += 10
-        if any(kw in desc for kw in ["production", "scalable", "optimize", "integrate"]):
-            desc_quality += 5
-        desc_score = min(desc_quality, 20)  # Max 20 points
+        desc_score = min(desc_quality, 20)
 
         # 4. RECENCY BONUS (10 points max)
-        # Projects with update dates get bonus
         updated = project.get("updated", "")
         recency_score = 10 if updated else 0
 
@@ -221,7 +225,7 @@ def _score_projects_heuristic(projects: list, jd_text: str) -> list:
         scored.append({
             **project,
             "match_score": min(total_score, 100),
-            "_debug": f"tech:{tech_score} role:{role_score} desc:{desc_score} recency:{recency_score}"
+            "_debug": f"name:{name} tech:{tech_score} role:{role_score} desc:{desc_score} rec:{recency_score} total:{min(total_score,100)}"
         })
 
     # Sort by score, then by recency for ties
