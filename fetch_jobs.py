@@ -112,9 +112,9 @@ COUNTRY_INDEED = "India"
 # that blocks us or returns nothing never aborts the run).
 SITES = ["linkedin", "indeed", "google", "glassdoor", "zip_recruiter", "naukri", "bayt"]
 
-# Only jobs posted within this many hours (24 = last day, 3x daily cron = max 8 hours old).
-# Changed from 48 to 24 to ensure FRESH jobs for TODAY/THIS_WEEK sections
-HOURS_OLD = 24
+# Only jobs posted within this many hours (72 = last 3 days for sufficient volume).
+# Increased from 24 to 72 to get enough jobs on Indian boards
+HOURS_OLD = 72
 
 # How many results to pull per search term, per site.
 # Increased to 75 for aggressive job discovery across all boards
