@@ -1669,8 +1669,8 @@ def _build_cover_note(title: str, company: str, matched) -> str:
 @app.post("/api/apply/kit")
 def api_apply_kit(payload: dict):
     """Semi-auto APPLY ASSISTANT for one job: builds a resume tailored to this job's
-    description (reusing /api/resume/build), drafts a matching cover note, and echoes
-    the apply link. You review and submit yourself — nothing is sent automatically."""
+    description (reusing /api/resume/build), drafts a matching cover note, echoes
+    the apply link, and includes best project matched. You review and submit yourself — nothing is sent automatically."""
     title = (payload.get("title") or "").strip()
     company = (payload.get("company") or "").strip()
     description = (payload.get("description") or "").strip()
@@ -1681,12 +1681,22 @@ def api_apply_kit(payload: dict):
     built = api_resume_build({"title": title or "Role", "company": company or "Company",
                               "description": description, "format": fmt})
     matched = built.get("emphasized") or []
+
+    # Get best project matched for this job
+    job_doc = {"title": title, "description": description, "company": company}
+    best_project_info = JPM.get_best_project_for_jd(job_doc)
+    best_project = best_project_info.get("best_project", {})
+
     return {
         "files": built.get("files", []),
         "emphasized": matched,
         "ats_keywords": built.get("ats_keywords", []),
+        "ats_score": built.get("ats_score", 0),
         "cover_note": _build_cover_note(title, company, matched),
         "job_url": job_url, "title": title, "company": company,
+        "best_project": best_project,
+        "best_project_name": best_project.get("name", ""),
+        "best_project_match": best_project.get("match_score", 0),
     }
 
 
@@ -2915,11 +2925,25 @@ function showApplyModal(j, d){
   const files=d.files||[];
   const emph=(d.emphasized||[]).slice(0,12).map(s=>'<span class="tag have" style="font-size:10px">'+esc(s)+'</span>').join('');
   const dl=files.map((f,k)=>'<button onclick="dlKitFile('+k+')">Download '+esc(f.name)+'</button>').join(' ');
+  const atsScore=d.ats_score||0;
+  const atsColor=atsScore>=80?'#16a34a':atsScore>=70?'#eab308':atsScore>=50?'#f97316':'#dc2626';
+  const atsLabel=atsScore>=80?'Excellent':atsScore>=70?'Good':atsScore>=50?'Fair':'Poor';
+  const projectSection=(d.best_project_name?
+    '<div class="field" style="margin-top:12px; background:#1e293b; padding:10px; border-radius:4px; border:1px solid #334155">'
+    +'<label>📌 Best Project Matched</label>'
+    +'<div><strong>'+esc(d.best_project_name)+'</strong></div>'
+    +'<div style="font-size:12px; color:#94a3b8; margin-top:4px;">Match Score: <b style="color:#7db0ff">'+Math.round(d.best_project_match)+'%</b></div>'
+    +'</div>'
+    :'');
   $('#applyModal').innerHTML=
     '<div class="modal-bg" onclick="if(event.target===this)closeApply()"><div class="modal">'
     +'<div class="bar" style="justify-content:space-between"><strong>Apply kit — '+esc(j.title||'')+'</strong>'
     +'<button class="secondary" onclick="closeApply()">Close</button></div>'
     +'<div class="note" style="margin:-4px 0 14px">'+esc(j.company||'')+(j.location?(' · '+esc(j.location)):'')+'</div>'
+    +'<div style="padding:8px 12px; background:'+atsColor+'; border-radius:4px; margin-bottom:12px; color:white; font-weight:600;">'
+    +'ATS Score: '+atsScore+'/100 ('+atsLabel+')'
+    +'</div>'
+    +projectSection
     +'<div class="field"><label>1 · Resume tailored to this job</label>'
     +'<div class="bar">'+(dl||'<span class="note">No file.</span>')+'</div>'
     +(emph?('<div class="tagrow" style="margin-top:6px">'+emph+'</div>'):'')+'</div>'
