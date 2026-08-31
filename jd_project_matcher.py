@@ -162,72 +162,104 @@ Return ONLY JSON:
 
 def _score_projects_heuristic(projects: list, jd_text: str) -> list:
     """
-    Score projects comprehensively based on tech/skill/description overlap with JD.
-    Ranks by: tech match (40%), role relevance (30%), description match (20%), recency (10%)
+    Smart project scoring - heavily favors EXACT JD matches.
+
+    Scoring logic:
+    1. Count ALL matching tech terms (primary differentiator)
+    2. Bonus for description quality & production keywords
+    3. Penalize irrelevant tech stacks
+    4. Return clearly ranked projects
 
     Returns: Projects sorted by score (highest first)
     """
     if not jd_text or jd_text == "None":
-        return projects  # No JD, return as-is
+        return projects
 
     jd_lower = str(jd_text).lower()
     scored = []
 
-    # Extract key tech terms from JD
-    tech_keywords = ["python", "javascript", "typescript", "java", "node.js", "fastapi",
-                     "django", "nestjs", "react", "angular", "postgresql", "mongodb",
-                     "docker", "kubernetes", "aws", "backend", "frontend", "fullstack",
-                     "api", "rest", "graphql", "microservices", "ai", "llm", "ml"]
+    # Tech keywords with importance weights
+    tech_keywords = [
+        "python", "javascript", "typescript", "java", "node.js", "go", "rust", "php",
+        "fastapi", "flask", "django", "express", "nestjs", "spring", "rails",
+        "react", "angular", "vue", "svelte",
+        "postgresql", "mysql", "mongodb", "redis", "elasticsearch",
+        "docker", "kubernetes", "aws", "azure", "gcp",
+        "rest", "graphql", "grpc", "websocket",
+        "backend", "frontend", "fullstack", "api", "microservice", "database",
+        "ai", "llm", "ml", "langchain", "langgraph", "groq",
+        "testing", "pytest", "jest", "mocha", "junit"
+    ]
 
+    # Extract JD requirements
     jd_tech_terms = [kw for kw in tech_keywords if kw in jd_lower]
 
-    for idx, project in enumerate(projects):
-        score = 0
-        tech_stack = project.get("tech_stack", [])
+    # Identify job type
+    job_type = "unknown"
+    if any(term in jd_lower for term in ["backend", "api", "microservice", "node", "python", "java"]):
+        job_type = "backend"
+    elif any(term in jd_lower for term in ["frontend", "react", "angular", "ui", "ux"]):
+        job_type = "frontend"
+    elif any(term in jd_lower for term in ["fullstack", "full stack", "both"]):
+        job_type = "fullstack"
+
+    for project in projects:
+        tech_stack = [t.lower() for t in (project.get("tech_stack", []) or [])]
+        desc = (project.get("description", "") or "").lower()
         name = project.get("name", "").lower()
-        desc = project.get("description", "").lower() if project.get("description") else ""
 
-        # 1. TECH STACK MATCH (40 points max) - CRITICAL
-        tech_matches = 0
-        for skill in tech_stack:
-            skill_lower = skill.lower()
-            for tech in jd_tech_terms:
-                if tech.lower() in skill_lower:
-                    tech_matches += 1
-                    break
-        tech_score = min(tech_matches * 10, 40)  # Max 40 points
+        score = 0
 
-        # 2. ROLE RELEVANCE (30 points max) - IMPORTANT
-        # Match role keywords ONLY if they appear in description
-        role_keywords = ["backend", "fullstack", "frontend", "api", "microservice", "database", "agent", "ai", "rest"]
-        role_score = 0
-        for keyword in role_keywords:
-            if keyword in jd_lower and keyword in desc:
-                role_score += 10
-        role_score = min(role_score, 30)
+        # 1. TECH STACK MATCHING (60 points max) - PRIMARY DIFFERENTIATOR
+        # Count how many JD tech terms are in project tech stack
+        tech_count = sum(1 for jd_tech in jd_tech_terms if any(jd_tech in tech for tech in tech_stack))
+        tech_score = min(tech_count * 15, 60)  # Scale up: each match is worth 15 pts
 
-        # 3. DESCRIPTION QUALITY (20 points max) - HELPS DIFFERENTIATE
-        desc_quality = 0
+        # BONUS: More diverse tech stack = better project
+        tech_diversity = len([t for t in tech_stack if t in jd_tech_terms])
+        diversity_bonus = min(tech_diversity * 5, 15)
+
+        # PENALTY: Irrelevant tech (like "Testing" for non-QA roles)
+        irrelevant_techs = ["testing", "test", "jest", "pytest", "qa", "uat"]
+        has_irrelevant = sum(1 for tech in tech_stack if any(irr in tech for irr in irrelevant_techs))
+        if job_type != "backend" and has_irrelevant:
+            tech_score = max(0, tech_score - 20)  # Penalize if not QA role
+
+        # 2. DESCRIPTION QUALITY (25 points max)
+        desc_score = 0
         if len(desc) > 100:
-            desc_quality += 5  # Has substantial description
-        desc_tech_matches = sum(1 for kw in jd_tech_terms if kw.lower() in desc)
-        desc_quality += min(desc_tech_matches * 3, 10)  # Points for tech match in desc
-        if any(kw in desc for kw in ["production", "scalable", "optimize", "integrate", "enterprise", "framework"]):
-            desc_quality += 5
-        desc_score = min(desc_quality, 20)
+            desc_score += 5
 
-        # 4. RECENCY BONUS (10 points max)
+        # Description mentions tech from JD
+        desc_tech_matches = sum(1 for jd_tech in jd_tech_terms if jd_tech in desc)
+        desc_score += min(desc_tech_matches * 3, 10)
+
+        # Description has production quality keywords
+        prod_keywords = ["production", "scalable", "optimize", "integrate", "enterprise", "framework", "api", "real-time", "microservices"]
+        desc_score += sum(2 for kw in prod_keywords if kw in desc)
+
+        desc_score = min(desc_score, 25)
+
+        # 3. RECENCY (15 points max)
         updated = project.get("updated", "")
-        recency_score = 10 if updated else 0
+        recency_score = 15 if updated else 0
 
-        total_score = tech_score + role_score + desc_score + recency_score
+        total_score = tech_score + diversity_bonus + desc_score + recency_score
+        final_score = min(total_score, 100)
 
         scored.append({
             **project,
-            "match_score": min(total_score, 100),
-            "_debug": f"name:{name} tech:{tech_score} role:{role_score} desc:{desc_score} rec:{recency_score} total:{min(total_score,100)}"
+            "match_score": final_score,
+            "_debug": f"tech:{tech_score} div:{diversity_bonus} desc:{desc_score} rec:{recency_score} = {final_score}"
         })
 
-    # Sort by score, then by recency for ties
-    scored.sort(key=lambda p: (p.get("match_score", 0), p.get("updated", "")), reverse=True)
+    # Sort by score (highest first), then by tech diversity as tiebreaker
+    scored.sort(
+        key=lambda p: (
+            p.get("match_score", 0),
+            len([t for t in (p.get("tech_stack", []) or []) if t.lower() in [kw for kw in jd_tech_terms]])
+        ),
+        reverse=True
+    )
+
     return scored
