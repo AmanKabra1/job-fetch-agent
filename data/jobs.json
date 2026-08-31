@@ -1,5 +1,5 @@
 {
-"fetched_at": "2026-08-30 18:34 UTC",
+"fetched_at": "2026-08-31 04:30 UTC",
 "count": 12,
 "jobs": [
 {
@@ -32,7 +32,7 @@
 "reason": "posted 0 days ago (likely still open)"
 }
 },
-"_date_category": "THIS_WEEK"
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-24 05:22 UTC",
@@ -64,7 +64,7 @@
 "reason": "posted 0 days ago (likely still open)"
 }
 },
-"_date_category": "THIS_WEEK"
+"_date_category": "RECENT"
 },
 {
 "date_fetched": "2026-08-24 05:22 UTC",
