@@ -48,8 +48,23 @@ def _should_fetch_github() -> bool:
         return True
 
 
+def _is_read_only():
+    """Check if filesystem is read-only (Vercel serverless)."""
+    try:
+        test_file = PROJECTS_FILE.parent / ".write_test"
+        with open(test_file, "w") as f:
+            f.write("test")
+        test_file.unlink()
+        return False
+    except (OSError, IOError, PermissionError):
+        return True
+
+
 def _log_fetch():
     """Log the last GitHub fetch time."""
+    if _is_read_only():
+        return  # Can't write on read-only filesystem
+
     try:
         FETCH_LOG_FILE.parent.mkdir(parents=True, exist_ok=True)
         with open(FETCH_LOG_FILE, "w") as f:
