@@ -27,6 +27,7 @@ import resume_profile as RP        # your saved resume drives search + ranking
 import strict_matcher as SM        # strict filtering before ranking
 import job_analyzer as JA          # free heuristic-based job analysis (no API needed)
 import job_requirement_agent as JRA  # LangGraph agent: check JD + expiration
+import job_fit_analyzer as JFA     # AI agent: analyzes top 50 jobs for interview likelihood
 
 
 def _quiet_jobspy():
@@ -462,6 +463,15 @@ def main():
     feed_rows = [r for r in feed_rows if r.get("_date_category") != "OLD"]
 
     ranked = rank_for_feed(feed_rows)
+
+    # AI Analysis: Analyze top 50 jobs for interview likelihood
+    print(f"  analyzing top 50 jobs for interview likelihood ...", flush=True)
+    try:
+        ranked = JFA.analyze_top_jobs(ranked, top_n=50)
+        print(f"    ✓ analyzed top 50 jobs for fit", flush=True)
+    except Exception as e:
+        print(f"    ! fit analysis failed: {e} (continuing without analysis)", flush=True)
+
     write_feed(ranked)
     print(f"Replaced feed with today's latest: {len(ranked)} jobs "
           f"(organized by date freshness + match score, floor {MIN_FEED}).", flush=True)
