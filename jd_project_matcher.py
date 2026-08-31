@@ -90,9 +90,11 @@ Return ONLY JSON:
 
     try:
         if not groq_client:
-            # Fallback: simple heuristic matching
+            # Fallback: comprehensive heuristic matching
+            print(f"  📊 Project matcher: Using HEURISTIC (Groq not available)", flush=True)
             scored = _score_projects_heuristic(projects, description)
         else:
+            print(f"  🤖 Project matcher: Using GROQ AI (analyzing {len(projects)} projects)", flush=True)
             message = groq_client.chat.completions.create(
                 model="mixtral-8x7b-32768",
                 messages=[{"role": "user", "content": prompt}],
@@ -160,7 +162,8 @@ Return ONLY JSON:
 
 def _score_projects_heuristic(projects: list, jd_text: str) -> list:
     """
-    Score projects based on skill/tech overlap with JD (no API needed).
+    Score projects comprehensively based on tech/skill/description overlap with JD.
+    Ranks by: tech match (40%), role relevance (30%), description match (20%), recency (10%)
 
     Returns: Projects sorted by score (highest first)
     """
@@ -170,31 +173,57 @@ def _score_projects_heuristic(projects: list, jd_text: str) -> list:
     jd_lower = str(jd_text).lower()
     scored = []
 
-    for project in projects:
+    # Extract key tech terms from JD
+    tech_keywords = ["python", "javascript", "typescript", "java", "node.js", "fastapi",
+                     "django", "nestjs", "react", "angular", "postgresql", "mongodb",
+                     "docker", "kubernetes", "aws", "backend", "frontend", "fullstack",
+                     "api", "rest", "graphql", "microservices", "ai", "llm", "ml"]
+
+    jd_tech_terms = [kw for kw in tech_keywords if kw in jd_lower]
+
+    for idx, project in enumerate(projects):
         score = 0
         tech_stack = project.get("tech_stack", [])
-
-        # Score based on tech overlap
-        for skill in tech_stack:
-            if skill.lower() in jd_lower:
-                score += 20
-
-        # Bonus for relevant project names
         name = project.get("name", "").lower()
-        if any(keyword in name for keyword in ["api", "backend", "fullstack", "agent", "ai"]):
-            if any(keyword in jd_lower for keyword in ["api", "backend", "fullstack", "agent", "ai"]):
-                score += 15
-
-        # Bonus for description match
         desc = project.get("description", "").lower()
-        if any(keyword in desc for keyword in ["api", "backend", "agent", "database", "auth"]):
-            score += 10
+
+        # 1. TECH STACK MATCH (40 points max)
+        tech_matches = 0
+        for skill in tech_stack:
+            skill_lower = skill.lower()
+            if any(tech in skill_lower for tech in jd_tech_terms):
+                tech_matches += 1
+        tech_score = min(tech_matches * 8, 40)  # Max 40 points
+
+        # 2. ROLE RELEVANCE (30 points max)
+        role_keywords = ["backend", "fullstack", "frontend", "api", "microservice", "database", "agent", "ai"]
+        role_match = sum(10 for keyword in role_keywords if keyword in jd_lower and keyword in desc)
+        role_score = min(role_match, 30)  # Max 30 points
+
+        # 3. DESCRIPTION QUALITY (20 points max)
+        # Check if description mentions relevant terms
+        desc_quality = 0
+        if len(desc) > 50:  # Good description
+            desc_quality += 5
+        if any(kw in desc for kw in jd_tech_terms):
+            desc_quality += 10
+        if any(kw in desc for kw in ["production", "scalable", "optimize", "integrate"]):
+            desc_quality += 5
+        desc_score = min(desc_quality, 20)  # Max 20 points
+
+        # 4. RECENCY BONUS (10 points max)
+        # Projects with update dates get bonus
+        updated = project.get("updated", "")
+        recency_score = 10 if updated else 0
+
+        total_score = tech_score + role_score + desc_score + recency_score
 
         scored.append({
             **project,
-            "match_score": min(score, 100)
+            "match_score": min(total_score, 100),
+            "_debug": f"tech:{tech_score} role:{role_score} desc:{desc_score} recency:{recency_score}"
         })
 
-    # Sort by score
-    scored.sort(key=lambda p: p.get("match_score", 0), reverse=True)
+    # Sort by score, then by recency for ties
+    scored.sort(key=lambda p: (p.get("match_score", 0), p.get("updated", "")), reverse=True)
     return scored
