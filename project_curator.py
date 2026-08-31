@@ -18,7 +18,7 @@ GITHUB_TOKEN = os.environ.get("GITHUB_TOKEN", "")
 
 def fetch_all_repos() -> list:
     """Fetch ALL repos from GitHub (max 100 per page, paginate)."""
-    print(f"\n🔍 Fetching all repos for {GITHUB_USER}...", flush=True)
+    print(f"\n[*] Fetching all repos for {GITHUB_USER}...", flush=True)
 
     all_repos = []
     page = 1
@@ -40,14 +40,14 @@ def fetch_all_repos() -> list:
                 break  # No more repos
 
             all_repos.extend(repos)
-            print(f"  ✓ Page {page}: {len(repos)} repos", flush=True)
+            print(f"  [][][] Page {page}: {len(repos)} repos", flush=True)
             page += 1
 
         except Exception as e:
-            print(f"  ⚠️  Error fetching page {page}: {e}", flush=True)
+            print(f"  [][][][][][]  Error fetching page {page}: {e}", flush=True)
             break
 
-    print(f"  📊 Total repos found: {len(all_repos)}\n", flush=True)
+    print(f"  [][][][] Total repos found: {len(all_repos)}\n", flush=True)
     return all_repos
 
 
@@ -71,10 +71,10 @@ def score_repo(repo: dict) -> dict:
     description = repo.get("description", "") or ""
     if description:
         score += 20
-        reasons.append("✓ Has description")
+        reasons.append("[][][] Has description")
         if len(description) > 50:
             score += 15
-            reasons.append("✓ Good description length")
+            reasons.append("[][][] Good description length")
 
     # 2. RECENCY (30 pts max)
     updated_at = repo.get("updated_at", "")
@@ -84,37 +84,37 @@ def score_repo(repo: dict) -> dict:
 
         if days_old < 90:  # < 3 months
             score += 20
-            reasons.append(f"✓ Recent update ({days_old} days)")
+            reasons.append(f"[][][] Recent update ({days_old} days)")
         elif days_old < 180:  # < 6 months
             score += 10
-            reasons.append(f"✓ Fairly recent ({days_old} days)")
+            reasons.append(f"[][][] Fairly recent ({days_old} days)")
         else:
-            reasons.append(f"⚠️  Outdated ({days_old} days)")
+            reasons.append(f"[][][][][][]  Outdated ({days_old} days)")
 
     # 3. STARS (25 pts max)
     stars = repo.get("stargazers_count", 0) or 0
     if stars > 0:
         score += 15
-        reasons.append(f"✓ {stars} stars")
+        reasons.append(f"[][][] {stars} stars")
         if stars >= 5:
             score += 10
-            reasons.append("✓ Good popularity (5+ stars)")
+            reasons.append("[][][] Good popularity (5+ stars)")
 
     # 4. LANGUAGE (10 pts max)
     language = repo.get("language", "")
     backend_langs = ["Python", "JavaScript", "TypeScript", "Java", "Go", "Rust", "PHP"]
     if language in backend_langs:
         score += 10
-        reasons.append(f"✓ Backend lang: {language}")
+        reasons.append(f"[][][] Backend lang: {language}")
 
     # PENALTIES
     if repo.get("fork"):
         score -= 20
-        reasons.append("❌ Fork (not original)")
+        reasons.append("[][][] Fork (not original)")
 
     if repo.get("private"):
         score -= 50
-        reasons.append("❌ Private (can't showcase)")
+        reasons.append("[][][] Private (can't showcase)")
 
     final_score = max(0, min(score, 100))
 
@@ -152,12 +152,12 @@ def curate_projects(min_score: int = 50) -> list:
     # Filter by minimum score
     candidates = [r for r in scored if r["score"] >= min_score]
 
-    print(f"\n📊 SCORING RESULTS:")
+    print(f"\n[][][][] SCORING RESULTS:")
     print(f"  Total repos: {len(repos)}")
     print(f"  Score >= {min_score}: {len(candidates)} candidates")
     print(f"  Score < {min_score}: {len(scored) - len(candidates)} skipped\n")
 
-    print(f"🎯 TOP PROJECT CANDIDATES (for portfolio):\n")
+    print(f"[][][][] TOP PROJECT CANDIDATES (for portfolio):\n")
 
     for i, proj in enumerate(candidates[:15], 1):  # Show top 15
         print(f"{i}. {proj['name']} ({proj['score']}/100)")
@@ -183,4 +183,4 @@ if __name__ == "__main__":
     with open("project_candidates.json", "w") as f:
         json.dump(output, f, indent=2)
 
-    print(f"\n✅ Saved {len(candidates[:20])} candidates to project_candidates.json")
+    print(f"\n[][][] Saved {len(candidates[:20])} candidates to project_candidates.json")
