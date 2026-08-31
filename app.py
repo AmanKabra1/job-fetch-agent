@@ -1668,9 +1668,9 @@ def _build_cover_note(title: str, company: str, matched) -> str:
 
 @app.post("/api/apply/kit")
 def api_apply_kit(payload: dict):
-    """Semi-auto APPLY ASSISTANT for one job: builds a resume tailored to this job's
-    description (reusing /api/resume/build), drafts a matching cover note, echoes
-    the apply link, and includes best project matched. You review and submit yourself — nothing is sent automatically."""
+    """Semi-auto APPLY ASSISTANT for one job: builds a resume TAILORED + with AUTOMATIC
+    PROJECT SWAP (best project for this job), drafts a matching cover note, echoes the apply link.
+    You review and submit yourself — nothing is sent automatically."""
     title = (payload.get("title") or "").strip()
     company = (payload.get("company") or "").strip()
     description = (payload.get("description") or "").strip()
@@ -1678,26 +1678,90 @@ def api_apply_kit(payload: dict):
     fmt = (payload.get("format") or "pdf").lower()
     if fmt not in ("pdf", "docx", "both"):
         fmt = "pdf"
-    built = api_resume_build({"title": title or "Role", "company": company or "Company",
-                              "description": description, "format": fmt})
-    matched = built.get("emphasized") or []
 
-    # Get best project matched for this job
-    job_doc = {"title": title, "description": description, "company": company}
-    best_project_info = JPM.get_best_project_for_jd(job_doc)
-    best_project = best_project_info.get("best_project", {})
-
-    return {
-        "files": built.get("files", []),
-        "emphasized": matched,
-        "ats_keywords": built.get("ats_keywords", []),
-        "ats_score": built.get("ats_score", 0),
-        "cover_note": _build_cover_note(title, company, matched),
-        "job_url": job_url, "title": title, "company": company,
-        "best_project": best_project,
-        "best_project_name": best_project.get("name", ""),
-        "best_project_match": best_project.get("match_score", 0),
+    # Use FULL tailored resume generation with AUTOMATIC PROJECT SWAP
+    job_doc = {
+        "title": title or "Role",
+        "description": description,
+        "company": company or "Company"
     }
+
+    try:
+        # Generate tailored resume WITH project swapping (40%+ match threshold)
+        result = DRG.generate_tailored_resume(job_doc)
+        resume_text = result.get("resume", {}).get("summary", "")
+        best_project = result.get("best_project", {})
+        matched = list(set(
+            (result.get("matched_skills", []) or []) +
+            (result.get("resume", {}).get("skills", {}).get("Technical Skills", []) or [])
+        ))[:12]
+        ats_score = result.get("ats_score", 0)
+        project_action = result.get("project_action", "kept")
+
+        # Generate files with swapped project
+        out_files = []
+        import datetime as dt
+        today = dt.date.today().isoformat()
+        short_title = (title or "Resume").replace(" ", "-")[:20]
+        base = f"resume_{short_title}_{today}"
+
+        if fmt in ("pdf", "both"):
+            import io
+            buf = io.BytesIO()
+            # Use result's resume data for PDF rendering
+            RB.render_pdf(buf, resume_text, result.get("resume", {}).get("skills", {}),
+                         matched, title, company, result.get("resume", {}).get("ats_keywords"))
+            data = buf.getvalue()
+            name = base + ".pdf"
+            _save_resume_copy(name, data)
+            out_files.append({"name": name, "mime": "application/pdf",
+                            "b64": base64.b64encode(data).decode()})
+
+        if fmt in ("docx", "both"):
+            import io
+            buf = io.BytesIO()
+            RB.render_docx(buf, resume_text, result.get("resume", {}).get("skills", {}),
+                          matched, title, company, result.get("resume", {}).get("ats_keywords"))
+            data = buf.getvalue()
+            name = base + ".docx"
+            _save_resume_copy(name, data)
+            out_files.append({"name": name, "mime": _DOCX_MIME,
+                            "b64": base64.b64encode(data).decode()})
+
+        return {
+            "files": out_files,
+            "emphasized": matched,
+            "ats_keywords": result.get("resume", {}).get("ats_keywords", []),
+            "ats_score": ats_score,
+            "cover_note": _build_cover_note(title, company, matched),
+            "job_url": job_url, "title": title, "company": company,
+            "best_project": best_project,
+            "best_project_name": best_project.get("name", ""),
+            "best_project_match": best_project.get("match_score", 0),
+            "project_action": project_action,
+        }
+    except Exception as e:
+        print(f"  ERROR in tailored resume generation: {e}", flush=True)
+        # Fallback to basic resume build
+        built = api_resume_build({"title": title or "Role", "company": company or "Company",
+                                  "description": description, "format": fmt})
+        matched = built.get("emphasized") or []
+        job_doc = {"title": title, "description": description, "company": company}
+        best_project_info = JPM.get_best_project_for_jd(job_doc)
+        best_project = best_project_info.get("best_project", {})
+
+        return {
+            "files": built.get("files", []),
+            "emphasized": matched,
+            "ats_keywords": built.get("ats_keywords", []),
+            "ats_score": built.get("ats_score", 0),
+            "cover_note": _build_cover_note(title, company, matched),
+            "job_url": job_url, "title": title, "company": company,
+            "best_project": best_project,
+            "best_project_name": best_project.get("name", ""),
+            "best_project_match": best_project.get("match_score", 0),
+            "project_action": "kept",
+        }
 
 
 @app.post("/api/resume/tailor")
@@ -2928,10 +2992,13 @@ function showApplyModal(j, d){
   const atsScore=d.ats_score||0;
   const atsColor=atsScore>=80?'#16a34a':atsScore>=70?'#eab308':atsScore>=50?'#f97316':'#dc2626';
   const atsLabel=atsScore>=80?'Excellent':atsScore>=70?'Good':atsScore>=50?'Fair':'Poor';
+  const projectAction=d.project_action||'kept';
+  const actionEmoji=(projectAction==='swapped'?'🔄':'✓');
+  const actionText=(projectAction==='swapped'?'Swapped to best match':'Kept (best match)');
   const projectSection=(d.best_project_name?
     '<div class="field" style="margin-top:12px; background:#1e293b; padding:10px; border-radius:4px; border:1px solid #334155">'
-    +'<label>📌 Best Project Matched</label>'
-    +'<div><strong>'+esc(d.best_project_name)+'</strong></div>'
+    +'<label>📌 Project Matched</label>'
+    +'<div><strong>'+esc(d.best_project_name)+'</strong> <span style="color:#94a3b8; font-size:12px;">'+actionEmoji+' '+actionText+'</span></div>'
     +'<div style="font-size:12px; color:#94a3b8; margin-top:4px;">Match Score: <b style="color:#7db0ff">'+Math.round(d.best_project_match)+'%</b></div>'
     +'</div>'
     :'');
