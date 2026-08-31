@@ -76,8 +76,12 @@ def generate_tailored_resume(job: dict, user_resume: dict = None, format_type: s
     resume = user_resume if user_resume else RESUME_TEMPLATE.copy()
 
     # Get best project for this JD
-    project_match = JPM.get_best_project_for_jd(job)
-    best_project = project_match.get("best_project", {})
+    try:
+        project_match = JPM.get_best_project_for_jd(job)
+    except:
+        project_match = {"best_project": None, "recommendation": "N/A"}
+
+    best_project = project_match.get("best_project") or {}
 
     # Extract job requirements
     jd_title = job.get("title", "")

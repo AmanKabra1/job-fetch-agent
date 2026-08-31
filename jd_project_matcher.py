@@ -48,11 +48,11 @@ def get_best_project_for_jd(job: dict, top_n: int = 3) -> dict:
             "alternatives": []
         }
 
-    title = job.get("title", "")
-    description = job.get("description", "")
-    company = job.get("company", "")
+    title = str(job.get("title", ""))
+    description = str(job.get("description", ""))
+    company = str(job.get("company", ""))
 
-    if not description or len(description) < 100:
+    if not description or description == "None" or len(description) < 100:
         # Fallback: return most recent project
         best = max(projects, key=lambda p: p.get("added_date", ""), default={})
         return {
@@ -164,7 +164,10 @@ def _score_projects_heuristic(projects: list, jd_text: str) -> list:
 
     Returns: Projects sorted by score (highest first)
     """
-    jd_lower = jd_text.lower()
+    if not jd_text or jd_text == "None":
+        return projects  # No JD, return as-is
+
+    jd_lower = str(jd_text).lower()
     scored = []
 
     for project in projects:
