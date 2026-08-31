@@ -17,18 +17,27 @@ from resume_tailor import SKILL_LEXICON, _clean_label, _word_in
 
 # User's core competencies (from resume_profile.py)
 CORE_STACK = {
-    "Python", "Node.js", "Backend", "Full Stack", "Java", "Spring Boot",
+    # Backend Languages & Frameworks - Node.js/NestJS focus
+    "Node.js", "NestJS", "Express.js", "TypeScript", "JavaScript",
+    "Python", "FastAPI", "Java", "Spring Boot",
+    # General backend/full stack
+    "Backend", "Full Stack", "API", "REST",
+    # Databases & Infrastructure
+    "PostgreSQL", "MongoDB", "Redis", "Docker", "Kubernetes",
+    # AI/ML Stack
     "Machine Learning", "LLM", "LangChain", "LangGraph", "AI Agents",
-    "Agentic AI", "FastAPI", "Express.js", "NestJS", "Docker",
+    "Agentic AI", "RAG", "GraphQL",
 }
 
 # Acceptable role categories for a 2-year developer
 ACCEPTABLE_ROLES = {
     "backend developer", "backend engineer", "sde 1", "sde-1",
     "junior backend", "full stack developer", "python developer",
-    "node.js developer", "java developer", "ai engineer", "ml engineer",
-    "llm engineer", "ai agent engineer", "software developer",
-    "software engineer", "entry level engineer",
+    "node.js developer", "nestjs developer", "typescript developer",
+    "javascript backend", "express.js developer", "java developer",
+    "ai engineer", "ml engineer", "llm engineer", "ai agent engineer",
+    "software developer", "software engineer", "entry level engineer",
+    "api developer", "rest api developer", "microservices developer",
 }
 
 # Hard reject keywords (wrong field entirely)
