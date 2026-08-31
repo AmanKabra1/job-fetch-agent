@@ -154,16 +154,21 @@ def should_include_job(job: dict, candidate_experience_years: int = 2) -> tuple[
 
     # GATE 3: Skill matching - check if job is IN YOUR FIELD
     job_required_skills = _extract_required_skills(desc)
+
+    # If we can't extract ANY skills from the description, it might have incomplete info
+    # In that case, KEEP it anyway (likely from an API that returns minimal descriptions)
+    # Let the ranking algorithm decide if it's relevant
+    if len(job_required_skills) == 0:
+        return True, f"kept for ranking (no skill data in description, let ranking decide)"
+
     matched_skills = job_required_skills & CORE_STACK
 
-    # REJECT only if 0 matching skills (completely wrong field like C++/Rust/Blockchain when you do Python/Node)
+    # If we found skills but NONE match your core stack, reject it
     if len(matched_skills) == 0:
         missing_skills = sorted(job_required_skills)[:3]
-        return False, f"not your field (needs: {', '.join(missing_skills) or 'unknown'}, not Python/Node/Java/Backend/AI)"
+        return False, f"not your field (needs: {', '.join(missing_skills)}, not your Python/Node/Java/Backend/AI)"
 
     # KEEP: Has 1+ core skill match — IN YOUR FIELD
-    # Even if skill_match_pct is low (e.g., needs 5 skills, you have 1)
-    # Let ranking decide the order. Show 250+ jobs this way.
     skill_match_pct = (len(matched_skills) / len(job_required_skills)) * 100 if job_required_skills else 0
     return True, f"kept for ranking ({round(skill_match_pct)}% match, {len(matched_skills)}/{len(job_required_skills)} skills)"
 
