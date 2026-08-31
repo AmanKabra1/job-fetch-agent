@@ -1,18 +1,30 @@
 """
 Job Fit Analyzer - Deep analysis of each job to predict interview callback likelihood.
 
-For each of the TOP 50 jobs, this agent:
-1. Analyzes company, role, requirements
-2. Compares against candidate profile
-3. Scores: "Interview Likelihood" (0-100%)
-4. Recommends: "APPLY NOW", "Good Fit", "Maybe"
-5. Provides insights: What to emphasize, red flags, growth potential
+For each of the TOP 50 jobs, this agent uses Groq (free) to:
+1. Analyze company, role, requirements
+2. Compare against candidate profile
+3. Score: "Interview Likelihood" (0-100%)
+4. Recommend: "APPLY NOW", "Good Fit", "Maybe"
+5. Provide insights: What to emphasize, red flags, growth potential
+
+Uses Groq free API (mixtral-8x7b-32768) for cron compatibility.
 """
 
+import os
 import json
-from anthropic import Anthropic
 
-client = Anthropic()
+try:
+    from groq import Groq
+    GROQ_AVAILABLE = True
+except ImportError:
+    GROQ_AVAILABLE = False
+
+groq_client = None
+if GROQ_AVAILABLE:
+    groq_key = os.environ.get("GROQ_API_KEY")
+    if groq_key:
+        groq_client = Groq(api_key=groq_key)
 
 SYSTEM_PROMPT = """You are a career advisor analyzing job postings for a backend developer.
 
@@ -42,10 +54,17 @@ Be HONEST: If it's not a good fit, score low. If it's perfect, score high.
 
 def analyze_job(job: dict) -> dict:
     """
-    Analyze a single job to predict interview likelihood.
+    Analyze a single job to predict interview likelihood using Groq (free API).
 
     Returns analysis dict with interview_likelihood (0-100), fit_level, highlights, etc.
     """
+    if not groq_client:
+        return {
+            "interview_likelihood": 50,
+            "fit_level": "MAYBE",
+            "why_call": "Groq API not available",
+        }
+
     title = job.get("title", "")
     company = job.get("company", "")
     location = job.get("location", "")
@@ -53,21 +72,21 @@ def analyze_job(job: dict) -> dict:
     salary_min = job.get("min_amount", "")
     salary_max = job.get("max_amount", "")
 
-    if not description:
+    if not description or len(description) < 100:
         return {
             "interview_likelihood": 30,
             "fit_level": "MAYBE",
             "key_matches": [],
             "skill_gaps": [],
             "resume_highlights": [],
-            "red_flags": ["No job description provided"],
+            "red_flags": ["Incomplete job description"],
             "growth_potential": "MEDIUM",
-            "why_call": "No description to analyze",
+            "why_call": "Not enough data",
             "company_type": "unknown",
             "salary_bracket": "unknown",
         }
 
-    prompt = f"""Analyze this job posting for fit with the candidate profile:
+    prompt = f"""Analyze this job for a 2-year backend developer (Python/Node.js/Java):
 
 ROLE: {title}
 COMPANY: {company}
@@ -75,31 +94,42 @@ LOCATION: {location}
 SALARY: {salary_min}-{salary_max}
 
 JOB DESCRIPTION:
-{description[:2000]}
+{description[:1500]}
 
-Provide JSON analysis only (no markdown, no explanation)."""
+Respond with ONLY JSON (no markdown):
+{{
+  "interview_likelihood": 0-100,
+  "fit_level": "APPLY_NOW" | "GOOD_FIT" | "MAYBE" | "SKIP",
+  "key_matches": ["skill1"],
+  "skill_gaps": ["skill1"],
+  "resume_highlights": ["point1"],
+  "red_flags": ["flag1"],
+  "growth_potential": "HIGH" | "MEDIUM" | "LOW",
+  "why_call": "reason",
+  "company_type": "startup" | "scaleup" | "enterprise" | "other",
+  "salary_bracket": "3-5L" | "5-7L" | "7-9L" | "9-12L" | "12L+"
+}}"""
 
     try:
-        message = client.messages.create(
-            model="claude-opus-5",
-            max_tokens=500,
-            system=SYSTEM_PROMPT,
+        message = groq_client.chat.completions.create(
+            model="mixtral-8x7b-32768",
             messages=[{"role": "user", "content": prompt}],
+            temperature=0.3,
+            max_tokens=400,
         )
 
-        response_text = message.content[0].text.strip()
+        response_text = message.choices[0].message.content.strip()
 
         # Extract JSON
         if response_text.startswith("{"):
             analysis = json.loads(response_text)
         else:
-            # Try to find JSON in response
             start = response_text.find("{")
             end = response_text.rfind("}") + 1
             if start >= 0 and end > start:
                 analysis = json.loads(response_text[start:end])
             else:
-                return {"error": "Could not parse response"}
+                return {"interview_likelihood": 50, "fit_level": "MAYBE"}
 
         return analysis
 
@@ -107,7 +137,7 @@ Provide JSON analysis only (no markdown, no explanation)."""
         return {
             "interview_likelihood": 50,
             "fit_level": "MAYBE",
-            "why_call": f"Analysis failed: {str(e)[:100]}",
+            "why_call": f"Analysis error (will retry): {str(e)[:50]}",
         }
 
 
