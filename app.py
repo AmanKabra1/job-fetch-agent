@@ -2288,32 +2288,48 @@ INDEX_HTML = r"""<!doctype html>
         </details>
       </div>
 
-      <div id="projects-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-top: 15px;"></div>
+      <div id="projects-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-top: 15px;">
+        <p style="grid-column: 1/-1; color: #7db0ff;">⏳ Loading projects...</p>
+      </div>
     </div>
 
     <script>
     // Helper function to refresh projects display
     function displayProjectsList() {
+      console.log('Loading projects...');
+      const list = document.getElementById('projects-list');
+      if (!list) {
+        console.error('projects-list element not found');
+        return;
+      }
+
       fetch('/api/projects/list')
-        .then(r => r.json())
+        .then(r => {
+          console.log('API response status:', r.status);
+          return r.json();
+        })
         .then(data => {
-          const list = document.getElementById('projects-list');
-          if (list) {
-            if (data.success && data.projects && data.projects.length > 0) {
-              list.innerHTML = data.projects.map(p => `
-                <div style="background: #1e293b; padding: 12px; border-radius: 4px; border-left: 4px solid #3b82f6; color: #e2e8f0; font-size: 13px;">
-                  <h5 style="margin: 0 0 8px 0; color: #e2e8f0;">${p.name}</h5>
-                  <p style="margin: 0 0 4px 0; color: #94a3b8;"><strong>Tech:</strong> ${(p.tech_stack || []).slice(0, 3).join(', ')}</p>
-                  <p style="margin: 0; color: #cbd5e1; font-size: 12px;">${p.description}</p>
-                  ${p.github_url ? `<p style="margin: 4px 0 0 0;"><a href="${p.github_url}" target="_blank" style="color: #7db0ff;">View on GitHub →</a></p>` : ''}
-                </div>
-              `).join('');
-            } else {
-              list.innerHTML = '<p style="color: #94a3b8; grid-column: 1/-1;">No projects yet. Add one or refresh from GitHub!</p>';
-            }
+          console.log('Projects data:', data);
+          if (data.success && data.projects && data.projects.length > 0) {
+            console.log('Displaying', data.projects.length, 'projects');
+            list.innerHTML = data.projects.map(p => `
+              <div style="background: #1e293b; padding: 12px; border-radius: 4px; border-left: 4px solid #3b82f6; color: #e2e8f0; font-size: 13px;">
+                <h5 style="margin: 0 0 8px 0; color: #e2e8f0; word-break: break-word;">${p.name || 'Unnamed'}</h5>
+                <p style="margin: 0 0 4px 0; color: #94a3b8;"><strong>Tech:</strong> ${(p.tech_stack || []).slice(0, 3).join(', ') || 'N/A'}</p>
+                <p style="margin: 0; color: #cbd5e1; font-size: 12px;">${p.description || 'No description'}</p>
+                ${p.github_url ? `<p style="margin: 4px 0 0 0;"><a href="${p.github_url}" target="_blank" style="color: #7db0ff;">View on GitHub →</a></p>` : ''}
+              </div>
+            `).join('');
+          } else {
+            console.log('No projects found or success=false');
+            list.innerHTML = '<p style="color: #94a3b8; grid-column: 1/-1;">No projects yet. Add one or refresh from GitHub!</p>';
           }
         })
-        .catch(e => console.log('Error loading projects:', e));
+        .catch(e => {
+          console.error('Error loading projects:', e);
+          const list = document.getElementById('projects-list');
+          if (list) list.innerHTML = '<p style="color: #ef4444; grid-column: 1/-1;">Error loading projects: ' + e.message + '</p>';
+        });
     }
 
     // Load projects on page load
