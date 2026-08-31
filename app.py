@@ -3133,6 +3133,118 @@ loadResumes();
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
 }
+
+// ===== NEW: Projects Section =====
+// Add projects section to the page after job feed
+const projectsHTML = `
+<div id="projects-section" style="margin: 30px auto; padding: 20px; background: #f3f4f6; border-radius: 8px; max-width: 900px;">
+  <h3>📁 My Projects</h3>
+  <button onclick="fetchGitHubProjects()" style="background: #6366f1; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 10px;">
+    🔄 Refresh from GitHub
+  </button>
+  <span id="github-status" style="margin-left: 10px;"></span>
+
+  <h4 style="margin-top: 20px;">Add New Project</h4>
+  <div id="project-form" style="background: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0;">
+    <form onsubmit="addProjectManually(event)">
+      <label style="display: block; margin-top: 12px; font-weight: 600;">Project Name *</label>
+      <input type="text" name="name" required placeholder="e.g., Job Fetch Agent" style="width: 100%; padding: 10px; margin-top: 4px; border: 1px solid #d1d5db; border-radius: 4px;">
+
+      <label style="display: block; margin-top: 12px; font-weight: 600;">Tech Stack * (comma-separated)</label>
+      <input type="text" name="skills" required placeholder="Python, FastAPI, Docker" style="width: 100%; padding: 10px; margin-top: 4px; border: 1px solid #d1d5db; border-radius: 4px;">
+
+      <label style="display: block; margin-top: 12px; font-weight: 600;">Description *</label>
+      <textarea name="description" required placeholder="What does this project do?" style="width: 100%; padding: 10px; margin-top: 4px; border: 1px solid #d1d5db; border-radius: 4px; min-height: 80px;"></textarea>
+
+      <label style="display: block; margin-top: 12px; font-weight: 600;">GitHub Link (optional)</label>
+      <input type="url" name="github_url" placeholder="https://github.com/..." style="width: 100%; padding: 10px; margin-top: 4px; border: 1px solid #d1d5db; border-radius: 4px;">
+
+      <button type="submit" style="background: #3b82f6; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin-top: 15px; font-weight: 600;">✅ Add to Portfolio</button>
+    </form>
+  </div>
+
+  <h4 style="margin-top: 20px;">Your Projects</h4>
+  <div id="projects-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
+</div>
+`;
+
+// Insert projects section into page (after jobs table)
+const jobsTable = document.querySelector('table');
+if (jobsTable) {
+  const container = document.createElement('div');
+  container.innerHTML = projectsHTML;
+  jobsTable.parentNode.insertBefore(container, jobsTable.nextSibling);
+}
+
+// Load projects on page load
+function loadProjects() {
+  fetch('/api/projects/list')
+    .then(r => r.json())
+    .then(data => {
+      if (data.success) {
+        const html = data.projects.map(p => \`
+          <div style="background: white; padding: 15px; border-radius: 4px; border-left: 4px solid #3b82f6;">
+            <h5>\${p.name}</h5>
+            <p><strong>Tech:</strong> \${(p.tech_stack || []).slice(0, 3).join(', ')}</p>
+            <p>\${p.description}</p>
+            \${p.github_url ? \`<a href="\${p.github_url}" target="_blank">View on GitHub →</a>\` : ''}
+          </div>
+        \`).join('');
+        const list = document.getElementById('projects-list');
+        if (list) list.innerHTML = html;
+      }
+    })
+    .catch(e => console.log('Error loading projects:', e));
+}
+
+async function addProjectManually(e) {
+  e.preventDefault();
+  const form = new FormData(e.target);
+  const skills = form.get('skills').split(',').map(s => s.trim());
+  try {
+    const res = await fetch('/api/projects/add', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        name: form.get('name'),
+        skills: skills,
+        description: form.get('description'),
+        github_url: form.get('github_url')
+      })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert('✓ Project added!');
+      e.target.reset();
+      loadProjects();
+    } else {
+      alert('Error: ' + (data.error || 'Unknown error'));
+    }
+  } catch (e) {
+    alert('Error: ' + e.message);
+  }
+}
+
+async function fetchGitHubProjects() {
+  const status = document.getElementById('github-status');
+  if (status) status.textContent = '⏳ Fetching...';
+  try {
+    const res = await fetch('/api/projects/fetch-github', {method: 'POST'});
+    const data = await res.json();
+    if (status) status.textContent = data.success ? \`✓ Fetched \${data.new_projects_added} new\` : (data.message || 'Fetch failed');
+    if (data.success) loadProjects();
+  } catch (e) {
+    if (status) status.textContent = 'Error: ' + e.message;
+  }
+}
+
+// Load projects when page ready
+document.addEventListener('DOMContentLoaded', loadProjects);
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadProjects);
+} else {
+  loadProjects();
+}
 </script>
 </body>
 </html>
