@@ -1,0 +1,360 @@
+{
+  "projects": [
+    {
+      "name": "job-fetch-agent",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/job-fetch-agent",
+      "language": "Python",
+      "stars": 0,
+      "updated": "2026-08-31T11:28:00Z",
+      "source": "github",
+      "tech_stack": [
+        "Python"
+      ]
+    },
+    {
+      "name": "ai-travel-planner",
+      "description": "Production multi-agent AI travel planner \u2014 LangGraph, Groq LLaMA 3.3, MCP (flights/weather/hotels), human-in-the-loop, PostgreSQL memory, Streamlit UI",
+      "github_url": "https://github.com/AmanKabra1/ai-travel-planner",
+      "language": "Python",
+      "stars": 0,
+      "updated": "2026-08-29T18:27:20Z",
+      "source": "github",
+      "tech_stack": [
+        "Python",
+        "LangGraph",
+        "PostgreSQL",
+        "AI",
+        "Machine Learning"
+      ]
+    },
+    {
+      "name": "singplay",
+      "description": "SingPlay \u2014 music streaming, DJ, karaoke & Sing Along app built with Next.js 16, TiDB, Drizzle ORM",
+      "github_url": "https://github.com/AmanKabra1/singplay",
+      "language": "TypeScript",
+      "stars": 0,
+      "updated": "2026-08-12T05:18:27Z",
+      "source": "github",
+      "tech_stack": [
+        "TypeScript"
+      ]
+    },
+    {
+      "name": "langgraph-chatbot",
+      "description": "Production LangGraph chatbot with embeddable widget, RAG, web search and multi-tenant client management",
+      "github_url": "https://github.com/AmanKabra1/langgraph-chatbot",
+      "language": "Python",
+      "stars": 0,
+      "updated": "2026-08-07T05:18:22Z",
+      "source": "github",
+      "tech_stack": [
+        "Python",
+        "LangGraph"
+      ]
+    },
+    {
+      "name": "ai-form-builder",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/ai-form-builder",
+      "language": "PHP",
+      "stars": 0,
+      "updated": "2026-08-05T17:34:02Z",
+      "source": "github",
+      "tech_stack": [
+        "PHP",
+        "AI"
+      ]
+    },
+    {
+      "name": "langgraph-blog-writer",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/langgraph-blog-writer",
+      "language": "Python",
+      "stars": 0,
+      "updated": "2026-08-03T05:54:33Z",
+      "source": "github",
+      "tech_stack": [
+        "Python",
+        "LangGraph"
+      ]
+    },
+    {
+      "name": "live-location-share",
+      "description": "Live location sharing PWA - connect with share codes and auto-share every 3 hours",
+      "github_url": "https://github.com/AmanKabra1/live-location-share",
+      "language": "HTML",
+      "stars": 0,
+      "updated": "2026-07-15T04:16:07Z",
+      "source": "github",
+      "tech_stack": [
+        "HTML"
+      ]
+    },
+    {
+      "name": "SB",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/SB",
+      "language": "Java",
+      "stars": 0,
+      "updated": "2026-06-23T09:59:05Z",
+      "source": "github",
+      "tech_stack": [
+        "Java"
+      ]
+    },
+    {
+      "name": "hotel_management_project",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/hotel_management_project",
+      "language": "HTML",
+      "stars": 0,
+      "updated": "2026-06-23T09:41:44Z",
+      "source": "github",
+      "tech_stack": [
+        "HTML"
+      ]
+    },
+    {
+      "name": "task-management-api",
+      "description": "Express + TypeScript REST API: JWT auth, role-based access, MongoDB (Mongoose), Redis, Zod validation",
+      "github_url": "https://github.com/AmanKabra1/task-management-api",
+      "language": "TypeScript",
+      "stars": 0,
+      "updated": "2026-06-23T09:10:01Z",
+      "source": "github",
+      "tech_stack": [
+        "TypeScript",
+        "MongoDB",
+        "Redis"
+      ]
+    },
+    {
+      "name": "angular-tut",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/angular-tut",
+      "language": null,
+      "stars": 0,
+      "updated": "2026-06-23T08:02:33Z",
+      "source": "github",
+      "tech_stack": []
+    },
+    {
+      "name": "Next",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/Next",
+      "language": null,
+      "stars": 0,
+      "updated": "2026-06-23T07:38:10Z",
+      "source": "github",
+      "tech_stack": []
+    },
+    {
+      "name": "demo1",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/demo1",
+      "language": "TypeScript",
+      "stars": 0,
+      "updated": "2026-06-23T06:52:00Z",
+      "source": "github",
+      "tech_stack": [
+        "TypeScript"
+      ]
+    },
+    {
+      "name": "babbar",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/babbar",
+      "language": "C++",
+      "stars": 0,
+      "updated": "2026-06-23T06:42:37Z",
+      "source": "github",
+      "tech_stack": [
+        "C++"
+      ]
+    },
+    {
+      "name": "ML-AI-IT",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/ML-AI-IT",
+      "language": "Jupyter Notebook",
+      "stars": 1,
+      "updated": "2026-06-23T06:32:52Z",
+      "source": "github",
+      "tech_stack": [
+        "Jupyter Notebook",
+        "AI",
+        "Machine Learning"
+      ]
+    },
+    {
+      "name": "amrutam-backend1",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/amrutam-backend1",
+      "language": "JavaScript",
+      "stars": 0,
+      "updated": "2026-06-23T06:24:44Z",
+      "source": "github",
+      "tech_stack": [
+        "JavaScript"
+      ]
+    },
+    {
+      "name": "uber-services",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/uber-services",
+      "language": "TypeScript",
+      "stars": 0,
+      "updated": "2026-06-23T06:05:51Z",
+      "source": "github",
+      "tech_stack": [
+        "TypeScript"
+      ]
+    },
+    {
+      "name": "Project-NodeJS",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/Project-NodeJS",
+      "language": "CSS",
+      "stars": 0,
+      "updated": "2026-06-23T05:16:31Z",
+      "source": "github",
+      "tech_stack": [
+        "CSS",
+        "Node.js"
+      ]
+    },
+    {
+      "name": "vendor-management",
+      "description": "Vendor Management System (NestJS + Angular) with JWT auth & role-based admin/vendor portals \u2014 evolving into RideFleet, a shared delivery-rider platform",
+      "github_url": "https://github.com/AmanKabra1/vendor-management",
+      "language": "TypeScript",
+      "stars": 0,
+      "updated": "2026-06-23T05:08:50Z",
+      "source": "github",
+      "tech_stack": [
+        "TypeScript"
+      ]
+    },
+    {
+      "name": "finance-backend",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/finance-backend",
+      "language": "TypeScript",
+      "stars": 0,
+      "updated": "2026-06-23T05:07:38Z",
+      "source": "github",
+      "tech_stack": [
+        "TypeScript"
+      ]
+    },
+    {
+      "name": "AgenticAI",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/AgenticAI",
+      "language": "Jupyter Notebook",
+      "stars": 0,
+      "updated": "2026-06-19T09:27:12Z",
+      "source": "github",
+      "tech_stack": [
+        "Jupyter Notebook",
+        "AI"
+      ]
+    },
+    {
+      "name": "AmanKabra1",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/AmanKabra1",
+      "language": null,
+      "stars": 0,
+      "updated": "2026-06-18T04:59:53Z",
+      "source": "github",
+      "tech_stack": []
+    },
+    {
+      "name": "langchain-learning",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/langchain-learning",
+      "language": "Jupyter Notebook",
+      "stars": 0,
+      "updated": "2026-06-17T06:14:10Z",
+      "source": "github",
+      "tech_stack": [
+        "Jupyter Notebook",
+        "LangChain",
+        "AI"
+      ]
+    },
+    {
+      "name": "Cricket",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/Cricket",
+      "language": "TypeScript",
+      "stars": 0,
+      "updated": "2026-06-17T04:48:11Z",
+      "source": "github",
+      "tech_stack": [
+        "TypeScript"
+      ]
+    },
+    {
+      "name": "CoWorking-Space",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/CoWorking-Space",
+      "language": "Python",
+      "stars": 0,
+      "updated": "2026-06-17T04:46:52Z",
+      "source": "github",
+      "tech_stack": [
+        "Python"
+      ]
+    },
+    {
+      "name": "aman_portfolio-app",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/aman_portfolio-app",
+      "language": "TypeScript",
+      "stars": 0,
+      "updated": "2026-06-16T10:46:48Z",
+      "source": "github",
+      "tech_stack": [
+        "TypeScript"
+      ]
+    },
+    {
+      "name": "Images",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/Images",
+      "language": null,
+      "stars": 0,
+      "updated": "2025-01-09T10:15:06Z",
+      "source": "github",
+      "tech_stack": []
+    },
+    {
+      "name": "demo",
+      "description": null,
+      "github_url": "https://github.com/AmanKabra1/demo",
+      "language": null,
+      "stars": 0,
+      "updated": "2024-12-06T09:29:49Z",
+      "source": "github",
+      "tech_stack": []
+    },
+    {
+      "name": "UAT Test Project",
+      "tech_stack": [
+        "Python",
+        "Testing"
+      ],
+      "description": "This is a UAT test project for verification",
+      "github_url": "",
+      "source": "manual",
+      "added_by_email": "amankabra.it24@gmail.com",
+      "added_date": "2026-08-31T20:09:36.539301"
+    }
+  ],
+  "last_updated": "2026-08-31T20:09:36.539905",
+  "source": "github",
+  "total": 29
+}
