@@ -2257,6 +2257,40 @@ INDEX_HTML = r"""<!doctype html>
     <p class="note" style="margin:-4px 0 12px">Boards: LinkedIn · Indeed · Google · Glassdoor · ZipRecruiter · Naukri · Bayt · Remotive · RemoteOK · Jobicy · Arbeitnow — all real, directly-posted listings. Ranked by skill/ATS match and your <b>target role</b>, then preference for <b>remote</b>, <b>big companies / 500+ employees</b>, roles that fit your experience, <b>pay above your current salary</b>, and the <b>freshest postings</b>. Remote jobs are always included. <i>Experience auto-detected from your resume if left blank.</i></p>
     <p class="note" id="feedHint" style="margin:-4px 0 12px;display:none">Hosted mode reads the daily job feed. Upload your resume (and/or type a role/skills) above and click <b>Load latest jobs</b> to rank the feed to your resume — or click it with nothing filled in to see the whole ranked feed.</p>
 
+    <!-- ===== PROJECTS SECTION ===== -->
+    <div id="projects-section" style="margin: 20px 0; padding: 20px; background: #0f172a; border: 1px solid #1e293b; border-radius: 8px;">
+      <h3 style="margin-top: 0; color: #e2e8f0;">📁 My Projects</h3>
+      <p style="color: #94a3b8; font-size: 13px; margin: 10px 0;">Your project portfolio is used to match jobs and tailor resumes automatically.</p>
+
+      <button onclick="fetchGitHubProjects()" style="background: #6366f1; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; margin-bottom: 15px; font-weight: 600;">🔄 Refresh from GitHub</button>
+      <span id="github-status" style="margin-left: 10px; color: #94a3b8;"></span>
+
+      <div style="margin-top: 15px;">
+        <details style="cursor: pointer;">
+          <summary style="color: #7db0ff; font-weight: 600; margin-bottom: 10px;">+ Add New Project</summary>
+          <div id="project-form" style="background: #1e293b; padding: 15px; border-radius: 4px; margin-top: 10px; border: 1px solid #334155;">
+            <form onsubmit="addProjectManually(event)">
+              <label style="display: block; color: #e2e8f0; margin-top: 10px; font-weight: 600; font-size: 13px;">Project Name *</label>
+              <input type="text" name="name" required placeholder="e.g., Job Fetch Agent" style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #334155; border-radius: 4px; background: #0f172a; color: #e2e8f0; font-size: 13px;">
+
+              <label style="display: block; color: #e2e8f0; margin-top: 10px; font-weight: 600; font-size: 13px;">Tech Stack * (comma-separated)</label>
+              <input type="text" name="skills" required placeholder="Python, FastAPI, Docker" style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #334155; border-radius: 4px; background: #0f172a; color: #e2e8f0; font-size: 13px;">
+
+              <label style="display: block; color: #e2e8f0; margin-top: 10px; font-weight: 600; font-size: 13px;">Description *</label>
+              <textarea name="description" required placeholder="What does this project do?" style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #334155; border-radius: 4px; background: #0f172a; color: #e2e8f0; font-size: 13px; min-height: 60px;"></textarea>
+
+              <label style="display: block; color: #e2e8f0; margin-top: 10px; font-weight: 600; font-size: 13px;">GitHub Link (optional)</label>
+              <input type="url" name="github_url" placeholder="https://github.com/..." style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #334155; border-radius: 4px; background: #0f172a; color: #e2e8f0; font-size: 13px;">
+
+              <button type="submit" style="background: #3b82f6; color: white; padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; margin-top: 12px; font-weight: 600; font-size: 13px;">✅ Add to Portfolio</button>
+            </form>
+          </div>
+        </details>
+      </div>
+
+      <div id="projects-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-top: 15px;"></div>
+    </div>
+
     <div class="table-wrap">
     <table id="jobsTable">
       <thead><tr>
@@ -3111,6 +3145,7 @@ $('#genBtn').onclick=generateResume;
 $('#tailorBtn').onclick=tailorResume;
 $('#refreshResumes').onclick=loadResumes;
 showTab('find');
+loadProjects();  // Load projects automatically on page load
 // SAME all-websites result everywhere:
 //   The cron scrapes ALL boards (LinkedIn/Indeed/Google/Glassdoor/ZipRecruiter/
 //   Naukri/Bayt) + career pages + free APIs into data/jobs.json, every few hours,
