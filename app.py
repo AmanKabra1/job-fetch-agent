@@ -2294,8 +2294,12 @@ INDEX_HTML = r"""<!doctype html>
         </details>
       </div>
 
-      <div id="projects-list" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; margin-top: 15px;">
-        <p style="grid-column: 1/-1; color: #7db0ff;">⏳ Loading projects...</p>
+      <div style="margin-top: 15px;">
+        <label style="color: #e2e8f0; font-weight: 600; display: block; margin-bottom: 8px;">Select Best Project for Resume:</label>
+        <select id="projects-dropdown" style="background: #1e293b; color: #e2e8f0; border: 1px solid #334155; border-radius: 4px; padding: 10px; width: 100%; font-size: 13px; cursor: pointer;">
+          <option value="">Loading projects...</option>
+        </select>
+        <p style="color: #94a3b8; font-size: 12px; margin-top: 8px;">Total: <span id="projects-count">0</span> projects</p>
       </div>
     </div>
 
@@ -3174,6 +3178,30 @@ loadResumes();
 // PWA: register the service worker so the site is installable and works offline.
 if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
+}
+
+// Load projects dropdown
+function loadProjectsDropdown() {
+  fetch('/api/projects/list')
+    .then(r => r.json())
+    .then(data => {
+      const dropdown = document.getElementById('projects-dropdown');
+      const countEl = document.getElementById('projects-count');
+      if (dropdown && data.success && data.projects) {
+        const projects = data.projects;
+        countEl.textContent = projects.length;
+        dropdown.innerHTML = '<option value="">-- Select a project --</option>' +
+          projects.map(p => `<option value="${p.name}">${p.name} (${(p.tech_stack || []).slice(0,2).join(', ')})</option>`).join('');
+      }
+    })
+    .catch(e => console.log('Error loading projects:', e));
+}
+
+// Load projects when page is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', loadProjectsDropdown);
+} else {
+  loadProjectsDropdown();
 }
 </script>
 </body>
