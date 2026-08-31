@@ -3159,6 +3159,37 @@ $('#jobLoc').addEventListener('input', ()=>{ shown=PAGE; renderJobs(); });
 $('#genBtn').onclick=generateResume;
 $('#tailorBtn').onclick=tailorResume;
 $('#refreshResumes').onclick=loadResumes;
+
+// GitHub refresh button
+const githubBtn = $('#github-refresh-btn');
+if (githubBtn) {
+  githubBtn.onclick = async () => {
+    const statusEl = $('#github-status');
+    const oldText = githubBtn.textContent;
+
+    try {
+      githubBtn.disabled = true;
+      githubBtn.textContent = '⏳ Fetching...';
+      statusEl.textContent = '';
+
+      const res = await fetch('/api/projects/fetch-github', { method: 'POST' });
+      const data = await res.json();
+
+      if (data.success || data.projects_fetched) {
+        statusEl.textContent = `✓ Fetched ${data.projects_fetched || 0} projects`;
+        setTimeout(() => loadProjects(), 500); // Reload dropdown
+      } else {
+        statusEl.textContent = '✗ ' + (data.message || 'Failed');
+      }
+    } catch (e) {
+      statusEl.textContent = '✗ Error: ' + e.message;
+    } finally {
+      githubBtn.disabled = false;
+      githubBtn.textContent = oldText;
+    }
+  };
+}
+
 showTab('find');
 // SAME all-websites result everywhere:
 //   The cron scrapes ALL boards (LinkedIn/Indeed/Google/Glassdoor/ZipRecruiter/
@@ -3186,24 +3217,32 @@ if('serviceWorker' in navigator){
 // Load projects dropdown
 function loadProjects() {
   fetch('/api/projects/list')
-    .then(r => r.json())
+    .then(r => {
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      return r.json();
+    })
     .then(data => {
-      if (data.success && data.projects && data.projects.length > 0) {
+      console.log('Projects API response:', data);
+
+      if (data.success && data.projects) {
         const projects = data.projects;
         const dropdown = document.getElementById('projects-dropdown');
         const countEl = document.getElementById('projects-count');
 
         // Update count
         countEl.textContent = projects.length;
+        console.log(`Loaded ${projects.length} projects`);
 
         // Update dropdown with project names only
         if (dropdown) {
           dropdown.innerHTML = '<option value="">-- Select a project --</option>' +
             projects.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
         }
+      } else {
+        console.error('API response not successful:', data);
       }
     })
-    .catch(e => console.log('Error loading projects:', e));
+    .catch(e => console.error('Error loading projects:', e));
 }
 
 // Load projects when page is ready
