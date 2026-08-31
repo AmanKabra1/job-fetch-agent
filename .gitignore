@@ -24,5 +24,8 @@ data/*
 !data/jobs.json
 resume/
 
+# Allow projects and jobs data files (committed data)
+!data/projects.json
+
 # Vercel
 .vercel/
