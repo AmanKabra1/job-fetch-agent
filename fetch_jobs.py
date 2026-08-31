@@ -394,22 +394,29 @@ def main():
         print(f"    removed {dedup_removed} duplicate jobs from previous runs", flush=True)
     print(f"    now have {len(today_rows)} new unique jobs", flush=True)
 
-    # REQUIREMENT AGENT: Use LangGraph to verify:
-    # 1. Job is still open (not expired > 30 days)
-    # 2. Job truly meets requirements (not misleading)
-    # NOTE: Limited to top 50 jobs to stay within free Groq API quota
-    print(f"  verifying job requirements & expiration (top 50 jobs) ...", flush=True)
-    profile_dict = {
-        "experience_years": 2,
-        "job_titles": getattr(RP, "TARGET_TITLES", ["Backend Developer", "Software Engineer"]),
-        "all_searchable_skills": [s for items in RP.SKILLS.values() for s in items],
-    }
-    verified_rows, req_stats = JRA.filter_jobs_with_agent(today_rows, profile_dict, max_assess=50)
-    stats = req_stats["stats"]
-    if stats["filtered_expired"] > 0 or stats["filtered_requirements"] > 0:
-        print(f"    verification: kept {stats['kept']}, "
-              f"filtered {stats['filtered_expired']} expired + {stats['filtered_requirements']} don't meet requirements", flush=True)
-    today_rows = verified_rows
+    # REQUIREMENT AGENT: Temporarily disabled to debug why only 12 jobs show
+    # Uncomment below to re-enable Groq verification
+    # profile_dict = {
+    #     "experience_years": 2,
+    #     "job_titles": getattr(RP, "TARGET_TITLES", ["Backend Developer", "Software Engineer"]),
+    #     "all_searchable_skills": [s for items in RP.SKILLS.values() for s in items],
+    # }
+    # verified_rows, req_stats = JRA.filter_jobs_with_agent(today_rows, profile_dict, max_assess=50)
+    # today_rows = verified_rows
+
+    # For now, skip Groq verification - just check basic expiration
+    print(f"  checking job expiration only (Groq verification disabled for debugging) ...", flush=True)
+    expired_count = 0
+    fresh_rows = []
+    for job in today_rows:
+        exp_check = JRA.check_job_expiration(job)
+        if not exp_check.get("is_expired", False):
+            fresh_rows.append(job)
+        else:
+            expired_count += 1
+    if expired_count > 0:
+        print(f"    filtered {expired_count} expired jobs, kept {len(fresh_rows)}", flush=True)
+    today_rows = fresh_rows
 
     # REPLACE, not append: each run the feed is this run's latest jobs, ranked.
     existing = load_existing()
