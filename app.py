@@ -2295,16 +2295,14 @@ INDEX_HTML = r"""<!doctype html>
       </div>
 
       <div style="margin-top: 15px;">
-        <label style="color: #e2e8f0; font-weight: 600; display: block; margin-bottom: 8px;">Select Best Project for Resume:</label>
-        <select id="projects-dropdown" style="background: #1e293b; color: #e2e8f0; border: 1px solid #334155; border-radius: 4px; padding: 10px; width: 100%; font-size: 13px; cursor: pointer;">
-          <option value="">Loading projects...</option>
-        </select>
-        <p style="color: #94a3b8; font-size: 12px; margin-top: 8px;">Total: <span id="projects-count">0</span> projects</p>
-      </div>
-
-      <h4 style="color: #e2e8f0; margin-top: 20px; margin-bottom: 12px;">Your Project Portfolio:</h4>
-      <div id="projects-gallery" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; margin-top: 12px;">
-        <p style="grid-column: 1/-1; color: #7db0ff;">Loading projects...</p>
+        <details style="cursor: pointer;">
+          <summary style="color: #7db0ff; font-weight: 600; margin-bottom: 10px;">+ My Projects (<span id="projects-count">0</span>)</summary>
+          <div style="background: #1e293b; padding: 12px; border-radius: 4px; margin-top: 8px; border: 1px solid #334155;">
+            <select id="projects-dropdown" style="background: #0f172a; color: #e2e8f0; border: 1px solid #334155; border-radius: 4px; padding: 10px; width: 100%; font-size: 13px; cursor: pointer;">
+              <option value="">-- Select a project --</option>
+            </select>
+          </div>
+        </details>
       </div>
     </div>
 
@@ -3185,7 +3183,7 @@ if('serviceWorker' in navigator){
   window.addEventListener('load', ()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));
 }
 
-// Load projects dropdown and gallery
+// Load projects dropdown
 function loadProjects() {
   fetch('/api/projects/list')
     .then(r => r.json())
@@ -3194,27 +3192,14 @@ function loadProjects() {
         const projects = data.projects;
         const dropdown = document.getElementById('projects-dropdown');
         const countEl = document.getElementById('projects-count');
-        const gallery = document.getElementById('projects-gallery');
 
         // Update count
         countEl.textContent = projects.length;
 
-        // Update dropdown
+        // Update dropdown with project names only
         if (dropdown) {
           dropdown.innerHTML = '<option value="">-- Select a project --</option>' +
             projects.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
-        }
-
-        // Create project cards in gallery
-        if (gallery) {
-          gallery.innerHTML = projects.map(p => `
-            <div style="background: #1e293b; border: 1px solid #334155; border-radius: 6px; padding: 14px; cursor: pointer; transition: all 0.2s;">
-              <h5 style="margin: 0 0 8px 0; color: #e2e8f0; font-size: 14px; font-weight: 600;">${p.name}</h5>
-              <p style="margin: 0 0 8px 0; color: #94a3b8; font-size: 12px;"><strong>Tech:</strong> ${(p.tech_stack || []).slice(0,4).join(', ') || 'N/A'}</p>
-              <p style="margin: 0; color: #cbd5e1; font-size: 12px; line-height: 1.4;">${(p.description || 'No description').substring(0, 80)}...</p>
-              ${p.github_url ? `<p style="margin-top: 8px;"><a href="${p.github_url}" target="_blank" style="color: #7db0ff; font-size: 12px;">View on GitHub →</a></p>` : ''}
-            </div>
-          `).join('');
         }
       }
     })
