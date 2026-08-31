@@ -3191,7 +3191,7 @@ function loadProjectsDropdown() {
         const projects = data.projects;
         countEl.textContent = projects.length;
         dropdown.innerHTML = '<option value="">-- Select a project --</option>' +
-          projects.map(p => `<option value="${p.name}">${p.name} (${(p.tech_stack || []).slice(0,2).join(', ')})</option>`).join('');
+          projects.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
       }
     })
     .catch(e => console.log('Error loading projects:', e));
