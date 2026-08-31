@@ -50,24 +50,14 @@ def _quiet_jobspy():
 # Node / full-stack) plus the SDE and AI/ML roles you want. Boards search by role,
 # so we keep these as roles; your detailed SKILLS drive the RANKING below.
 SEARCH_TERMS = [
-    # Backend roles (primary focus)
-    "backend developer", "backend engineer", "Python backend", "Node.js backend",
-    "Java backend", "Go backend", "API developer", "web developer",
-
-    # General software roles
-    "software developer", "software engineer", "SDE 1", "SDE-1",
-    "junior engineer", "junior developer", "associate engineer", "entry level developer",
-
-    # Full stack
-    "full stack developer", "full stack engineer",
-
-    # Specialized roles (AI/ML boom in 2026)
-    "machine learning engineer", "ML engineer", "AI engineer", "LLM engineer",
-    "AI agent engineer", "GenAI engineer", "data engineer", "data scientist",
-
-    # Additional high-volume searches
-    "Python developer", "Node developer", "JavaScript developer",
-    "REST API developer", "microservices developer", "cloud engineer",
+    # Most important / highest volume
+    "backend developer", "software developer", "software engineer",
+    "Python developer", "Node.js developer", "Java developer",
+    "full stack developer", "SDE 1",
+    "junior engineer", "machine learning engineer",
+    "AI engineer", "data engineer",
+    "backend engineer", "API developer",
+    "web developer", "microservices developer",
 ]
 
 # Extra skills/keywords to emphasise on top of the resume. Edit freely.
@@ -107,18 +97,18 @@ SITES = ["linkedin", "indeed", "google", "glassdoor", "zip_recruiter", "naukri",
 HOURS_OLD = 72
 
 # How many results to pull per search term, per site.
-# Increased to 150 for VERY aggressive job discovery to ensure TODAY's jobs appear
-RESULTS_WANTED = 150
+# Balanced at 50 for speed + volume (15 terms × 7 boards × 50 = decent coverage)
+RESULTS_WANTED = 50
 
 # Where the daily feed is written. The Vercel app reads this same file.
 OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "jobs.json")
 # Cap the stored feed so the committed file doesn't grow without bound.
 MAX_STORED = 1000
 # Always keep at least this many fresh jobs in the feed (when that many were fetched).
-# Increased to 300 to ensure plenty of options
-MIN_KEEP_BEFORE_RELAX = 300
+# Realistic target: 100-150 quality jobs per cron run
+MIN_KEEP_BEFORE_RELAX = 100
 # even if some fall below the quality gate — so the hosted page is never sparse.
-MIN_FEED = 500  # Increased to 500 - VERY aggressive job discovery to ensure TODAY's jobs
+MIN_FEED = 150  # Realistic target - 15 search terms × 50 results × 7 boards = good coverage
 
 # Columns we keep, in order. (jobspy returns many more; these are the useful ones.)
 COLUMNS = [
@@ -192,11 +182,9 @@ def fetch_all_jobs() -> pd.DataFrame:
     # Extra real sources — Remotive + RemoteOK + Jobicy + Arbeitnow + Himalayas AND
     # direct company career pages (Greenhouse/Lever/Ashby ATS APIs + HN + WWR).
     #
-    # The cron runs only twice a day (see the workflow schedule), so the Tavily
-    # sources (web-discovered ATS boards, company careers, LinkedIn hiring posts)
-    # run on every run and still stay within the free Tavily tier (1000/mo). Set
-    # DISABLE_TAVILY=1 to force them off (e.g. if you switch to a busier schedule).
-    use_tavily = os.environ.get("DISABLE_TAVILY") != "1"
+    # The cron runs 3x a day, so disable Tavily sources for speed.
+    # Tavily is too slow for this frequency. Focus on direct board APIs instead.
+    use_tavily = False  # DISABLED for speed - direct APIs are enough
     print(f"  Tavily sources this run: {'ON' if use_tavily else 'off (free sources only)'}",
           flush=True)
     try:
