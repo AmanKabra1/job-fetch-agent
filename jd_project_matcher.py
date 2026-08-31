@@ -61,7 +61,7 @@ def get_best_project_for_jd(job: dict, top_n: int = 3) -> dict:
             "recommendation": "Limited job data; returning most recent project"
         }
 
-    prompt = f"""Analyze this job and find the BEST project from Aman's portfolio to highlight.
+    prompt = f"""Analyze this job and find the ABSOLUTE BEST project from ALL {len(projects)} projects in Aman's portfolio.
 
 JOB:
 Title: {title}
@@ -69,8 +69,8 @@ Company: {company}
 Description (first 1500 chars):
 {description[:1500]}
 
-PROJECTS:
-{json.dumps(projects[:10], indent=2)}  # Top 10 projects
+ALL PROJECTS IN PORTFOLIO ({len(projects)} total):
+{json.dumps(projects, indent=2)}
 
 For EACH project, score how well it matches this JD (0-100):
 - Does project use skills they need? (40%)
