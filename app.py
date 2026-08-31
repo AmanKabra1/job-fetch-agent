@@ -1687,7 +1687,7 @@ def api_apply_kit(payload: dict):
     }
 
     try:
-        # Generate tailored resume WITH project swapping (40%+ match threshold)
+        # Generate tailored resume WITH project swapping (60%+ match threshold)
         result = DRG.generate_tailored_resume(job_doc)
         resume_text = result.get("resume", {}).get("summary", "")
         best_project = result.get("best_project", {})
