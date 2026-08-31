@@ -3176,8 +3176,14 @@ if (githubBtn) {
       const data = await res.json();
 
       if (data.success || data.projects_fetched) {
-        statusEl.textContent = `✓ Fetched ${data.projects_fetched || 0} projects`;
-        setTimeout(() => loadProjects(), 500); // Reload dropdown
+        const count = data.projects_fetched || 0;
+        statusEl.textContent = `✓ Fetched ${count} projects`;
+
+        // Force reload dropdown after a delay to ensure file is saved
+        setTimeout(() => {
+          console.log('Reloading projects dropdown after GitHub fetch...');
+          loadProjects();
+        }, 1000);
       } else {
         statusEl.textContent = '✗ ' + (data.message || 'Failed');
       }
