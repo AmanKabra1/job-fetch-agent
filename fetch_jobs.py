@@ -105,18 +105,18 @@ SITES = ["linkedin", "indeed", "google", "glassdoor", "zip_recruiter", "naukri",
 HOURS_OLD = 72
 
 # How many results to pull per search term, per site.
-# Balanced at 50 for speed + volume (15 terms × 7 boards × 50 = decent coverage)
-RESULTS_WANTED = 50
+# Increased to 100 for more job options matching user skills
+RESULTS_WANTED = 100
 
 # Where the daily feed is written. The Vercel app reads this same file.
 OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "jobs.json")
 # Cap the stored feed so the committed file doesn't grow without bound.
-MAX_STORED = 1000
+MAX_STORED = 2000  # Increased to show 300+ jobs
 # Always keep at least this many fresh jobs in the feed (when that many were fetched).
-# Realistic target: 100-150 quality jobs per cron run
-MIN_KEEP_BEFORE_RELAX = 100
+# Realistic target: 200-300 quality jobs per cron run (more chances to apply)
+MIN_KEEP_BEFORE_RELAX = 200
 # even if some fall below the quality gate — so the hosted page is never sparse.
-MIN_FEED = 150  # Realistic target - 15 search terms × 50 results × 7 boards = good coverage
+MIN_FEED = 300  # Target: Show 300+ jobs matching user's skills, experience, requirements
 
 # Columns we keep, in order. (jobspy returns many more; these are the useful ones.)
 COLUMNS = [
