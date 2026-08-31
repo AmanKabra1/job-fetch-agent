@@ -75,6 +75,8 @@ def list_projects() -> dict:
         data = PM.load_projects()
         projects = data.get("projects", [])
 
+        print(f"  API: loaded {len(projects)} projects from storage", flush=True)
+
         return {
             "success": True,
             "projects": projects,
@@ -84,6 +86,7 @@ def list_projects() -> dict:
             "message": f"{len(projects)} projects in your portfolio"
         }
     except Exception as e:
+        print(f"  API ERROR loading projects: {e}", flush=True)
         return {
             "success": False,
             "error": str(e),
