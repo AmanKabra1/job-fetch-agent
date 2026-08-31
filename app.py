@@ -1900,6 +1900,68 @@ def service_worker():
                     headers={"Cache-Control": "no-cache"})
 
 
+# ============================================================================
+# NEW API ENDPOINTS - Resume Generation & Project Management
+# ============================================================================
+
+@app.post("/api/resume/generate")
+async def api_generate_resume(request: Request):
+    """Generate tailored resume for a job"""
+    try:
+        data = await request.json()
+        job = data.get("job", {})
+        result = AH.generate_resume_for_job(job)
+        return JSONResponse(result)
+    except Exception as e:
+        return JSONResponse({"success": False, "error": str(e)}, status_code=400)
+
+@app.get("/api/projects/list")
+async def api_list_projects():
+    """List all user projects"""
+    return JSONResponse(AH.list_projects())
+
+@app.post("/api/projects/add")
+async def api_add_project(request: Request):
+    """Add project manually"""
+    try:
+        data = await request.json()
+        validation = AH.validate_project_input(
+            data.get("name"),
+            data.get("skills", []),
+            data.get("description")
+        )
+        if not validation["valid"]:
+            return JSONResponse(
+                {"success": False, "errors": validation["errors"]},
+                status_code=400
+            )
+        result = AH.add_project_manually(
+            name=data.get("name"),
+            skills=data.get("skills", []),
+            description=data.get("description"),
+            github_url=data.get("github_url")
+        )
+        return JSONResponse(result)
+    except Exception as e:
+        return JSONResponse({"success": False, "error": str(e)}, status_code=400)
+
+@app.post("/api/projects/fetch-github")
+async def api_fetch_github():
+    """Fetch projects from GitHub"""
+    return JSONResponse(AH.fetch_github_projects())
+
+@app.post("/api/job/analyze")
+async def api_analyze_job(request: Request):
+    """Get job analysis with best project"""
+    try:
+        data = await request.json()
+        job = data.get("job", {})
+        result = AH.get_job_with_analysis(job)
+        return JSONResponse(result)
+    except Exception as e:
+        return JSONResponse({"success": False, "error": str(e)}, status_code=400)
+
+
 @app.get("/", response_class=HTMLResponse)
 def index():
     """Landing page: choose between 'My Profile' (with cron) or 'Quick Analysis' (visitor, no cron)"""
