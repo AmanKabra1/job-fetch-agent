@@ -198,7 +198,7 @@ _TITLE_FAMILY = {"developer", "engineer", "programmer", "sde", "architect", "dev
 # it asks for are skills the PROFILE actually has. If the strict pass leaves too
 # few jobs we re-run at RELAX_SKILL_RATIO (and tell the user we relaxed) so the
 # page is never empty.
-MIN_SKILL_RATIO = 0.6        # >= 60% of a job's required skills must be in profile
+MIN_SKILL_RATIO = 0.6        # >= 75% of a job's required skills must be in profile
 RELAX_SKILL_RATIO = 0.50     # Relaxed to 50% (was 30%, too loose - filters bad jobs better)
 MIN_KEEP_BEFORE_RELAX = 15   # Need 15+ before relaxing (was 8 - stay strict longer)
 
@@ -1687,7 +1687,7 @@ def api_apply_kit(payload: dict):
     }
 
     try:
-        # Generate tailored resume WITH project swapping (60%+ match threshold)
+        # Generate tailored resume WITH project swapping (75%+ match threshold)
         result = DRG.generate_tailored_resume(job_doc)
         resume_text = result.get("resume", {}).get("summary", "")
         best_project = result.get("best_project", {})

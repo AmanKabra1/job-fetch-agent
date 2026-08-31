@@ -97,7 +97,7 @@ def generate_tailored_resume(job: dict, user_resume: dict = None, format_type: s
     # Update summary to match job
     tailored["summary"] = _generate_summary(jd_title, matched_skills[:3])
 
-    # Swap projects: Only swap if match score >= 60%
+    # Swap projects: Only swap if match score >= 75%
     # Otherwise keep original project and focus on keywords/ATS
     best_match_score = best_project.get("match_score", 0) if best_project else 0
 
