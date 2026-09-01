@@ -1728,6 +1728,11 @@ def api_apply_kit(payload: dict):
             out_files.append({"name": name, "mime": _DOCX_MIME,
                             "b64": base64.b64encode(data).decode()})
 
+        # Build matching explanation
+        matched_skills_str = ", ".join(matched[:5]) if matched else "Your profile skills"
+        project_tech = ", ".join(best_project.get("tech_stack", [])[:4]) if best_project.get("tech_stack") else ""
+        why_matched = f"This project uses {project_tech} which aligns with your job requirements" if project_tech else "Strong skill match for this role"
+
         return {
             "files": out_files,
             "emphasized": matched,
@@ -1739,6 +1744,8 @@ def api_apply_kit(payload: dict):
             "best_project_name": best_project.get("name", ""),
             "best_project_match": best_project.get("match_score", 0),
             "project_action": project_action,
+            "matched_skills": matched_skills_str,
+            "why_project_matched": why_matched,
         }
     except Exception as e:
         print(f"  ERROR in tailored resume generation: {e}", flush=True)
@@ -2999,7 +3006,11 @@ function showApplyModal(j, d){
     '<div class="field" style="margin-top:12px; background:#1e293b; padding:10px; border-radius:4px; border:1px solid #334155">'
     +'<label>📌 Project Matched</label>'
     +'<div><strong>'+esc(d.best_project_name)+'</strong> <span style="color:#94a3b8; font-size:12px;">'+actionEmoji+' '+actionText+'</span></div>'
-    +'<div style="font-size:12px; color:#94a3b8; margin-top:4px;">Match Score: <b style="color:#7db0ff">'+Math.round(d.best_project_match)+'%</b></div>'
+    +'<div style="font-size:12px; color:#94a3b8; margin-top:6px;">Match Score: <b style="color:#7db0ff">'+Math.round(d.best_project_match)+'%</b></div>'
+    +'<div style="font-size:11px; color:#cbd5e1; margin-top:8px; padding-top:8px; border-top:1px solid #475569;">'
+    +'<div style="margin-bottom:4px;"><strong>Matched Skills:</strong> '+esc(d.matched_skills||'')+'</div>'
+    +'<div style="color:#a0aec0;"><strong>Why:</strong> '+esc(d.why_project_matched||'')+'</div>'
+    +'</div>'
     +'</div>'
     :'');
   $('#applyModal').innerHTML=
