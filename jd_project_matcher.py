@@ -176,47 +176,50 @@ def _score_projects_heuristic(projects: list, jd_text: str) -> list:
 
         score = 0
 
-        # 1. TECH STACK MATCHING (60 points max) - PRIMARY DIFFERENTIATOR
+        # Base score: start all projects at 50 (matches job's job type + general backend role)
+        score = 50
+
+        # 1. TECH STACK MATCHING - PRIMARY DIFFERENTIATOR
         # Count how many JD tech terms are in project tech stack
         tech_count = sum(1 for jd_tech in jd_tech_terms if any(jd_tech in tech for tech in tech_stack))
-        tech_score = min(tech_count * 15, 60)  # Scale up: each match is worth 15 pts
+        if tech_count >= 1:
+            score += min(tech_count * 12, 35)  # +12 per match, max +35
 
-        # BONUS: More diverse tech stack = better project
-        tech_diversity = len([t for t in tech_stack if t in jd_tech_terms])
-        diversity_bonus = min(tech_diversity * 5, 15)
+        # BONUS: Diverse tech stack (multiple matches)
+        if tech_count >= 2:
+            score += 10  # Bonus for 2+ matches
+        if tech_count >= 3:
+            score += 5   # Extra bonus for 3+ matches
 
-        # PENALTY: Irrelevant tech (like "Testing" for non-QA roles)
-        irrelevant_techs = ["testing", "test", "jest", "pytest", "qa", "uat"]
-        has_irrelevant = sum(1 for tech in tech_stack if any(irr in tech for irr in irrelevant_techs))
-        if job_type != "backend" and has_irrelevant:
-            tech_score = max(0, tech_score - 20)  # Penalize if not QA role
-
-        # 2. DESCRIPTION QUALITY (25 points max)
-        desc_score = 0
-        if len(desc) > 100:
-            desc_score += 5
+        # 2. DESCRIPTION QUALITY BONUS
+        if len(desc) > 50:  # Project has meaningful description
+            score += 10
 
         # Description mentions tech from JD
         desc_tech_matches = sum(1 for jd_tech in jd_tech_terms if jd_tech in desc)
-        desc_score += min(desc_tech_matches * 3, 10)
+        if desc_tech_matches > 0:
+            score += min(desc_tech_matches * 3, 8)
 
-        # Description has production quality keywords
+        # 3. PRODUCTION KEYWORDS IN DESCRIPTION
         prod_keywords = ["production", "scalable", "optimize", "integrate", "enterprise", "framework", "api", "real-time", "microservices"]
-        desc_score += sum(2 for kw in prod_keywords if kw in desc)
+        score += sum(2 for kw in prod_keywords if kw in desc)
 
-        desc_score = min(desc_score, 25)
-
-        # 3. RECENCY (15 points max)
+        # 4. RECENCY BONUS
         updated = project.get("updated", "")
-        recency_score = 15 if updated else 0
+        if updated:
+            score += 5
 
-        total_score = tech_score + diversity_bonus + desc_score + recency_score
-        final_score = min(total_score, 100)
+        # PENALTY: Irrelevant tech (like "Testing" for non-QA/dev roles)
+        irrelevant_techs = ["testing", "test", "jest", "pytest", "qa", "uat"]
+        has_irrelevant = sum(1 for tech in tech_stack if any(irr in tech for irr in irrelevant_techs))
+        if job_type == "backend" and has_irrelevant > 0:
+            score -= 15  # Penalize QA-focused projects for backend roles
+
+        final_score = min(max(score, 0), 100)  # Clamp to 0-100
 
         scored.append({
             **project,
-            "match_score": final_score,
-            "_debug": f"tech:{tech_score} div:{diversity_bonus} desc:{desc_score} rec:{recency_score} = {final_score}"
+            "match_score": final_score
         })
 
     # Sort by score (highest first), then by tech diversity as tiebreaker
