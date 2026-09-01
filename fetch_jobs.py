@@ -51,18 +51,20 @@ def _quiet_jobspy():
 # Node / full-stack) plus the SDE and AI/ML roles you want. Boards search by role,
 # so we keep these as roles; your detailed SKILLS drive the RANKING below.
 SEARCH_TERMS = [
-    # Most important / highest volume - focused on NestJS, Node.js, backend, full stack, AI
-    "Node.js developer", "NestJS developer", "backend developer",
-    "Node.js backend engineer", "NestJS backend engineer",
-    "full stack developer", "full stack engineer",
-    "AI engineer", "AI developer",
-    "TypeScript backend developer", "JavaScript backend developer",
-    "Express.js developer", "microservices developer",
-    "software developer", "software engineer",
-    "backend engineer", "API developer",
-    "Python developer", "machine learning engineer",
-    "Java developer", "SDE 1",
-    "junior engineer", "data engineer",
+    # TOP PRIORITY: Node.js, NestJS, Full Stack, AI (your preferred tech)
+    "Node.js developer", "NestJS developer", "full stack developer",
+    "AI engineer", "LLM engineer",
+    "Node.js backend engineer", "NestJS backend engineer", "full stack engineer",
+
+    # SECONDARY: Python, Backend roles
+    "Python developer", "Python backend engineer", "backend developer", "backend engineer",
+    "TypeScript backend developer", "Express.js developer",
+    "machine learning engineer", "AI developer",
+
+    # TERTIARY: General + Java variety (keep some Java jobs)
+    "JavaScript backend developer", "microservices developer", "API developer",
+    "Junior Java developer", "Java developer", "SDE 1",
+    "software developer", "software engineer", "junior engineer", "data engineer",
 ]
 
 # Extra skills/keywords to emphasise on top of the resume. Edit freely.
