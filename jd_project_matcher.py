@@ -89,75 +89,37 @@ Return ONLY JSON:
 }}"""
 
     try:
-        if not groq_client:
-            # Fallback: comprehensive heuristic matching
-            print(f"  📊 Project matcher: Using HEURISTIC (Groq not available)", flush=True)
-            scored = _score_projects_heuristic(projects, description)
-        else:
-            print(f"  🤖 Project matcher: Using GROQ AI (analyzing {len(projects)} projects)", flush=True)
-            message = groq_client.chat.completions.create(
-                model="mixtral-8x7b-32768",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.3,
-                max_tokens=400,
-            )
-
-            response_text = message.choices[0].message.content.strip()
-
-            # Extract JSON
-            if response_text.startswith("{"):
-                result = json.loads(response_text)
-            else:
-                start = response_text.find("{")
-                end = response_text.rfind("}") + 1
-                if start >= 0 and end > start:
-                    result = json.loads(response_text[start:end])
-                else:
-                    scored = _score_projects_heuristic(projects, description)
-                    result = None
-
-            if result:
-                # Find the project in portfolio
-                best_name = result.get("best_project_name", "")
-                best_project = next((p for p in projects if p.get("name") == best_name), None)
-
-                if best_project:
-                    best_project["match_score"] = result.get("match_score", 70)
-
-                    # Get alternatives
-                    scored = _score_projects_heuristic(projects, description)
-                    alternatives = [p for p in scored[:top_n-1] if p.get("name") != best_name]
-
-                    return {
-                        "best_project": best_project,
-                        "alternatives": alternatives,
-                        "recommendation": result.get("why", "Good fit for this role"),
-                        "resume_points": result.get("recommendations", [])
-                    }
-
-        # Fallback: heuristic scoring
-        if not groq_client or not result:
-            scored = _score_projects_heuristic(projects, description)
-            best = scored[0] if scored else {}
-
-            return {
-                "best_project": best,
-                "alternatives": scored[1:top_n],
-                "recommendation": f"Project '{best.get('name')}' matches {best.get('score', 0)}% of job requirements",
-                "resume_points": []
-            }
-
-    except Exception as e:
-        # Fallback to heuristic
+        # Use improved heuristic (primary, fastest, most reliable)
+        print(f"  [*] Project matcher: Using improved HEURISTIC (analyzing {len(projects)} projects)", flush=True)
         scored = _score_projects_heuristic(projects, description)
         best = scored[0] if scored else {}
 
         return {
             "best_project": best,
             "alternatives": scored[1:top_n],
-            "recommendation": f"Analysis error (heuristic match): {str(e)[:50]}",
+            "recommendation": f"Project '{best.get('name')}' matches {best.get('match_score', 0)}% of job requirements",
             "resume_points": []
         }
+
+    except Exception as e:
+        # Fallback to heuristic if error occurs
+        print(f"  [!] Project matcher error: {str(e)[:50]}, using fallback heuristic", flush=True)
+        try:
+            scored = _score_projects_heuristic(projects, description)
+            best = scored[0] if scored else {}
+
+            return {
+                "best_project": best,
+                "alternatives": scored[1:top_n],
+                "recommendation": f"Analysis error - using heuristic match: {str(e)[:30]}",
+                "resume_points": []
+            }
+        except:
+            return {
+                "error": "Could not match projects",
+                "best_project": None,
+                "alternatives": []
+            }
 
 
 def _score_projects_heuristic(projects: list, jd_text: str) -> list:
