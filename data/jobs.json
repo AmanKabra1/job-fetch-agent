@@ -32,7 +32,7 @@
           "reason": "posted 0 days ago (likely still open)"
         }
       },
-      "_date_category": "RECENT"
+      "_date_category": "TODAY"
     },
     {
       "date_fetched": "2026-08-24 05:22 UTC",
@@ -64,7 +64,7 @@
           "reason": "posted 0 days ago (likely still open)"
         }
       },
-      "_date_category": "RECENT"
+      "_date_category": "TODAY"
     },
     {
       "date_fetched": "2026-08-24 05:22 UTC",
@@ -96,7 +96,7 @@
           "reason": "posted 1 days ago (likely still open)"
         }
       },
-      "_date_category": "RECENT"
+      "_date_category": "TODAY"
     },
     {
       "date_fetched": "2026-08-24 05:22 UTC",
@@ -128,7 +128,7 @@
           "reason": "posted 2 days ago (likely still open)"
         }
       },
-      "_date_category": "RECENT"
+      "_date_category": "TODAY"
     },
     {
       "date_fetched": "2026-08-24 05:22 UTC",
@@ -160,7 +160,7 @@
           "reason": "posted 2 days ago (likely still open)"
         }
       },
-      "_date_category": "RECENT"
+      "_date_category": "TODAY"
     },
     {
       "date_fetched": "2026-08-24 05:22 UTC",
@@ -192,7 +192,7 @@
           "reason": "posted 2 days ago (likely still open)"
         }
       },
-      "_date_category": "RECENT"
+      "_date_category": "TODAY"
     },
     {
       "date_fetched": "2026-08-24 05:22 UTC",
@@ -224,7 +224,7 @@
           "reason": "posted 2 days ago (likely still open)"
         }
       },
-      "_date_category": "RECENT"
+      "_date_category": "TODAY"
     },
     {
       "date_fetched": "2026-08-20 03:43 UTC",
@@ -239,7 +239,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "java developer",
-      "_date_category": "RECENT"
+      "_date_category": "TODAY"
     },
     {
       "date_fetched": "2026-08-20 03:43 UTC",
@@ -254,7 +254,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "RECENT"
+      "_date_category": "TODAY"
     },
     {
       "date_fetched": "2026-08-20 03:43 UTC",
@@ -269,7 +269,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "SDE 1",
-      "_date_category": "RECENT"
+      "_date_category": "TODAY"
     },
     {
       "date_fetched": "2026-08-20 03:43 UTC",
@@ -284,7 +284,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "backend engineer",
-      "_date_category": "RECENT"
+      "_date_category": "TODAY"
     },
     {
       "date_fetched": "2026-08-20 03:43 UTC",
@@ -299,7 +299,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "SDE 1",
-      "_date_category": "RECENT"
+      "_date_category": "TODAY"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -314,7 +314,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -329,7 +329,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "AI engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -344,7 +344,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -359,7 +359,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -374,7 +374,7 @@
       "is_remote": "False",
       "company_num_employees": "51 to 200",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -389,7 +389,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -404,7 +404,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -419,7 +419,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -434,7 +434,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -449,7 +449,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -464,7 +464,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "AI engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -479,7 +479,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -494,7 +494,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -509,7 +509,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -524,7 +524,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -539,7 +539,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -554,7 +554,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -569,7 +569,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -584,7 +584,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -599,7 +599,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -614,7 +614,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -629,7 +629,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -644,7 +644,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "AI engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -659,7 +659,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -674,7 +674,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -689,7 +689,7 @@
       "is_remote": "False",
       "company_num_employees": "5,001 to 10,000",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -704,7 +704,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -719,7 +719,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -734,7 +734,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -749,7 +749,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -764,7 +764,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -779,7 +779,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -794,7 +794,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "AI engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -809,7 +809,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "AI engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -824,7 +824,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "AI engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -839,7 +839,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -854,7 +854,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -869,7 +869,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -884,7 +884,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -899,7 +899,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -914,7 +914,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -929,7 +929,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "LLM engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -944,7 +944,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "SDE 1",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -959,7 +959,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -974,7 +974,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -989,7 +989,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1004,7 +1004,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1019,7 +1019,7 @@
       "is_remote": "True",
       "company_num_employees": "10,000+",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1034,7 +1034,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1049,7 +1049,7 @@
       "is_remote": "False",
       "company_num_employees": "51 to 200",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1064,7 +1064,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "SDE 1",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1079,7 +1079,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1094,7 +1094,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1109,7 +1109,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1124,7 +1124,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "LLM engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1139,7 +1139,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "LLM engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1154,7 +1154,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1169,7 +1169,7 @@
       "is_remote": "False",
       "company_num_employees": "5,001 to 10,000",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1184,7 +1184,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "SDE 1",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1199,7 +1199,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1214,7 +1214,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1229,7 +1229,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1244,7 +1244,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1259,7 +1259,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1274,7 +1274,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1289,7 +1289,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1304,7 +1304,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1319,7 +1319,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1334,7 +1334,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1349,7 +1349,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1364,7 +1364,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1379,7 +1379,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1394,7 +1394,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1409,7 +1409,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1424,7 +1424,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1439,7 +1439,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1454,7 +1454,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1469,7 +1469,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1484,7 +1484,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1499,7 +1499,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1514,7 +1514,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1529,7 +1529,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1544,7 +1544,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1559,7 +1559,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1574,7 +1574,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1589,7 +1589,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1604,7 +1604,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1619,7 +1619,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1634,7 +1634,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1649,7 +1649,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1664,7 +1664,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1679,7 +1679,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1694,7 +1694,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1709,7 +1709,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1724,7 +1724,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1739,7 +1739,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1754,7 +1754,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1769,7 +1769,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1784,7 +1784,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1799,7 +1799,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1814,7 +1814,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1829,7 +1829,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1844,7 +1844,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1859,7 +1859,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1874,7 +1874,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1889,7 +1889,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1904,7 +1904,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1919,7 +1919,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1934,7 +1934,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1949,7 +1949,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1964,7 +1964,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1979,7 +1979,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -1994,7 +1994,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2009,7 +2009,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2024,7 +2024,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2039,7 +2039,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2054,7 +2054,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2069,7 +2069,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2084,7 +2084,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2099,7 +2099,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2114,7 +2114,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2129,7 +2129,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "SDE 1",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2144,7 +2144,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2159,7 +2159,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2174,7 +2174,7 @@
       "is_remote": "False",
       "company_num_employees": "11 to 50",
       "search_term": "full stack developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2189,7 +2189,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2204,7 +2204,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2219,7 +2219,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2234,7 +2234,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2249,7 +2249,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2264,7 +2264,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2279,7 +2279,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2294,7 +2294,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2309,7 +2309,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2324,7 +2324,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2339,7 +2339,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2354,7 +2354,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2369,7 +2369,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2384,7 +2384,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2399,7 +2399,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2414,7 +2414,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2429,7 +2429,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2444,7 +2444,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2459,7 +2459,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2474,7 +2474,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2489,7 +2489,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2504,7 +2504,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2519,7 +2519,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2534,7 +2534,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2549,7 +2549,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2564,7 +2564,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "LLM engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2579,7 +2579,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "AI engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2594,7 +2594,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "AI engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2609,7 +2609,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "LLM engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2624,7 +2624,7 @@
       "is_remote": "False",
       "company_num_employees": "51 to 200",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2639,7 +2639,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "SDE 1",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2654,7 +2654,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2669,7 +2669,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2684,7 +2684,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "LLM engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2699,7 +2699,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "full stack developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2714,7 +2714,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "LLM engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2729,7 +2729,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2744,7 +2744,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2759,7 +2759,7 @@
       "is_remote": "False",
       "company_num_employees": "51 to 200",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2774,7 +2774,7 @@
       "is_remote": "False",
       "company_num_employees": "51 to 200",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2789,7 +2789,7 @@
       "is_remote": "False",
       "company_num_employees": "51 to 200",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2804,7 +2804,7 @@
       "is_remote": "False",
       "company_num_employees": "11 to 50",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2819,7 +2819,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2834,7 +2834,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "AI engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2849,7 +2849,7 @@
       "is_remote": "False",
       "company_num_employees": "51 to 200",
       "search_term": "LLM engineer",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2864,7 +2864,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2879,7 +2879,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2894,7 +2894,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2909,7 +2909,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2924,7 +2924,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2939,7 +2939,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2954,7 +2954,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2969,7 +2969,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2984,7 +2984,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -2999,7 +2999,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3014,7 +3014,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3029,7 +3029,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "THIS_WEEK"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3044,7 +3044,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3059,7 +3059,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3074,7 +3074,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3089,7 +3089,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3104,7 +3104,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3119,7 +3119,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3134,7 +3134,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3149,7 +3149,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3164,7 +3164,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3179,7 +3179,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3194,7 +3194,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3209,7 +3209,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "SDE 1",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3224,7 +3224,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3239,7 +3239,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "AI agent engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3254,7 +3254,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3269,7 +3269,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3284,7 +3284,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3299,7 +3299,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3314,7 +3314,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3329,7 +3329,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3344,7 +3344,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3359,7 +3359,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3374,7 +3374,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3389,7 +3389,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3404,7 +3404,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3419,7 +3419,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3434,7 +3434,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3449,7 +3449,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3464,7 +3464,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3479,7 +3479,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3494,7 +3494,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "SDE 1",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3509,7 +3509,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3524,7 +3524,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3539,7 +3539,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3554,7 +3554,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3569,7 +3569,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3584,7 +3584,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3599,7 +3599,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3614,7 +3614,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3629,7 +3629,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3644,7 +3644,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3659,7 +3659,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3674,7 +3674,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3689,7 +3689,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3704,7 +3704,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3719,7 +3719,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3734,7 +3734,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3749,7 +3749,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3764,7 +3764,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3779,7 +3779,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3794,7 +3794,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3809,7 +3809,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3824,7 +3824,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3839,7 +3839,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3854,7 +3854,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "SDE 1",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3869,7 +3869,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3884,7 +3884,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "full stack developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3899,7 +3899,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "full stack developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3914,7 +3914,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "full stack developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3929,7 +3929,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "full stack developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3944,7 +3944,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "backend developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3959,7 +3959,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "full stack developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3974,7 +3974,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -3989,7 +3989,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4004,7 +4004,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4019,7 +4019,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4034,7 +4034,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4049,7 +4049,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4064,7 +4064,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "python developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4079,7 +4079,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4094,7 +4094,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4109,7 +4109,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4124,7 +4124,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4139,7 +4139,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4154,7 +4154,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4169,7 +4169,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4184,7 +4184,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4199,7 +4199,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4214,7 +4214,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4229,7 +4229,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4244,7 +4244,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4259,7 +4259,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4274,7 +4274,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4289,7 +4289,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4304,7 +4304,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4319,7 +4319,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4334,7 +4334,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4349,7 +4349,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4364,7 +4364,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4379,7 +4379,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4394,7 +4394,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4409,7 +4409,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4424,7 +4424,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4439,7 +4439,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4454,7 +4454,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4469,7 +4469,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4484,7 +4484,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4499,7 +4499,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4514,7 +4514,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "AI engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4529,7 +4529,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "LLM engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4544,7 +4544,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "LLM engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4559,7 +4559,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4574,7 +4574,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4589,7 +4589,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "backend engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4604,7 +4604,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4619,7 +4619,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "software developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4634,7 +4634,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "SDE 1",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4649,7 +4649,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "java developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4664,7 +4664,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4679,7 +4679,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4694,7 +4694,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4709,7 +4709,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4724,7 +4724,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4739,7 +4739,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4754,7 +4754,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4769,7 +4769,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "machine learning engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4784,7 +4784,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "AI engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4799,7 +4799,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "AI engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4814,7 +4814,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "LLM engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4829,7 +4829,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "LLM engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4844,7 +4844,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "AI agent engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4859,7 +4859,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4874,7 +4874,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "AI engineer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4889,7 +4889,7 @@
       "is_remote": "False",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4904,7 +4904,7 @@
       "is_remote": "True",
       "company_num_employees": "",
       "search_term": "remote-api",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
@@ -4919,7 +4919,7 @@
       "is_remote": "False",
       "company_num_employees": "10,000+",
       "search_term": "node.js developer",
-      "_date_category": "OLD"
+      "_date_category": "RECENT"
     },
     {
       "date_fetched": "2026-08-12 05:31 UTC",
