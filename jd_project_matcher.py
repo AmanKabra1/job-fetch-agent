@@ -52,13 +52,13 @@ def get_best_project_for_jd(job: dict, top_n: int = 3) -> dict:
     description = str(job.get("description", ""))
     company = str(job.get("company", ""))
 
-    if not description or description == "None" or len(description) < 100:
-        # Fallback: return most recent project
+    if not description or description == "None":
+        # Only skip if NO description at all
         best = max(projects, key=lambda p: p.get("added_date", ""), default={})
         return {
             "best_project": {**best, "match_score": 50},
             "alternatives": [],
-            "recommendation": "Limited job data; returning most recent project"
+            "recommendation": "No job description provided"
         }
 
     prompt = f"""Analyze this job and find the ABSOLUTE BEST project from ALL {len(projects)} projects in Aman's portfolio.
