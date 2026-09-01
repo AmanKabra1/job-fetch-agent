@@ -53,26 +53,35 @@ def _quiet_jobspy():
 SEARCH_TERMS = [
     # TOP PRIORITY: Node.js, NestJS, Full Stack, AI (your preferred tech)
     "Node.js developer", "NestJS developer", "full stack developer",
-    "AI engineer", "LLM engineer",
+    "AI engineer", "LLM engineer", "AI developer",
     "Node.js backend engineer", "NestJS backend engineer", "full stack engineer",
 
-    # SECONDARY: Python, Backend roles
+    # HIGH PRIORITY: Python, Backend, AI/ML
     "Python developer", "Python backend engineer", "backend developer", "backend engineer",
     "TypeScript backend developer", "Express.js developer",
-    "machine learning engineer", "AI developer",
+    "machine learning engineer", "ML engineer",
 
-    # TERTIARY: General + Java variety (keep some Java jobs)
-    "JavaScript backend developer", "microservices developer", "API developer",
-    "Junior Java developer", "Java developer", "SDE 1",
-    "software developer", "software engineer", "junior engineer", "data engineer",
+    # SECONDARY: Java, Go, other backends (expanded to get more jobs)
+    "Java backend engineer", "Java developer", "Spring Boot developer",
+    "Go developer", "Golang engineer", "Go backend developer",
+    "microservices developer", "API developer", "REST API developer",
+
+    # INCLUSIVE: Junior/Entry-level (1-2 years OK, not just 2+)
+    "Junior developer", "Junior backend developer", "Junior full stack developer",
+    "junior engineer", "entry level developer", "graduate engineer",
+    "Junior Java developer", "Junior Python developer", "Junior Node.js developer",
+
+    # GENERAL: Catch-all for more volume
+    "software developer", "software engineer", "SDE 1",
+    "data engineer", "full stack engineer",
 ]
 
 # Extra skills/keywords to emphasise on top of the resume. Edit freely.
 PREFERRED_SKILLS = ["Node.js", "NestJS", "Express.js", "TypeScript", "JavaScript",
-                    "Python", "Java", "Spring Boot", "Docker", "Microservices",
+                    "Python", "Java", "Spring Boot", "Go", "Golang", "Docker", "Microservices",
                     "PostgreSQL", "MongoDB", "REST API", "GraphQL",
-                    "AI", "LLM", "RAG", "Machine Learning",
-                    "LangChain", "LangGraph", "Agentic AI"]
+                    "AI", "LLM", "RAG", "Machine Learning", "ML Engineer",
+                    "LangChain", "LangGraph", "Agentic AI", "Junior", "Entry Level"]
 
 
 def _clean_skill(s: str) -> str:
