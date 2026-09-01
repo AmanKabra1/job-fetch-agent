@@ -129,7 +129,6 @@ COLUMNS = [
     "site",
     "date_posted",
     "job_url",          # <-- the real, direct link where it's posted
-    "description",      # <-- job description for project matching
     "min_amount",
     "max_amount",
     "is_remote",
