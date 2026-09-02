@@ -479,16 +479,25 @@ def main():
 
     ranked = rank_for_feed(feed_rows)
 
-    # QUALITY FILTER: Prioritize HIGH-QUALITY matches (95%+)
+    # QUALITY FILTER: KEEP ONLY HIGH-QUALITY matches (95%+)
+    # Remove all jobs with score < 95% to ensure highest quality feed
     high_quality = [r for r in ranked if r.get("_match_score", 0) >= 95]
     medium_quality = [r for r in ranked if 75 <= r.get("_match_score", 0) < 95]
-    other = [r for r in ranked if r.get("_match_score", 0) < 75]
+    low_quality = [r for r in ranked if r.get("_match_score", 0) < 75]
 
-    quality_breakdown = f"High(95%+):{len(high_quality)} | Medium(75-95%):{len(medium_quality)} | Other:<75:{len(other)}"
+    quality_breakdown = f"High(95%+):{len(high_quality)} | Medium(75-95%):{len(medium_quality)} | Low:<75:{len(low_quality)}"
     print(f"  quality breakdown: {quality_breakdown}", flush=True)
+    print(f"  filtering: keeping ONLY 95%+ quality jobs ({len(high_quality)} jobs)", flush=True)
+    print(f"    removed {len(medium_quality) + len(low_quality)} lower-quality jobs", flush=True)
 
-    # Reorganize: High quality first, then medium, then others
-    ranked = high_quality + medium_quality + other
+    # KEEP ONLY HIGH QUALITY (95%+)
+    ranked = high_quality
+
+    # If not enough high-quality jobs, top up with medium quality to reach MIN_FEED
+    if len(ranked) < MIN_FEED:
+        needed = min(MIN_FEED - len(ranked), len(medium_quality))
+        ranked.extend(medium_quality[:needed])
+        print(f"  topped up with {needed} medium-quality jobs to reach {MIN_FEED} minimum", flush=True)
 
     # AI Analysis: Analyze top 50 jobs for interview likelihood
     print(f"  analyzing top 50 jobs for interview likelihood ...", flush=True)
