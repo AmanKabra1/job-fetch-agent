@@ -1,9 +1,9 @@
 {
-"fetched_at": "2026-09-02 17:27 UTC",
+"fetched_at": "2026-09-02 17:31 UTC",
 "count": 50,
 "jobs": [
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software Engineer III - Java, Python, AWS",
 "company": "JPMorganChase",
 "location": "MH, IN",
@@ -25,7 +25,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software Engineer III - Java",
 "company": "JPMorganChase",
 "location": "TS, IN",
@@ -47,7 +47,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Full Stack Developer - Python + Angular",
 "company": "Sanumas Solutions",
 "location": "TN, IN",
@@ -69,7 +69,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Full Stack Developer (MVC)",
 "company": "SMARTSOFT",
 "location": "TS, IN",
@@ -91,7 +91,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software Engineer II- Java,React,Microservice,Sql",
 "company": "Blue Yonder",
 "location": "MH, IN",
@@ -113,7 +113,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Data Warehouse & SQL Developer",
 "company": "NatWest Group",
 "location": "KA, IN",
@@ -124,7 +124,7 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "10,000+",
-"search_term": "Python developer",
+"search_term": "full stack engineer",
 "_date_category": "TODAY",
 "_fit_analysis": {
 "interview_likelihood": 50,
@@ -135,7 +135,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Machine Learning Engineer",
 "company": "Twilio",
 "location": "Remote - Ireland",
@@ -157,7 +157,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Python and Gen AI developer",
 "company": "EXL Service",
 "location": "UP, IN",
@@ -179,7 +179,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Python (Odoo) Developer Internship",
 "company": "Arihant AI",
 "location": "GJ, IN",
@@ -201,7 +201,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Python Developer",
 "company": "WebSenor InfoTech",
 "location": "RJ, IN",
@@ -223,7 +223,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Java Developer",
 "company": "Josh Software",
 "location": "MH, IN",
@@ -245,7 +245,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Angular Developer",
 "company": "Cloute Technologies Pvt. Ltd",
 "location": "KA, IN",
@@ -267,7 +267,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Java Back End Developer (Contract)",
 "company": "Saaki Argus And Averil Consulting",
 "location": "KA, IN",
@@ -289,7 +289,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Java Developer – Spring Boot & Microservices",
 "company": "Future tech corporate solutions",
 "location": "TN, IN",
@@ -311,7 +311,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Java Developer",
 "company": "Future tech corporate solutions",
 "location": "TN, IN",
@@ -333,7 +333,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Java Developer",
 "company": "Future Tech",
 "location": "TN, IN",
@@ -355,7 +355,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Java Developer",
 "company": "Elfonze Technologies",
 "location": "Remote, IN",
@@ -377,7 +377,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Python Developer (Contract)",
 "company": "Saaki Argus And Averil Consulting",
 "location": "KA, IN",
@@ -399,7 +399,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Angular JS Developer",
 "company": "NetScore Technologies, Inc",
 "location": "TS, IN",
@@ -421,7 +421,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Python/Django Developer",
 "company": "FATCAT WEALTHY",
 "location": "TN, IN",
@@ -443,7 +443,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Shopify & Custom Frontend Developer (HTML/CSS)",
 "company": "Omniraa Media",
 "location": "MH, IN",
@@ -465,7 +465,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Data/ Java Engineer (AI/LLM Chatbot, Customer Service)",
 "company": "Binance",
 "location": "APAC",
@@ -487,7 +487,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Internship - Machine Learning Research Engineer",
 "company": "Perplexity",
 "location": "Berlin",
@@ -509,7 +509,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Consultant | Backend Developer | Bengaluru | Engineering | Platform Development & Integration",
 "company": "Deloitte",
 "location": "KA, IN",
@@ -531,7 +531,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Java Fullstack Developer (Java + Angular/ ReactJS)",
 "company": "Capgemini",
 "location": "MH, IN",
@@ -553,7 +553,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software Engineer III",
 "company": "JPMorganChase",
 "location": "MH, IN",
@@ -575,7 +575,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Data Engineer (Software Engineer II)",
 "company": "JPMorganChase",
 "location": "KA, IN",
@@ -597,7 +597,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software Engineer III, AI/ML, AI Innovation and Research",
 "company": "Google",
 "location": "KA, IN",
@@ -619,7 +619,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software Engineer",
 "company": "Cisco",
 "location": "MH, IN",
@@ -641,7 +641,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Advisory Software Engineer",
 "company": "Pitney Bowes",
 "location": "MH, IN",
@@ -663,29 +663,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
-"title": "Software Engineer II – Integrations & API Connectivity",
-"company": "Mastercard",
-"location": "MH, IN",
-"site": "indeed",
-"date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=8d47d04637389485",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "backend developer",
-"_date_category": "TODAY",
-"_fit_analysis": {
-"interview_likelihood": 50,
-"fit_level": "MAYBE",
-"why_call": "Groq API not available"
-},
-"interview_likelihood": 50,
-"fit_level": "MAYBE"
-},
-{
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Advanced Software Engr",
 "company": "Honeywell",
 "location": "KA, IN",
@@ -707,7 +685,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Infrastructure Platform Engineering (SMTS, Software Engineering)",
 "company": "Salesforce",
 "location": "TS, IN",
@@ -729,7 +707,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Full Stack Developer (2 Years Experience)",
 "company": "Newagesys Inc",
 "location": "KL, IN",
@@ -751,7 +729,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Full Stack Developer Intern",
 "company": "Rajlaxmi Solutions Pvt. Ltd",
 "location": "MH, IN",
@@ -773,7 +751,29 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
+"title": "Software Intern",
+"company": "Blue Ripples Technologies",
+"location": "KL, IN",
+"site": "indeed",
+"date_posted": "2026-09-02",
+"job_url": "https://in.indeed.com/viewjob?jk=f0752dd4d9d7e1df",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "Node.js backend engineer",
+"_date_category": "TODAY",
+"_fit_analysis": {
+"interview_likelihood": 50,
+"fit_level": "MAYBE",
+"why_call": "Groq API not available"
+},
+"interview_likelihood": 50,
+"fit_level": "MAYBE"
+},
+{
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Junior Software Engineer",
 "company": "Crowe Capability Center - India",
 "location": "TS, IN",
@@ -795,7 +795,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software Developer Intern",
 "company": "WayBic Tech",
 "location": "TN, IN",
@@ -817,7 +817,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software Engineering Intern (Winter)",
 "company": "Datadog",
 "location": "Boston, Massachusetts, USA; New York, New York, USA",
@@ -839,7 +839,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software Engineer, Data Infrastructure & Acquisition - Hyderabad, India",
 "company": "Speechify",
 "location": "TS, IN",
@@ -861,7 +861,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software Engineer, Data Infrastructure & Acquisition - Pune, India",
 "company": "Speechify",
 "location": "MH, IN",
@@ -883,7 +883,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software Engineer, iOS Core Product - Noida, India",
 "company": "Speechify",
 "location": "UP, IN",
@@ -905,7 +905,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Full Stack Engineer – Higher Ed Platforms (India)",
 "company": "Strata Information Group",
 "location": "MH, IN",
@@ -916,7 +916,7 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "51 to 200",
-"search_term": "software developer",
+"search_term": "API developer",
 "_date_category": "TODAY",
 "_fit_analysis": {
 "interview_likelihood": 50,
@@ -927,7 +927,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Specailist Software Engineer, CX",
 "company": "NiCE",
 "location": "MH, IN",
@@ -949,7 +949,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software Platform Engineer I",
 "company": "MetLife",
 "location": "MH, IN",
@@ -971,7 +971,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Associate- Full-Stack Engineer(Retail)",
 "company": "Bain & Company",
 "location": "DL, IN",
@@ -993,7 +993,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software OT Developer",
 "company": "Merck KGaA",
 "location": "TS, IN",
@@ -1015,7 +1015,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Mobile Software Engineer, Growth & Experimentation",
 "company": "NTT DATA",
 "location": "IN",
@@ -1037,29 +1037,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
-"title": "Software Development Engineer",
-"company": "IQVIA",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=390e9ecacd70eec8",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "10,000+",
-"search_term": "full stack engineer",
-"_date_category": "TODAY",
-"_fit_analysis": {
-"interview_likelihood": 50,
-"fit_level": "MAYBE",
-"why_call": "Groq API not available"
-},
-"interview_likelihood": 50,
-"fit_level": "MAYBE"
-},
-{
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Murex Software Engineer",
 "company": "NatWest Group",
 "location": "HR, IN",
@@ -1081,7 +1059,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 17:27 UTC",
+"date_fetched": "2026-09-02 17:31 UTC",
 "title": "Software Engineer - B8",
 "company": "NatWest Group",
 "location": "KA, IN",
@@ -1093,6 +1071,28 @@
 "is_remote": "False",
 "company_num_employees": "10,000+",
 "search_term": "full stack engineer",
+"_date_category": "TODAY",
+"_fit_analysis": {
+"interview_likelihood": 50,
+"fit_level": "MAYBE",
+"why_call": "Groq API not available"
+},
+"interview_likelihood": 50,
+"fit_level": "MAYBE"
+},
+{
+"date_fetched": "2026-09-02 17:31 UTC",
+"title": "Software Engineering & Development, Officer",
+"company": "State Street",
+"location": "KA, IN",
+"site": "indeed",
+"date_posted": "2026-09-02",
+"job_url": "https://in.indeed.com/viewjob?jk=c21a08d2900ba259",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "Python developer",
 "_date_category": "TODAY",
 "_fit_analysis": {
 "interview_likelihood": 50,
