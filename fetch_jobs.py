@@ -479,6 +479,17 @@ def main():
 
     ranked = rank_for_feed(feed_rows)
 
+    # QUALITY FILTER: Prioritize HIGH-QUALITY matches (95%+)
+    high_quality = [r for r in ranked if r.get("_match_score", 0) >= 95]
+    medium_quality = [r for r in ranked if 75 <= r.get("_match_score", 0) < 95]
+    other = [r for r in ranked if r.get("_match_score", 0) < 75]
+
+    quality_breakdown = f"High(95%+):{len(high_quality)} | Medium(75-95%):{len(medium_quality)} | Other:<75:{len(other)}"
+    print(f"  quality breakdown: {quality_breakdown}", flush=True)
+
+    # Reorganize: High quality first, then medium, then others
+    ranked = high_quality + medium_quality + other
+
     # AI Analysis: Analyze top 50 jobs for interview likelihood
     print(f"  analyzing top 50 jobs for interview likelihood ...", flush=True)
     try:
@@ -489,7 +500,7 @@ def main():
 
     write_feed(ranked)
     print(f"Replaced feed with today's latest: {len(ranked)} jobs "
-          f"(organized by date freshness + match score, floor {MIN_FEED}).", flush=True)
+          f"({quality_breakdown}, organized by quality + match score, floor {MIN_FEED}).", flush=True)
 
 
 if __name__ == "__main__":
