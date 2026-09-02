@@ -189,7 +189,7 @@
     },
     {
       "name": "amrutam-backend1",
-      "description": "- Node.js v20+ - PostgreSQL - npm",
+      "description": "1. Clone repo 2. Install dependencies: npm install 3. Set environment variables in .env 4. Run DB migrations Sequelize auto-sync 5. Start server: npm run dev",
       "github_url": "https://github.com/AmanKabra1/amrutam-backend1",
       "language": "JavaScript",
       "stars": 0,
