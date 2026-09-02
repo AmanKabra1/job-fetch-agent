@@ -27,6 +27,14 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
+      - name: Load existing jobs from feed branch (to keep portfolio intact)
+        run: |
+          git fetch origin feed || true
+          if git show-ref --verify --quiet refs/remotes/origin/feed; then
+            mkdir -p data
+            git show origin/feed:data/jobs.json > data/jobs.json 2>/dev/null || true
+          fi
+
       - name: Fetch jobs and write data/jobs.json
         env:
           # Free Tavily key (repo secret) switches ON LinkedIn "we're hiring" posts
