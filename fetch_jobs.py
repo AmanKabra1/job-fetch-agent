@@ -475,10 +475,7 @@ def main():
     week_count = sum(1 for r in feed_rows if r.get("_date_category") == "THIS_WEEK")
     recent_count = sum(1 for r in feed_rows if r.get("_date_category") == "RECENT")
     old_count = sum(1 for r in feed_rows if r.get("_date_category") == "OLD")
-    print(f"    categories: {today_count} TODAY, {week_count} THIS_WEEK, {recent_count} RECENT, {old_count} OLD (filtered)", flush=True)
-
-    # Filter out jobs older than 14 days
-    feed_rows = [r for r in feed_rows if r.get("_date_category") != "OLD"]
+    print(f"    categories: {today_count} TODAY, {week_count} THIS_WEEK, {recent_count} RECENT, {old_count} OLD", flush=True)
 
     ranked = rank_for_feed(feed_rows)
 
