@@ -15,39 +15,74 @@ PROFILE_FILE = Path(__file__).parent / "resume_profile.py"
 
 
 def generate_project_bullets(project: dict) -> list:
-    """Generate resume bullets from project data."""
+    """Generate detailed resume bullets from project data (Shaadi-style)."""
     bullets = []
-
-    # Use description if available
-    if project.get("description"):
-        desc = project["description"]
-        # Clean up description
-        if desc and len(desc) > 10:
-            bullets.append(desc)
-
-    # Add tech stack info
+    name = project.get("name", "")
     tech_stack = project.get("tech_stack", [])
-    if tech_stack:
-        tech_str = ", ".join(tech_stack[:5])  # Top 5 tech
-        if project.get("description"):
-            bullets.append(f"Tech Stack: {tech_str}")
+    description = (project.get("description") or "").strip()
+    language = project.get("language", "")
+
+    # Bullet 1: Main description or project summary
+    if description and len(description) > 15:
+        bullets.append(description)
+    else:
+        # Generate from tech stack if no description
+        if tech_stack:
+            tech_summary = ", ".join(tech_stack[:4])
+            bullets.append(f"Production {name} project built with {tech_summary}")
+        elif language:
+            bullets.append(f"{name} project implemented in {language}")
         else:
-            bullets.append(f"Built with: {tech_str}")
+            bullets.append(f"Full-stack {name} project")
 
-    # If no bullets yet, generate generic ones from tech/language
-    if not bullets:
-        language = project.get("language", "")
-        if language:
-            bullets.append(f"Project built with {language}")
+    # Bullet 2: Technical architecture/implementation details
+    if tech_stack and len(tech_stack) > 0:
+        if len(tech_stack) <= 3:
+            tech_str = " and ".join(tech_stack)
+            bullets.append(f"Implemented using {tech_str} for robust architecture")
         else:
-            bullets.append("Production project")
+            core_tech = ", ".join(tech_stack[:3])
+            other_tech = ", ".join(tech_stack[3:])
+            bullets.append(
+                f"Built with {core_tech}; leveraged {other_tech} "
+                "for enhanced functionality and scalability"
+            )
 
-    # Add GitHub link info
-    github_url = project.get("github_url", "")
-    if github_url:
-        bullets.append(f"Source: {github_url}")
+    # Bullet 3: Performance/Production focus
+    if description and "production" in description.lower():
+        bullets.append(
+            "Deployed as production-ready system with focus on reliability, "
+            "performance, and maintainability"
+        )
+    elif "ai" in str(tech_stack).lower() or "machine learning" in str(tech_stack).lower():
+        bullets.append(
+            "Integrated advanced AI/ML capabilities for intelligent automation "
+            "and data-driven decision making"
+        )
+    elif any(db in str(tech_stack).lower() for db in ["postgresql", "mongodb", "mysql", "redis"]):
+        bullets.append(
+            "Designed database architecture with optimization for query performance "
+            "and data consistency at scale"
+        )
+    else:
+        bullets.append(
+            "Implemented best practices for code quality, testing, and continuous deployment"
+        )
 
-    return bullets[:4]  # Max 4 bullets per project
+    # Bullet 4: Achievement/Impact statement
+    if description and any(word in description.lower() for word in
+                           ["api", "microservice", "service", "platform", "app"]):
+        bullets.append(
+            "Delivered production-grade solution demonstrating full-stack capabilities "
+            "and professional software engineering practices"
+        )
+    else:
+        bullets.append(
+            "Showcases expertise in full-stack development with clean architecture "
+            "and production deployment experience"
+        )
+
+    return bullets[:4]  # Max 4 bullets per project (like Shaadi)
 
 
 def portfolio_to_resume_format(project: dict) -> dict:
