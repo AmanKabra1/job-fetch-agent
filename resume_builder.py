@@ -202,6 +202,15 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
     ])
     story.append(Paragraph(contact, contact_st))
 
+    # Show project match score at top (if score >= 75%)
+    if best_project and best_project.get("match_score", 0) >= 75:
+        match_score = best_project.get("match_score", 0)
+        project_name = best_project.get("name", "Project")
+        match_line = f'<i style="color:#00AA00; font-size:8.5pt">✓ TAILORED FOR THIS ROLE • {project_name}: {match_score:.0f}% match</i>'
+        story.append(Spacer(1, 2))
+        story.append(Paragraph(match_line, body_st))
+        story.append(Spacer(1, 1.5))
+
     # Professional summary
     section("Professional Summary")
     story.append(Paragraph(summary, summary_st))
@@ -361,6 +370,17 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     c = p.add_run(" | ".join([P.LOCATION, P.PHONE, P.EMAIL, P.LINKEDIN, P.GITHUB]))
     c.font.size = Pt(8)
+
+    # Show project match score at top (if score >= 75%)
+    if best_project and best_project.get("match_score", 0) >= 75:
+        match_score = best_project.get("match_score", 0)
+        project_name = best_project.get("name", "Project")
+        p = no_space(doc.add_paragraph(), after=1)
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        r = p.add_run(f'✓ TAILORED FOR THIS ROLE • {project_name}: {match_score:.0f}% match')
+        r.italic = True
+        r.font.size = Pt(8.5)
+        r.font.color.rgb = RGBColor(0, 170, 0)
 
     # Summary
     section_heading("Professional Summary")
