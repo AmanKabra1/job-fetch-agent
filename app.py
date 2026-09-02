@@ -1713,9 +1713,9 @@ def api_apply_kit(payload: dict):
         if fmt in ("pdf", "both"):
             import io
             buf = io.BytesIO()
-            # Use result's resume data for PDF rendering + matched project (if >= 75%)
+            # Pass matched project ONLY if: has data AND score >= 75%
             project_match_score = result.get("project_match_score", 0)
-            matched_project = best_project if project_match_score >= 75 else None
+            matched_project = best_project if (best_project and best_project.get("name") and project_match_score >= 75) else None
             RB.render_pdf(buf, resume_text, result.get("resume", {}).get("skills", {}),
                          matched, title, company, result.get("resume", {}).get("ats_keywords"),
                          best_project=matched_project)
@@ -1729,7 +1729,7 @@ def api_apply_kit(payload: dict):
             import io
             buf = io.BytesIO()
             project_match_score = result.get("project_match_score", 0)
-            matched_project = best_project if project_match_score >= 75 else None
+            matched_project = best_project if (best_project and best_project.get("name") and project_match_score >= 75) else None
             RB.render_docx(buf, resume_text, result.get("resume", {}).get("skills", {}),
                           matched, title, company, result.get("resume", {}).get("ats_keywords"),
                           best_project=matched_project)
