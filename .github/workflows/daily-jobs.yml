@@ -32,7 +32,13 @@ jobs:
           git fetch origin feed || true
           if git show-ref --verify --quiet refs/remotes/origin/feed; then
             mkdir -p data
-            git show origin/feed:data/jobs.json > data/jobs.json 2>/dev/null || true
+            git show origin/feed:data/jobs.json > data/jobs.json 2>&1
+            if [ ! -s data/jobs.json ]; then
+              echo "Warning: Failed to load jobs from feed, starting with empty"
+              echo '{"jobs":[]}' > data/jobs.json
+            fi
+          else
+            echo "Feed branch not found"
           fi
 
       - name: Fetch jobs and write data/jobs.json
