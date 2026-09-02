@@ -229,11 +229,15 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
 
     # Projects
     section("Projects")
-    if best_project:
+    if best_project and best_project.get("name"):
         # Show matched project as MAIN (score >= 75%, so it's a good match)
         proj = best_project
-        head = (f'<b>{proj.get("name", "Project")}</b> | <i>{proj.get("tech_stack", [""])}</i> | '
-                f'<a href="{proj.get("github_url", "#")}">{proj.get("github_url", "GitHub")}</a>')
+        tech = proj.get("tech_stack", [])
+        tech_str = ", ".join(tech) if isinstance(tech, list) else str(tech)
+        github_link = proj.get("github_url", proj.get("link", ""))
+        head = (f'<b>{proj.get("name", "Project")}</b> | <i>{tech_str}</i>')
+        if github_link:
+            head += f' | <a href="{github_link}">GitHub</a>'
         story.append(Paragraph(head, body_st))
         story.append(Spacer(1, 1))
         desc = proj.get("description", "")
@@ -382,15 +386,19 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
 
     # Projects
     section_heading("Projects")
-    if best_project:
+    if best_project and best_project.get("name"):
         # Show matched project as MAIN (score >= 75%, so it's a good match)
         proj = best_project
         p = no_space(doc.add_paragraph())
         nr = p.add_run(proj.get("name", "Project"))
         nr.bold = True
-        sr = p.add_run(f' | {", ".join(proj.get("tech_stack", [])[:3])} | ')
+        tech = proj.get("tech_stack", [])
+        tech_str = ", ".join(tech[:3]) if isinstance(tech, list) else str(tech)
+        sr = p.add_run(f' | {tech_str}')
         sr.italic = True
-        p.add_run(proj.get("github_url", "GitHub")).font.color.rgb = ACCENT
+        github_link = proj.get("github_url", proj.get("link", ""))
+        if github_link:
+            p.add_run(" | " + github_link).font.color.rgb = ACCENT
 
         desc = proj.get("description", "")
         if desc:
