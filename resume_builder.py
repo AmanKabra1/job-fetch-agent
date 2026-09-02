@@ -116,7 +116,7 @@ def base_filename(company: str, title: str) -> str:
 # PDF RENDERER  (reportlab)
 # --------------------------------------------------------------------------- #
 def render_pdf(path, summary, skills, matched, target_title, target_company,
-               ats_keywords=None, best_project_name="", best_project_score=0):
+               ats_keywords=None, best_project=None):
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.units import mm
     from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
@@ -229,19 +229,26 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
 
     # Projects
     section("Projects")
-    if best_project_name and best_project_score > 0:
-        score_color = "#00AA00" if best_project_score >= 75 else "#FF8800"
-        match_note = f'<i style="color:{score_color}">✓ Best match for this role ({best_project_score:.0f}%)</i>'
-        story.append(Paragraph(match_note, body_st))
-        story.append(Spacer(1, 2))
-    for i, proj in enumerate(P.PROJECTS):
-        if i:
-            story.append(Spacer(1, 2.5))
-        head = (f'<b>{proj["name"]}</b> | <i>{proj["stack"]}</i> | '
-                f'<a href="{proj["link"]}">{proj["link"]}</a>')
+    if best_project:
+        # Show matched project as MAIN (score >= 75%, so it's a good match)
+        proj = best_project
+        head = (f'<b>{proj.get("name", "Project")}</b> | <i>{proj.get("tech_stack", [""])}</i> | '
+                f'<a href="{proj.get("github_url", "#")}">{proj.get("github_url", "GitHub")}</a>')
         story.append(Paragraph(head, body_st))
         story.append(Spacer(1, 1))
-        story.append(bullets(proj["bullets"]))
+        desc = proj.get("description", "")
+        if desc:
+            story.append(Paragraph(desc, body_st))
+            story.append(Spacer(1, 1))
+    else:
+        # No good match - show first project from profile
+        proj = P.PROJECTS[0] if P.PROJECTS else {}
+        head = (f'<b>{proj.get("name", "Project")}</b> | <i>{proj.get("stack", "")}</i> | '
+                f'<a href="{proj.get("link", "#")}">{proj.get("link", "GitHub")}</a>')
+        story.append(Paragraph(head, body_st))
+        story.append(Spacer(1, 1))
+        if proj.get("bullets"):
+            story.append(bullets(proj.get("bullets", [])))
 
     # Education
     section("Education")
@@ -259,7 +266,7 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
 # WORD RENDERER  (python-docx)
 # --------------------------------------------------------------------------- #
 def render_docx(path, summary, skills, matched, target_title, target_company,
-                ats_keywords=None, best_project_name="", best_project_score=0):
+                ats_keywords=None, best_project=None):
     from docx import Document
     from docx.shared import Pt, RGBColor, Inches
     from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
@@ -375,21 +382,31 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
 
     # Projects
     section_heading("Projects")
-    if best_project_name and best_project_score > 0:
-        p = doc.add_paragraph()
-        r = p.add_run(f'✓ Best match for this role ({best_project_score:.0f}%)')
-        r.italic = True
-        r.font.color.rgb = RGBColor(0, 170, 0) if best_project_score >= 75 else RGBColor(255, 136, 0)
-        p.paragraph_format.space_after = Pt(6)
-    for proj in P.PROJECTS:
+    if best_project:
+        # Show matched project as MAIN (score >= 75%, so it's a good match)
+        proj = best_project
         p = no_space(doc.add_paragraph())
-        nr = p.add_run(proj["name"])
+        nr = p.add_run(proj.get("name", "Project"))
         nr.bold = True
-        sr = p.add_run(f' | {proj["stack"]} | ')
+        sr = p.add_run(f' | {", ".join(proj.get("tech_stack", [])[:3])} | ')
         sr.italic = True
-        p.add_run(proj["link"]).font.color.rgb = ACCENT
-        for b in proj["bullets"]:
+        p.add_run(proj.get("github_url", "GitHub")).font.color.rgb = ACCENT
+
+        desc = proj.get("description", "")
+        if desc:
+            bullet(desc)
+    else:
+        # No good match - show first project from profile
+        proj = P.PROJECTS[0] if P.PROJECTS else {}
+        p = no_space(doc.add_paragraph())
+        nr = p.add_run(proj.get("name", "Project"))
+        nr.bold = True
+        sr = p.add_run(f' | {proj.get("stack", "")} | ')
+        sr.italic = True
+        p.add_run(proj.get("link", "GitHub")).font.color.rgb = ACCENT
+        for b in proj.get("bullets", []):
             bullet(b)
+
 
     # Education
     section_heading("Education")
