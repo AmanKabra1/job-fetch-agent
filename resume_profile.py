@@ -140,48 +140,270 @@ SKILLS = {
 # --------------------------------------------------------------------------- #
 PROJECTS = [
     {
-        "name": "Shaadi Vidhaan",
-        "stack": "NestJS, Angular 17, TypeScript, MySQL, Docker, Render, Vercel",
-        "link": "https://wedding-planner-wine-six.vercel.app/",
+        "name": "job-fetch-agent",
+        "stack": "Python",
+        "link": "https://github.com/AmanKabra1/job-fetch-agent",
         "bullets": [
-            "Independently built a production full-stack platform for Indian "
-            "wedding & cultural event planning, covering 28+ states, 7 event "
-            "types, and 50+ seeded rituals with ceremony details.",
-            "Engineered a NestJS REST API with TypeORM + MySQL, JWT auth with role "
-            "separation (user vs. organizer), Swagger/OpenAPI docs, validation "
-            "pipes, and CORS configuration.",
-            "Developed Angular 17 frontend using Signals, standalone components, "
-            "lazy-loaded routes, and RxJS Map-based response caching for improved "
-            "load performance.",
-            "Containerized backend with Docker and configured CI/CD via GitHub "
-            "Actions, enabling auto-redeploy on Render (backend) and Vercel "
-            "(frontend) on every push.",
+            "Built with: Python",
+            "Source: https://github.com/AmanKabra1/job-fetch-agent",
         ],
     },
     {
         "name": "ai-travel-planner",
-        "stack": "Python, LangGraph, Groq LLaMA 3.3, PostgreSQL, MCP, Streamlit",
+        "stack": "Python, LangGraph, PostgreSQL, AI, Machine Learning",
         "link": "https://github.com/AmanKabra1/ai-travel-planner",
         "bullets": [
-            "Production multi-agent AI travel planner using LangGraph for orchestration "
-            "and Groq LLaMA 3.3 for intelligent reasoning across flight booking, weather "
-            "forecasting, and hotel recommendations.",
-            "Implemented Model Context Protocol (MCP) integrations for real-time data "
-            "fetching and human-in-the-loop decision making for complex travel scenarios.",
-            "Designed PostgreSQL memory system for persistent conversation context and "
-            "user preferences; built Streamlit UI for interactive trip planning experience.",
-            "Leveraged advanced AI patterns: multi-agent coordination, tool-use automation, "
-            "and intelligent fallback logic to handle edge cases in travel planning.",
+            "Production multi-agent AI travel planner — LangGraph, Groq LLaMA 3.3, MCP (flights/weather/hotels), human-in-the-loop, PostgreSQL memory, Streamlit UI",
+            "Tech Stack: Python, LangGraph, PostgreSQL, AI, Machine Learning",
+            "Source: https://github.com/AmanKabra1/ai-travel-planner",
         ],
     },
     {
-        "name": "Personal Portfolio",
-        "stack": "Node.js, TypeScript, Replit",
-        "link": "https://dark-mode-portfolio--amankabrait24.replit.app",
+        "name": "singplay",
+        "stack": "TypeScript",
+        "link": "https://github.com/AmanKabra1/singplay",
         "bullets": [
-            "Built an automated ETL pipeline for CSV-to-MySQL data transformation; "
-            "utilized Pandas for cleaning, integrated AWS S3 for storage, reducing "
-            "manual processing time by 70%.",
+            "SingPlay — music streaming, DJ, karaoke & Sing Along app built with Next.js 16, TiDB, Drizzle ORM",
+            "Tech Stack: TypeScript",
+            "Source: https://github.com/AmanKabra1/singplay",
+        ],
+    },
+    {
+        "name": "langgraph-chatbot",
+        "stack": "Python, LangGraph",
+        "link": "https://github.com/AmanKabra1/langgraph-chatbot",
+        "bullets": [
+            "Production LangGraph chatbot with embeddable widget, RAG, web search and multi-tenant client management",
+            "Tech Stack: Python, LangGraph",
+            "Source: https://github.com/AmanKabra1/langgraph-chatbot",
+        ],
+    },
+    {
+        "name": "ai-form-builder",
+        "stack": "PHP, AI",
+        "link": "https://github.com/AmanKabra1/ai-form-builder",
+        "bullets": [
+            "Built with: PHP, AI",
+            "Source: https://github.com/AmanKabra1/ai-form-builder",
+        ],
+    },
+    {
+        "name": "langgraph-blog-writer",
+        "stack": "Python, LangGraph",
+        "link": "https://github.com/AmanKabra1/langgraph-blog-writer",
+        "bullets": [
+            "Built with: Python, LangGraph",
+            "Source: https://github.com/AmanKabra1/langgraph-blog-writer",
+        ],
+    },
+    {
+        "name": "live-location-share",
+        "stack": "HTML",
+        "link": "https://github.com/AmanKabra1/live-location-share",
+        "bullets": [
+            "Live location sharing PWA - connect with share codes and auto-share every 3 hours",
+            "Tech Stack: HTML",
+            "Source: https://github.com/AmanKabra1/live-location-share",
+        ],
+    },
+    {
+        "name": "SB",
+        "stack": "Java",
+        "link": "https://github.com/AmanKabra1/SB",
+        "bullets": [
+            "Built with: Java",
+            "Source: https://github.com/AmanKabra1/SB",
+        ],
+    },
+    {
+        "name": "hotel_management_project",
+        "stack": "HTML",
+        "link": "https://github.com/AmanKabra1/hotel_management_project",
+        "bullets": [
+            "Built with: HTML",
+            "Source: https://github.com/AmanKabra1/hotel_management_project",
+        ],
+    },
+    {
+        "name": "task-management-api",
+        "stack": "TypeScript, MongoDB, Redis",
+        "link": "https://github.com/AmanKabra1/task-management-api",
+        "bullets": [
+            "Express + TypeScript REST API: JWT auth, role-based access, MongoDB (Mongoose), Redis, Zod validation",
+            "Tech Stack: TypeScript, MongoDB, Redis",
+            "Source: https://github.com/AmanKabra1/task-management-api",
+        ],
+    },
+    {
+        "name": "angular-tut",
+        "stack": "Full Stack",
+        "link": "https://github.com/AmanKabra1/angular-tut",
+        "bullets": [
+            "Production project",
+            "Source: https://github.com/AmanKabra1/angular-tut",
+        ],
+    },
+    {
+        "name": "Next",
+        "stack": "Full Stack",
+        "link": "https://github.com/AmanKabra1/Next",
+        "bullets": [
+            "Production project",
+            "Source: https://github.com/AmanKabra1/Next",
+        ],
+    },
+    {
+        "name": "demo1",
+        "stack": "TypeScript",
+        "link": "https://github.com/AmanKabra1/demo1",
+        "bullets": [
+            "Built with: TypeScript",
+            "Source: https://github.com/AmanKabra1/demo1",
+        ],
+    },
+    {
+        "name": "babbar",
+        "stack": "C++",
+        "link": "https://github.com/AmanKabra1/babbar",
+        "bullets": [
+            "Built with: C++",
+            "Source: https://github.com/AmanKabra1/babbar",
+        ],
+    },
+    {
+        "name": "ML-AI-IT",
+        "stack": "Jupyter Notebook, AI, Machine Learning",
+        "link": "https://github.com/AmanKabra1/ML-AI-IT",
+        "bullets": [
+            "Built with: Jupyter Notebook, AI, Machine Learning",
+            "Source: https://github.com/AmanKabra1/ML-AI-IT",
+        ],
+    },
+    {
+        "name": "amrutam-backend1",
+        "stack": "JavaScript",
+        "link": "https://github.com/AmanKabra1/amrutam-backend1",
+        "bullets": [
+            "Built with: JavaScript",
+            "Source: https://github.com/AmanKabra1/amrutam-backend1",
+        ],
+    },
+    {
+        "name": "uber-services",
+        "stack": "TypeScript",
+        "link": "https://github.com/AmanKabra1/uber-services",
+        "bullets": [
+            "Built with: TypeScript",
+            "Source: https://github.com/AmanKabra1/uber-services",
+        ],
+    },
+    {
+        "name": "Project-NodeJS",
+        "stack": "CSS, Node.js",
+        "link": "https://github.com/AmanKabra1/Project-NodeJS",
+        "bullets": [
+            "Built with: CSS, Node.js",
+            "Source: https://github.com/AmanKabra1/Project-NodeJS",
+        ],
+    },
+    {
+        "name": "vendor-management",
+        "stack": "TypeScript",
+        "link": "https://github.com/AmanKabra1/vendor-management",
+        "bullets": [
+            "Vendor Management System (NestJS + Angular) with JWT auth & role-based admin/vendor portals — evolving into RideFleet, a shared delivery-rider platform",
+            "Tech Stack: TypeScript",
+            "Source: https://github.com/AmanKabra1/vendor-management",
+        ],
+    },
+    {
+        "name": "finance-backend",
+        "stack": "TypeScript",
+        "link": "https://github.com/AmanKabra1/finance-backend",
+        "bullets": [
+            "Built with: TypeScript",
+            "Source: https://github.com/AmanKabra1/finance-backend",
+        ],
+    },
+    {
+        "name": "AgenticAI",
+        "stack": "Jupyter Notebook, AI",
+        "link": "https://github.com/AmanKabra1/AgenticAI",
+        "bullets": [
+            "Built with: Jupyter Notebook, AI",
+            "Source: https://github.com/AmanKabra1/AgenticAI",
+        ],
+    },
+    {
+        "name": "AmanKabra1",
+        "stack": "Full Stack",
+        "link": "https://github.com/AmanKabra1/AmanKabra1",
+        "bullets": [
+            "Production project",
+            "Source: https://github.com/AmanKabra1/AmanKabra1",
+        ],
+    },
+    {
+        "name": "langchain-learning",
+        "stack": "Jupyter Notebook, LangChain, AI",
+        "link": "https://github.com/AmanKabra1/langchain-learning",
+        "bullets": [
+            "Built with: Jupyter Notebook, LangChain, AI",
+            "Source: https://github.com/AmanKabra1/langchain-learning",
+        ],
+    },
+    {
+        "name": "Cricket",
+        "stack": "TypeScript",
+        "link": "https://github.com/AmanKabra1/Cricket",
+        "bullets": [
+            "Built with: TypeScript",
+            "Source: https://github.com/AmanKabra1/Cricket",
+        ],
+    },
+    {
+        "name": "CoWorking-Space",
+        "stack": "Python",
+        "link": "https://github.com/AmanKabra1/CoWorking-Space",
+        "bullets": [
+            "Built with: Python",
+            "Source: https://github.com/AmanKabra1/CoWorking-Space",
+        ],
+    },
+    {
+        "name": "aman_portfolio-app",
+        "stack": "TypeScript",
+        "link": "https://github.com/AmanKabra1/aman_portfolio-app",
+        "bullets": [
+            "Built with: TypeScript",
+            "Source: https://github.com/AmanKabra1/aman_portfolio-app",
+        ],
+    },
+    {
+        "name": "Images",
+        "stack": "Full Stack",
+        "link": "https://github.com/AmanKabra1/Images",
+        "bullets": [
+            "Production project",
+            "Source: https://github.com/AmanKabra1/Images",
+        ],
+    },
+    {
+        "name": "demo",
+        "stack": "Full Stack",
+        "link": "https://github.com/AmanKabra1/demo",
+        "bullets": [
+            "Production project",
+            "Source: https://github.com/AmanKabra1/demo",
+        ],
+    },
+    {
+        "name": "UAT Test Project",
+        "stack": "Python, Testing",
+        "link": "",
+        "bullets": [
+            "This is a UAT test project for verification",
+            "Tech Stack: Python, Testing",
         ],
     },
 ]
