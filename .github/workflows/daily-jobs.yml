@@ -28,18 +28,7 @@ jobs:
           pip install -r requirements.txt
 
       - name: Load existing jobs from feed branch (to keep portfolio intact)
-        run: |
-          git fetch origin feed || true
-          if git show-ref --verify --quiet refs/remotes/origin/feed; then
-            mkdir -p data
-            git show origin/feed:data/jobs.json > data/jobs.json 2>&1
-            if [ ! -s data/jobs.json ]; then
-              echo "Warning: Failed to load jobs from feed, starting with empty"
-              echo '{"jobs":[]}' > data/jobs.json
-            fi
-          else
-            echo "Feed branch not found"
-          fi
+        run: python load_existing_jobs.py
 
       - name: Fetch jobs and write data/jobs.json
         env:
