@@ -1,9 +1,9 @@
 {
-"fetched_at": "2026-09-02 14:01 UTC",
+"fetched_at": "2026-09-02 15:30 UTC",
 "count": 50,
 "jobs": [
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Software Development Engineer- Python (S03)",
 "company": "Systango",
 "location": "MP, IN",
@@ -25,7 +25,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Software Development Engineer- Python (S03)",
 "company": "Systango Technologies Ltd",
 "location": "MP, IN",
@@ -47,7 +47,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Python Full Stack Developer",
 "company": "Hiring Mavericks",
 "location": "MH, IN",
@@ -69,7 +69,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Java Software Developer",
 "company": "SACMIA Pvt. Ltd.",
 "location": "Remote, IN",
@@ -91,7 +91,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Software Engineer II - Java",
 "company": "JPMorganChase",
 "location": "MH, IN",
@@ -113,7 +113,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Java with Angular Full stack developer",
 "company": "Capgemini",
 "location": "KA, IN",
@@ -135,7 +135,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Java Full Stack Developer",
 "company": "snehal",
 "location": "MH, IN",
@@ -157,7 +157,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Java Full Stack Developer",
 "company": "ComUnus Technologies Pvt Ltd",
 "location": "MH, IN",
@@ -179,7 +179,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Software Engineer (Java)",
 "company": "Diksha Technologies",
 "location": "MH, IN",
@@ -201,7 +201,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Software Engineer - Nodejs",
 "company": "3Pillar Global",
 "location": "Remote, IN",
@@ -223,7 +223,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Software Engineer - Java/Microservices/Gen AI",
 "company": "Wells Fargo",
 "location": "TS, IN",
@@ -245,7 +245,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Consultant - Backend & Agentic AI Engineering",
 "company": "CHRYSELYS",
 "location": "TS, IN",
@@ -267,7 +267,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Python backend engineer",
 "company": "Rao IIT Academy",
 "location": "MH, IN",
@@ -289,7 +289,29 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
+"title": "Software Engineer-Java Open Liquidity",
+"company": "CGI",
+"location": "KA, IN",
+"site": "indeed",
+"date_posted": "2026-09-02",
+"job_url": "https://in.indeed.com/viewjob?jk=171ac401783b4fde",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "backend developer",
+"_date_category": "TODAY",
+"_fit_analysis": {
+"interview_likelihood": 50,
+"fit_level": "MAYBE",
+"why_call": "Groq API not available"
+},
+"interview_likelihood": 50,
+"fit_level": "MAYBE"
+},
+{
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Consultant | Java Springboot Backend | Mumbai | Engineering | Platform Development & Integration",
 "company": "Deloitte",
 "location": "MH, IN",
@@ -311,7 +333,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Consultant | Java Backend Developer | Delhi | Engineering",
 "company": "Deloitte",
 "location": "DL, IN",
@@ -333,7 +355,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Freshers -Java Software Developer",
 "company": "Risosu Consulting",
 "location": "MH, IN",
@@ -355,7 +377,29 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
+"title": "Software Engineer - Java backend Development",
+"company": "Wells Fargo",
+"location": "TS, IN",
+"site": "indeed",
+"date_posted": "2026-09-02",
+"job_url": "https://in.indeed.com/viewjob?jk=8fd693954261bcd1",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "Java backend engineer",
+"_date_category": "TODAY",
+"_fit_analysis": {
+"interview_likelihood": 50,
+"fit_level": "MAYBE",
+"why_call": "Groq API not available"
+},
+"interview_likelihood": 50,
+"fit_level": "MAYBE"
+},
+{
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Java Full Stack Trainer",
 "company": "",
 "location": "DL, IN",
@@ -377,7 +421,29 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
+"title": "Linux devices software engineer - snapd",
+"company": "Canonical",
+"location": "EMEA,  LATAM,  Canada,  USA",
+"site": "jobicy",
+"date_posted": "2026-09-02",
+"job_url": "https://jobicy.com/jobs/149969-linux-devices-software-engineer-snapd",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "True",
+"company_num_employees": "",
+"search_term": "remote-api",
+"_date_category": "TODAY",
+"_fit_analysis": {
+"interview_likelihood": 50,
+"fit_level": "MAYBE",
+"why_call": "Groq API not available"
+},
+"interview_likelihood": 50,
+"fit_level": "MAYBE"
+},
+{
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Full Stack Developer (AI Agents)",
 "company": "Databricks",
 "location": "Bengaluru, India",
@@ -399,7 +465,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Software Engineer II - Java, Spring Boot, Oracle",
 "company": "JPMorganChase",
 "location": "KA, IN",
@@ -421,7 +487,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Junior Python Developer",
 "company": "KATALYSTCS - AGENTS OF CHANGE CONSULTING PRIVATE LIMITED",
 "location": "Remote, IN",
@@ -443,7 +509,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Agentic�AI�Engineer",
 "company": "Persistent Systems",
 "location": "MH, IN",
@@ -465,7 +531,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Junior Agentic AI Engineer",
 "company": "Commerce Pundit",
 "location": "GJ, IN",
@@ -487,7 +553,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Python Developer Intern",
 "company": "",
 "location": "PB, IN",
@@ -509,7 +575,29 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
+"title": "Machine Learning Engineer",
+"company": "Proofpoint",
+"location": "IN",
+"site": "indeed",
+"date_posted": "2026-09-02",
+"job_url": "https://in.indeed.com/viewjob?jk=339309231cb4d8d9",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "True",
+"company_num_employees": "1,001 to 5,000",
+"search_term": "AI engineer",
+"_date_category": "TODAY",
+"_fit_analysis": {
+"interview_likelihood": 50,
+"fit_level": "MAYBE",
+"why_call": "Groq API not available"
+},
+"interview_likelihood": 50,
+"fit_level": "MAYBE"
+},
+{
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Developer - Application Development JAVA S 4A",
 "company": "Genpact",
 "location": "MH, IN",
@@ -531,7 +619,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "GenAI & Agentic AI Engineer",
 "company": "NatWest Group",
 "location": "KA, IN",
@@ -553,17 +641,39 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
-"title": "Back End Developer ��� Java / Spring Boot",
-"company": "Zensar Technologies",
-"location": "IN",
+"date_fetched": "2026-09-02 15:30 UTC",
+"title": "Data Engineer with Python",
+"company": "ABB",
+"location": "KA, IN",
 "site": "indeed",
 "date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=14f7c5b1b680e660",
+"job_url": "https://in.indeed.com/viewjob?jk=6c56332352634110",
 "min_amount": "",
 "max_amount": "",
 "is_remote": "False",
-"company_num_employees": "5,001 to 10,000",
+"company_num_employees": "10,000+",
+"search_term": "Python developer",
+"_date_category": "TODAY",
+"_fit_analysis": {
+"interview_likelihood": 50,
+"fit_level": "MAYBE",
+"why_call": "Groq API not available"
+},
+"interview_likelihood": 50,
+"fit_level": "MAYBE"
+},
+{
+"date_fetched": "2026-09-02 15:30 UTC",
+"title": "Angular Developer",
+"company": "Intelliworkz Business Solution Pvt. Ltd.",
+"location": "GJ, IN",
+"site": "indeed",
+"date_posted": "2026-09-02",
+"job_url": "https://in.indeed.com/viewjob?jk=29a63b3406ae6d54",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
 "search_term": "backend developer",
 "_date_category": "TODAY",
 "_fit_analysis": {
@@ -575,7 +685,29 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
+"title": "AI & LLM Platform Engineer",
+"company": "CGI",
+"location": "KA, IN",
+"site": "indeed",
+"date_posted": "2026-09-02",
+"job_url": "https://in.indeed.com/viewjob?jk=9f62a4ad5f2e7f2c",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "10,000+",
+"search_term": "machine learning engineer",
+"_date_category": "TODAY",
+"_fit_analysis": {
+"interview_likelihood": 50,
+"fit_level": "MAYBE",
+"why_call": "Groq API not available"
+},
+"interview_likelihood": 50,
+"fit_level": "MAYBE"
+},
+{
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Java FullStack Engineer",
 "company": "Zensar Technologies",
 "location": "TN, IN",
@@ -597,7 +729,29 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
+"title": "Back End Developer ��� Java / Spring Boot",
+"company": "Zensar Technologies",
+"location": "IN",
+"site": "indeed",
+"date_posted": "2026-09-02",
+"job_url": "https://in.indeed.com/viewjob?jk=14f7c5b1b680e660",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "5,001 to 10,000",
+"search_term": "Java developer",
+"_date_category": "TODAY",
+"_fit_analysis": {
+"interview_likelihood": 50,
+"fit_level": "MAYBE",
+"why_call": "Groq API not available"
+},
+"interview_likelihood": 50,
+"fit_level": "MAYBE"
+},
+{
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "SW developer :Java",
 "company": "Bosch",
 "location": "KA, IN",
@@ -619,51 +773,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
-"title": "Machine Learning Engineer",
-"company": "Proofpoint",
-"location": "IN",
-"site": "indeed",
-"date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=339309231cb4d8d9",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "1,001 to 5,000",
-"search_term": "data engineer",
-"_date_category": "TODAY",
-"_fit_analysis": {
-"interview_likelihood": 50,
-"fit_level": "MAYBE",
-"why_call": "Groq API not available"
-},
-"interview_likelihood": 50,
-"fit_level": "MAYBE"
-},
-{
-"date_fetched": "2026-09-02 14:01 UTC",
-"title": "Data Engineer with Python",
-"company": "ABB",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=6c56332352634110",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "10,000+",
-"search_term": "data engineer",
-"_date_category": "TODAY",
-"_fit_analysis": {
-"interview_likelihood": 50,
-"fit_level": "MAYBE",
-"why_call": "Groq API not available"
-},
-"interview_likelihood": 50,
-"fit_level": "MAYBE"
-},
-{
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Machine Learning Engineer, AI Platform",
 "company": "Airbnb",
 "location": "China",
@@ -685,7 +795,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Java Full Stack Developer (React JS)",
 "company": "Chabez Tech",
 "location": "KA, IN",
@@ -707,7 +817,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Note,js developer-IGaming/Casino",
 "company": "",
 "location": "GJ, IN",
@@ -729,7 +839,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Java Developer",
 "company": "NetScore Technologies, Inc",
 "location": "TS, IN",
@@ -751,29 +861,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
-"title": "Angular Developer",
-"company": "Next XR India",
-"location": "TN, IN",
-"site": "indeed",
-"date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=812c9fa0a940030d",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "AI engineer",
-"_date_category": "TODAY",
-"_fit_analysis": {
-"interview_likelihood": 50,
-"fit_level": "MAYBE",
-"why_call": "Groq API not available"
-},
-"interview_likelihood": 50,
-"fit_level": "MAYBE"
-},
-{
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Java Spring Boot Developer",
 "company": "Next XR India",
 "location": "TN, IN",
@@ -784,7 +872,7 @@
 "max_amount": "",
 "is_remote": "False",
 "company_num_employees": "",
-"search_term": "AI engineer",
+"search_term": "LLM engineer",
 "_date_category": "TODAY",
 "_fit_analysis": {
 "interview_likelihood": 50,
@@ -795,7 +883,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Python / AI Automation Engineer",
 "company": "Karma Global Solutions",
 "location": "GJ, IN",
@@ -817,7 +905,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "AI Platform Engineer= AWS(Contractual for 6 months extendable)",
 "company": "Stellaspire",
 "location": "KA, IN",
@@ -839,7 +927,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Python Developer (Night shift)",
 "company": "Webkorps Optimal Solution",
 "location": "MP, IN",
@@ -861,7 +949,29 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
+"title": "Angular Developer",
+"company": "Next XR India",
+"location": "TN, IN",
+"site": "indeed",
+"date_posted": "2026-09-02",
+"job_url": "https://in.indeed.com/viewjob?jk=812c9fa0a940030d",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "AI developer",
+"_date_category": "TODAY",
+"_fit_analysis": {
+"interview_likelihood": 50,
+"fit_level": "MAYBE",
+"why_call": "Groq API not available"
+},
+"interview_likelihood": 50,
+"fit_level": "MAYBE"
+},
+{
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Linux System Engineer",
 "company": "Alchi Design Studio",
 "location": "Remote, IN",
@@ -883,7 +993,73 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
+"title": "Python Developer",
+"company": "Physiocares - Rapid Recovery Team",
+"location": "GJ, IN",
+"site": "indeed",
+"date_posted": "2026-09-02",
+"job_url": "https://in.indeed.com/viewjob?jk=58856aae15330729",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "Python developer",
+"_date_category": "TODAY",
+"_fit_analysis": {
+"interview_likelihood": 50,
+"fit_level": "MAYBE",
+"why_call": "Groq API not available"
+},
+"interview_likelihood": 50,
+"fit_level": "MAYBE"
+},
+{
+"date_fetched": "2026-09-02 15:30 UTC",
+"title": "Python Developer",
+"company": "Physiocares - RRT",
+"location": "GJ, IN",
+"site": "indeed",
+"date_posted": "2026-09-02",
+"job_url": "https://in.indeed.com/viewjob?jk=27e2a5ef71d9bcce",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "Python developer",
+"_date_category": "TODAY",
+"_fit_analysis": {
+"interview_likelihood": 50,
+"fit_level": "MAYBE",
+"why_call": "Groq API not available"
+},
+"interview_likelihood": 50,
+"fit_level": "MAYBE"
+},
+{
+"date_fetched": "2026-09-02 15:30 UTC",
+"title": "Python Developer",
+"company": "eDigillence Infosolutions",
+"location": "GJ, IN",
+"site": "indeed",
+"date_posted": "2026-09-02",
+"job_url": "https://in.indeed.com/viewjob?jk=66117b4b0edd24de",
+"min_amount": "",
+"max_amount": "",
+"is_remote": "False",
+"company_num_employees": "",
+"search_term": "Python developer",
+"_date_category": "TODAY",
+"_fit_analysis": {
+"interview_likelihood": 50,
+"fit_level": "MAYBE",
+"why_call": "Groq API not available"
+},
+"interview_likelihood": 50,
+"fit_level": "MAYBE"
+},
+{
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Python Developer",
 "company": "NetScore Technologies, Inc",
 "location": "TS, IN",
@@ -905,7 +1081,7 @@
 "fit_level": "MAYBE"
 },
 {
-"date_fetched": "2026-09-02 14:01 UTC",
+"date_fetched": "2026-09-02 15:30 UTC",
 "title": "Python Developer",
 "company": "iZOOlogic",
 "location": "RJ, IN",
@@ -917,182 +1093,6 @@
 "is_remote": "False",
 "company_num_employees": "11 to 50",
 "search_term": "Python developer",
-"_date_category": "TODAY",
-"_fit_analysis": {
-"interview_likelihood": 50,
-"fit_level": "MAYBE",
-"why_call": "Groq API not available"
-},
-"interview_likelihood": 50,
-"fit_level": "MAYBE"
-},
-{
-"date_fetched": "2026-09-02 14:01 UTC",
-"title": "Python Automation Framework Developer",
-"company": "",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=10b70326b303d2fe",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "True",
-"company_num_employees": "",
-"search_term": "Python developer",
-"_date_category": "TODAY",
-"_fit_analysis": {
-"interview_likelihood": 50,
-"fit_level": "MAYBE",
-"why_call": "Groq API not available"
-},
-"interview_likelihood": 50,
-"fit_level": "MAYBE"
-},
-{
-"date_fetched": "2026-09-02 14:01 UTC",
-"title": "Python/Django Developer",
-"company": "FATCAT WEALTHY",
-"location": "TN, IN",
-"site": "indeed",
-"date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=29a879aeb141f5f0",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "Python developer",
-"_date_category": "TODAY",
-"_fit_analysis": {
-"interview_likelihood": 50,
-"fit_level": "MAYBE",
-"why_call": "Groq API not available"
-},
-"interview_likelihood": 50,
-"fit_level": "MAYBE"
-},
-{
-"date_fetched": "2026-09-02 14:01 UTC",
-"title": "Python Developer",
-"company": "WebSenor InfoTech",
-"location": "RJ, IN",
-"site": "indeed",
-"date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=99bc2d0a5ba9f35e",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "2 to 10",
-"search_term": "Python developer",
-"_date_category": "TODAY",
-"_fit_analysis": {
-"interview_likelihood": 50,
-"fit_level": "MAYBE",
-"why_call": "Groq API not available"
-},
-"interview_likelihood": 50,
-"fit_level": "MAYBE"
-},
-{
-"date_fetched": "2026-09-02 14:01 UTC",
-"title": "Python Developer (Contract)",
-"company": "Saaki Argus And Averil Consulting",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=d1880ff87dd6af20",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "51 to 200",
-"search_term": "Python developer",
-"_date_category": "TODAY",
-"_fit_analysis": {
-"interview_likelihood": 50,
-"fit_level": "MAYBE",
-"why_call": "Groq API not available"
-},
-"interview_likelihood": 50,
-"fit_level": "MAYBE"
-},
-{
-"date_fetched": "2026-09-02 14:01 UTC",
-"title": "Java Developer",
-"company": "Josh Software",
-"location": "MH, IN",
-"site": "indeed",
-"date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=7d9dfafab85eb9d8",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer",
-"_date_category": "TODAY",
-"_fit_analysis": {
-"interview_likelihood": 50,
-"fit_level": "MAYBE",
-"why_call": "Groq API not available"
-},
-"interview_likelihood": 50,
-"fit_level": "MAYBE"
-},
-{
-"date_fetched": "2026-09-02 14:01 UTC",
-"title": "Angular JS Developer",
-"company": "NetScore Technologies, Inc",
-"location": "TS, IN",
-"site": "indeed",
-"date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=6e667aa7dadde953",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend developer",
-"_date_category": "TODAY",
-"_fit_analysis": {
-"interview_likelihood": 50,
-"fit_level": "MAYBE",
-"why_call": "Groq API not available"
-},
-"interview_likelihood": 50,
-"fit_level": "MAYBE"
-},
-{
-"date_fetched": "2026-09-02 14:01 UTC",
-"title": "Java Back End Developer (Contract)",
-"company": "Saaki Argus And Averil Consulting",
-"location": "KA, IN",
-"site": "indeed",
-"date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=af7aea4a86e23868",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "51 to 200",
-"search_term": "backend engineer",
-"_date_category": "TODAY",
-"_fit_analysis": {
-"interview_likelihood": 50,
-"fit_level": "MAYBE",
-"why_call": "Groq API not available"
-},
-"interview_likelihood": 50,
-"fit_level": "MAYBE"
-},
-{
-"date_fetched": "2026-09-02 14:01 UTC",
-"title": "Linux System Engineer",
-"company": "Armia Systems Inc",
-"location": "KL, IN",
-"site": "indeed",
-"date_posted": "2026-09-02",
-"job_url": "https://in.indeed.com/viewjob?jk=870d018eb90398c5",
-"min_amount": "",
-"max_amount": "",
-"is_remote": "False",
-"company_num_employees": "",
-"search_term": "backend engineer",
 "_date_category": "TODAY",
 "_fit_analysis": {
 "interview_likelihood": 50,
