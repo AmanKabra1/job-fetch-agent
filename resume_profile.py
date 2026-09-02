@@ -159,6 +159,22 @@ PROJECTS = [
         ],
     },
     {
+        "name": "ai-travel-planner",
+        "stack": "Python, LangGraph, Groq LLaMA 3.3, PostgreSQL, MCP, Streamlit",
+        "link": "https://github.com/AmanKabra1/ai-travel-planner",
+        "bullets": [
+            "Production multi-agent AI travel planner using LangGraph for orchestration "
+            "and Groq LLaMA 3.3 for intelligent reasoning across flight booking, weather "
+            "forecasting, and hotel recommendations.",
+            "Implemented Model Context Protocol (MCP) integrations for real-time data "
+            "fetching and human-in-the-loop decision making for complex travel scenarios.",
+            "Designed PostgreSQL memory system for persistent conversation context and "
+            "user preferences; built Streamlit UI for interactive trip planning experience.",
+            "Leveraged advanced AI patterns: multi-agent coordination, tool-use automation, "
+            "and intelligent fallback logic to handle edge cases in travel planning.",
+        ],
+    },
+    {
         "name": "Personal Portfolio",
         "stack": "Node.js, TypeScript, Replit",
         "link": "https://dark-mode-portfolio--amankabrait24.replit.app",

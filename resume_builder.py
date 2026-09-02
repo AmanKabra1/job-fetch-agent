@@ -266,7 +266,11 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
             story.append(bullets(proj.get("bullets", [])))
 
     # Show OTHER projects from profile (2nd onwards, always visible)
+    # Skip matched project to avoid duplication
+    matched_proj_name = best_project.get("name", "") if best_project else ""
     for proj in P.PROJECTS[1:]:
+        if proj.get("name") == matched_proj_name:
+            continue  # Skip if already shown as matched project
         story.append(Spacer(1, 2.5))
         head = (f'<b>{proj.get("name", "Project")}</b> | <i>{proj.get("stack", "")}</i> | '
                 f'<a href="{proj.get("link", "#")}">{proj.get("link", "GitHub")}</a>')
@@ -450,7 +454,11 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
             bullet(b)
 
     # Show OTHER projects from profile (2nd onwards, always visible)
+    # Skip matched project to avoid duplication
+    matched_proj_name = best_project.get("name", "") if best_project else ""
     for proj in P.PROJECTS[1:]:
+        if proj.get("name") == matched_proj_name:
+            continue  # Skip if already shown as matched project
         p = no_space(doc.add_paragraph())
         nr = p.add_run(proj.get("name", "Project"))
         nr.bold = True
