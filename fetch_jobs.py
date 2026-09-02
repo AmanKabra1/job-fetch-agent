@@ -460,10 +460,22 @@ def main():
 
     feed_rows = today_rows
     if len(today_rows) < MIN_FEED:
-        fresh_old = [r for r in existing
-                     if str(r.get("job_url", "")) not in seen and _is_fresh(r)]
-        feed_rows = today_rows + fresh_old
-        print(f"  thin scrape ({len(today_rows)}); topped up with {len(fresh_old)} fresh jobs "
+        # QUALITY: From existing jobs, keep ONLY 95%+ matches (from previous cron filtering)
+        high_quality_existing = [r for r in existing
+                                if str(r.get("job_url", "")) not in seen
+                                and _is_fresh(r)
+                                and r.get("_match_score", 0) >= 95]  # Keep 95%+ only
+        low_quality_existing = [r for r in existing
+                               if str(r.get("job_url", "")) not in seen
+                               and _is_fresh(r)
+                               and r.get("_match_score", 0) < 95]  # These are older, lower quality
+
+        feed_rows = today_rows + high_quality_existing
+        removed_low = len(low_quality_existing)
+
+        if removed_low > 0:
+            print(f"  thin scrape ({len(today_rows)}); removed {removed_low} low-quality jobs (<95%) from previous cron", flush=True)
+        print(f"  topped up with {len(high_quality_existing)} high-quality (95%+) fresh jobs "
               f"(< 14 days old) to {len(feed_rows)} before ranking.", flush=True)
 
     # ADD DATE CATEGORIES: TODAY (3d), THIS_WEEK (7d), RECENT (14d)
@@ -479,25 +491,14 @@ def main():
 
     ranked = rank_for_feed(feed_rows)
 
-    # QUALITY FILTER: KEEP ONLY HIGH-QUALITY matches (95%+)
-    # Remove all jobs with score < 95% to ensure highest quality feed
+    # QUALITY BREAKDOWN: Show all jobs now, but track quality for next cron
     high_quality = [r for r in ranked if r.get("_match_score", 0) >= 95]
     medium_quality = [r for r in ranked if 75 <= r.get("_match_score", 0) < 95]
     low_quality = [r for r in ranked if r.get("_match_score", 0) < 75]
 
     quality_breakdown = f"High(95%+):{len(high_quality)} | Medium(75-95%):{len(medium_quality)} | Low:<75:{len(low_quality)}"
     print(f"  quality breakdown: {quality_breakdown}", flush=True)
-    print(f"  filtering: keeping ONLY 95%+ quality jobs ({len(high_quality)} jobs)", flush=True)
-    print(f"    removed {len(medium_quality) + len(low_quality)} lower-quality jobs", flush=True)
-
-    # KEEP ONLY HIGH QUALITY (95%+)
-    ranked = high_quality
-
-    # If not enough high-quality jobs, top up with medium quality to reach MIN_FEED
-    if len(ranked) < MIN_FEED:
-        needed = min(MIN_FEED - len(ranked), len(medium_quality))
-        ranked.extend(medium_quality[:needed])
-        print(f"  topped up with {needed} medium-quality jobs to reach {MIN_FEED} minimum", flush=True)
+    print(f"  NOTE: Showing ALL jobs this cron. Next cron will keep ONLY 95%+ from this batch.", flush=True)
 
     # AI Analysis: Analyze top 50 jobs for interview likelihood
     print(f"  analyzing top 50 jobs for interview likelihood ...", flush=True)
