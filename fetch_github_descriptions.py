@@ -17,43 +17,61 @@ PROJECTS_FILE = Path(__file__).parent / "data" / "projects.json"
 
 
 def extract_readme_summary(readme_content: str) -> str:
-    """Extract meaningful summary from README (skip badges, titles, etc)."""
+    """Extract rich 4-5 line summary from README."""
     if not readme_content:
         return ""
 
     lines = readme_content.split("\n")
-    summary_lines = []
-    skip_next = False
+    summary_parts = []
+    paragraph_buffer = []
 
-    for line in lines:
+    for i, line in enumerate(lines):
         line = line.strip()
 
-        # Skip badges, shields, images
-        if line.startswith("[![") or line.startswith("![") or not line:
+        # Skip empty lines and badges early
+        if not line or line.startswith("[![") or line.startswith("!["):
+            # If we have buffered content, add it
+            if paragraph_buffer and len(summary_parts) < 5:
+                summary_parts.append(" ".join(paragraph_buffer))
+                paragraph_buffer = []
             continue
 
-        # Skip main title (first # heading)
-        if line.startswith("# ") and len(summary_lines) == 0:
+        # Skip main title and headings
+        if line.startswith("#"):
+            if paragraph_buffer and len(summary_parts) < 5:
+                summary_parts.append(" ".join(paragraph_buffer))
+                paragraph_buffer = []
             continue
 
-        # Skip TOC
-        if "Table of Contents" in line or "## " in line[:4]:
-            if skip_next:
-                break
-            skip_next = True
+        # Skip HTML tags, markdown special syntax
+        if line.startswith("<") or line.startswith("|") or line.startswith("-") or line.startswith("*"):
             continue
 
-        # Get meaningful content
-        if line and not line.startswith("#"):
-            # Clean up markdown
-            line = line.replace("**", "").replace("_", "").replace("`", "")
-            summary_lines.append(line)
+        # Clean markdown formatting
+        line = line.replace("**", "").replace("__", "").replace("_", "").replace("`", "").replace("~~", "")
+        line = line.replace("[", "").replace("]", "").replace("(", "").replace(")", "")
 
-            # Get 2-4 meaningful lines (4-5 sentences worth)
-            if len(summary_lines) >= 4:
-                break
+        # Skip links that are now empty
+        if line:
+            paragraph_buffer.append(line)
 
-    return " ".join(summary_lines)[:500]  # Max 500 chars
+            # If we have a sentence (ends with period/colon) or buffer is long, add to parts
+            if line.endswith((".", ":", "!", "?")) or len(" ".join(paragraph_buffer)) > 120:
+                if len(summary_parts) < 5:  # Get up to 5 substantial sentences/lines
+                    summary_parts.append(" ".join(paragraph_buffer))
+                    paragraph_buffer = []
+
+    # Add any remaining buffer
+    if paragraph_buffer and len(summary_parts) < 5:
+        summary_parts.append(" ".join(paragraph_buffer))
+
+    # Join with newlines and limit to substantial content
+    result = "\n".join(summary_parts[:5])  # Keep up to 5 paragraphs
+
+    # Remove excessive whitespace
+    result = " ".join(result.split())
+
+    return result[:1200] if result else ""  # Much longer - 1200 chars = 4-5 full lines
 
 
 def fetch_github_readme(github_url: str) -> str:

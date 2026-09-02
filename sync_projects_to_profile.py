@@ -91,26 +91,43 @@ def generate_heuristic_bullets(project: dict) -> list:
     description = (project.get("description") or "").strip()
     language = project.get("language", "")
 
-    # Bullet 1: Main description or project summary
-    if description and len(description) > 20:
+    # Bullet 1: LONG Main description or project summary (4-5 detailed lines)
+    if description and len(description) > 40:
+        # Description is already rich from GitHub - use it as-is (often 4-5 sentences)
         bullets.append(description)
     else:
+        # Generate detailed long description (4-5 sentences)
         if tech_stack:
-            core_stack = ", ".join(tech_stack[:3])
-            bullets.append(
-                f"Independently developed {name} leveraging {core_stack} "
-                f"to deliver production-grade features and professional-level capabilities; "
-                f"demonstrates comprehensive full-stack development expertise"
-            )
+            core_stack = ", ".join(tech_stack[:2])
+            other_stack = ", ".join(tech_stack[2:4]) if len(tech_stack) > 2 else ""
+
+            if other_stack:
+                bullets.append(
+                    f"Independently developed {name} as a comprehensive solution leveraging {core_stack} "
+                    f"for core functionality, with additional integration of {other_stack} to enhance capabilities "
+                    f"and deliver production-grade features. The project demonstrates professional-level engineering with emphasis on "
+                    f"scalability, reliability, and maintainability. Showcases expertise in full-stack architecture design and implementation "
+                    f"of complex systems with multiple technology layers."
+                )
+            else:
+                bullets.append(
+                    f"Independently developed {name} leveraging {core_stack} as primary technology stack "
+                    f"to deliver production-grade features and professional-level capabilities. This comprehensive project demonstrates "
+                    f"expertise in full-stack development with emphasis on clean code architecture, scalability, and production-ready implementation. "
+                    f"Showcases ability to design, develop, and deploy complete systems with focus on reliability and maintainability."
+                )
         elif language:
             bullets.append(
-                f"Engineered {name} application in {language} emphasizing clean code "
-                f"architecture, maintainability, and production-ready implementation practices"
+                f"Engineered {name} application in {language} emphasizing clean code architecture, "
+                f"professional implementation standards, and production-ready quality. The project demonstrates expertise in building "
+                f"robust systems with proper error handling, testing, and maintainability. Showcases ability to deliver complete solutions "
+                f"that follow industry best practices and support long-term scalability and evolution."
             )
         else:
             bullets.append(
-                f"Developed {name} as a complete project showcasing full-stack capabilities "
-                f"and professional software engineering practices"
+                f"Developed {name} as a complete end-to-end project showcasing comprehensive full-stack capabilities "
+                f"and professional software engineering practices. The implementation demonstrates expertise in system design, architecture patterns, "
+                f"and production deployment. Project reflects commitment to code quality, user experience, and maintainable solutions that scale effectively."
             )
 
     # Bullet 2: Technical architecture

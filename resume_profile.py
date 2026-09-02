@@ -221,7 +221,7 @@ PROJECTS = [
         "stack": "Java",
         "link": "https://github.com/AmanKabra1/SB",
         "bullets": [
-            "Independently developed SB leveraging Java to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
+            "Independently developed SB leveraging Java as primary technology stack to deliver production-grade features and professional-level capabilities. This comprehensive project demonstrates expertise in full-stack development with emphasis on clean code architecture, scalability, and production-ready implementation. Showcases ability to design, develop, and deploy complete systems with focus on reliability and maintainability.",
             "Implemented core architecture using Java ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -232,7 +232,7 @@ PROJECTS = [
         "stack": "HTML",
         "link": "https://github.com/AmanKabra1/hotel_management_project",
         "bullets": [
-            "Independently developed hotel_management_project leveraging HTML to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
+            "Independently developed hotel_management_project leveraging HTML as primary technology stack to deliver production-grade features and professional-level capabilities. This comprehensive project demonstrates expertise in full-stack development with emphasis on clean code architecture, scalability, and production-ready implementation. Showcases ability to design, develop, and deploy complete systems with focus on reliability and maintainability.",
             "Implemented core architecture using HTML ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -287,7 +287,7 @@ PROJECTS = [
         "stack": "C++",
         "link": "https://github.com/AmanKabra1/babbar",
         "bullets": [
-            "Independently developed babbar leveraging C++ to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
+            "Independently developed babbar leveraging C++ as primary technology stack to deliver production-grade features and professional-level capabilities. This comprehensive project demonstrates expertise in full-stack development with emphasis on clean code architecture, scalability, and production-ready implementation. Showcases ability to design, develop, and deploy complete systems with focus on reliability and maintainability.",
             "Implemented core architecture using C++ ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -298,7 +298,7 @@ PROJECTS = [
         "stack": "Jupyter Notebook, AI, Machine Learning",
         "link": "https://github.com/AmanKabra1/ML-AI-IT",
         "bullets": [
-            "Independently developed ML-AI-IT leveraging Jupyter Notebook, AI, Machine Learning to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
+            "Independently developed ML-AI-IT as a comprehensive solution leveraging Jupyter Notebook, AI for core functionality, with additional integration of Machine Learning to enhance capabilities and deliver production-grade features. The project demonstrates professional-level engineering with emphasis on scalability, reliability, and maintainability. Showcases expertise in full-stack architecture design and implementation of complex systems with multiple technology layers.",
             "Engineered backend with Jupyter Notebook, AI; integrated Machine Learning for enhanced functionality, performance, and production reliability",
             "Integrated advanced AI/ML capabilities including multi-agent orchestration, retrieval-augmented generation, and intelligent automation for complex workflows",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -309,7 +309,7 @@ PROJECTS = [
         "stack": "JavaScript",
         "link": "https://github.com/AmanKabra1/amrutam-backend1",
         "bullets": [
-            "- Node.js v20+ - PostgreSQL - npm",
+            "1. Clone repo 2. Install dependencies: npm install 3. Set environment variables in .env 4. Run DB migrations Sequelize auto-sync 5. Start server: npm run dev",
             "Implemented core architecture using JavaScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -331,7 +331,7 @@ PROJECTS = [
         "stack": "CSS, Node.js",
         "link": "https://github.com/AmanKabra1/Project-NodeJS",
         "bullets": [
-            "Independently developed Project-NodeJS leveraging CSS, Node.js to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
+            "Independently developed Project-NodeJS leveraging CSS, Node.js as primary technology stack to deliver production-grade features and professional-level capabilities. This comprehensive project demonstrates expertise in full-stack development with emphasis on clean code architecture, scalability, and production-ready implementation. Showcases ability to design, develop, and deploy complete systems with focus on reliability and maintainability.",
             "Implemented core architecture using CSS with Node.js ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -419,7 +419,7 @@ PROJECTS = [
         "stack": "TypeScript",
         "link": "https://github.com/AmanKabra1/aman_portfolio-app",
         "bullets": [
-            "Independently developed aman_portfolio-app leveraging TypeScript to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
+            "Independently developed aman_portfolio-app leveraging TypeScript as primary technology stack to deliver production-grade features and professional-level capabilities. This comprehensive project demonstrates expertise in full-stack development with emphasis on clean code architecture, scalability, and production-ready implementation. Showcases ability to design, develop, and deploy complete systems with focus on reliability and maintainability.",
             "Implemented core architecture using TypeScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -430,7 +430,7 @@ PROJECTS = [
         "stack": "Full Stack",
         "link": "https://github.com/AmanKabra1/Images",
         "bullets": [
-            "Developed Images as a complete project showcasing full-stack capabilities and professional software engineering practices",
+            "Developed Images as a complete end-to-end project showcasing comprehensive full-stack capabilities and professional software engineering practices. The implementation demonstrates expertise in system design, architecture patterns, and production deployment. Project reflects commitment to code quality, user experience, and maintainable solutions that scale effectively.",
             "Implemented robust architecture following best practices for code quality and system design",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -441,7 +441,7 @@ PROJECTS = [
         "stack": "Full Stack",
         "link": "https://github.com/AmanKabra1/demo",
         "bullets": [
-            "Developed demo as a complete project showcasing full-stack capabilities and professional software engineering practices",
+            "Developed demo as a complete end-to-end project showcasing comprehensive full-stack capabilities and professional software engineering practices. The implementation demonstrates expertise in system design, architecture patterns, and production deployment. Project reflects commitment to code quality, user experience, and maintainable solutions that scale effectively.",
             "Implemented robust architecture following best practices for code quality and system design",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
