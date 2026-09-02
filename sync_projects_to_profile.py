@@ -98,18 +98,19 @@ def generate_heuristic_bullets(project: dict) -> list:
         if tech_stack:
             core_stack = ", ".join(tech_stack[:3])
             bullets.append(
-                f"Built {name} as a comprehensive project leveraging {core_stack} "
-                f"to deliver production-grade features and capabilities"
+                f"Independently developed {name} leveraging {core_stack} "
+                f"to deliver production-grade features and professional-level capabilities; "
+                f"demonstrates comprehensive full-stack development expertise"
             )
         elif language:
             bullets.append(
-                f"Developed {name} project in {language} with focus on clean code "
-                f"architecture and maintainability"
+                f"Engineered {name} application in {language} emphasizing clean code "
+                f"architecture, maintainability, and production-ready implementation practices"
             )
         else:
             bullets.append(
-                f"Engineered {name} as a full-stack project demonstrating "
-                f"complete software development lifecycle"
+                f"Developed {name} as a complete project showcasing full-stack capabilities "
+                f"and professional software engineering practices"
             )
 
     # Bullet 2: Technical architecture

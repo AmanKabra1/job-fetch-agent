@@ -144,7 +144,7 @@ PROJECTS = [
         "stack": "Python",
         "link": "https://github.com/AmanKabra1/job-fetch-agent",
         "bullets": [
-            "Built job-fetch-agent as a comprehensive project leveraging Python to deliver production-grade features and capabilities",
+            "Independently developed job-fetch-agent leveraging Python to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using Python ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -188,7 +188,7 @@ PROJECTS = [
         "stack": "PHP, AI",
         "link": "https://github.com/AmanKabra1/ai-form-builder",
         "bullets": [
-            "Built ai-form-builder as a comprehensive project leveraging PHP, AI to deliver production-grade features and capabilities",
+            "Independently developed ai-form-builder leveraging PHP, AI to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using PHP with AI ensuring scalable and maintainable codebase",
             "Integrated advanced AI/ML capabilities including multi-agent orchestration, retrieval-augmented generation, and intelligent automation for complex workflows",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -199,7 +199,7 @@ PROJECTS = [
         "stack": "Python, LangGraph",
         "link": "https://github.com/AmanKabra1/langgraph-blog-writer",
         "bullets": [
-            "Built langgraph-blog-writer as a comprehensive project leveraging Python, LangGraph to deliver production-grade features and capabilities",
+            "Independently developed langgraph-blog-writer leveraging Python, LangGraph to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using Python with LangGraph ensuring scalable and maintainable codebase",
             "Integrated advanced AI/ML capabilities including multi-agent orchestration, retrieval-augmented generation, and intelligent automation for complex workflows",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -221,7 +221,7 @@ PROJECTS = [
         "stack": "Java",
         "link": "https://github.com/AmanKabra1/SB",
         "bullets": [
-            "Built SB as a comprehensive project leveraging Java to deliver production-grade features and capabilities",
+            "Independently developed SB leveraging Java to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using Java ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -232,7 +232,7 @@ PROJECTS = [
         "stack": "HTML",
         "link": "https://github.com/AmanKabra1/hotel_management_project",
         "bullets": [
-            "Built hotel_management_project as a comprehensive project leveraging HTML to deliver production-grade features and capabilities",
+            "Independently developed hotel_management_project leveraging HTML to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using HTML ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -254,7 +254,7 @@ PROJECTS = [
         "stack": "Full Stack",
         "link": "https://github.com/AmanKabra1/angular-tut",
         "bullets": [
-            "Engineered angular-tut as a full-stack project demonstrating complete software development lifecycle",
+            "Developed angular-tut as a complete project showcasing full-stack capabilities and professional software engineering practices",
             "Implemented robust architecture following best practices for code quality and system design",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -265,7 +265,7 @@ PROJECTS = [
         "stack": "Full Stack",
         "link": "https://github.com/AmanKabra1/Next",
         "bullets": [
-            "Engineered Next as a full-stack project demonstrating complete software development lifecycle",
+            "Developed Next as a complete project showcasing full-stack capabilities and professional software engineering practices",
             "Implemented robust architecture following best practices for code quality and system design",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -276,7 +276,7 @@ PROJECTS = [
         "stack": "TypeScript",
         "link": "https://github.com/AmanKabra1/demo1",
         "bullets": [
-            "Built demo1 as a comprehensive project leveraging TypeScript to deliver production-grade features and capabilities",
+            "Independently developed demo1 leveraging TypeScript to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using TypeScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -287,7 +287,7 @@ PROJECTS = [
         "stack": "C++",
         "link": "https://github.com/AmanKabra1/babbar",
         "bullets": [
-            "Built babbar as a comprehensive project leveraging C++ to deliver production-grade features and capabilities",
+            "Independently developed babbar leveraging C++ to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using C++ ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -298,7 +298,7 @@ PROJECTS = [
         "stack": "Jupyter Notebook, AI, Machine Learning",
         "link": "https://github.com/AmanKabra1/ML-AI-IT",
         "bullets": [
-            "Built ML-AI-IT as a comprehensive project leveraging Jupyter Notebook, AI, Machine Learning to deliver production-grade features and capabilities",
+            "Independently developed ML-AI-IT leveraging Jupyter Notebook, AI, Machine Learning to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Engineered backend with Jupyter Notebook, AI; integrated Machine Learning for enhanced functionality, performance, and production reliability",
             "Integrated advanced AI/ML capabilities including multi-agent orchestration, retrieval-augmented generation, and intelligent automation for complex workflows",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -309,7 +309,7 @@ PROJECTS = [
         "stack": "JavaScript",
         "link": "https://github.com/AmanKabra1/amrutam-backend1",
         "bullets": [
-            "Built amrutam-backend1 as a comprehensive project leveraging JavaScript to deliver production-grade features and capabilities",
+            "Independently developed amrutam-backend1 leveraging JavaScript to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using JavaScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -320,7 +320,7 @@ PROJECTS = [
         "stack": "TypeScript",
         "link": "https://github.com/AmanKabra1/uber-services",
         "bullets": [
-            "Built uber-services as a comprehensive project leveraging TypeScript to deliver production-grade features and capabilities",
+            "Independently developed uber-services leveraging TypeScript to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using TypeScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -331,7 +331,7 @@ PROJECTS = [
         "stack": "CSS, Node.js",
         "link": "https://github.com/AmanKabra1/Project-NodeJS",
         "bullets": [
-            "Built Project-NodeJS as a comprehensive project leveraging CSS, Node.js to deliver production-grade features and capabilities",
+            "Independently developed Project-NodeJS leveraging CSS, Node.js to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using CSS with Node.js ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -353,7 +353,7 @@ PROJECTS = [
         "stack": "TypeScript",
         "link": "https://github.com/AmanKabra1/finance-backend",
         "bullets": [
-            "Built finance-backend as a comprehensive project leveraging TypeScript to deliver production-grade features and capabilities",
+            "Independently developed finance-backend leveraging TypeScript to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using TypeScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -364,7 +364,7 @@ PROJECTS = [
         "stack": "Jupyter Notebook, AI",
         "link": "https://github.com/AmanKabra1/AgenticAI",
         "bullets": [
-            "Built AgenticAI as a comprehensive project leveraging Jupyter Notebook, AI to deliver production-grade features and capabilities",
+            "Independently developed AgenticAI leveraging Jupyter Notebook, AI to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using Jupyter Notebook with AI ensuring scalable and maintainable codebase",
             "Integrated advanced AI/ML capabilities including multi-agent orchestration, retrieval-augmented generation, and intelligent automation for complex workflows",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -375,7 +375,7 @@ PROJECTS = [
         "stack": "Full Stack",
         "link": "https://github.com/AmanKabra1/AmanKabra1",
         "bullets": [
-            "Engineered AmanKabra1 as a full-stack project demonstrating complete software development lifecycle",
+            "Developed AmanKabra1 as a complete project showcasing full-stack capabilities and professional software engineering practices",
             "Implemented robust architecture following best practices for code quality and system design",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -386,7 +386,7 @@ PROJECTS = [
         "stack": "Jupyter Notebook, LangChain, AI",
         "link": "https://github.com/AmanKabra1/langchain-learning",
         "bullets": [
-            "Built langchain-learning as a comprehensive project leveraging Jupyter Notebook, LangChain, AI to deliver production-grade features and capabilities",
+            "Independently developed langchain-learning leveraging Jupyter Notebook, LangChain, AI to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Engineered backend with Jupyter Notebook, LangChain; integrated AI for enhanced functionality, performance, and production reliability",
             "Integrated advanced AI/ML capabilities including multi-agent orchestration, retrieval-augmented generation, and intelligent automation for complex workflows",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -397,7 +397,7 @@ PROJECTS = [
         "stack": "TypeScript",
         "link": "https://github.com/AmanKabra1/Cricket",
         "bullets": [
-            "Built Cricket as a comprehensive project leveraging TypeScript to deliver production-grade features and capabilities",
+            "Independently developed Cricket leveraging TypeScript to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using TypeScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -408,7 +408,7 @@ PROJECTS = [
         "stack": "Python",
         "link": "https://github.com/AmanKabra1/CoWorking-Space",
         "bullets": [
-            "Built CoWorking-Space as a comprehensive project leveraging Python to deliver production-grade features and capabilities",
+            "Independently developed CoWorking-Space leveraging Python to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using Python ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -419,7 +419,7 @@ PROJECTS = [
         "stack": "TypeScript",
         "link": "https://github.com/AmanKabra1/aman_portfolio-app",
         "bullets": [
-            "Built aman_portfolio-app as a comprehensive project leveraging TypeScript to deliver production-grade features and capabilities",
+            "Independently developed aman_portfolio-app leveraging TypeScript to deliver production-grade features and professional-level capabilities; demonstrates comprehensive full-stack development expertise",
             "Implemented core architecture using TypeScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -430,7 +430,7 @@ PROJECTS = [
         "stack": "Full Stack",
         "link": "https://github.com/AmanKabra1/Images",
         "bullets": [
-            "Engineered Images as a full-stack project demonstrating complete software development lifecycle",
+            "Developed Images as a complete project showcasing full-stack capabilities and professional software engineering practices",
             "Implemented robust architecture following best practices for code quality and system design",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -441,7 +441,7 @@ PROJECTS = [
         "stack": "Full Stack",
         "link": "https://github.com/AmanKabra1/demo",
         "bullets": [
-            "Engineered demo as a full-stack project demonstrating complete software development lifecycle",
+            "Developed demo as a complete project showcasing full-stack capabilities and professional software engineering practices",
             "Implemented robust architecture following best practices for code quality and system design",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",

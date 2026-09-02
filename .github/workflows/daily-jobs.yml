@@ -2,11 +2,9 @@ name: Daily Job Fetch
 
 on:
   schedule:
-    # FOUR SEPARATE CRON SCHEDULES for reliability (GitHub Actions runs multiple times better as separate schedules)
-    - cron: "0 3 * * *"    # 8:30 AM IST (morning peak)
-    - cron: "0 7 * * *"    # 12:30 PM IST (noon)
-    - cron: "0 11 * * *"   # 4:30 PM IST (afternoon peak)
-    - cron: "0 15 * * *"   # 8:30 PM IST (evening batch)
+    # SINGLE CRON WITH ALL 4 TIMES - More reliable than separate entries
+    # GitHub Actions runs comma-separated times better than separate cron entries
+    - cron: "0 3,7,11,15 * * *"  # 8:30 AM, 12:30 PM, 4:30 PM, 8:30 PM IST
   workflow_dispatch: {}   # trigger manually from the Actions tab any time
 
 permissions:
