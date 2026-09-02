@@ -3,19 +3,88 @@ Sync projects from data/projects.json to resume_profile.py with proper resume fo
 
 This ensures all GitHub projects are available for job matching and resume swapping.
 Runs after projects_manager fetches new projects every 2 weeks.
+Uses Groq AI to generate detailed, achievement-focused project bullets (Shaadi-style).
 """
 
 import json
 import re
 from pathlib import Path
 from datetime import datetime
+import os
+
+try:
+    from groq import Groq
+    GROQ_AVAILABLE = True
+except ImportError:
+    GROQ_AVAILABLE = False
 
 PROJECTS_FILE = Path(__file__).parent / "data" / "projects.json"
 PROFILE_FILE = Path(__file__).parent / "resume_profile.py"
 
+# Initialize Groq for AI bullet generation
+groq_client = None
+if GROQ_AVAILABLE:
+    groq_key = os.environ.get("GROQ_API_KEY")
+    if groq_key:
+        groq_client = Groq(api_key=groq_key)
 
-def generate_project_bullets(project: dict) -> list:
-    """Generate detailed resume bullets from project data (Shaadi-style)."""
+
+def generate_ai_bullets(project: dict) -> list:
+    """Generate detailed Shaadi-style bullets using Groq AI."""
+    if not groq_client:
+        return generate_heuristic_bullets(project)
+
+    name = project.get("name", "")
+    description = (project.get("description") or "").strip()
+    tech_stack = project.get("tech_stack", [])
+    language = project.get("language", "")
+
+    tech_str = ", ".join(tech_stack) if tech_stack else language or "Full Stack"
+
+    prompt = f"""Generate 4 detailed, achievement-focused resume bullets for this GitHub project (like the Shaadi Vidhaan example).
+
+PROJECT:
+- Name: {name}
+- Tech Stack: {tech_str}
+- Description: {description if description else "No description available"}
+
+EXAMPLE (Shaadi Vidhaan project format):
+1. "Independently built a production full-stack platform for Indian wedding & cultural event planning, covering 28+ states, 7 event types, and 50+ seeded rituals with ceremony details."
+2. "Engineered a NestJS REST API with TypeORM + MySQL, JWT auth with role separation (user vs. organizer), Swagger/OpenAPI docs, validation pipes, and CORS configuration."
+3. "Developed Angular 17 frontend using Signals, standalone components, lazy-loaded routes, and RxJS Map-based response caching for improved load performance."
+4. "Containerized backend with Docker and configured CI/CD via GitHub Actions, enabling auto-redeploy on Render (backend) and Vercel (frontend) on every push."
+
+Create 4 bullets for {name}:
+- Bullet 1: What the project is (specific use case, features, scope)
+- Bullet 2: Technical implementation (architecture, patterns, tech details)
+- Bullet 3: Additional technical achievements (optimization, features, integrations)
+- Bullet 4: Deployment/production focus (infrastructure, CI/CD, scalability)
+
+Return ONLY the 4 bullets as a JSON array of strings, no other text:
+["bullet1", "bullet2", "bullet3", "bullet4"]"""
+
+    try:
+        response = groq_client.chat.completions.create(
+            model="mixtral-8x7b-32768",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=500
+        )
+
+        result_text = response.choices[0].message.content.strip()
+        # Parse JSON array
+        bullets = json.loads(result_text)
+        if isinstance(bullets, list) and len(bullets) >= 4:
+            return bullets[:4]
+    except Exception as e:
+        print(f"  [!] AI bullet generation failed for {name}: {str(e)[:40]}", flush=True)
+
+    # Fallback to heuristic if AI fails
+    return generate_heuristic_bullets(project)
+
+
+def generate_heuristic_bullets(project: dict) -> list:
+    """Fallback: Generate detailed bullets heuristically when AI unavailable."""
     bullets = []
     name = project.get("name", "")
     tech_stack = project.get("tech_stack", [])
@@ -23,66 +92,87 @@ def generate_project_bullets(project: dict) -> list:
     language = project.get("language", "")
 
     # Bullet 1: Main description or project summary
-    if description and len(description) > 15:
+    if description and len(description) > 20:
         bullets.append(description)
     else:
-        # Generate from tech stack if no description
         if tech_stack:
-            tech_summary = ", ".join(tech_stack[:4])
-            bullets.append(f"Production {name} project built with {tech_summary}")
-        elif language:
-            bullets.append(f"{name} project implemented in {language}")
-        else:
-            bullets.append(f"Full-stack {name} project")
-
-    # Bullet 2: Technical architecture/implementation details
-    if tech_stack and len(tech_stack) > 0:
-        if len(tech_stack) <= 3:
-            tech_str = " and ".join(tech_stack)
-            bullets.append(f"Implemented using {tech_str} for robust architecture")
-        else:
-            core_tech = ", ".join(tech_stack[:3])
-            other_tech = ", ".join(tech_stack[3:])
+            core_stack = ", ".join(tech_stack[:3])
             bullets.append(
-                f"Built with {core_tech}; leveraged {other_tech} "
-                "for enhanced functionality and scalability"
+                f"Built {name} as a comprehensive project leveraging {core_stack} "
+                f"to deliver production-grade features and capabilities"
+            )
+        elif language:
+            bullets.append(
+                f"Developed {name} project in {language} with focus on clean code "
+                f"architecture and maintainability"
+            )
+        else:
+            bullets.append(
+                f"Engineered {name} as a full-stack project demonstrating "
+                f"complete software development lifecycle"
             )
 
-    # Bullet 3: Performance/Production focus
-    if description and "production" in description.lower():
+    # Bullet 2: Technical architecture
+    if tech_stack:
+        if len(tech_stack) <= 2:
+            tech_str = " with ".join(tech_stack)
+            bullets.append(
+                f"Implemented core architecture using {tech_str} "
+                f"ensuring scalable and maintainable codebase"
+            )
+        else:
+            core = ", ".join(tech_stack[:2])
+            rest = ", ".join(tech_stack[2:])
+            bullets.append(
+                f"Engineered backend with {core}; integrated {rest} "
+                f"for enhanced functionality, performance, and production reliability"
+            )
+    else:
         bullets.append(
-            "Deployed as production-ready system with focus on reliability, "
-            "performance, and maintainability"
+            f"Implemented robust architecture following best practices "
+            f"for code quality and system design"
         )
-    elif "ai" in str(tech_stack).lower() or "machine learning" in str(tech_stack).lower():
+
+    # Bullet 3: Specialized features based on tech
+    if any(ai in str(tech_stack).lower() for ai in ["ai", "machine learning", "langgraph", "langchain"]):
         bullets.append(
-            "Integrated advanced AI/ML capabilities for intelligent automation "
-            "and data-driven decision making"
+            "Integrated advanced AI/ML capabilities including multi-agent orchestration, "
+            "retrieval-augmented generation, and intelligent automation for complex workflows"
         )
-    elif any(db in str(tech_stack).lower() for db in ["postgresql", "mongodb", "mysql", "redis"]):
+    elif any(db in str(tech_stack).lower() for db in ["postgresql", "mongodb", "mysql"]):
         bullets.append(
-            "Designed database architecture with optimization for query performance "
-            "and data consistency at scale"
+            "Designed optimized database schema with efficient queries, transactions, "
+            "and data consistency patterns for handling scale and concurrency"
+        )
+    elif any(web in str(tech_stack).lower() for web in ["react", "angular", "vue", "next"]):
+        bullets.append(
+            "Developed responsive frontend with modern component architecture, "
+            "state management, and performance optimization for optimal user experience"
         )
     else:
         bullets.append(
-            "Implemented best practices for code quality, testing, and continuous deployment"
+            "Implemented key features including API design, data persistence, "
+            "error handling, and comprehensive testing for production reliability"
         )
 
-    # Bullet 4: Achievement/Impact statement
-    if description and any(word in description.lower() for word in
-                           ["api", "microservice", "service", "platform", "app"]):
+    # Bullet 4: Deployment and DevOps
+    if any(deploy in str(tech_stack).lower() for deploy in ["docker", "kubernetes", "github actions", "ci/cd"]):
         bullets.append(
-            "Delivered production-grade solution demonstrating full-stack capabilities "
-            "and professional software engineering practices"
+            "Containerized application with Docker and configured automated CI/CD pipelines "
+            "using GitHub Actions for seamless testing, building, and deployment to production"
         )
     else:
         bullets.append(
-            "Showcases expertise in full-stack development with clean architecture "
-            "and production deployment experience"
+            "Deployed as production-ready system with focus on reliability, scalability, "
+            "and maintainability; demonstrates professional software engineering practices"
         )
 
-    return bullets[:4]  # Max 4 bullets per project (like Shaadi)
+    return bullets[:4]
+
+
+def generate_project_bullets(project: dict) -> list:
+    """Generate detailed Shaadi-style project bullets (4-5 lines each)."""
+    return generate_ai_bullets(project)
 
 
 def portfolio_to_resume_format(project: dict) -> dict:
