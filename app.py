@@ -1583,6 +1583,8 @@ def api_resume_build(payload: dict):
     category and bolded, and the summary leads with the matching stack. Returns
     PDF and/or Word as base64. This is the user's OWN template — separate from
     the generic 'Find jobs' section.
+
+    FOR AUTHENTICATED USER ONLY: Includes smart project matching (swap first project if >= 75% match)
     """
     description = (payload.get("description") or "").strip()
     title = (payload.get("title") or "").strip() or "Resume"
@@ -1594,15 +1596,31 @@ def api_resume_build(payload: dict):
     matched = RB.find_matched_skills(description)
     skills = RB.tailor_skills(matched)
     summary = RB.build_summary(matched)
+
+    # PROJECT MATCHING (for authenticated user only)
+    best_project = None
+    project_match_score = 0
+    if description:
+        try:
+            job_doc = {"title": title, "description": description, "company": company}
+            result = DRG.generate_tailored_resume(job_doc)
+            best_project = result.get("best_project")
+            project_match_score = result.get("project_match_score", 0)
+            # Only pass best_project if it has data AND score >= 75%
+            if not (best_project and best_project.get("name") and project_match_score >= 75):
+                best_project = None
+            if best_project:
+                print(f"  BUILD: Project matched - {best_project.get('name')} ({project_match_score:.0f}%)", flush=True)
+        except Exception as e:
+            print(f"  BUILD: Project matching skipped - {e}", flush=True)
+
     # Simplified filename: just title + date (short)
     import datetime as dt
     today = dt.date.today().isoformat()
     short_title = (title or "Resume").replace(" ", "-")[:20]
     base = f"resume_{short_title}_{today}"
 
-    # ATS: add only the JD keywords NOT already in the profile (the ones you have
-    # already appear in Technical Skills) to a short "Core Competencies" line, so
-    # total keyword coverage is ~100% without duplicating or overflowing the page.
+    # ATS: add only the JD keywords NOT already in the profile
     ats_keywords = None
     if description:
         profile_blob = " ".join(
@@ -1613,7 +1631,7 @@ def api_resume_build(payload: dict):
         have = _labels_in(profile_blob)
         ats_keywords = sorted(_labels_in(description) - have) or None
 
-    # Calculate ATS score for the generated resume (use is_generated=True for optimized scoring)
+    # Calculate ATS score
     resume_text = f"{summary}\n" + "\n".join(skills.get("Technical Skills", [])) + (("\n" + ", ".join(ats_keywords)) if ats_keywords else "")
     ats_result = ATS.calculate_ats_score(resume_text, is_generated=True)
     ats_score = ats_result.get("score", 0)
@@ -1621,7 +1639,7 @@ def api_resume_build(payload: dict):
     out_files = []
     if fmt in ("pdf", "both"):
         buf = io.BytesIO()
-        RB.render_pdf(buf, summary, skills, matched, title, company, ats_keywords)
+        RB.render_pdf(buf, summary, skills, matched, title, company, ats_keywords, best_project=best_project)
         data = buf.getvalue()
         name = base + ".pdf"
         _save_resume_copy(name, data)
@@ -1629,7 +1647,7 @@ def api_resume_build(payload: dict):
                           "b64": base64.b64encode(data).decode()})
     if fmt in ("docx", "both"):
         buf = io.BytesIO()
-        RB.render_docx(buf, summary, skills, matched, title, company, ats_keywords)
+        RB.render_docx(buf, summary, skills, matched, title, company, ats_keywords, best_project=best_project)
         data = buf.getvalue()
         name = base + ".docx"
         _save_resume_copy(name, data)
@@ -1637,7 +1655,9 @@ def api_resume_build(payload: dict):
                           "b64": base64.b64encode(data).decode()})
 
     return {"files": out_files, "emphasized": sorted(matched),
-            "ats_keywords": ats_keywords or [], "ats_score": ats_score}
+            "ats_keywords": ats_keywords or [], "ats_score": ats_score,
+            "project_match": best_project.get("name") if best_project else None,
+            "project_score": project_match_score if best_project else 0}
 
 
 def _build_cover_note(title: str, company: str, matched) -> str:
