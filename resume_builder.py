@@ -238,21 +238,14 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
 
     # Projects
     section("Projects")
+
+    # Show FIRST project: either matched (if >= 75%) or default
     if best_project and best_project.get("name"):
-        # Show matched project as MAIN (score >= 75%, so it's a good match)
+        # SWAP: Show matched project as FIRST (score >= 75%)
         proj = best_project
         tech = proj.get("tech_stack", [])
         tech_str = ", ".join(tech) if isinstance(tech, list) else str(tech)
         github_link = proj.get("github_url", proj.get("link", ""))
-
-        # Show match indicator
-        match_score = proj.get("match_score", 0)
-        if match_score > 0:
-            score_color = "#00AA00" if match_score >= 75 else "#FF8800"
-            match_line = f'<i style="color:{score_color}">✓ Best match for this role ({match_score:.0f}%)</i>'
-            story.append(Paragraph(match_line, body_st))
-            story.append(Spacer(1, 0.5))
-
         head = (f'<b>{proj.get("name", "Project")}</b> | <i>{tech_str}</i>')
         if github_link:
             head += f' | <a href="{github_link}">GitHub</a>'
@@ -263,8 +256,18 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
             story.append(Paragraph(desc, body_st))
             story.append(Spacer(1, 1))
     else:
-        # No good match - show first project from profile
+        # No match: show first project from profile (default)
         proj = P.PROJECTS[0] if P.PROJECTS else {}
+        head = (f'<b>{proj.get("name", "Project")}</b> | <i>{proj.get("stack", "")}</i> | '
+                f'<a href="{proj.get("link", "#")}">{proj.get("link", "GitHub")}</a>')
+        story.append(Paragraph(head, body_st))
+        story.append(Spacer(1, 1))
+        if proj.get("bullets"):
+            story.append(bullets(proj.get("bullets", [])))
+
+    # Show OTHER projects from profile (2nd onwards, always visible)
+    for proj in P.PROJECTS[1:]:
+        story.append(Spacer(1, 2.5))
         head = (f'<b>{proj.get("name", "Project")}</b> | <i>{proj.get("stack", "")}</i> | '
                 f'<a href="{proj.get("link", "#")}">{proj.get("link", "GitHub")}</a>')
         story.append(Paragraph(head, body_st))
@@ -415,8 +418,10 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
 
     # Projects
     section_heading("Projects")
+
+    # Show FIRST project: either matched (if >= 75%) or default
     if best_project and best_project.get("name"):
-        # Show matched project as MAIN (score >= 75%, so it's a good match)
+        # SWAP: Show matched project as FIRST (score >= 75%)
         proj = best_project
         p = no_space(doc.add_paragraph())
         nr = p.add_run(proj.get("name", "Project"))
@@ -433,8 +438,19 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
         if desc:
             bullet(desc)
     else:
-        # No good match - show first project from profile
+        # No match: show first project from profile (default)
         proj = P.PROJECTS[0] if P.PROJECTS else {}
+        p = no_space(doc.add_paragraph())
+        nr = p.add_run(proj.get("name", "Project"))
+        nr.bold = True
+        sr = p.add_run(f' | {proj.get("stack", "")} | ')
+        sr.italic = True
+        p.add_run(proj.get("link", "GitHub")).font.color.rgb = ACCENT
+        for b in proj.get("bullets", []):
+            bullet(b)
+
+    # Show OTHER projects from profile (2nd onwards, always visible)
+    for proj in P.PROJECTS[1:]:
         p = no_space(doc.add_paragraph())
         nr = p.add_run(proj.get("name", "Project"))
         nr.bold = True
