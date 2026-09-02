@@ -1708,9 +1708,12 @@ def api_apply_kit(payload: dict):
         if fmt in ("pdf", "both"):
             import io
             buf = io.BytesIO()
-            # Use result's resume data for PDF rendering
+            # Use result's resume data for PDF rendering + project match score
+            project_match_score = result.get("project_match_score", 0)
             RB.render_pdf(buf, resume_text, result.get("resume", {}).get("skills", {}),
-                         matched, title, company, result.get("resume", {}).get("ats_keywords"))
+                         matched, title, company, result.get("resume", {}).get("ats_keywords"),
+                         best_project_name=best_project.get("name", ""),
+                         best_project_score=project_match_score)
             data = buf.getvalue()
             name = base + ".pdf"
             _save_resume_copy(name, data)
@@ -1720,8 +1723,11 @@ def api_apply_kit(payload: dict):
         if fmt in ("docx", "both"):
             import io
             buf = io.BytesIO()
+            project_match_score = result.get("project_match_score", 0)
             RB.render_docx(buf, resume_text, result.get("resume", {}).get("skills", {}),
-                          matched, title, company, result.get("resume", {}).get("ats_keywords"))
+                          matched, title, company, result.get("resume", {}).get("ats_keywords"),
+                          best_project_name=best_project.get("name", ""),
+                          best_project_score=project_match_score)
             data = buf.getvalue()
             name = base + ".docx"
             _save_resume_copy(name, data)

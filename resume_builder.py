@@ -116,7 +116,7 @@ def base_filename(company: str, title: str) -> str:
 # PDF RENDERER  (reportlab)
 # --------------------------------------------------------------------------- #
 def render_pdf(path, summary, skills, matched, target_title, target_company,
-               ats_keywords=None):
+               ats_keywords=None, best_project_name="", best_project_score=0):
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.units import mm
     from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
@@ -229,6 +229,11 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
 
     # Projects
     section("Projects")
+    if best_project_name and best_project_score > 0:
+        score_color = "#00AA00" if best_project_score >= 75 else "#FF8800"
+        match_note = f'<i style="color:{score_color}">✓ Best match for this role ({best_project_score:.0f}%)</i>'
+        story.append(Paragraph(match_note, body_st))
+        story.append(Spacer(1, 2))
     for i, proj in enumerate(P.PROJECTS):
         if i:
             story.append(Spacer(1, 2.5))
@@ -254,7 +259,7 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
 # WORD RENDERER  (python-docx)
 # --------------------------------------------------------------------------- #
 def render_docx(path, summary, skills, matched, target_title, target_company,
-                ats_keywords=None):
+                ats_keywords=None, best_project_name="", best_project_score=0):
     from docx import Document
     from docx.shared import Pt, RGBColor, Inches
     from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
@@ -370,6 +375,12 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
 
     # Projects
     section_heading("Projects")
+    if best_project_name and best_project_score > 0:
+        p = doc.add_paragraph()
+        r = p.add_run(f'✓ Best match for this role ({best_project_score:.0f}%)')
+        r.italic = True
+        r.font.color.rgb = RGBColor(0, 170, 0) if best_project_score >= 75 else RGBColor(255, 136, 0)
+        p.paragraph_format.space_after = Pt(6)
     for proj in P.PROJECTS:
         p = no_space(doc.add_paragraph())
         nr = p.add_run(proj["name"])
