@@ -235,6 +235,15 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
         tech = proj.get("tech_stack", [])
         tech_str = ", ".join(tech) if isinstance(tech, list) else str(tech)
         github_link = proj.get("github_url", proj.get("link", ""))
+
+        # Show match indicator
+        match_score = proj.get("match_score", 0)
+        if match_score > 0:
+            score_color = "#00AA00" if match_score >= 75 else "#FF8800"
+            match_line = f'<i style="color:{score_color}">✓ Best match for this role ({match_score:.0f}%)</i>'
+            story.append(Paragraph(match_line, body_st))
+            story.append(Spacer(1, 0.5))
+
         head = (f'<b>{proj.get("name", "Project")}</b> | <i>{tech_str}</i>')
         if github_link:
             head += f' | <a href="{github_link}">GitHub</a>'
