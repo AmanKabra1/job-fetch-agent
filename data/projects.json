@@ -2,7 +2,7 @@
   "projects": [
     {
       "name": "job-fetch-agent",
-      "description": null,
+      "description": "A single-user web app (and optional daily cron): 1. Find jobs across many boards \u2014 generic: ranked to whatever you give it (an uploaded resume / target role / JD / skills), never to any baked-in data. 2. Create a resume two ways: (A) generate your saved resume",
       "github_url": "https://github.com/AmanKabra1/job-fetch-agent",
       "language": "Python",
       "stars": 0,
@@ -55,7 +55,7 @@
     },
     {
       "name": "ai-form-builder",
-      "description": null,
+      "description": "<p align=\"center\"><a href=\"https://laravel.com\" target=\"blank\"><img src=\"https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg\" width=\"400\" alt=\"Laravel Logo\"></a></p> <p align=\"center\"> <a href=\"https://github.com/laravel/framework/actions\"><img src=\"https://github.com/laravel/framework/workflows/tests/badge.svg\" alt=\"Build Status\"></a> <a href=\"https://packagist.org/packages/laravel/framework\"><img src=\"https://img.sh",
       "github_url": "https://github.com/AmanKabra1/ai-form-builder",
       "language": "PHP",
       "stars": 0,
@@ -68,7 +68,7 @@
     },
     {
       "name": "langgraph-blog-writer",
-      "description": null,
+      "description": "A LangGraph pipeline that turns a one-line topic into a finished technical blog post \u2014 routing, researching, planning, writing sections in parallel, and generating diagrams \u2014 wrapped in a Streamlit UI that runs on a phone, a tablet or a desktop. It runs in one of two modes, chosen automatically by what's in Secrets:",
       "github_url": "https://github.com/AmanKabra1/langgraph-blog-writer",
       "language": "Python",
       "stars": 0,
@@ -131,7 +131,7 @@
     },
     {
       "name": "angular-tut",
-      "description": null,
+      "description": "Personal Angular learning project. > Note: project source (e.g. package.json, angular.json, src/app/* components) > is not yet present in this folder. Add it here and commit \u2014 the repository is > configured to attribute commits to the personal identity.",
       "github_url": "https://github.com/AmanKabra1/angular-tut",
       "language": null,
       "stars": 0,
@@ -141,7 +141,7 @@
     },
     {
       "name": "Next",
-      "description": null,
+      "description": "Workspace for a Next.js project (my-app/). > Note: the application source under my-app/ is currently an empty scaffold > (only the folder structure and nodemodules/ exist). Add your code under > my-app/src/ and it will be tracked by git.",
       "github_url": "https://github.com/AmanKabra1/Next",
       "language": null,
       "stars": 0,
@@ -151,7 +151,7 @@
     },
     {
       "name": "demo1",
-      "description": null,
+      "description": "<p align=\"center\"> <a href=\"http://nestjs.com/\" target=\"blank\"><img src=\"https://nestjs.com/img/logo-small.svg\" width=\"120\" alt=\"Nest Logo\" /></a> </p> [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
       "github_url": "https://github.com/AmanKabra1/demo1",
       "language": "TypeScript",
       "stars": 0,
@@ -189,7 +189,7 @@
     },
     {
       "name": "amrutam-backend1",
-      "description": null,
+      "description": "- Node.js v20+ - PostgreSQL - npm",
       "github_url": "https://github.com/AmanKabra1/amrutam-backend1",
       "language": "JavaScript",
       "stars": 0,
@@ -201,7 +201,7 @@
     },
     {
       "name": "uber-services",
-      "description": null,
+      "description": "<p align=\"center\"> <a href=\"http://nestjs.com/\" target=\"blank\"><img src=\"https://nestjs.com/img/logo-small.svg\" width=\"120\" alt=\"Nest Logo\" /></a> </p> [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
       "github_url": "https://github.com/AmanKabra1/uber-services",
       "language": "TypeScript",
       "stars": 0,
@@ -238,7 +238,7 @@
     },
     {
       "name": "finance-backend",
-      "description": null,
+      "description": "<p align=\"center\"> <a href=\"http://nestjs.com/\" target=\"blank\"><img src=\"https://nestjs.com/img/logo-small.svg\" width=\"120\" alt=\"Nest Logo\" /></a> </p> [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
       "github_url": "https://github.com/AmanKabra1/finance-backend",
       "language": "TypeScript",
       "stars": 0,
@@ -250,7 +250,7 @@
     },
     {
       "name": "AgenticAI",
-      "description": null,
+      "description": "A hands-on collection of projects for learning Agentic AI \u2014 building systems where Large Language Models (LLMs) don't just answer questions, but reason, use tools, remember context, and take actions to accomplish goals. Each subfolder is a self-contained Python project (managed with [uv](https://github.com/astral-sh/uv)) that demonstrates one building block of an agentic system. --- A plain LLM is a text-in, text-out function. An agent wraps an LLM in a loop that lets it interact with the world:",
       "github_url": "https://github.com/AmanKabra1/AgenticAI",
       "language": "Jupyter Notebook",
       "stars": 0,
@@ -263,7 +263,7 @@
     },
     {
       "name": "AmanKabra1",
-      "description": null,
+      "description": "<div align=\"center\"> Backend-Focused Software Engineer | API Architect | System Design Enthusiast Building scalable, production-ready systems with clean code and thoughtful design. [Portfolio](#-featured-projects) \u2022 [Resume](#resume) \u2022 [Connect](#-connect-with-me) \u2022 [Blog](#-articles--blog)",
       "github_url": "https://github.com/AmanKabra1/AmanKabra1",
       "language": null,
       "stars": 0,
@@ -273,7 +273,7 @@
     },
     {
       "name": "langchain-learning",
-      "description": null,
+      "description": "A collection of hands-on projects exploring the modern LangChain (v1) ecosystem \u2014 agents, evaluation, model gateways, and core LangChain concepts. Each subfolder is a self-contained project managed with [uv](https://docs.astral.sh/uv/). | Folder | Focus | Key libraries |",
       "github_url": "https://github.com/AmanKabra1/langchain-learning",
       "language": "Jupyter Notebook",
       "stars": 0,
@@ -287,7 +287,7 @@
     },
     {
       "name": "Cricket",
-      "description": null,
+      "description": "A real-time scoring platform for local cricket tournaments and grounds \u2014 inspired by CricHeroes, Cricbuzz, and ESPN Cricinfo, but built for community sport. Cricket-first, with a sport-agnostic core (teams/tournaments/venues) ready to extend to football, kabaddi, etc.",
       "github_url": "https://github.com/AmanKabra1/Cricket",
       "language": "TypeScript",
       "stars": 0,
@@ -299,7 +299,7 @@
     },
     {
       "name": "CoWorking-Space",
-      "description": null,
+      "description": "The modern operating system for coworking spaces \u2014 manage buildings, facilities, bookings, billing, members, inventory, vendors, and community from one platform. | Layer | Technology | |-------|-----------| | Backend | Django 5.1 + Django REST Framework, SimpleJWT auth |",
       "github_url": "https://github.com/AmanKabra1/CoWorking-Space",
       "language": "Python",
       "stars": 0,
