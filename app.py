@@ -1691,6 +1691,11 @@ def api_apply_kit(payload: dict):
         result = DRG.generate_tailored_resume(job_doc)
         resume_text = result.get("resume", {}).get("summary", "")
         best_project = result.get("best_project", {})
+        project_match_score = result.get("project_match_score", 0)
+
+        # DEBUG: Log project matching
+        print(f"  APPLY: best_project={best_project.get('name', 'NONE')}, score={project_match_score}", flush=True)
+
         matched = list(set(
             (result.get("matched_skills", []) or []) +
             (result.get("resume", {}).get("skills", {}).get("Technical Skills", []) or [])
