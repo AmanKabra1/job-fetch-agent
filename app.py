@@ -3665,31 +3665,43 @@ async def cron_fetch_jobs(request: Request):
     """
     import subprocess
     import sys
+    from pathlib import Path
 
     try:
         print(f"[CRON] Job fetch triggered at {dt.datetime.utcnow()} UTC")
 
-        # Run fetch_jobs.py script
+        # Get the absolute path to fetch_jobs.py
+        # On Vercel: /var/task/fetch_jobs.py
+        # On local: ./fetch_jobs.py (resolved to absolute)
+        repo_root = Path(__file__).parent.absolute()
+        fetch_script = repo_root / "fetch_jobs.py"
+
+        print(f"[CRON] Running: {fetch_script}")
+
+        # Run fetch_jobs.py script with absolute path
         result = subprocess.run(
-            [sys.executable, "fetch_jobs.py"],
+            [sys.executable, str(fetch_script)],
             capture_output=True,
             text=True,
-            timeout=300  # 5 minute timeout
+            timeout=300,  # 5 minute timeout
+            cwd=str(repo_root)  # Set working directory to repo root
         )
 
         if result.returncode == 0:
             print(f"[CRON] SUCCESS: Job fetch completed")
+            print(f"[CRON] Output: {result.stdout[:200]}")
             return {
                 "status": "success",
                 "message": "Jobs fetched and synced to feed branch",
-                "timestamp": dt.datetime.utcnow().isoformat()
+                "timestamp": dt.datetime.utcnow().isoformat(),
+                "output": result.stdout[:500]
             }
         else:
             error_msg = result.stderr or result.stdout
             print(f"[CRON] ERROR: {error_msg}")
             return {
                 "status": "error",
-                "message": f"Job fetch failed: {error_msg}",
+                "message": f"Job fetch failed: {error_msg[:200]}",
                 "timestamp": dt.datetime.utcnow().isoformat()
             }, 500
 
@@ -3703,9 +3715,11 @@ async def cron_fetch_jobs(request: Request):
 
     except Exception as e:
         print(f"[CRON] EXCEPTION: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return {
             "status": "error",
-            "message": f"Unexpected error: {str(e)}",
+            "message": f"Unexpected error: {str(e)[:200]}",
             "timestamp": dt.datetime.utcnow().isoformat()
         }, 500
 
