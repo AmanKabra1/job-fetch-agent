@@ -8,6 +8,7 @@ Returns: Best project + match score (0-100)
 import os
 import json
 import projects_manager as PM
+import project_tailor_generator as PTG
 
 try:
     from groq import Groq
@@ -98,11 +99,17 @@ Return ONLY JSON:
         scored = _score_projects_heuristic(projects, description)
         best = scored[0] if scored else {}
 
+        # Generate tailored description + bullets for best project
+        if best and best.get("match_score", 0) >= 50:
+            try:
+                best = PTG.tailor_project_for_jd(best, description)
+                print(f"  [*] Generated tailored bullets for '{best.get('name')}'", flush=True)
+            except Exception as e:
+                print(f"  [!] Tailor generator error: {str(e)[:50]}, using original project", flush=True)
+
         return {
             "best_project": best,
-            "alternatives": scored[1:top_n],
-            "recommendation": f"Project '{best.get('name')}' matches {best.get('match_score', 0)}% of job requirements",
-            "resume_points": []
+            "recommendation": f"Project '{best.get('name')}' matches {best.get('match_score', 0)}% of job requirements"
         }
 
     except Exception as e:
@@ -112,17 +119,21 @@ Return ONLY JSON:
             scored = _score_projects_heuristic(projects, description)
             best = scored[0] if scored else {}
 
+            # Try to generate tailored data even in fallback
+            if best and best.get("match_score", 0) >= 50:
+                try:
+                    best = PTG.tailor_project_for_jd(best, description)
+                except:
+                    pass  # Use original project if tailor fails
+
             return {
                 "best_project": best,
-                "alternatives": scored[1:top_n],
-                "recommendation": f"Analysis error - using heuristic match: {str(e)[:30]}",
-                "resume_points": []
+                "recommendation": f"Analysis error - using heuristic match: {str(e)[:30]}"
             }
         except:
             return {
                 "error": "Could not match projects",
-                "best_project": None,
-                "alternatives": []
+                "best_project": None
             }
 
 

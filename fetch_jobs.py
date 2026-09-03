@@ -238,7 +238,7 @@ def normalise(jobs: pd.DataFrame) -> pd.DataFrame:
 
 
 def add_date_category(rows):
-    """Categorize jobs by posting date: TODAY (last 3 days), THIS_WEEK (3-7 days), RECENT (8-14 days), OLD (15+ days)"""
+    """Categorize jobs by posting date: TODAY (0-1d), THIS_WEEK (2-7d), RECENT (8d+)"""
     now = datetime.now(timezone.utc).replace(tzinfo=None)
     today_date = now.date()
 
@@ -249,17 +249,15 @@ def add_date_category(rows):
             posted_date = posted.date()
             days_old = (now - posted).days
 
-            # TODAY = posted in last 14 days (freshest available jobs)
-            if days_old >= 0 and days_old <= 14:
+            # TODAY = posted today or yesterday (0-1 days ago)
+            if days_old >= 0 and days_old <= 1:
                 row["_date_category"] = "TODAY"
-            # THIS_WEEK = posted 15-21 days ago
-            elif days_old >= 15 and days_old <= 21:
+            # THIS_WEEK = posted 2-7 days ago
+            elif days_old >= 2 and days_old <= 7:
                 row["_date_category"] = "THIS_WEEK"
-            # RECENT = posted 22-30 days ago
-            elif days_old >= 22 and days_old <= 30:
-                row["_date_category"] = "RECENT"
+            # RECENT = posted 8+ days ago
             else:
-                row["_date_category"] = "OLD"  # Will be filtered out
+                row["_date_category"] = "RECENT"
         except (ValueError, TypeError):
             row["_date_category"] = "UNKNOWN"
 

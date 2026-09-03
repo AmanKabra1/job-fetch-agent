@@ -251,10 +251,17 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
             head += f' | <a href="{github_link}">GitHub</a>'
         story.append(Paragraph(head, body_st))
         story.append(Spacer(1, 1))
-        desc = proj.get("description", "")
+
+        # Use tailored description if available, otherwise use original
+        desc = proj.get("tailored_description") or proj.get("description", "")
         if desc:
             story.append(Paragraph(desc, body_st))
             story.append(Spacer(1, 1))
+
+        # Use tailored bullets if available, otherwise use original
+        bullet_points = proj.get("tailored_bullets") or proj.get("bullets", [])
+        if bullet_points:
+            story.append(bullets(bullet_points))
     else:
         # No match: show first project from profile (default)
         proj = P.PROJECTS[0] if P.PROJECTS else {}
@@ -438,9 +445,15 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
         if github_link:
             p.add_run(" | " + github_link).font.color.rgb = ACCENT
 
-        desc = proj.get("description", "")
+        # Use tailored description if available, otherwise use original
+        desc = proj.get("tailored_description") or proj.get("description", "")
         if desc:
             bullet(desc)
+
+        # Use tailored bullets if available, otherwise use original
+        bullet_points = proj.get("tailored_bullets") or proj.get("bullets", [])
+        for b in bullet_points:
+            bullet(b)
     else:
         # No match: show first project from profile (default)
         proj = P.PROJECTS[0] if P.PROJECTS else {}
