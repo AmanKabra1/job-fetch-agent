@@ -144,6 +144,7 @@ Respond with ONLY JSON (no markdown):
 def analyze_top_jobs(jobs: list, top_n: int = 50) -> list:
     """
     Analyze top N jobs and add fit analysis to each.
+    Returns ALL jobs (analyzed top N first, then rest unannotated).
 
     Returns jobs with added fields: interview_likelihood, fit_level, resume_highlights, etc.
     """
@@ -161,4 +162,6 @@ def analyze_top_jobs(jobs: list, top_n: int = 50) -> list:
 
         analyzed.append(job)
 
+    # Return ALL jobs: top N analyzed + rest unannotated
+    analyzed.extend(jobs[top_n:])
     return analyzed
