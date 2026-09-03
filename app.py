@@ -2712,7 +2712,7 @@ function renderJobs(){
       const idx = offset + i + 1;
       return `<tr>
         <td>${idx}</td>
-        <td><span class="score ${scoreClass(j.score)}">${j.score}%</span>${j.skill_pct!=null?('<div class="note" style="font-size:10px;margin-top:2px">skills '+j.skill_pct+'%</div>'):''}</td>
+        <td><span class="score ${scoreClass(j.score)}">${j.score}%</span>${j.interview_likelihood!=null?('<div class="note" style="font-size:10px;margin-top:2px;color:#4dd0e1">AI: '+j.interview_likelihood+'%</div>'):j.skill_pct!=null?('<div class="note" style="font-size:10px;margin-top:2px">skills '+j.skill_pct+'%</div>'):''}${j.fit_level?' <div class="note" style="font-size:9px;margin-top:2px">'+j.fit_level+'</div>':''}</td>
         <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${exp}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.salary_lpa>0?(' <span class="chip"'+(j.salary_lpa>CURRENT_LPA?' style="background:#1c7c3f;color:#fff" title="above your current pay"':'')+'>'+j.salary_lpa+' LPA'+(j.salary_lpa>CURRENT_LPA?' ↑':'')+'</span>'):''}${matchLine}${missLine}</td>
         <td>${esc(j.company)}</td>
         <td class="note">${size}</td>
