@@ -3670,7 +3670,7 @@ async def cron_fetch_jobs(request: Request):
     Vercel Cron endpoint: Called automatically at 3,7,11,15 UTC daily.
 
     Vercel cron makes HTTP GET requests to this endpoint on schedule.
-    No deployment needed - just function execution!
+    Direct import (not subprocess) for better Vercel reliability.
 
     Times:
     - 3 UTC  = 8:30 AM IST (morning peak)
@@ -3678,55 +3678,23 @@ async def cron_fetch_jobs(request: Request):
     - 11 UTC = 4:30 PM IST (afternoon peak)
     - 15 UTC = 8:30 PM IST (evening batch)
     """
-    import subprocess
-    import sys
-    from pathlib import Path
-
     try:
         print(f"[CRON] Job fetch triggered at {dt.datetime.utcnow()} UTC")
 
-        # Get the absolute path to fetch_jobs.py
-        # On Vercel: /var/task/fetch_jobs.py
-        # On local: ./fetch_jobs.py (resolved to absolute)
-        repo_root = Path(__file__).parent.absolute()
-        fetch_script = repo_root / "fetch_jobs.py"
+        # Import directly (more reliable on Vercel than subprocess)
+        import fetch_jobs
 
-        print(f"[CRON] Running: {fetch_script}")
+        print(f"[CRON] Running fetch_jobs.main()")
 
-        # Run fetch_jobs.py script with absolute path
-        result = subprocess.run(
-            [sys.executable, str(fetch_script)],
-            capture_output=True,
-            text=True,
-            timeout=300,  # 5 minute timeout
-            cwd=str(repo_root)  # Set working directory to repo root
-        )
+        # Call fetch_jobs.main() directly
+        fetch_jobs.main()
 
-        if result.returncode == 0:
-            print(f"[CRON] SUCCESS: Job fetch completed")
-            print(f"[CRON] Output: {result.stdout[:200]}")
-            return {
-                "status": "success",
-                "message": "Jobs fetched and synced to feed branch",
-                "timestamp": dt.datetime.utcnow().isoformat(),
-                "output": result.stdout[:500]
-            }
-        else:
-            error_msg = result.stderr or result.stdout
-            print(f"[CRON] ERROR: {error_msg}")
-            return {
-                "status": "error",
-                "message": f"Job fetch failed: {error_msg[:200]}",
-                "timestamp": dt.datetime.utcnow().isoformat()
-            }, 500
-
-    except subprocess.TimeoutExpired:
-        print(f"[CRON] TIMEOUT: Job fetch took too long")
+        print(f"[CRON] SUCCESS: Job fetch completed")
         return {
-            "status": "timeout",
-            "message": "Job fetch timed out (5 minutes exceeded)",
+            "status": "success",
+            "message": "Jobs fetched and synced to feed branch",
             "timestamp": dt.datetime.utcnow().isoformat()
-        }, 408
+        }
 
     except Exception as e:
         print(f"[CRON] EXCEPTION: {str(e)}")
