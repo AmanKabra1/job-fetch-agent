@@ -1691,22 +1691,21 @@ def api_apply_kit(payload: dict):
     """Semi-auto APPLY ASSISTANT for one job: builds a resume TAILORED + with AUTOMATIC
     PROJECT SWAP (best project for this job), drafts a matching cover note, echoes the apply link.
     You review and submit yourself — nothing is sent automatically."""
-    title = (payload.get("title") or "").strip()
-    company = (payload.get("company") or "").strip()
-    description = (payload.get("description") or "").strip()
-    job_url = (payload.get("job_url") or "").strip()
-    fmt = (payload.get("format") or "pdf").lower()
-    if fmt not in ("pdf", "docx", "both"):
-        fmt = "pdf"
-
-    # Use FULL tailored resume generation with AUTOMATIC PROJECT SWAP
-    job_doc = {
-        "title": title or "Role",
-        "description": description,
-        "company": company or "Company"
-    }
-
     try:
+        title = (payload.get("title") or "").strip()
+        company = (payload.get("company") or "").strip()
+        description = (payload.get("description") or "").strip()
+        job_url = (payload.get("job_url") or "").strip()
+        fmt = (payload.get("format") or "pdf").lower()
+        if fmt not in ("pdf", "docx", "both"):
+            fmt = "pdf"
+
+        # Use FULL tailored resume generation with AUTOMATIC PROJECT SWAP
+        job_doc = {
+            "title": title or "Role",
+            "description": description,
+            "company": company or "Company"
+        }
         # Generate tailored resume WITH project swapping (75%+ match threshold)
         result = DRG.generate_tailored_resume(job_doc)
         resume_text = result.get("resume", {}).get("summary", "")
@@ -1794,27 +1793,16 @@ def api_apply_kit(payload: dict):
             "why_project_matched": why_matched,
         }
     except Exception as e:
-        print(f"  ERROR in tailored resume generation: {e}", flush=True)
-        # Fallback to basic resume build
-        built = api_resume_build({"title": title or "Role", "company": company or "Company",
-                                  "description": description, "format": fmt})
-        matched = built.get("emphasized") or []
-        job_doc = {"title": title, "description": description, "company": company}
-        best_project_info = JPM.get_best_project_for_jd(job_doc)
-        best_project = best_project_info.get("best_project", {})
-
-        return {
-            "files": built.get("files", []),
-            "emphasized": matched,
-            "ats_keywords": built.get("ats_keywords", []),
-            "ats_score": built.get("ats_score", 0),
-            "cover_note": _build_cover_note(title, company, matched),
-            "job_url": job_url, "title": title, "company": company,
-            "best_project": best_project,
-            "best_project_name": best_project.get("name", ""),
-            "best_project_match": best_project.get("match_score", 0),
-            "project_action": "kept",
-        }
+        print(f"  ERROR in apply/kit: {e}", flush=True)
+        import traceback
+        traceback.print_exc()
+        return JSONResponse({
+            "error": f"Resume generation failed: {str(e)[:100]}",
+            "files": [],
+            "emphasized": [],
+            "ats_score": 0,
+            "cover_note": "Unable to generate at this time."
+        }, status_code=500)
 
 
 @app.post("/api/resume/tailor")
