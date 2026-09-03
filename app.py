@@ -1707,13 +1707,21 @@ def api_apply_kit(payload: dict):
             "company": company or "Company"
         }
         # Generate tailored resume WITH project swapping (75%+ match threshold)
-        print(f"  DEBUG: Calling DRG.generate_tailored_resume with job_doc={job_doc}", flush=True)
-        result = DRG.generate_tailored_resume(job_doc)
-        print(f"  DEBUG: Result type={type(result)}, value={result if result else 'None'}", flush=True)
+        print(f"[APPLY] DRG={DRG}, method={getattr(DRG, 'generate_tailored_resume', 'MISSING')}", flush=True)
+        try:
+            print(f"[APPLY] Calling DRG.generate_tailored_resume", flush=True)
+            result = DRG.generate_tailored_resume(job_doc)
+            print(f"[APPLY] Result type={type(result)}", flush=True)
+        except Exception as e:
+            print(f"[APPLY] EXCEPTION in DRG: {e}", flush=True)
+            import traceback
+            traceback.print_exc()
+            raise
+
         if not result:
-            print(f"  ERROR: DRG.generate_tailored_resume returned None or falsy!", flush=True)
+            print(f"[APPLY] DRG returned None/empty!", flush=True)
             return JSONResponse({
-                "error": "Resume generation returned falsy value - DRG module issue",
+                "error": "DRG returned empty result",
                 "files": [],
                 "emphasized": [],
                 "ats_score": 0
