@@ -178,6 +178,16 @@ EDUCATION = {
     "location": "Jaipur, Rajasthan, India",
 }
 
+# --------------------------------------------------------------------------- #
+# CERTIFICATIONS
+# --------------------------------------------------------------------------- #
+CERTIFICATIONS = [
+    "Google Digital Garage - Digital Marketing",
+    "The Complete Python Developer - Advanced Programming",
+    "HTML, CSS & JavaScript - Certification Course",
+    "Google Cloud Infrastructure - Core Services, Scaling, Automation",
+]
+
 SKILL_KEYWORDS = {
     "NestJS": ["nestjs", "nest.js"],
     "Node.js": ["node.js", "nodejs", "node js", "node"],
