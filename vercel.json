@@ -1,10 +1,28 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/index.py", "use": "@vercel/python", "config": { "maxDuration": 60 } }
+    { "src": "api/index.py", "use": "@vercel/python", "config": { "maxDuration": 300 } }
   ],
   "routes": [
     { "src": "/(.*)", "dest": "api/index.py" }
   ],
-  "git": { "deploymentEnabled": { "feed": false } }
+  "git": { "deploymentEnabled": { "feed": false } },
+  "crons": [
+    {
+      "path": "/api/cron/fetch-jobs",
+      "schedule": "0 3 * * *"
+    },
+    {
+      "path": "/api/cron/fetch-jobs",
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/fetch-jobs",
+      "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/cron/fetch-jobs",
+      "schedule": "0 15 * * *"
+    }
+  ]
 }

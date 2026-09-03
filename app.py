@@ -3646,6 +3646,70 @@ $('#exCsv').onclick=exCsv; $('#exJson').onclick=exJson; $('#exGeo').onclick=exGe
 """
 
 
+# ============================================================================
+# VERCEL CRON ENDPOINT - Automatic job fetching (no manual trigger needed)
+# ============================================================================
+@app.get("/api/cron/fetch-jobs")
+async def cron_fetch_jobs(request: Request):
+    """
+    Vercel Cron endpoint: Called automatically at 3,7,11,15 UTC daily.
+
+    Vercel cron makes HTTP GET requests to this endpoint on schedule.
+    No deployment needed - just function execution!
+
+    Times:
+    - 3 UTC  = 8:30 AM IST (morning peak)
+    - 7 UTC  = 12:30 PM IST (noon)
+    - 11 UTC = 4:30 PM IST (afternoon peak)
+    - 15 UTC = 8:30 PM IST (evening batch)
+    """
+    import subprocess
+    import sys
+
+    try:
+        print(f"[CRON] Job fetch triggered at {dt.datetime.utcnow()} UTC")
+
+        # Run fetch_jobs.py script
+        result = subprocess.run(
+            [sys.executable, "fetch_jobs.py"],
+            capture_output=True,
+            text=True,
+            timeout=300  # 5 minute timeout
+        )
+
+        if result.returncode == 0:
+            print(f"[CRON] SUCCESS: Job fetch completed")
+            return {
+                "status": "success",
+                "message": "Jobs fetched and synced to feed branch",
+                "timestamp": dt.datetime.utcnow().isoformat()
+            }
+        else:
+            error_msg = result.stderr or result.stdout
+            print(f"[CRON] ERROR: {error_msg}")
+            return {
+                "status": "error",
+                "message": f"Job fetch failed: {error_msg}",
+                "timestamp": dt.datetime.utcnow().isoformat()
+            }, 500
+
+    except subprocess.TimeoutExpired:
+        print(f"[CRON] TIMEOUT: Job fetch took too long")
+        return {
+            "status": "timeout",
+            "message": "Job fetch timed out (5 minutes exceeded)",
+            "timestamp": dt.datetime.utcnow().isoformat()
+        }, 408
+
+    except Exception as e:
+        print(f"[CRON] EXCEPTION: {str(e)}")
+        return {
+            "status": "error",
+            "message": f"Unexpected error: {str(e)}",
+            "timestamp": dt.datetime.utcnow().isoformat()
+        }, 500
+
+
 if __name__ == "__main__":
     import uvicorn
     port = int(os.environ.get("PORT", "8000"))
