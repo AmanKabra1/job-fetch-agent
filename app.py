@@ -1716,10 +1716,11 @@ def api_apply_kit(payload: dict):
         # DEBUG: Log project matching
         print(f"  APPLY: best_project={best_project.get('name', 'NONE')}, score={project_match_score}", flush=True)
 
-        matched = list(set(
-            (result.get("matched_skills", []) or []) +
-            (result.get("resume", {}).get("skills", {}).get("Technical Skills", []) or [])
-        ))[:12]
+        # Get matched skills from result (DRG returns matched_skills as list)
+        matched = result.get("matched_skills", [])
+        if isinstance(matched, dict):  # Fallback if it's a dict
+            matched = matched.get("Technical Skills", [])
+        matched = list(set(matched or []))[:12]
         ats_score = result.get("ats_score", 0)
         project_action = result.get("project_action", "kept")
 
@@ -1736,8 +1737,15 @@ def api_apply_kit(payload: dict):
             # Pass matched project ONLY if: has data AND score >= 75%
             project_match_score = result.get("project_match_score", 0)
             matched_project = best_project if (best_project and best_project.get("name") and project_match_score >= 75) else None
-            RB.render_pdf(buf, resume_text, result.get("resume", {}).get("skills", {}),
-                         matched, title, company, result.get("resume", {}).get("ats_keywords"),
+
+            # Build skills dict from matched skills (format expected by render_pdf)
+            skills_for_pdf = P.SKILLS.copy()
+            if matched:  # Prioritize matched skills
+                if "Technical Skills" in skills_for_pdf:
+                    skills_for_pdf["Technical Skills"] = matched + [s for s in skills_for_pdf["Technical Skills"] if s not in matched]
+
+            RB.render_pdf(buf, resume_text, skills_for_pdf,
+                         matched, title, company, None,
                          best_project=matched_project)
             data = buf.getvalue()
             name = base + ".pdf"
@@ -1750,8 +1758,15 @@ def api_apply_kit(payload: dict):
             buf = io.BytesIO()
             project_match_score = result.get("project_match_score", 0)
             matched_project = best_project if (best_project and best_project.get("name") and project_match_score >= 75) else None
-            RB.render_docx(buf, resume_text, result.get("resume", {}).get("skills", {}),
-                          matched, title, company, result.get("resume", {}).get("ats_keywords"),
+
+            # Build skills dict from matched skills (format expected by render_docx)
+            skills_for_docx = P.SKILLS.copy()
+            if matched:  # Prioritize matched skills
+                if "Technical Skills" in skills_for_docx:
+                    skills_for_docx["Technical Skills"] = matched + [s for s in skills_for_docx["Technical Skills"] if s not in matched]
+
+            RB.render_docx(buf, resume_text, skills_for_docx,
+                          matched, title, company, None,
                           best_project=matched_project)
             data = buf.getvalue()
             name = base + ".docx"

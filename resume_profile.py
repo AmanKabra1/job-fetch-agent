@@ -144,7 +144,7 @@ PROJECTS = [
         "stack": "Python",
         "link": "https://github.com/AmanKabra1/job-fetch-agent",
         "bullets": [
-            "A single-user web app (and optional daily cron): 1. Find jobs across many boards - generic: ranked to whatever you give it (an uploaded resume / target role / JD / skills), never to any baked-in data. 2. Create a resume two ways: (A) generate your saved resume",
+            "A single-user web app (and optional daily cron): 1. Find jobs across many boards ? generic: ranked to whatever you give it (an uploaded resume / target role / JD / skills), never to any baked-in data. 2. Create a resume two ways: (A) generate your saved resume",
             "Implemented core architecture using Python ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -155,7 +155,7 @@ PROJECTS = [
         "stack": "Python, LangGraph, PostgreSQL, AI, Machine Learning",
         "link": "https://github.com/AmanKabra1/ai-travel-planner",
         "bullets": [
-            "Production multi-agent AI travel planner � LangGraph, Groq LLaMA 3.3, MCP (flights/weather/hotels), human-in-the-loop, PostgreSQL memory, Streamlit UI",
+            "Production multi-agent AI travel planner ? LangGraph, Groq LLaMA 3.3, MCP (flights/weather/hotels), human-in-the-loop, PostgreSQL memory, Streamlit UI",
             "Engineered backend with Python, LangGraph; integrated PostgreSQL, AI, Machine Learning for enhanced functionality, performance, and production reliability",
             "Integrated advanced AI/ML capabilities including multi-agent orchestration, retrieval-augmented generation, and intelligent automation for complex workflows",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -166,7 +166,7 @@ PROJECTS = [
         "stack": "TypeScript",
         "link": "https://github.com/AmanKabra1/singplay",
         "bullets": [
-            "SingPlay � music streaming, DJ, karaoke & Sing Along app built with Next.js 16, TiDB, Drizzle ORM",
+            "SingPlay ? music streaming, DJ, karaoke & Sing Along app built with Next.js 16, TiDB, Drizzle ORM",
             "Implemented core architecture using TypeScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -188,7 +188,7 @@ PROJECTS = [
         "stack": "PHP, AI",
         "link": "https://github.com/AmanKabra1/ai-form-builder",
         "bullets": [
-            "<p align=\"center\"><a href=\"https://laravel.com\" target=\"blank\"><img src=\"https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg\" width=\"400\" alt=\"Laravel Logo\"></a></p> <p align=\"center\"> <a href=\"https://github.com/laravel/framework/actions\"><img src=\"https://github.com/laravel/framework/workflows/tests/badge.svg\" alt=\"Build Status\"></a> <a href=\"https://packagist.org/packages/laravel/framework\"><img src=\"https://img.sh",
+            "Independently developed ai-form-builder leveraging PHP, AI as primary technology stack to deliver production-grade features and professional-level capabilities. This comprehensive project demonstrates expertise in full-stack development with emphasis on clean code architecture, scalability, and production-ready implementation. Showcases ability to design, develop, and deploy complete systems with focus on reliability and maintainability.",
             "Implemented core architecture using PHP with AI ensuring scalable and maintainable codebase",
             "Integrated advanced AI/ML capabilities including multi-agent orchestration, retrieval-augmented generation, and intelligent automation for complex workflows",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -199,7 +199,7 @@ PROJECTS = [
         "stack": "Python, LangGraph",
         "link": "https://github.com/AmanKabra1/langgraph-blog-writer",
         "bullets": [
-            "A LangGraph pipeline that turns a one-line topic into a finished technical blog post � routing, researching, planning, writing sections in parallel, and generating diagrams � wrapped in a Streamlit UI that runs on a phone, a tablet or a desktop. It runs in one of two modes, chosen automatically by what's in Secrets:",
+            "A LangGraph pipeline that turns a one-line topic into a finished technical blog post ? routing, researching, planning, writing sections in parallel, and generating diagrams ? wrapped in a Streamlit UI that runs on a phone, a tablet or a desktop. It runs in one of two modes, chosen automatically by w",
             "Implemented core architecture using Python with LangGraph ensuring scalable and maintainable codebase",
             "Integrated advanced AI/ML capabilities including multi-agent orchestration, retrieval-augmented generation, and intelligent automation for complex workflows",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -254,7 +254,7 @@ PROJECTS = [
         "stack": "Full Stack",
         "link": "https://github.com/AmanKabra1/angular-tut",
         "bullets": [
-            "Personal Angular learning project. > Note: project source (e.g. package.json, angular.json, src/app/* components) > is not yet present in this folder. Add it here and commit � the repository is > configured to attribute commits to the personal identity.",
+            "Personal Angular learning project. > Note: project source (e.g. package.json, angular.json, src/app/* components) > is not yet present in this folder. Add it here and commit ? the repository is > configured to attribute commits to the personal identity.",
             "Implemented robust architecture following best practices for code quality and system design",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -276,7 +276,7 @@ PROJECTS = [
         "stack": "TypeScript",
         "link": "https://github.com/AmanKabra1/demo1",
         "bullets": [
-            "<p align=\"center\"> <a href=\"http://nestjs.com/\" target=\"blank\"><img src=\"https://nestjs.com/img/logo-small.svg\" width=\"120\" alt=\"Nest Logo\" /></a> </p> [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
+            "[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
             "Implemented core architecture using TypeScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -320,7 +320,7 @@ PROJECTS = [
         "stack": "TypeScript",
         "link": "https://github.com/AmanKabra1/uber-services",
         "bullets": [
-            "<p align=\"center\"> <a href=\"http://nestjs.com/\" target=\"blank\"><img src=\"https://nestjs.com/img/logo-small.svg\" width=\"120\" alt=\"Nest Logo\" /></a> </p> [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
+            "[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
             "Implemented core architecture using TypeScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -342,7 +342,7 @@ PROJECTS = [
         "stack": "TypeScript",
         "link": "https://github.com/AmanKabra1/vendor-management",
         "bullets": [
-            "Vendor Management System (NestJS + Angular) with JWT auth & role-based admin/vendor portals � evolving into RideFleet, a shared delivery-rider platform",
+            "Vendor Management System (NestJS + Angular) with JWT auth & role-based admin/vendor portals ? evolving into RideFleet, a shared delivery-rider platform",
             "Implemented core architecture using TypeScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -353,7 +353,7 @@ PROJECTS = [
         "stack": "TypeScript",
         "link": "https://github.com/AmanKabra1/finance-backend",
         "bullets": [
-            "<p align=\"center\"> <a href=\"http://nestjs.com/\" target=\"blank\"><img src=\"https://nestjs.com/img/logo-small.svg\" width=\"120\" alt=\"Nest Logo\" /></a> </p> [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
+            "[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
             "Implemented core architecture using TypeScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -364,7 +364,7 @@ PROJECTS = [
         "stack": "Jupyter Notebook, AI",
         "link": "https://github.com/AmanKabra1/AgenticAI",
         "bullets": [
-            "A hands-on collection of projects for learning Agentic AI � building systems where Large Language Models (LLMs) don't just answer questions, but reason, use tools, remember context, and take actions to accomplish goals. Each subfolder is a self-contained Python project (managed with [uv](https://github.com/astral-sh/uv)) that demonstrates one building block of an agentic system. --- A plain LLM is a text-in, text-out function. An agent wraps an LLM in a loop that lets it interact with the world:",
+            "A hands-on collection of projects for learning Agentic AI ? building systems where Large Language Models (LLMs) don't just answer questions, but reason, use tools, remember context, and take actions to accomplish goals. Each subfolder is a self-contained Python project (managed with ) that demonstra",
             "Implemented core architecture using Jupyter Notebook with AI ensuring scalable and maintainable codebase",
             "Integrated advanced AI/ML capabilities including multi-agent orchestration, retrieval-augmented generation, and intelligent automation for complex workflows",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -375,7 +375,7 @@ PROJECTS = [
         "stack": "Full Stack",
         "link": "https://github.com/AmanKabra1/AmanKabra1",
         "bullets": [
-            "<div align=\"center\"> Backend-Focused Software Engineer | API Architect | System Design Enthusiast Building scalable, production-ready systems with clean code and thoughtful design. [Portfolio](#-featured-projects) � [Resume](#resume) � [Connect](#-connect-with-me) � [Blog](#-articles--blog)",
+            "Backend-Focused Software Engineer | API Architect | System Design Enthusiast Building scalable, production-ready systems with clean code and thoughtful design. ? ? ?",
             "Implemented robust architecture following best practices for code quality and system design",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -386,7 +386,7 @@ PROJECTS = [
         "stack": "Jupyter Notebook, LangChain, AI",
         "link": "https://github.com/AmanKabra1/langchain-learning",
         "bullets": [
-            "A collection of hands-on projects exploring the modern LangChain (v1) ecosystem � agents, evaluation, model gateways, and core LangChain concepts. Each subfolder is a self-contained project managed with [uv](https://docs.astral.sh/uv/). | Folder | Focus | Key libraries |",
+            "A collection of hands-on projects exploring the modern LangChain (v1) ecosystem ? agents, evaluation, model gateways, and core LangChain concepts. Each subfolder is a self-contained project managed with . | Folder | Focus | Key libraries |",
             "Engineered backend with Jupyter Notebook, LangChain; integrated AI for enhanced functionality, performance, and production reliability",
             "Integrated advanced AI/ML capabilities including multi-agent orchestration, retrieval-augmented generation, and intelligent automation for complex workflows",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -397,7 +397,7 @@ PROJECTS = [
         "stack": "TypeScript",
         "link": "https://github.com/AmanKabra1/Cricket",
         "bullets": [
-            "A real-time scoring platform for local cricket tournaments and grounds � inspired by CricHeroes, Cricbuzz, and ESPN Cricinfo, but built for community sport. Cricket-first, with a sport-agnostic core (teams/tournaments/venues) ready to extend to football, kabaddi, etc.",
+            "A real-time scoring platform for local cricket tournaments and grounds ? inspired by CricHeroes, Cricbuzz, and ESPN Cricinfo, but built for community sport. Cricket-first, with a sport-agnostic core (teams/tournaments/venues) ready to extend to football, kabaddi, etc.",
             "Implemented core architecture using TypeScript ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
@@ -408,7 +408,7 @@ PROJECTS = [
         "stack": "Python",
         "link": "https://github.com/AmanKabra1/CoWorking-Space",
         "bullets": [
-            "The modern operating system for coworking spaces � manage buildings, facilities, bookings, billing, members, inventory, vendors, and community from one platform. | Layer | Technology | |-------|-----------| | Backend | Django 5.1 + Django REST Framework, SimpleJWT auth |",
+            "The modern operating system for coworking spaces ? manage buildings, facilities, bookings, billing, members, inventory, vendors, and community from one platform. | Layer | Technology | |-------|-----------| | Backend | Django 5.1 + Django REST Framework, SimpleJWT auth |",
             "Implemented core architecture using Python ensuring scalable and maintainable codebase",
             "Implemented key features including API design, data persistence, error handling, and comprehensive testing for production reliability",
             "Deployed as production-ready system with focus on reliability, scalability, and maintainability; demonstrates professional software engineering practices",
