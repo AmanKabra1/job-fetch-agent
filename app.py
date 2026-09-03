@@ -1723,16 +1723,22 @@ def api_apply_kit(payload: dict):
             traceback.print_exc()
             raise
 
-        if not result:
-            print(f"[APPLY] DRG returned None/empty!", flush=True)
+        if not result or not isinstance(result, dict):
+            print(f"[APPLY] DRG returned None/empty! result={result}, type={type(result)}", flush=True)
             return JSONResponse({
                 "error": "DRG returned empty result",
                 "files": [],
                 "emphasized": [],
-                "ats_score": 0
+                "ats_score": 0,
+                "cover_note": "Unable to generate at this time."
             }, status_code=500)
-        resume_text = result.get("resume", {}).get("summary", "")
-        best_project = result.get("best_project", {})
+
+        # DEFENSIVE: safely extract from result dict
+        resume_data = result.get("resume") or {}
+        if not isinstance(resume_data, dict):
+            resume_data = {}
+        resume_text = resume_data.get("summary", "")
+        best_project = result.get("best_project") or {}
         project_match_score = result.get("project_match_score", 0)
 
         # DEBUG: Log project matching

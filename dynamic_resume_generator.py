@@ -71,77 +71,83 @@ def generate_tailored_resume(job: dict, user_resume: dict = None, format_type: s
             "summary": "Tailoring summary"
         }
     """
-
-    # Use template or user resume
-    resume = user_resume if user_resume else RESUME_TEMPLATE.copy()
-
-    # Get best project for this JD
     try:
-        project_match = JPM.get_best_project_for_jd(job)
-    except:
-        project_match = {"best_project": None, "recommendation": "N/A"}
+        # Use template or user resume
+        resume = user_resume if user_resume else RESUME_TEMPLATE.copy()
 
-    best_project = project_match.get("best_project") or {}
+        # Get best project for this JD
+        try:
+            project_match = JPM.get_best_project_for_jd(job)
+        except Exception as e:
+            print(f"[DRG] JPM error: {e}", flush=True)
+            project_match = {"best_project": None, "recommendation": "N/A"}
 
-    # Extract job requirements
-    jd_title = job.get("title", "")
-    jd_desc = job.get("description", "")
-    jd_company = job.get("company", "")
+        best_project = project_match.get("best_project") or {}
 
-    # Find skills mentioned in JD
-    matched_skills = _extract_job_skills(jd_desc)
+        # Extract job requirements
+        jd_title = job.get("title", "")
+        jd_desc = job.get("description", "")
+        jd_company = job.get("company", "")
 
-    # Tailor the resume
-    tailored = resume.copy()
+        # Find skills mentioned in JD
+        matched_skills = _extract_job_skills(jd_desc)
 
-    # Update summary to match job
-    tailored["summary"] = _generate_summary(jd_title, matched_skills[:3])
+        # Tailor the resume
+        tailored = resume.copy()
 
-    # Swap projects: Only swap if match score >= 75%
-    # Otherwise keep original project and focus on keywords/ATS
-    best_match_score = best_project.get("match_score", 0) if best_project else 0
+        # Update summary to match job
+        tailored["summary"] = _generate_summary(jd_title, matched_skills[:3])
 
-    if best_project and best_project.get("name") and best_match_score >= 75:
-        # Good match found - swap project
-        tailored["projects"] = [
-            {
-                "name": best_project.get("name", ""),
-                "tech": ", ".join(best_project.get("tech_stack", [])[:5]),
-                "description": best_project.get("description", "")
-            }
-        ]
-        project_action = "swapped"
-    else:
-        # No good match - keep original project, focus on keywords
-        project_action = "kept (no good match)"
-        # Keep existing projects as-is
+        # Swap projects: Only swap if match score >= 75%
+        # Otherwise keep original project and focus on keywords/ATS
+        best_match_score = best_project.get("match_score", 0) if best_project else 0
 
-    # Update skills to match JD (but keep user's core skills)
-    core_skills = ["Python", "Node.js", "TypeScript", "Java"]
-    jd_skills = [s for s in matched_skills if s not in core_skills][:5]
-    tailored["skills"] = core_skills + jd_skills
+        if best_project and best_project.get("name") and best_match_score >= 75:
+            # Good match found - swap project
+            tailored["projects"] = [
+                {
+                    "name": best_project.get("name", ""),
+                    "tech": ", ".join(best_project.get("tech_stack", [])[:5]),
+                    "description": best_project.get("description", "")
+                }
+            ]
+            project_action = "swapped"
+        else:
+            # No good match - keep original project, focus on keywords
+            project_action = "kept (no good match)"
+            # Keep existing projects as-is
 
-    # Update experience summary to match job
-    if tailored.get("experience"):
-        exp = tailored["experience"][0]
-        exp["role"] = jd_title if jd_title else "Backend Developer"
-        exp["company"] = jd_company if jd_company else "Your Company"
-        exp["points"] = _generate_experience_points(jd_title, matched_skills)
+        # Update skills to match JD (but keep user's core skills)
+        core_skills = ["Python", "Node.js", "TypeScript", "Java"]
+        jd_skills = [s for s in matched_skills if s not in core_skills][:5]
+        tailored["skills"] = core_skills + jd_skills
 
-    # Calculate ATS score for tailored resume
-    ats_score = ATS.score_resume_for_jd(tailored, jd_desc)
-    ats_score = max(ats_score, 85)  # Ensure 85+ for tailored resumes
+        # Update experience summary to match job
+        if tailored.get("experience"):
+            exp = tailored["experience"][0]
+            exp["role"] = jd_title if jd_title else "Backend Developer"
+            exp["company"] = jd_company if jd_company else "Your Company"
+            exp["points"] = _generate_experience_points(jd_title, matched_skills)
 
-    return {
-        "resume": tailored,
-        "best_project": best_project if best_match_score >= 75 else None,
-        "project_action": project_action,  # "swapped" or "kept (no good match)"
-        "project_match_score": best_match_score,
-        "ats_score": ats_score,
-        "matched_skills": matched_skills,
-        "summary": f"Tailored for {jd_title} at {jd_company}",
-        "resume_points": project_match.get("resume_points", []) if best_match_score >= 75 else []
-    }
+        # Calculate ATS score for tailored resume
+        ats_score = ATS.score_resume_for_jd(tailored, jd_desc)
+        ats_score = max(ats_score, 85)  # Ensure 85+ for tailored resumes
+
+        return {
+            "resume": tailored,
+            "best_project": best_project if best_match_score >= 75 else None,
+            "project_action": project_action,  # "swapped" or "kept (no good match)"
+            "project_match_score": best_match_score,
+            "ats_score": ats_score,
+            "matched_skills": matched_skills,
+            "summary": f"Tailored for {jd_title} at {jd_company}",
+            "resume_points": project_match.get("resume_points", []) if best_match_score >= 75 else []
+        }
+    except Exception as e:
+        print(f"[DRG] CRITICAL ERROR in generate_tailored_resume: {e}", flush=True)
+        import traceback
+        traceback.print_exc()
+        return None
 
 
 def _extract_job_skills(jd_text: str) -> list:
