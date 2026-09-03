@@ -1708,6 +1708,14 @@ def api_apply_kit(payload: dict):
         }
         # Generate tailored resume WITH project swapping (75%+ match threshold)
         result = DRG.generate_tailored_resume(job_doc)
+        if not result:
+            print(f"  WARNING: DRG.generate_tailored_resume returned None!", flush=True)
+            return JSONResponse({
+                "error": "Resume generation module returned None - check server logs",
+                "files": [],
+                "emphasized": [],
+                "ats_score": 0
+            }, status_code=500)
         resume_text = result.get("resume", {}).get("summary", "")
         best_project = result.get("best_project", {})
         project_match_score = result.get("project_match_score", 0)
