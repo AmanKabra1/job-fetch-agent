@@ -3681,6 +3681,12 @@ async def cron_fetch_jobs(request: Request):
     try:
         print(f"[CRON] Job fetch triggered at {dt.datetime.utcnow()} UTC")
 
+        # Fix import path for Vercel (add repo root to sys.path)
+        from pathlib import Path
+        repo_root = Path(__file__).parent.absolute()
+        if str(repo_root) not in sys.path:
+            sys.path.insert(0, str(repo_root))
+
         # Import directly (more reliable on Vercel than subprocess)
         import fetch_jobs
 
