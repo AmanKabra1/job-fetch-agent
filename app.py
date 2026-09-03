@@ -1700,6 +1700,11 @@ def api_apply_kit(payload: dict):
         if fmt not in ("pdf", "docx", "both"):
             fmt = "pdf"
 
+        # Fallback: if description empty, generate from title
+        if not description:
+            description = f"Position: {title}. Backend developer role requiring strong technical skills and experience with modern frameworks."
+            print(f"[APPLY] Empty description - generated fallback", flush=True)
+
         # Use FULL tailored resume generation with AUTOMATIC PROJECT SWAP
         job_doc = {
             "title": title or "Role",
