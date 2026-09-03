@@ -83,51 +83,31 @@ def generate_tailored_resume(job: dict, user_resume: dict = None, format_type: s
             project_match = {"best_project": None, "recommendation": "N/A"}
 
         best_project = project_match.get("best_project") or {}
-
-        # Extract job requirements
-        jd_title = job.get("title", "")
-        jd_desc = job.get("description", "")
-        jd_company = job.get("company", "")
-
-        # Find skills mentioned in JD
-        matched_skills = _extract_job_skills(jd_desc)
-
-        # Tailor the resume
-        tailored = resume.copy()
-
-        # Update summary to match job
-        tailored["summary"] = _generate_summary(jd_title, matched_skills[:3])
-
-        # Swap projects: Only swap if match score >= 75%
-        # Otherwise keep original project and focus on keywords/ATS
         best_match_score = best_project.get("match_score", 0) if best_project else 0
 
+        # ONLY tailor the PROJECT section - everything else from resume_profile.py
+        tailored = resume.copy()
+
+        # Swap projects: Only swap if match score >= 75%
         if best_project and best_project.get("name") and best_match_score >= 75:
-            # Good match found - swap project
+            # Good match found - swap project with tailored bullets
             tailored["projects"] = [
                 {
                     "name": best_project.get("name", ""),
                     "tech": ", ".join(best_project.get("tech_stack", [])[:5]),
-                    "description": best_project.get("description", "")
+                    "description": best_project.get("tailored_description", best_project.get("description", "")),
+                    "bullets": best_project.get("tailored_bullets", best_project.get("bullets", []))
                 }
             ]
             project_action = "swapped"
         else:
-            # No good match - keep original project, focus on keywords
+            # No good match - keep original project as-is
             project_action = "kept (no good match)"
-            # Keep existing projects as-is
 
-        # Update skills to match JD (but keep user's core skills)
-        core_skills = ["Python", "Node.js", "TypeScript", "Java"]
-        jd_skills = [s for s in matched_skills if s not in core_skills][:5]
-        tailored["skills"] = core_skills + jd_skills
-
-        # Update experience summary to match job
-        if tailored.get("experience"):
-            exp = tailored["experience"][0]
-            exp["role"] = jd_title if jd_title else "Backend Developer"
-            exp["company"] = jd_company if jd_company else "Your Company"
-            exp["points"] = _generate_experience_points(jd_title, matched_skills)
+        # Extract job requirements for ATS scoring only
+        jd_desc = job.get("description", "")
+        jd_title = job.get("title", "")
+        matched_skills = _extract_job_skills(jd_desc)
 
         # Calculate ATS score for tailored resume
         ats_score = ATS.score_resume_for_jd(tailored, jd_desc)
@@ -139,9 +119,7 @@ def generate_tailored_resume(job: dict, user_resume: dict = None, format_type: s
             "project_action": project_action,  # "swapped" or "kept (no good match)"
             "project_match_score": best_match_score,
             "ats_score": ats_score,
-            "matched_skills": matched_skills,
-            "summary": f"Tailored for {jd_title} at {jd_company}",
-            "resume_points": project_match.get("resume_points", []) if best_match_score >= 75 else []
+            "matched_skills": matched_skills
         }
     except Exception as e:
         print(f"[DRG] CRITICAL ERROR in generate_tailored_resume: {e}", flush=True)
@@ -169,29 +147,6 @@ def _extract_job_skills(jd_text: str) -> list:
     return list(set(skills))  # Remove duplicates
 
 
-def _generate_summary(job_title: str, top_skills: list) -> str:
-    """Generate a summary tailored to the job."""
-    skills_str = ", ".join(top_skills) if top_skills else "backend technologies"
-    return f"Backend Developer experienced in {skills_str} with proven track record in building scalable systems. Seeking {job_title} role."
-
-
-def _generate_experience_points(job_title: str, skills: list) -> list:
-    """Generate experience bullet points tailored to job."""
-    base_points = [
-        f"Developed backend systems using {skills[0] if skills else 'modern tech'}",
-        "Designed and optimized database architectures",
-        "Implemented REST APIs and microservices",
-        "Collaborated with cross-functional teams"
-    ]
-
-    # Add job-specific points
-    if "AI" in str(skills) or "LLM" in str(skills):
-        base_points.insert(0, "Integrated LLM and AI agents into production systems")
-
-    if "Docker" in str(skills) or "Kubernetes" in str(skills):
-        base_points.append("Set up containerization and orchestration pipelines")
-
-    return base_points[:4]  # Keep to 4 points (1-page limit)
 
 
 def export_resume(resume_data: dict, format_type: str = "json") -> str:
