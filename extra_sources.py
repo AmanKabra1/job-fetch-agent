@@ -299,13 +299,15 @@ def fetch_himalayas(terms, max_age_hours=0):
 
 
 # Domains that are actual job postings (used to filter Tavily web results).
+# Includes Indian job boards: Naukri, Instahyre, Shine, Cutshort, Hirist
 _JOB_DOMAINS = (
     "linkedin.com/jobs", "indeed.", "glassdoor.", "naukri.com", "lever.co",
     "greenhouse.io", "ashbyhq.com", "myworkdayjobs.com", "workday", "wellfound.com",
     "angel.co", "remoteok", "weworkremotely.com", "remotive.com", "jobicy.com",
     "ziprecruiter.com", "dice.com", "monster.com", "instahyre.com", "cutshort.io",
-    "hirist.", "ycombinator.com/jobs", "/careers", "careers.", "jobs.", "smartrecruiters.com",
-    "workable.com", "recruitee.com", "jobvite.com", "bamboohr.com",
+    "shine.com", "hirist.", "ycombinator.com/jobs", "/careers", "careers.", "jobs.",
+    "smartrecruiters.com", "workable.com", "recruitee.com", "jobvite.com", "bamboohr.com",
+    "foundry.", "foundit.",
 )
 
 
