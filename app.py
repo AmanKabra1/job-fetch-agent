@@ -2446,6 +2446,7 @@ INDEX_HTML = r"""<!doctype html>
             <select id="projects-dropdown" style="background: #0f172a; color: #e2e8f0; border: 1px solid #334155; border-radius: 4px; padding: 10px; width: 100%; font-size: 13px; cursor: pointer;">
               <option value="">-- Select a project --</option>
             </select>
+            <div id="project-details" style="margin-top: 10px; font-size: 13px; color: #94a3b8; display: none;"></div>
           </div>
         </details>
       </div>
@@ -3387,6 +3388,8 @@ if('serviceWorker' in navigator){
 }
 
 // Load projects dropdown
+let allProjects = [];
+
 function loadProjects() {
   fetch('/api/projects/list')
     .then(r => {
@@ -3398,6 +3401,7 @@ function loadProjects() {
 
       if (data.success && data.projects) {
         const projects = data.projects;
+        allProjects = projects;
         const dropdown = document.getElementById('projects-dropdown');
         const countEl = document.getElementById('projects-count');
 
@@ -3410,11 +3414,70 @@ function loadProjects() {
           dropdown.innerHTML = '<option value="">-- Select a project --</option>' +
             projects.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
         }
+        const detailsEl = document.getElementById('project-details');
+        if (detailsEl) detailsEl.style.display = 'none';
       } else {
         console.error('API response not successful:', data);
       }
     })
     .catch(e => console.error('Error loading projects:', e));
+}
+
+// Selecting a project shows its tech stack, description and GitHub link
+const projectsDropdown = document.getElementById('projects-dropdown');
+if (projectsDropdown) {
+  projectsDropdown.addEventListener('change', () => {
+    const detailsEl = document.getElementById('project-details');
+    const p = allProjects.find(pr => pr.name === projectsDropdown.value);
+    if (!p) { detailsEl.style.display = 'none'; return; }
+    const stack = (p.tech_stack || []).join(', ') || '—';
+    const link = p.github_url ? `<a href="${esc(p.github_url)}" target="_blank" rel="noopener" style="color:#7db0ff">${esc(p.github_url)}</a>` : '—';
+    detailsEl.innerHTML = `<b style="color:#e2e8f0">Tech stack:</b> ${esc(stack)}<br>`
+      + `<b style="color:#e2e8f0">Description:</b> ${esc(p.description || '—')}<br>`
+      + `<b style="color:#e2e8f0">GitHub:</b> ${link}`;
+    detailsEl.style.display = '';
+  });
+}
+
+// Manually adding a project to the portfolio
+const projectForm = document.getElementById('project-form-submit');
+if (projectForm) {
+  projectForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const fd = new FormData(projectForm);
+    const skills = String(fd.get('skills') || '').split(',').map(s => s.trim()).filter(Boolean);
+    const payload = {
+      name: String(fd.get('name') || '').trim(),
+      skills,
+      description: String(fd.get('description') || '').trim(),
+      github_url: String(fd.get('github_url') || '').trim() || null,
+    };
+    const submitBtn = projectForm.querySelector('button[type="submit"]');
+    const oldText = submitBtn.textContent;
+    try {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Adding...';
+      const res = await fetch('/api/projects/add', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (res.ok && data.success !== false) {
+        toast('✓ Project added to portfolio');
+        projectForm.reset();
+        loadProjects();
+      } else {
+        const msg = (data.errors && data.errors.join(', ')) || data.error || 'Could not add project';
+        toast('✗ ' + msg);
+      }
+    } catch (e) {
+      toast('✗ Error: ' + e.message);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = oldText;
+    }
+  });
 }
 
 // Load projects when page is ready
