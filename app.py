@@ -2272,7 +2272,16 @@ INDEX_HTML = r"""<!doctype html>
   .modal-bg { position:fixed; inset:0; background:#000a; display:flex; align-items:center;
               justify-content:center; z-index:60; padding:16px; }
   .modal { background:#0e1726; border:1px solid var(--line); border-radius:12px;
-           max-width:640px; width:100%; max-height:90vh; overflow:auto; padding:18px 20px; }
+           max-width:640px; width:100%; max-height:90vh; overflow:hidden; padding:0;
+           display:flex; flex-direction:column; }
+  .modal-head { position:sticky; top:0; z-index:5; display:flex; align-items:center; gap:10px;
+                justify-content:space-between; padding:16px 20px; background:#0e1726;
+                border-bottom:1px solid var(--line); border-radius:12px 12px 0 0; }
+  .modal-head strong { min-width:0; overflow-wrap:anywhere; }
+  .modal-body { overflow:auto; padding:16px 20px 20px; }
+  .modal-close { flex-shrink:0; background:#1e293b; color:var(--ink); border:1px solid var(--line);
+                 width:30px; height:30px; padding:0; border-radius:8px; display:flex;
+                 align-items:center; justify-content:center; font-size:15px; line-height:1; cursor:pointer; }
   .table-wrap { overflow-x:auto; -webkit-overflow-scrolling:touch; }
   /* Respect phone notches / rounded corners (viewport-fit=cover) */
   header { padding-left:max(24px, env(safe-area-inset-left)); padding-right:max(24px, env(safe-area-inset-right)); }
@@ -3080,8 +3089,9 @@ function showApplyModal(j, d){
     :'');
   $('#applyModal').innerHTML=
     '<div class="modal-bg" onclick="if(event.target===this)closeApply()"><div class="modal">'
-    +'<div class="bar" style="justify-content:space-between"><strong>Apply kit — '+esc(j.title||'')+'</strong>'
-    +'<button class="secondary" onclick="closeApply()">Close</button></div>'
+    +'<div class="modal-head"><strong>Apply kit — '+esc(j.title||'')+'</strong>'
+    +'<button class="modal-close" onclick="closeApply()" title="Close" aria-label="Close">&#10005;</button></div>'
+    +'<div class="modal-body">'
     +'<div class="note" style="margin:-4px 0 14px">'+esc(j.company||'')+(j.location?(' · '+esc(j.location)):'')+'</div>'
     +'<div style="padding:8px 12px; background:'+atsColor+'; border-radius:4px; margin-bottom:12px; color:white; font-weight:600;">'
     +'ATS Score: '+atsScore+'/100 ('+atsLabel+')'
@@ -3097,7 +3107,7 @@ function showApplyModal(j, d){
     +(j.job_url?('<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener"><button>Open job &amp; apply &#8599;</button></a>')
                :'<span class="note">This listing has no direct apply link.</span>')
     +'</div><div class="note" style="margin-top:6px">Review the resume &amp; note, then submit on the site yourself.</div></div>'
-    +'</div></div>';
+    +'</div></div></div>';
 }
 function closeApply(){ $('#applyModal').innerHTML=''; }
 function dlKitFile(k){ const f=((window._applyKit||{}).files||[])[k]; if(f) b64Download(f.name, f.b64, f.mime); }
