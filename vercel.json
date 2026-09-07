@@ -1,11 +1,14 @@
 {
   "version": 2,
   "builds": [
-    { "src": "api/index.py", "use": "@vercel/python", "config": { "maxDuration": 300 } }
+    { "src": "api/index.py", "use": "@vercel/python", "config": { "maxDuration": 300, "pythonVersion": "3.12", "zeroConfig": true } }
   ],
   "routes": [
     { "src": "/(.*)", "dest": "api/index.py" }
   ],
+  "env": {
+    "PYTHONPATH": "/var/task"
+  },
   "git": { "deploymentEnabled": { "feed": false } },
   "crons": [
     {
