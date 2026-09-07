@@ -19,9 +19,30 @@ on:
 permissions:
   contents: write
 
+# Never let two fetches race each other onto the feed branch (a scheduled run
+# overlapping a manual one would collide on `git push origin feed`).
+concurrency:
+  group: daily-job-fetch
+  cancel-in-progress: false
+
 jobs:
   fetch:
     runs-on: ubuntu-latest
+    # Job-level so EVERY step sees them (sync_projects_to_profile.py needs GROQ too).
+    env:
+      # Free Groq key. Powers the AI agent that reads each JD and scores
+      # interview_likelihood / fit_level, plus JD-expiry checks and project
+      # matching. WITHOUT IT every job silently scores 50% / "MAYBE" and the
+      # feed records "groq unavailable for deep analysis".
+      GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      # Free Tavily key switches ON LinkedIn "we're hiring" posts + web-discovered
+      # ATS/career pages. Empty -> those sources stay off (not fatal).
+      TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
+      # Optional extra search source (extra_sources.py).
+      GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+      # Auto-provided by Actions; raises the GitHub API rate limit for the
+      # portfolio-project fetch (projects_manager.py / project_curator.py).
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -37,13 +58,15 @@ jobs:
       - name: Load existing jobs from feed branch (to keep portfolio intact)
         run: python load_existing_jobs.py
 
+      - name: Verify AI scoring key is present
+        run: |
+          if [ -z "$GROQ_API_KEY" ]; then
+            echo "::warning title=GROQ_API_KEY missing::AI job scoring is DISABLED. Every job will score 50% / MAYBE. Add the secret at Settings > Secrets and variables > Actions."
+          else
+            echo "GROQ_API_KEY present - AI job scoring enabled."
+          fi
+
       - name: Fetch jobs and write data/jobs.json
-        env:
-          # Free Tavily key (repo secret) switches ON LinkedIn "we're hiring" posts
-          # + web-discovered ATS/company career pages. Empty → those sources stay off.
-          # The cron runs 4 times a day, so Tavily runs on every run and still
-          # fits the free tier (~4 runs/day × a handful of searches).
-          TAVILY_API_KEY: ${{ secrets.TAVILY_API_KEY }}
         run: python fetch_jobs.py
 
       - name: Sync portfolio projects to resume profile
