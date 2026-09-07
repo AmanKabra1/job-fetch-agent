@@ -3765,16 +3765,23 @@ async def cron_fetch_jobs(request: Request):
         # Fix import path for Vercel (add repo root to sys.path)
         from pathlib import Path
         repo_root = Path(__file__).parent.absolute()
+        print(f"[CRON] Repo root: {repo_root}", flush=True)
+        print(f"[CRON] sys.path: {sys.path[:3]}", flush=True)
+
         if str(repo_root) not in sys.path:
             sys.path.insert(0, str(repo_root))
+            print(f"[CRON] Added to sys.path: {str(repo_root)}", flush=True)
 
         # Import directly (more reliable on Vercel than subprocess)
+        print(f"[CRON] Attempting to import fetch_jobs...", flush=True)
         import fetch_jobs
+        print(f"[CRON] Successfully imported fetch_jobs", flush=True)
 
         print(f"[CRON] Running fetch_jobs.main()")
 
         # Call fetch_jobs.main() directly
-        fetch_jobs.main()
+        result = fetch_jobs.main()
+        print(f"[CRON] fetch_jobs.main() returned: {result}", flush=True)
 
         print(f"[CRON] SUCCESS: Job fetch completed")
         return {
