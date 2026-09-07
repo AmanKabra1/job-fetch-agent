@@ -1,9 +1,19 @@
 name: Daily Job Fetch
 
 on:
-  # MOVED TO VERCEL CRON: More reliable, no deployment overhead
-  # Vercel cron is configured in vercel.json with 4 schedules
-  # Keep GitHub Actions for manual triggers only
+  # Runs HERE, not on Vercel: this job needs pandas + python-jobspy (installed
+  # below from requirements.txt), real non-datacenter IPs the boards don't block,
+  # and a writable checkout to git-push the feed branch. Vercel's function can do
+  # none of those, so it only SERVES the feed this workflow publishes.
+  #
+  # 4 peak posting times, UTC (IST = UTC+5:30):
+  #   03:00 UTC = 08:30 IST   |  07:00 UTC = 12:30 IST
+  #   11:00 UTC = 16:30 IST   |  15:00 UTC = 20:30 IST
+  schedule:
+    - cron: "0 3 * * *"
+    - cron: "0 7 * * *"
+    - cron: "0 11 * * *"
+    - cron: "0 15 * * *"
   workflow_dispatch: {}   # trigger manually from the Actions tab any time
 
 permissions:

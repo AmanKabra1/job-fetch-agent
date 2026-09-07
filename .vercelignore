@@ -5,3 +5,8 @@ resume/
 __pycache__/
 *.pyc
 service_account.json
+# fetch_jobs.py is EXCLUDED deliberately: it needs pandas + python-jobspy, which
+# are not in api/requirements.txt (they would bloat the function toward Vercel's
+# 250MB limit), the boards block Vercel's datacenter IPs, and Vercel's filesystem
+# cannot git-push the feed branch. GitHub Actions runs it instead (daily-jobs.yml).
+fetch_jobs.py
