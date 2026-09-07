@@ -3743,21 +3743,19 @@ $('#exCsv').onclick=exCsv; $('#exJson').onclick=exJson; $('#exGeo').onclick=exGe
 
 
 # ============================================================================
-# VERCEL CRON ENDPOINT - Automatic job fetching (no manual trigger needed)
+# MANUAL/LOCAL JOB FETCH ENDPOINT
 # ============================================================================
 @app.get("/api/cron/fetch-jobs")
 async def cron_fetch_jobs(request: Request):
     """
-    Vercel Cron endpoint: Called automatically at 3,7,11,15 UTC daily.
+    Kick off a job fetch. Works LOCALLY only.
 
-    Vercel cron makes HTTP GET requests to this endpoint on schedule.
-    Direct import (not subprocess) for better Vercel reliability.
-
-    Times:
-    - 3 UTC  = 8:30 AM IST (morning peak)
-    - 7 UTC  = 12:30 PM IST (noon)
-    - 11 UTC = 4:30 PM IST (afternoon peak)
-    - 15 UTC = 8:30 PM IST (evening batch)
+    The scheduled fetch runs on GitHub Actions (.github/workflows/daily-jobs.yml)
+    at 03:00/07:00/11:00/15:00 UTC = 8:30 AM/12:30 PM/4:30 PM/8:30 PM IST.
+    It cannot run on Vercel: fetch_jobs.py needs pandas + python-jobspy (absent
+    from api/requirements.txt and too large for the function), the job boards
+    block Vercel's datacenter IPs, and the function filesystem cannot git-push
+    the feed branch. On Vercel this returns a 501 explaining where to look.
     """
     try:
         print(f"[CRON] Job fetch triggered at {dt.datetime.utcnow()} UTC")
@@ -3772,9 +3770,23 @@ async def cron_fetch_jobs(request: Request):
             sys.path.insert(0, str(repo_root))
             print(f"[CRON] Added to sys.path: {str(repo_root)}", flush=True)
 
-        # Import directly (more reliable on Vercel than subprocess)
+        # Import directly. On Vercel this raises ModuleNotFoundError by design —
+        # fetch_jobs.py is in .vercelignore and its deps are not installed there.
         print(f"[CRON] Attempting to import fetch_jobs...", flush=True)
-        import fetch_jobs
+        try:
+            import fetch_jobs
+        except ModuleNotFoundError as e:
+            print(f"[CRON] Not runnable in this environment: {e}", flush=True)
+            return JSONResponse({
+                "status": "not_supported",
+                "message": (
+                    f"Job fetching does not run here ({e}). The scheduled fetch runs on "
+                    "GitHub Actions (.github/workflows/daily-jobs.yml) at 03:00/07:00/"
+                    "11:00/15:00 UTC — 8:30 AM/12:30 PM/4:30 PM/8:30 PM IST. Check its "
+                    "status under the repo's Actions tab, or trigger it there manually."
+                ),
+                "timestamp": dt.datetime.utcnow().isoformat(),
+            }, status_code=501)
         print(f"[CRON] Successfully imported fetch_jobs", flush=True)
 
         print(f"[CRON] Running fetch_jobs.main()")
