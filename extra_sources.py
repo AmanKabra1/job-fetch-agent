@@ -1083,6 +1083,70 @@ def fetch_google_jobs(terms, max_age_hours=24):
     return rows
 
 
+# Foundit's page title reads like a full sentence, e.g. "Python Developer for
+# Darwin Labs with 1 - 3 Year of Experience at Darwin Labs Pvt Ltd in Gurugram,
+# India" — pull the real title/company/location out of that instead of the
+# generic " - "/" | " split (which cuts mid-sentence on the "1 - 3" range).
+_FOUNDIT_TITLE_RE = re.compile(
+    r"^(?P<title>.+?)\s+with\s+\d+\s*-\s*\d+\s*Years?\s+of\s+Experience\s+at\s+"
+    r"(?P<company>.+?)\s+in\s+(?P<location>[^|]+?)\s*(?:\|.*)?$",
+    re.I,
+)
+
+
+def fetch_foundit(terms, location="", max_results=8, max_age_hours=0):
+    """Foundit.in (formerly Monster India) has no public API and no jobspy
+    scraper support, and its search results page is JS-rendered so a plain GET
+    returns no listings. Same approach as fetch_company_careers/fetch_tavily_ats:
+    search Tavily restricted to foundit.in, keep only URLs that look like a
+    specific job posting (not the homepage/blog), and require the result to
+    actually mention one of the searched skills/titles. Needs TAVILY_API_KEY;
+    returns [] without it — the caller already merges this into the same ranked
+    list, so these rows get the normal skill/experience/title scoring."""
+    key = os.environ.get("TAVILY_API_KEY")
+    if not key:
+        return []
+    rows, seen = [], set()
+    for term in list(terms)[:4]:
+        query = f"{term} job opening apply {location}".strip()
+        try:
+            r = requests.post("https://api.tavily.com/search", json={
+                "api_key": key, "query": query, "max_results": max_results,
+                "search_depth": "basic", "include_domains": ["foundit.in"],
+            }, headers=_UA, timeout=_TIMEOUT)
+            r.raise_for_status()
+            results = r.json().get("results", [])
+        except Exception as e:
+            print(f"  ! foundit {term!r} failed: {e}", flush=True)
+            continue
+        for res in results:
+            url = res.get("url", "")
+            if not url or url in seen or not _looks_like_job_post(url):
+                continue
+            title = res.get("title", "") or ""
+            if "position closed" in title.lower():
+                continue                              # Foundit marks filled roles this way
+            company = ""
+            m = _FOUNDIT_TITLE_RE.match(title)
+            if m:
+                title, company = m.group("title").strip(), m.group("company").strip()
+            content = res.get("content", "")
+            if not _kw_match(f"{title} {content}", terms):
+                continue
+            seen.add(url)
+            rows.append({
+                "title": title[:120] or "Role via Foundit",
+                "company": company or "",
+                "location": location or "India",
+                "site": "Foundit",
+                "date_posted": str(res.get("published_date", ""))[:10],
+                "is_remote": "remote" in (title + " " + content).lower(),
+                "job_url": url,
+                "description": content,
+            })
+    return rows
+
+
 def fetch_instahyre(terms, max_age_hours=24):
     """Fetch jobs from Instahyre (Indian tech job board).
     Scrapes search results for each term."""
@@ -1157,4 +1221,9 @@ def fetch_extra(terms, per_term=20, max_age_hours=0, include_career=False,
                                         use_tavily=use_tavily)
         except Exception as e:
             print(f"  ! career pages failed: {e}", flush=True)
+    if use_tavily:
+        try:
+            rows += fetch_foundit(terms, location=location, max_age_hours=max_age_hours)
+        except Exception as e:
+            print(f"  ! foundit source failed: {e}", flush=True)
     return rows
