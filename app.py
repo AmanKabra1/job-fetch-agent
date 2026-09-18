@@ -199,7 +199,7 @@ _TITLE_FAMILY = {"developer", "engineer", "programmer", "sde", "architect", "dev
 # it asks for are skills the PROFILE actually has. If the strict pass leaves too
 # few jobs we re-run at RELAX_SKILL_RATIO (and tell the user we relaxed) so the
 # page is never empty.
-MIN_SKILL_RATIO = 0.6        # >= 75% of a job's required skills must be in profile
+MIN_SKILL_RATIO = 0.6        # >= 60% of a job's required skills must be in profile
 RELAX_SKILL_RATIO = 0.50     # Relaxed to 50% (was 30%, too loose - filters bad jobs better)
 MIN_KEEP_BEFORE_RELAX = 15   # Need 15+ before relaxing (was 8 - stay strict longer)
 
@@ -237,6 +237,11 @@ _JUNIOR_RE = re.compile(
     r"\b(junior|jr\.?|entry[- ]?level|entry|graduate|trainee|fresher|intern|"
     r"sde\s*(?:1|i)\b|sde-?1)\b", re.I)
 _YEARS_RE = re.compile(r"(\d{1,2})\s*\+?\s*(?:years|yrs|yr)\b", re.I)
+# 'X-Y years' / 'X to Y yrs' ranges — matched separately because _YEARS_RE can
+# only anchor to the number sitting directly before "years", so on a bare range
+# like "2-4 years" it only ever catches the upper bound (4), never the 2.
+_YEARS_RANGE_RE = re.compile(
+    r"(\d{1,2})\s*(?:-|–|—|to)\s*(\d{1,2})\s*\+?\s*(?:years|yrs|yr)\b", re.I)
 
 # India-location detection — you apply from India, so India-based roles
 # (onsite / hybrid / WFH-in-India) are the most actionable and rank highest;
@@ -258,17 +263,26 @@ def _india_location(text: str) -> bool:
 
 
 def _required_years(text: str) -> int:
-    """Largest 'N years' mentioned in a JD (rough seniority signal). 0 if none."""
-    yrs = [int(m) for m in _YEARS_RE.findall(text or "") if int(m) <= 20]
+    """Largest 'N years' mentioned in a JD (rough seniority signal). 0 if none.
+    A 'X-Y years' range counts its upper bound Y toward this."""
+    text = text or ""
+    yrs = [int(b) for _a, b in _YEARS_RANGE_RE.findall(text) if int(b) <= 20]
+    yrs += [int(m) for m in _YEARS_RE.findall(_YEARS_RANGE_RE.sub(" ", text)) if int(m) <= 20]
     return max(yrs) if yrs else 0
 
 
 def _min_required_years(text: str) -> int:
     """Smallest 'N years' a JD asks for — the MINIMUM experience floor. 0 if none.
-    e.g. '3+ years' -> 3, '2-4 years' -> 4 (the regex only matches the number
-    directly before 'years'). Used to reject roles needing many more years than
-    the candidate has."""
-    yrs = [int(m) for m in _YEARS_RE.findall(text or "") if int(m) <= 20]
+    e.g. '3+ years' -> 3. A 'X-Y years' range (the overwhelmingly common phrasing
+    on Naukri/LinkedIn postings, e.g. '2-4 Yrs') counts its LOWER bound X, since
+    that's what the JD actually asks for — plain _YEARS_RE alone can't see X here
+    (it only anchors to the number directly before 'years', so a bare '2-4 years'
+    scan only ever finds 4). This floor is a HARD reject gate in
+    calculate_match_score, so undercounting it here means a job whose stated
+    range you genuinely qualify for got wrongly rejected as 'too senior'."""
+    text = text or ""
+    yrs = [int(a) for a, _b in _YEARS_RANGE_RE.findall(text) if int(a) <= 20]
+    yrs += [int(m) for m in _YEARS_RE.findall(_YEARS_RANGE_RE.sub(" ", text)) if int(m) <= 20]
     return min(yrs) if yrs else 0
 
 
