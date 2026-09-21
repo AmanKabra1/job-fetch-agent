@@ -133,6 +133,7 @@ _TEXT_QUESTION_KEYWORDS = (
     (("notice period",), "notice_period"),
     (("current location", "current city", "which city", "where are you based"), "location"),
     (("linkedin",), "linkedin"),
+    (("github",), "github"),
 )
 
 
@@ -196,6 +197,23 @@ def _answer_text_questions(page, screening):
     return filled
 
 
+def _with_profile_links(screening, linkedin, github):
+    """screening (from .env, CTC/notice-period/location) doesn't carry your
+    LinkedIn/GitHub URLs -- those live in resume_profile.py and are passed to
+    each filler separately. Merge them in (without overriding an explicit
+    screening override) so _answer_text_questions can also match a job's own
+    custom "LinkedIn Profile" / "GitHub" TEXT question, not just the fields
+    that have a dedicated, stable selector (like Lever's urls[LinkedIn]).
+    Found missing live: a real Gusto/Greenhouse posting had exactly such a
+    custom "LinkedIn Profile" question that went unfilled before this."""
+    merged = dict(screening or {})
+    if linkedin:
+        merged.setdefault("linkedin", linkedin)
+    if github:
+        merged.setdefault("github", github)
+    return merged
+
+
 def _fill_lever(page, full_name, email, phone, resume_path, cover_note, linkedin, github, screening):
     filled = []
     _try_fill(page, "input[name='name']", full_name, "name", filled)
@@ -206,27 +224,76 @@ def _fill_lever(page, full_name, email, phone, resume_path, cover_note, linkedin
     # Not every Lever board has a comments/cover-letter box — harmless no-op if absent.
     _try_fill(page, "textarea[name='comments']", cover_note, "cover note", filled)
     _try_upload(page, ["input[name='resume']"], resume_path, filled)
-    filled += _answer_text_questions(page, screening)
+    filled += _answer_text_questions(page, _with_profile_links(screening, linkedin, github))
     return filled
+
+
+def _reveal_greenhouse_cover_letter(page):
+    """Some Greenhouse postings (confirmed live: Gusto) hide the cover-letter
+    box behind its own 'Enter manually' button -- same widget style as the
+    resume upload, which ALSO has an 'Enter manually' button on the same
+    page. Clicking the wrong one could clear the resume we just uploaded, so
+    this specifically finds the "Enter manually" button that sits inside the
+    Cover Letter section (by walking up from a "Cover Letter" text node) and
+    clicks only that one. No-op (returns False) if not found -- the plain
+    textarea fill attempt after this still covers postings that don't need
+    a reveal click at all (e.g. Anthropic)."""
+    try:
+        handle = page.evaluate_handle("""
+            () => {
+              const heading = [...document.querySelectorAll('*')].find(el =>
+                el.children.length === 0 &&
+                /cover letter/i.test(el.textContent || '') &&
+                el.textContent.trim().length < 30
+              );
+              if (!heading) return null;
+              let container = heading.parentElement;
+              for (let i = 0; i < 5 && container; i++) {
+                const btn = [...container.querySelectorAll('button')].find(
+                  b => /enter manually/i.test(b.textContent || '')
+                );
+                if (btn) return btn;
+                container = container.parentElement;
+              }
+              return null;
+            }
+        """)
+        el = handle.as_element()
+        if el:
+            el.click(timeout=2000)
+            return True
+    except Exception:
+        pass
+    return False
 
 
 def _fill_greenhouse(page, full_name, email, phone, resume_path, cover_note, linkedin, github, screening):
     filled = []
     first, last = _split_name(full_name)
+    # Upload the resume FIRST and let its "parsing" settle before filling
+    # anything else. Confirmed live (Gusto): Greenhouse's newer template
+    # re-renders the personal-info fields once it finishes analyzing the
+    # uploaded resume, which silently wiped out name/email/phone that had
+    # been filled beforehand -- page.fill() reported success at the time,
+    # but the values were gone by the time the form was actually submittable.
+    _try_upload(page, ["#resume", "input[name='job_application[resume]']"], resume_path, filled)
+    if resume_path:
+        page.wait_for_timeout(2500)
     _try_fill(page, "#first_name", first, "first name", filled)
     _try_fill(page, "#last_name", last, "last name", filled)
     _try_fill(page, "#email", email, "email", filled)
     _try_fill(page, "#phone", phone, "phone", filled)
-    _try_upload(page, ["#resume", "input[name='job_application[resume]']"], resume_path, filled)
+    if cover_note:
+        _reveal_greenhouse_cover_letter(page)
     # Greenhouse's older template has a dedicated #cover_letter_text box; its
     # newer job-boards.greenhouse.io template instead has a generic textarea
-    # labelled "Additional Information" (id varies per posting -- confirmed
-    # live against a real Anthropic posting) or sometimes "Cover Letter".
+    # labelled "Additional Information" (confirmed live: Anthropic) or
+    # "Cover Letter" (confirmed live: Gusto, once revealed above).
     _try_fill_any(page, ["#cover_letter_text",
                          "textarea[aria-label='Additional Information']",
                          "textarea[aria-label='Cover Letter']"],
                   cover_note, "cover note", filled)
-    filled += _answer_text_questions(page, screening)
+    filled += _answer_text_questions(page, _with_profile_links(screening, linkedin, github))
     return filled
 
 
@@ -263,7 +330,7 @@ def _fill_workable(page, full_name, email, phone, resume_path, cover_note, linke
     _try_fill(page, "input[name='phone']", phone, "phone", filled)
     _try_fill(page, "textarea[name='cover_letter']", cover_note, "cover note", filled)
     _try_upload(page, ["input[data-ui='resume']", "input[type='file']"], resume_path, filled)
-    filled += _answer_text_questions(page, screening)
+    filled += _answer_text_questions(page, _with_profile_links(screening, linkedin, github))
     return filled
 
 
