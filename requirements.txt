@@ -17,3 +17,9 @@ python-multipart>=0.0.9          # resume upload (multipart form)
 pypdf>=4.0.0                      # read text from uploaded PDFs
 docx2pdf>=0.1.8 ; sys_platform == "win32"   # .docx -> PDF via MS Word (local, Windows)
 pywin32>=306 ; sys_platform == "win32"       # COM bridge docx2pdf needs
+
+# Auto-fill assistant for Greenhouse/Lever/Ashby applications (apply_agent.py).
+# LOCAL ONLY — never add this to api/requirements.txt (Vercel has no desktop to
+# show a browser window on, and apply_agent.py already guards against that).
+# After installing, also run once: playwright install chromium
+playwright>=1.40.0

@@ -55,6 +55,7 @@ import resume_tailor as RT
 import resume_builder as RB
 import resume_profile as P
 import extra_sources as ES
+import apply_agent as AA
 import ats_scorer as ATS
 
 # NEW: API and project management modules
@@ -323,6 +324,23 @@ try:
     CURRENT_LPA = float(os.environ.get("CURRENT_LPA", "7"))  # Target 7-9 LPA range (your bracket)
 except ValueError:
     CURRENT_LPA = 7  # Jobs paying 7+ LPA get boosted (your salary range)
+
+# Recurring screening-question answers — set once in .env (gitignored, never
+# committed; NOT in resume_profile.py since that file IS committed to the
+# repo). Used two ways: (1) apply_agent.py fills matching TEXT questions
+# (CTC/notice period/location/LinkedIn) on Lever/Greenhouse/Workable forms —
+# deliberately TEXT only, never a Yes/No radio (see apply_agent.py's
+# _TEXT_QUESTION_KEYWORDS comment for why); (2) shown back to you as a
+# quick-reference in the Apply modal for sites that aren't auto-fillable
+# (LinkedIn/Naukri/Indeed/Foundit — they ask this same standard set).
+SCREENING_ANSWERS = {
+    "current_ctc": os.environ.get("CURRENT_CTC", ""),
+    "expected_ctc": os.environ.get("EXPECTED_CTC", ""),
+    "notice_period": os.environ.get("NOTICE_PERIOD", ""),
+    "location": os.environ.get("CANDIDATE_CURRENT_LOCATION", ""),
+    "relocate": os.environ.get("WILLING_TO_RELOCATE", ""),
+    "work_auth": os.environ.get("WORK_AUTH_INDIA", ""),
+}
 
 
 def _salary_boost(lpa: float) -> int:
@@ -1701,17 +1719,18 @@ def _build_cover_note(title: str, company: str, matched) -> str:
     )
 
 
-@app.post("/api/apply/kit")
-def api_apply_kit(payload: dict):
-    """Semi-auto APPLY ASSISTANT for one job: builds a resume TAILORED + with AUTOMATIC
-    PROJECT SWAP (best project for this job), drafts a matching cover note, echoes the apply link.
-    You review and submit yourself — nothing is sent automatically."""
+def _build_apply_kit(title: str, company: str, description: str, job_url: str,
+                      fmt: str = "pdf"):
+    """Builds a resume TAILORED + with AUTOMATIC PROJECT SWAP (best project for
+    this job) and drafts a matching cover note. Shared by /api/apply/kit (you
+    download + apply yourself) and /api/apply/autofill (also opens the real
+    application form pre-filled with this resume, for Greenhouse/Lever/Ashby)."""
     try:
-        title = (payload.get("title") or "").strip()
-        company = (payload.get("company") or "").strip()
-        description = (payload.get("description") or "").strip()
-        job_url = (payload.get("job_url") or "").strip()
-        fmt = (payload.get("format") or "pdf").lower()
+        title = (title or "").strip()
+        company = (company or "").strip()
+        description = (description or "").strip()
+        job_url = (job_url or "").strip()
+        fmt = (fmt or "pdf").lower()
         if fmt not in ("pdf", "docx", "both"):
             fmt = "pdf"
 
@@ -1847,6 +1866,67 @@ def api_apply_kit(payload: dict):
             "ats_score": 0,
             "cover_note": "Unable to generate at this time."
         }, status_code=500)
+
+
+@app.post("/api/apply/kit")
+def api_apply_kit(payload: dict):
+    """Semi-auto APPLY ASSISTANT for one job: builds a resume TAILORED + with AUTOMATIC
+    PROJECT SWAP (best project for this job), drafts a matching cover note, echoes the apply link.
+    You review and submit yourself — nothing is sent automatically."""
+    return _build_apply_kit(payload.get("title"), payload.get("company"),
+                             payload.get("description"), payload.get("job_url"),
+                             payload.get("format"))
+
+
+@app.post("/api/apply/autofill")
+def api_apply_autofill(payload: dict):
+    """AUTO-FILL ASSISTANT for one job: for Greenhouse/Lever/Ashby postings (the
+    only ones with a genuinely public application FORM, not a login-gated
+    action), opens a real browser window on this machine, navigates to the
+    real apply page, and fills in the standard fields (name/email/phone/resume/
+    LinkedIn/GitHub/cover note) using the same tailored resume _build_apply_kit
+    generates. It never clicks Submit — CAPTCHA and any custom screening
+    questions are left for you to finish by hand. Local-only: makes no sense
+    on Vercel (no desktop to show a browser window on), so it's disabled there.
+    Every other site (LinkedIn/Naukri/Foundit/company pages/etc.) isn't a
+    supported ATS and just returns the same kit as /api/apply/kit for you to
+    apply manually via the link."""
+    if ON_VERCEL:
+        return JSONResponse({"ok": False, "supported": False,
+                              "message": "Auto-fill only runs locally (python app.py on your own machine), not on the hosted site."},
+                             status_code=400)
+
+    job_url = (payload.get("job_url") or "").strip()
+    ats = AA.detect_ats(job_url)
+    kit = _build_apply_kit(payload.get("title"), payload.get("company"),
+                            payload.get("description"), job_url, "pdf")
+    if isinstance(kit, JSONResponse):
+        return kit
+    if not ats:
+        return {**kit, "supported": False,
+                "autofill": {"ok": False, "message":
+                             "This job isn't on Greenhouse/Lever/Ashby, so there's no public "
+                             "form to pre-fill — use the resume/cover note above and the link "
+                             "to apply manually."}}
+
+    resume_file = next((f for f in kit["files"] if f["mime"] == "application/pdf"),
+                        kit["files"][0] if kit["files"] else None)
+    resume_path = None
+    if resume_file:
+        import tempfile
+        fd, resume_path = tempfile.mkstemp(suffix="_" + resume_file["name"])
+        with os.fdopen(fd, "wb") as f:
+            f.write(base64.b64decode(resume_file["b64"]))
+
+    autofill = AA.autofill_application(
+        job_url=job_url, ats=ats,
+        full_name=getattr(P, "NAME", ""), email=getattr(P, "EMAIL", ""),
+        phone=getattr(P, "PHONE", ""), resume_path=resume_path,
+        cover_note=kit.get("cover_note", ""),
+        linkedin=getattr(P, "LINKEDIN", ""), github=getattr(P, "GITHUB", ""),
+        screening=SCREENING_ANSWERS,
+    )
+    return {**kit, "supported": True, "ats": ats, "autofill": autofill}
 
 
 @app.post("/api/resume/tailor")
@@ -2150,6 +2230,10 @@ def dashboard(mode: str = "profile"):
     html = INDEX_HTML.replace("__LIVE__", "true" if live else "false")
     html = html.replace("__CURRENT_LPA__", str(CURRENT_LPA))
     html = html.replace("__FEED_MODE__", "true" if feed_mode else "false")
+    # Your saved screening answers (CTC/notice period/etc.) are personal — never
+    # send them to a visitor's page source, only to yourself in "profile" mode.
+    screening = SCREENING_ANSWERS if mode != "visitor" else {}
+    html = html.replace("__SCREENING_JSON__", json.dumps(screening))
 
     # If visitor mode, add JS to hide the "Load latest jobs" button (cron-personalized)
     if mode == "visitor":
@@ -2629,6 +2713,7 @@ INDEX_HTML = r"""<!doctype html>
 const LIVE = __LIVE__;
 const _isFeedMode = __FEED_MODE__;
 const CURRENT_LPA = __CURRENT_LPA__;
+const SCREENING = __SCREENING_JSON__;   // {} in visitor mode -- never your data
 const $ = s => document.querySelector(s);
 let jobs = [];
 const PAGE = 50;           // show 50 first, then "Load more" reveals 50 at a time
@@ -2637,6 +2722,18 @@ let shown = PAGE;
 function toast(msg, ms=3500){ const t=$('#toast'); t.innerHTML='<div class="toast">'+msg+'</div>';
   clearTimeout(window._tt); window._tt=setTimeout(()=>t.innerHTML='',ms); }
 function scoreClass(s){ return s>=65?'s-hi':s>=45?'s-md':'s-lo'; }
+// Mirrors apply_agent.detect_ats() -- only the 3 ATS types with a REAL working
+// filler get the "auto-fill" badge (Ashby is recognized server-side too, but
+// has no filler yet, so it stays unbadged here rather than promise something
+// that doesn't happen). LinkedIn/Naukri/Indeed/Foundit/etc. are login-gated
+// account actions, not a public form, and are never auto-fillable.
+function autoFillAts(url){
+  const h=(url||'').toLowerCase();
+  if(h.includes('lever.co')) return 'lever';
+  if(h.includes('greenhouse.io')) return 'greenhouse';
+  if(h.includes('workable.com')) return 'workable';
+  return '';
+}
 function esc(s){ return (s||'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
 // While an action runs, lock every input/select/textarea/button in its card so
 // fields can't be edited mid-process; unlock when done.
@@ -2744,7 +2841,7 @@ function renderJobs(){
         <td class="note">${j.site?('via '+esc(j.site)):''}</td>
         <td>${esc(j.date_posted)}</td>
         <td>${j.job_url?'<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener">Open</a>':''}</td>
-        <td><button onclick="applyKit(${offset+i})" style="margin-bottom:4px">Apply</button><br><button class="secondary" onclick="useInTailor(${offset+i})">Tailor &#8595;</button></td>
+        <td><button onclick="applyKit(${offset+i})" style="margin-bottom:4px">Apply</button>${isAutoFilled(j.job_url)?'<div class="tag have" style="font-size:9px;margin:2px 0;background:#16a34a" title="You already ran auto-fill for this job -- click Apply to reopen it or fill again">✅ auto-filled</div>':(autoFillAts(j.job_url)?'<div class="tag have" style="font-size:9px;margin:2px 0" title="Public application form -- opens pre-filled in a browser for you to review &amp; submit">🪄 auto-fill</div>':'')}<br><button class="secondary" onclick="useInTailor(${offset+i})">Tailor &#8595;</button></td>
       </tr>`;
     }).join('');
     return `<tr style="background:linear-gradient(135deg, #2a5ccc 0%, #1a3c9c 100%);color:#fff;font-weight:bold;cursor:pointer;height:40px"><td colspan="10" style="padding:12px;text-align:left;vertical-align:middle">${emoji} <strong>${title}</strong> <span style="float:right;font-size:12px;margin-right:16px">${count} jobs</span></td></tr>${rows}`;
@@ -3070,6 +3167,7 @@ function useInTailor(i){
 // note, and open the apply link — you review and submit yourself. No auto-submit.
 async function applyKit(i){
   const j=(window._view||jobs)[i]; if(!j) return;
+  window._applyJob=j;
   toast('Preparing your apply kit — tailoring resume to this job…');
   try{
     const r=await fetch('/api/apply/kit',{method:'POST',headers:{'Content-Type':'application/json'},
@@ -3101,6 +3199,20 @@ function showApplyModal(j, d){
     +'</div>'
     +'</div>'
     :'');
+  const ats=autoFillAts(j.job_url);
+  const already=isAutoFilled(j.job_url);
+  const autofillBtnHtml = ats
+    ? '<button class="secondary" id="autofillBtn" onclick="autoFillApply()">🪄 '
+      +(already?'Auto-fill again':'Auto-fill in browser')+'</button>'
+    : '';
+  const autofillNote = ats
+    ? ('This job is on '+ats[0].toUpperCase()+ats.slice(1)+', which has a genuine public application form — '
+      +'"Auto-fill in browser" opens it in a real browser window on THIS computer with the form pre-filled '
+      +'(name/email/phone/resume/cover note), and also fills in any question that asks for your current/'
+      +'expected CTC, notice period, current location, or LinkedIn URL, using your saved answers. '
+      +'It never clicks Submit for you, and never answers a Yes/No question (e.g. relocation, work '
+      +'authorization) — CAPTCHA and anything else custom are left for you to finish.')
+    : siteRequirementsHint(j.site, j.job_url);
   $('#applyModal').innerHTML=
     '<div class="modal-bg" onclick="if(event.target===this)closeApply()"><div class="modal">'
     +'<div class="modal-head"><strong>Apply kit — '+esc(j.title||'')+'</strong>'
@@ -3117,11 +3229,81 @@ function showApplyModal(j, d){
     +'<div class="field" style="margin-top:12px"><label>2 · Cover note (edit, then copy)</label>'
     +'<textarea id="coverBox" style="min-height:180px">'+esc(d.cover_note||'')+'</textarea>'
     +'<div class="bar" style="margin-top:6px"><button class="secondary" onclick="copyCover()">Copy cover note</button></div></div>'
-    +'<div class="field" style="margin-top:12px"><label>3 · Apply on the site</label><div>'
+    +'<div class="field" style="margin-top:12px"><label>3 · Apply on the site'
+    +(already?' <span class="tag have" style="font-size:10px;background:#16a34a">✅ auto-filled already</span>':'')
+    +'</label><div class="bar">'
     +(j.job_url?('<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener"><button>Open job &amp; apply &#8599;</button></a>')
                :'<span class="note">This listing has no direct apply link.</span>')
-    +'</div><div class="note" style="margin-top:6px">Review the resume &amp; note, then submit on the site yourself.</div></div>'
+    +autofillBtnHtml
+    +'</div><div class="note" style="margin-top:6px">Review the resume &amp; note, then submit on the site yourself. '+autofillNote+'</div>'
+    +'<div id="autofillResult" style="margin-top:10px"></div></div>'
     +'</div></div></div>';
+}
+// Which known job sites/platforms ask for what, shown so you know what to have
+// ready when a site ISN'T on the safe auto-fillable list (LinkedIn/Naukri/
+// Indeed/Foundit all apply through YOUR LOGGED-IN account on that platform —
+// that's a login-gated action, not a public form, so it's never auto-filled;
+// same reasoning as LinkedIn Easy Apply).
+function siteRequirementsHint(site, url){
+  const u=(url||'').toLowerCase(), s=(site||'').toLowerCase();
+  // Your saved answers -- same standard set every India-market site below asks
+  // for, shown so you can copy them in by hand in seconds instead of retyping.
+  const has = SCREENING && Object.values(SCREENING).some(v=>v);
+  const yours = has ? (' Your saved answers — Current CTC: '+esc(SCREENING.current_ctc||'—')
+    +' · Expected CTC: '+esc(SCREENING.expected_ctc||'—')
+    +' · Notice period: '+esc(SCREENING.notice_period||'—')
+    +' · Location: '+esc(SCREENING.location||'—')
+    +' · Willing to relocate: '+esc(SCREENING.relocate||'—')
+    +' · Work authorized (India): '+esc(SCREENING.work_auth||'—')+'.') : '';
+  if(u.includes('linkedin.com')) return 'LinkedIn (sign-in required — not auto-filled) usually asks for: resume, phone number, and a few screener questions (work authorization, years of experience).'+yours;
+  if(u.includes('naukri.com')) return 'Naukri (sign-in required — not auto-filled) usually asks for: resume, current CTC, expected CTC, notice period, and current location.'+yours;
+  if(u.includes('indeed.com')) return 'Indeed usually asks for: name, email, phone, resume, and sometimes a few screener questions — may ask you to sign in.'+yours;
+  if(u.includes('foundit.in')) return 'Foundit (sign-in required — not auto-filled) usually asks for: resume, current CTC, expected CTC, and notice period.'+yours;
+  if(u.includes('ashbyhq.com')) return 'Ashby is a public form, but every company customizes its layout, so it is not auto-filled yet — usually asks for: name, email, resume, and job-specific screening questions.'+yours;
+  if(u.includes('smartrecruiters.com')) return 'SmartRecruiters "Interested" button redirects to a sign-in/quick-apply step, so it is not auto-filled — usually asks for: resume and a LinkedIn/Google sign-in.';
+  if(u.includes('glassdoor.')) return 'Glassdoor usually redirects to the employer\'s own site, or asks you to sign in to apply.';
+  return 'This site usually asks for: your name, email, phone, resume, and sometimes a cover letter or a few screening questions.'+yours;
+}
+function getAutoFilled(){ try{ return JSON.parse(localStorage.getItem('autoFilledJobs')||'{}'); }catch(e){ return {}; } }
+function isAutoFilled(url){ return !!(url && getAutoFilled()[url]); }
+function markAutoFilled(url, ats){
+  if(!url) return;
+  try{
+    const m=getAutoFilled(); m[url]={at:Date.now(), ats:ats||''};
+    localStorage.setItem('autoFilledJobs', JSON.stringify(m));
+  }catch(e){}
+}
+async function autoFillApply(){
+  const j=window._applyJob; if(!j) return;
+  const btn=$('#autofillBtn'), out=$('#autofillResult');
+  const oldText=btn?btn.textContent:'';
+  if(btn) btn.disabled=true;
+  const stopTimer=startTimer(t=>{
+    if(btn) btn.innerHTML='<span class="spin"></span> Opening browser… '+t;
+    if(out) out.innerHTML='<span class="note"><span class="spin"></span> Launching a browser window and filling in the form on this computer — usually 5-15 seconds… '+t+'</span>';
+  });
+  try{
+    const r=await fetch('/api/apply/autofill',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({title:j.title||'', company:j.company||'',
+                           description:j.description||'', job_url:j.job_url||''})});
+    const d=await r.json();
+    const af=d.autofill||{};
+    if(!r.ok || !af.ok){
+      if(out) out.innerHTML='<div class="note" style="color:#f97316">'+esc(af.message||d.message||('HTTP '+r.status))+'</div>';
+    } else {
+      const filled=(af.filled_fields||[]).map(f=>'<span class="tag have" style="font-size:10px">'+esc(f)+'</span>').join('');
+      if(out) out.innerHTML=
+        '<div class="note" style="color:#16a34a">✅ '+esc(af.message||'Opened — finish it in that browser window.')+'</div>'
+        +(filled?('<div class="tagrow" style="margin-top:6px">Filled: '+filled+'</div>'):'');
+      markAutoFilled(j.job_url, d.ats);
+      renderJobs();                 // refresh the "✅ auto-filled" mark in the table
+    }
+  }catch(e){
+    if(out) out.innerHTML='<div class="note" style="color:#f97316">Auto-fill error: '+esc(String(e))+'</div>';
+  }finally{
+    stopTimer();
+    if(btn){ btn.disabled=false; btn.textContent=oldText||'🪄 Auto-fill in browser'; }
+  }
 }
 function closeApply(){ $('#applyModal').innerHTML=''; }
 function dlKitFile(k){ const f=((window._applyKit||{}).files||[])[k]; if(f) b64Download(f.name, f.b64, f.mime); }
