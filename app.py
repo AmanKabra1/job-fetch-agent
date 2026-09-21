@@ -2855,7 +2855,13 @@ function renderJobs(){
         <td class="note">${j.site?('via '+esc(j.site)):''}</td>
         <td>${esc(j.date_posted)}</td>
         <td>${j.job_url?'<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener">Open</a>':''}</td>
-        <td><button onclick="applyKit(${offset+i})" style="margin-bottom:4px">Apply</button>${isAutoFilled(j.job_url)?'<div class="tag have" style="font-size:9px;margin:2px 0;background:#16a34a" title="You already ran auto-fill for this job -- click Apply to reopen it or fill again">✅ auto-filled</div>':(autoFillAts(j.job_url)?'<div class="tag have" style="font-size:9px;margin:2px 0" title="Public application form -- opens pre-filled in a browser for you to review &amp; submit">🪄 auto-fill</div>':'')}<br><button class="secondary" onclick="useInTailor(${offset+i})">Tailor &#8595;</button></td>
+        <td><button onclick="applyKit(${offset+i})" style="margin-bottom:4px">Apply</button>${
+          isAutoFilled(j.job_url)
+            ? '<button class="tag have" id="afRowBtn'+(offset+i)+'" onclick="quickAutoFill('+(offset+i)+')" style="display:block;width:100%;font-size:9px;margin:2px 0;padding:3px 6px;background:#16a34a;border:none;cursor:pointer" title="Already auto-filled -- click to open &amp; fill it again">✅ auto-filled</button>'
+            : (autoFillAts(j.job_url)
+              ? '<button class="tag have" id="afRowBtn'+(offset+i)+'" onclick="quickAutoFill('+(offset+i)+')" style="display:block;width:100%;font-size:9px;margin:2px 0;padding:3px 6px;border:none;cursor:pointer" title="Public application form -- click to open it pre-filled in a browser for you to review &amp; submit">🪄 auto-fill</button>'
+              : '')
+        }<br><button class="secondary" onclick="useInTailor(${offset+i})">Tailor &#8595;</button></td>
       </tr>`;
     }).join('');
     return `<tr style="background:linear-gradient(135deg, #2a5ccc 0%, #1a3c9c 100%);color:#fff;font-weight:bold;cursor:pointer;height:40px"><td colspan="10" style="padding:12px;text-align:left;vertical-align:middle">${emoji} <strong>${title}</strong> <span style="float:right;font-size:12px;margin-right:16px">${count} jobs</span></td></tr>${rows}`;
@@ -3346,6 +3352,31 @@ async function autoFillAllEligible(){
   renderJobs();
   toast(done+' auto-filled'+(failed?(', '+failed+' failed (try those individually via Apply)'):'')
     +'. Review each open browser window and submit yourself.', 7000);
+}
+// The "🪄 auto-fill" / "✅ auto-filled" tag in the jobs table is itself the
+// one-press button: click it and it runs the whole thing right there — no
+// need to open the Apply modal first.
+async function quickAutoFill(i){
+  const j=(window._view||jobs)[i]; if(!j) return;
+  window._applyJob=j;
+  const el=document.getElementById('afRowBtn'+i);
+  const oldHtml=el?el.innerHTML:'';
+  if(el) el.disabled=true;
+  const stopTimer=startTimer(t=>{ if(el) el.innerHTML='<span class="spin"></span> '+t; });
+  try{
+    const res=await _requestAutoFill(j);
+    if(res.ok){
+      markAutoFilled(j.job_url, res.ats);
+      toast('✅ '+(res.autofill.message||'Opened — finish it in that browser window.'));
+    } else {
+      toast('Auto-fill failed: '+(res.autofill.message||res.raw.message||('HTTP '+res.status)));
+    }
+  }catch(e){
+    toast('Auto-fill error: '+e);
+  }finally{
+    stopTimer();
+    renderJobs();   // rebuilds this button as "✅ auto-filled" (or re-enables it on failure)
+  }
 }
 function closeApply(){ $('#applyModal').innerHTML=''; }
 function dlKitFile(k){ const f=((window._applyKit||{}).files||[])[k]; if(f) b64Download(f.name, f.b64, f.mime); }
