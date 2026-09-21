@@ -26,6 +26,7 @@ there (see ON_VERCEL in app.py).
 
 import base64
 import os
+import queue
 import threading
 import time
 from urllib.parse import urlparse
@@ -35,7 +36,9 @@ from urllib.parse import urlparse
 # Vercel's serverless deploy never installs playwright/a browser (this feature
 # is local-only), so a top-level import here would crash the whole hosted app.
 
-# session_id -> {"playwright", "browser", "page", "opened_at"}
+# session_id -> {"close_event", "opened_at"}. The browser/page/playwright
+# objects themselves are NOT stored here -- they only ever exist inside the
+# dedicated thread that owns them (see autofill_application's _own_thread).
 _SESSIONS = {}
 _SESSIONS_LOCK = threading.Lock()
 _SESSION_TTL = 45 * 60  # close an abandoned (never-submitted) browser after 45 min
@@ -277,19 +280,13 @@ def _cleanup_stale():
 
 
 def close_session(session_id: str):
-    """Close a still-open auto-fill browser (e.g. the user is done / gave up)."""
+    """Close a still-open auto-fill browser (e.g. the user is done / gave up).
+    Just signals the thread that owns it -- see the "own thread" note below on
+    why the actual browser.close()/playwright.stop() has to happen there."""
     with _SESSIONS_LOCK:
-        s = _SESSIONS.pop(session_id, None)
-    if not s:
-        return
-    try:
-        s["browser"].close()
-    except Exception:
-        pass
-    try:
-        s["playwright"].stop()
-    except Exception:
-        pass
+        s = _SESSIONS.get(session_id)
+    if s:
+        s["close_event"].set()
 
 
 def autofill_application(job_url, ats, full_name="", email="", phone="",
@@ -301,12 +298,26 @@ def autofill_application(job_url, ats, full_name="", email="", phone="",
     LinkedIn) matched from `screening` -- see _answer_text_questions. Never
     answers a Yes/No question and never touches Submit — returns with the
     browser left open (headless=False in production) for the user to finish
-    and submit themselves."""
+    and submit themselves.
+
+    Runs the whole Playwright session in ITS OWN dedicated thread, kept alive
+    for as long as the browser stays open. This isn't optional: Playwright's
+    sync API ties its dispatcher to whichever thread called
+    sync_playwright().start(), and can't have two independent sessions share
+    one thread. Sessions here are deliberately left open (so you can review
+    before submitting), and FastAPI serves each request from a pooled worker
+    thread that gets REUSED across requests -- so a second auto-fill (via the
+    "Auto-fill all" batch button, or just two single auto-fills back to back)
+    landing on the same reused thread as an still-open session crashed with
+    "Playwright Sync API inside the asyncio loop" before this fix. Confirmed
+    live: two real jobs (Anthropic/Greenhouse then Spotify/Lever) filled
+    sequentially in the same process without one, both sessions independently
+    closeable afterward."""
     if ats not in _FILLERS:
         return {"ok": False, "message": f"Auto-fill isn't supported for '{ats or 'this site'}'."}
 
     try:
-        from playwright.sync_api import sync_playwright
+        import playwright.sync_api  # noqa: F401  (just checking it's installed)
     except ImportError:
         return {"ok": False, "message":
                 "Playwright isn't installed. Run: pip install playwright  &&  "
@@ -314,33 +325,57 @@ def autofill_application(job_url, ats, full_name="", email="", phone="",
 
     _cleanup_stale()
     session_id = base64.urlsafe_b64encode(os.urandom(9)).decode()
-    p = None
-    try:
-        p = sync_playwright().start()
-        browser = p.chromium.launch(headless=headless)
-        page = browser.new_page()
-        page.goto(job_url, timeout=30000, wait_until="domcontentloaded")
-        page.wait_for_timeout(1200)
-        filled = _FILLERS[ats](page, full_name, email, phone, resume_path,
-                                cover_note, linkedin, github, screening or {})
-        screenshot_b64 = base64.b64encode(page.screenshot(full_page=True)).decode()
+    close_event = threading.Event()
+    result_q = queue.Queue(maxsize=1)
 
-        with _SESSIONS_LOCK:
-            _SESSIONS[session_id] = {"playwright": p, "browser": browser, "page": page,
-                                      "opened_at": time.time()}
-        browser.on("disconnected", lambda *_: _SESSIONS.pop(session_id, None))
+    def _own_thread():
+        from playwright.sync_api import sync_playwright
+        p = None
+        browser = None
+        try:
+            p = sync_playwright().start()
+            browser = p.chromium.launch(headless=headless)
+            page = browser.new_page()
+            page.goto(job_url, timeout=30000, wait_until="domcontentloaded")
+            page.wait_for_timeout(1200)
+            filled = _FILLERS[ats](page, full_name, email, phone, resume_path,
+                                    cover_note, linkedin, github, screening or {})
+            screenshot_b64 = base64.b64encode(page.screenshot(full_page=True)).decode()
 
-        return {
-            "ok": True, "session_id": session_id, "filled_fields": filled,
-            "screenshot_b64": screenshot_b64,
-            "message": ("Opened in a browser window on this computer. Review it, "
-                        "answer anything custom, solve any CAPTCHA, and click the "
-                        "real Submit button yourself when ready."),
-        }
-    except Exception as e:
-        if p:
+            with _SESSIONS_LOCK:
+                _SESSIONS[session_id] = {"close_event": close_event, "opened_at": time.time()}
+            result_q.put({
+                "ok": True, "session_id": session_id, "filled_fields": filled,
+                "screenshot_b64": screenshot_b64,
+                "message": ("Opened in a browser window on this computer. Review it, "
+                            "answer anything custom, solve any CAPTCHA, and click the "
+                            "real Submit button yourself when ready."),
+            })
+            # Keep this thread (and therefore the browser + Playwright dispatcher
+            # it owns) alive until closed by the user (close_session) or the TTL.
+            close_event.wait(timeout=_SESSION_TTL)
+        except Exception as e:
             try:
-                p.stop()
+                result_q.put_nowait({"ok": False,
+                                     "message": f"Could not open/fill the application: {e}"})
+            except queue.Full:
+                pass
+        finally:
+            with _SESSIONS_LOCK:
+                _SESSIONS.pop(session_id, None)
+            try:
+                if browser:
+                    browser.close()
             except Exception:
                 pass
-        return {"ok": False, "message": f"Could not open/fill the application: {e}"}
+            try:
+                if p:
+                    p.stop()
+            except Exception:
+                pass
+
+    threading.Thread(target=_own_thread, daemon=True).start()
+    try:
+        return result_q.get(timeout=45)
+    except queue.Empty:
+        return {"ok": False, "message": "Timed out opening the browser (45s)."}

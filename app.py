@@ -2788,6 +2788,20 @@ function renderJobs(){
     }
   });
 
+  // "Auto-fill all eligible" — batches the SAME safe, never-submits auto-fill
+  // (Greenhouse/Lever/Workable only) across every currently-visible job that
+  // hasn't been auto-filled yet, instead of clicking Apply on each one.
+  let autoDiv = $('#autoFillAllDiv');
+  if(!autoDiv){ autoDiv = document.createElement('div'); autoDiv.id='autoFillAllDiv';
+                b.parentElement.insertBefore(autoDiv, b); }
+  const autoEligible = view.filter(j => autoFillAts(j.job_url) && !isAutoFilled(j.job_url));
+  autoDiv.innerHTML = autoEligible.length
+    ? ('<div style="margin-bottom:16px;padding:10px 12px;background:#0f172a;border:1px solid #1e293b;border-radius:6px">'
+      +'<button class="secondary" id="autoFillAllBtn" onclick="autoFillAllEligible()">🪄 Auto-fill all eligible ('+autoEligible.length+')</button>'
+      +'<span class="note" style="margin-left:8px">Opens '+autoEligible.length+' separate browser window'+(autoEligible.length>1?'s':'')
+      +' on this computer, one per job — each pre-filled, none submitted. You review and submit every one yourself.</span></div>')
+    : '';
+
   // Update or create dropdown filter
   let filterDiv = $('#dateFilterDiv');
   const filterHtml = `
@@ -3273,6 +3287,13 @@ function markAutoFilled(url, ats){
     localStorage.setItem('autoFilledJobs', JSON.stringify(m));
   }catch(e){}
 }
+async function _requestAutoFill(j){
+  const r=await fetch('/api/apply/autofill',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({title:j.title||'', company:j.company||'',
+                         description:j.description||'', job_url:j.job_url||''})});
+  const d=await r.json();
+  return {ok: r.ok && !!(d.autofill||{}).ok, ats:d.ats, autofill:d.autofill||{}, raw:d, httpOk:r.ok, status:r.status};
+}
 async function autoFillApply(){
   const j=window._applyJob; if(!j) return;
   const btn=$('#autofillBtn'), out=$('#autofillResult');
@@ -3283,19 +3304,16 @@ async function autoFillApply(){
     if(out) out.innerHTML='<span class="note"><span class="spin"></span> Launching a browser window and filling in the form on this computer — usually 5-15 seconds… '+t+'</span>';
   });
   try{
-    const r=await fetch('/api/apply/autofill',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({title:j.title||'', company:j.company||'',
-                           description:j.description||'', job_url:j.job_url||''})});
-    const d=await r.json();
-    const af=d.autofill||{};
-    if(!r.ok || !af.ok){
-      if(out) out.innerHTML='<div class="note" style="color:#f97316">'+esc(af.message||d.message||('HTTP '+r.status))+'</div>';
+    const res=await _requestAutoFill(j);
+    const af=res.autofill;
+    if(!res.ok){
+      if(out) out.innerHTML='<div class="note" style="color:#f97316">'+esc(af.message||res.raw.message||('HTTP '+res.status))+'</div>';
     } else {
       const filled=(af.filled_fields||[]).map(f=>'<span class="tag have" style="font-size:10px">'+esc(f)+'</span>').join('');
       if(out) out.innerHTML=
         '<div class="note" style="color:#16a34a">✅ '+esc(af.message||'Opened — finish it in that browser window.')+'</div>'
         +(filled?('<div class="tagrow" style="margin-top:6px">Filled: '+filled+'</div>'):'');
-      markAutoFilled(j.job_url, d.ats);
+      markAutoFilled(j.job_url, res.ats);
       renderJobs();                 // refresh the "✅ auto-filled" mark in the table
     }
   }catch(e){
@@ -3304,6 +3322,30 @@ async function autoFillApply(){
     stopTimer();
     if(btn){ btn.disabled=false; btn.textContent=oldText||'🪄 Auto-fill in browser'; }
   }
+}
+async function autoFillAllEligible(){
+  const view=window._view||[];
+  const eligible=view.filter(j=>autoFillAts(j.job_url) && !isAutoFilled(j.job_url));
+  if(!eligible.length){ toast('No new Greenhouse/Lever/Workable jobs to auto-fill.'); return; }
+  const warn='This opens '+eligible.length+' separate browser window'+(eligible.length>1?'s':'')
+    +' on this computer, one at a time — each pre-filled with your tailored resume, cover note, '
+    +'and saved answers, but NONE of them get submitted. You review and submit every one yourself. '
+    +'It will take a little while (roughly '+eligible.length+'x 5-15 seconds). Continue?';
+  if(!confirm(warn)) return;
+  const btn=$('#autoFillAllBtn'); if(btn) btn.disabled=true;
+  let done=0, failed=0;
+  for(let i=0;i<eligible.length;i++){
+    const j=eligible[i];
+    if(btn) btn.innerHTML='<span class="spin"></span> Auto-filling '+(i+1)+' of '+eligible.length+' — '+esc((j.company||'')+' · '+(j.title||''));
+    try{
+      const res=await _requestAutoFill(j);
+      if(res.ok){ markAutoFilled(j.job_url, res.ats); done++; }
+      else { failed++; }
+    }catch(e){ failed++; }
+  }
+  renderJobs();
+  toast(done+' auto-filled'+(failed?(', '+failed+' failed (try those individually via Apply)'):'')
+    +'. Review each open browser window and submit yourself.', 7000);
 }
 function closeApply(){ $('#applyModal').innerHTML=''; }
 function dlKitFile(k){ const f=((window._applyKit||{}).files||[])[k]; if(f) b64Download(f.name, f.b64, f.mime); }
