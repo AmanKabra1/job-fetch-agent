@@ -89,6 +89,21 @@ def _try_fill(page, selector, value, label, filled):
         pass
 
 
+def _try_fill_any(page, selectors, value, label, filled):
+    """Like _try_fill, but tries each selector in turn and stops at the first
+    that exists — for a field whose id/name differs across postings but whose
+    other attributes (aria-label, placeholder) stay stable."""
+    if not value:
+        return
+    for sel in selectors:
+        try:
+            page.fill(sel, value, timeout=1500)
+            filled.append(label)
+            return
+        except Exception:
+            continue
+
+
 def _try_upload(page, selectors, path, filled):
     if not path or not os.path.exists(path):
         return
@@ -200,7 +215,14 @@ def _fill_greenhouse(page, full_name, email, phone, resume_path, cover_note, lin
     _try_fill(page, "#email", email, "email", filled)
     _try_fill(page, "#phone", phone, "phone", filled)
     _try_upload(page, ["#resume", "input[name='job_application[resume]']"], resume_path, filled)
-    _try_fill(page, "#cover_letter_text", cover_note, "cover note", filled)
+    # Greenhouse's older template has a dedicated #cover_letter_text box; its
+    # newer job-boards.greenhouse.io template instead has a generic textarea
+    # labelled "Additional Information" (id varies per posting -- confirmed
+    # live against a real Anthropic posting) or sometimes "Cover Letter".
+    _try_fill_any(page, ["#cover_letter_text",
+                         "textarea[aria-label='Additional Information']",
+                         "textarea[aria-label='Cover Letter']"],
+                  cover_note, "cover note", filled)
     filled += _answer_text_questions(page, screening)
     return filled
 
