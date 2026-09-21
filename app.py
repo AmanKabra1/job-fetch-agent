@@ -47,7 +47,7 @@ def _quiet_jobspy():
     for name in names:
         logging.getLogger(name).disabled = True
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request
+from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request, Response
 from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
 from starlette.concurrency import run_in_threadpool
 
@@ -385,6 +385,38 @@ def _recency_boost(date_posted: str) -> int:
 
 
 app = FastAPI(title="Job Finder & Resume Tailor")
+
+
+# CORS for the ONE endpoint that needs it: /api/apply/autofill. Auto-fill has
+# to open a real browser window on a real desktop, which Vercel's serverless
+# functions don't have -- so when you're on the HOSTED site, the "Auto-fill
+# in browser" button instead calls straight through to a LOCAL instance of
+# this same app (http://localhost:8000, i.e. `python app.py` running on your
+# own machine) rather than Vercel's own (always-refusing) copy of this
+# endpoint. That's a cross-origin request from https://*.vercel.app to
+# http://localhost, so this instance needs to explicitly allow it — plus the
+# Access-Control-Allow-Private-Network header some Chrome versions require
+# before letting a public HTTPS page reach a loopback address at all.
+# Scoped to this one path on purpose: nothing else in the app needs (or
+# should have) cross-origin access.
+@app.middleware("http")
+async def _autofill_cors(request: Request, call_next):
+    if request.url.path != "/api/apply/autofill":
+        return await call_next(request)
+    origin = request.headers.get("origin") or ""
+    allowed = origin == "https://job-fetch-agent.vercel.app" or (
+        origin.startswith("https://") and origin.endswith(".vercel.app")
+    )
+    if request.method == "OPTIONS":
+        resp = Response(status_code=204)
+    else:
+        resp = await call_next(request)
+    if allowed:
+        resp.headers["Access-Control-Allow-Origin"] = origin
+        resp.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
+        resp.headers["Access-Control-Allow-Headers"] = "Content-Type"
+        resp.headers["Access-Control-Allow-Private-Network"] = "true"
+    return resp
 
 
 # --------------------------------------------------------------------------- #
@@ -2714,6 +2746,13 @@ const LIVE = __LIVE__;
 const _isFeedMode = __FEED_MODE__;
 const CURRENT_LPA = __CURRENT_LPA__;
 const SCREENING = __SCREENING_JSON__;   // {} in visitor mode -- never your data
+// Auto-fill needs a real desktop to open a browser window on -- Vercel's
+// serverless functions don't have one. On the hosted site (LIVE=false) this
+// app.py instance's own /api/apply/autofill always refuses, so the button
+// instead calls a LOCAL instance directly (python app.py on your machine,
+// default port 8000) via this absolute URL. Locally (LIVE=true) it just
+// calls its own same-origin endpoint as before.
+const AUTOFILL_ORIGIN = LIVE ? '' : 'http://localhost:8000';
 const $ = s => document.querySelector(s);
 let jobs = [];
 const PAGE = 50;           // show 50 first, then "Load more" reveals 50 at a time
@@ -3227,10 +3266,12 @@ function showApplyModal(j, d){
     : '';
   const autofillNote = ats
     ? ('This job is on '+ats[0].toUpperCase()+ats.slice(1)+', which has a genuine public application form — '
-      +'"Auto-fill in browser" opens it in a real browser window on THIS computer with the form pre-filled '
-      +'(name/email/phone/resume/cover note), and also fills in any question that asks for your current/'
-      +'expected CTC, notice period, current location, or LinkedIn URL, using your saved answers. '
-      +'It never clicks Submit for you, and never answers a Yes/No question (e.g. relocation, work '
+      +'"Auto-fill in browser" opens it in a real browser window '
+      +(LIVE ? 'on THIS computer' : 'on YOUR computer (this hosted page connects to a local copy of the app '
+                                    +'running at '+AUTOFILL_ORIGIN+' — start "python app.py" first)')
+      +' with the form pre-filled (name/email/phone/resume/cover note), and also fills in any question that '
+      +'asks for your current/expected CTC, notice period, current location, or LinkedIn URL, using your saved '
+      +'answers. It never clicks Submit for you, and never answers a Yes/No question (e.g. relocation, work '
       +'authorization) — CAPTCHA and anything else custom are left for you to finish.')
     : siteRequirementsHint(j.site, j.job_url);
   $('#applyModal').innerHTML=
@@ -3294,9 +3335,21 @@ function markAutoFilled(url, ats){
   }catch(e){}
 }
 async function _requestAutoFill(j){
-  const r=await fetch('/api/apply/autofill',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({title:j.title||'', company:j.company||'',
-                         description:j.description||'', job_url:j.job_url||''})});
+  let r;
+  try{
+    r = await fetch(AUTOFILL_ORIGIN+'/api/apply/autofill',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({title:j.title||'', company:j.company||'',
+                           description:j.description||'', job_url:j.job_url||''})});
+  }catch(e){
+    // Most likely cause when !LIVE: no local `python app.py` running on
+    // localhost:8000 for the hosted page to reach -- give that specific,
+    // actionable message instead of the browser's raw "Failed to fetch".
+    const hint = LIVE ? String(e)
+      : 'Could not reach a local copy of this app at '+AUTOFILL_ORIGIN+'. Auto-fill needs a real '
+        +'desktop to open a browser window on, which this hosted site does not have -- start '
+        +'"python app.py" on your own computer (leave it running), then try again.';
+    return {ok:false, ats:'', autofill:{ok:false, message:hint}, raw:{message:hint}, httpOk:false, status:0};
+  }
   const d=await r.json();
   return {ok: r.ok && !!(d.autofill||{}).ok, ats:d.ats, autofill:d.autofill||{}, raw:d, httpOk:r.ok, status:r.status};
 }
