@@ -3339,19 +3339,30 @@ async function autoFillAllEligible(){
     +'It will take a little while (roughly '+eligible.length+'x 5-15 seconds). Continue?';
   if(!confirm(warn)) return;
   const btn=$('#autoFillAllBtn'); if(btn) btn.disabled=true;
-  let done=0, failed=0;
+  let done=0, failed=0, lastFailMsg='';
   for(let i=0;i<eligible.length;i++){
     const j=eligible[i];
     if(btn) btn.innerHTML='<span class="spin"></span> Auto-filling '+(i+1)+' of '+eligible.length+' — '+esc((j.company||'')+' · '+(j.title||''));
     try{
       const res=await _requestAutoFill(j);
       if(res.ok){ markAutoFilled(j.job_url, res.ats); done++; }
-      else { failed++; }
-    }catch(e){ failed++; }
+      else { failed++; lastFailMsg = res.autofill.message || (res.raw&&res.raw.message) || ('HTTP '+res.status); }
+    }catch(e){ failed++; lastFailMsg = String(e); }
+    // If the very first job fails, that's almost always a systemic reason
+    // (e.g. this page is the hosted Vercel site, which can't open a local
+    // browser window at all) rather than something specific to that one
+    // job -- stop immediately and show the REAL reason instead of quietly
+    // repeating the same guaranteed failure through the rest of the list.
+    if(i===0 && failed===1){
+      renderJobs();
+      if(btn) btn.disabled=false;
+      toast('Stopped after the first job failed — '+lastFailMsg, 9000);
+      return;
+    }
   }
   renderJobs();
-  toast(done+' auto-filled'+(failed?(', '+failed+' failed (try those individually via Apply)'):'')
-    +'. Review each open browser window and submit yourself.', 7000);
+  toast(done+' auto-filled'+(failed?(', '+failed+' failed — last reason: '+lastFailMsg):'')
+    +'. Review each open browser window and submit yourself.', 8000);
 }
 // The "🪄 auto-fill" / "✅ auto-filled" tag in the jobs table is itself the
 // one-press button: click it and it runs the whole thing right there — no
