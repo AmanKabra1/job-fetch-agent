@@ -3470,8 +3470,12 @@ async function generateResume(){
     $('#genResult').innerHTML='<div style="margin-bottom:8px">Downloaded · <b style="font-size:16px;color:'+scoreColor+'">ATS: '+atsScore+'/100 ('+scoreLabel+')</b></div><span style="font-size:12px">'+emph+' skills matched to job description'+keywordTags+'</span>';
     toast('✓ Resume generated! ATS Score: '+atsScore+'/100 ('+scoreLabel+')');
     // Clear the pasted JD / title / company so the next resume starts fresh
-    // (the old JD no longer lingers on the form).
+    // (the old JD no longer lingers on the form) -- and auto-clear this
+    // result box too after a few seconds, so it doesn't keep showing a score
+    // for a job description that's no longer even in the form.
     $('#genJD').value=''; $('#genTitle').value=''; $('#genCompany').value='';
+    clearTimeout(window._genResultTimer);
+    window._genResultTimer=setTimeout(()=>{ $('#genResult').innerHTML=''; }, 9000);
     loadResumes();
   }catch(e){ $('#genResult').textContent='Error: '+e; }
   finally{ stopTimer(); setBusy(btn,false); btn.textContent=old; }
