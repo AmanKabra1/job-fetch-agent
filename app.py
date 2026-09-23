@@ -1001,10 +1001,22 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
 
     # 2. EXPERIENCE (20) + hard gate -------------------------------------------
     req_floor = _min_required_years(blob)
+    req_ceiling = _required_years(blob)   # upper bound of a range, or the lone number
     exp_fit = True
     if req_floor and cy:
         if req_floor <= cy:
             score += 20  # perfect match for your level
+            # Extra boost for a TIGHTLY-scoped junior/mid range close to your
+            # own level (e.g. "1-2 yrs" or "2-3 yrs") over a technically-
+            # passing but much wider/open range (e.g. "1-8 yrs") or an
+            # open-ended "2+ yrs" that likely really wants someone more
+            # senior within that span. Requires an actual "X-Y years" range
+            # in the text -- a bare "2+" or lone "2 years" isn't one, even
+            # though _required_years() would otherwise report the same
+            # number as both floor and ceiling for it.
+            if _YEARS_RANGE_RE.search(blob) and req_ceiling and req_ceiling <= cy + 1:
+                score += 6
+                reasons.append(f"tightly scoped {req_floor}-{req_ceiling}yr — matches your level")
         elif req_floor <= cy + 1:
             score += 8   # one year stretch is OK but penalised heavily
             reasons.append("slight experience stretch")
