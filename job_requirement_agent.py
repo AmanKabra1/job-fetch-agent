@@ -220,10 +220,15 @@ RESPOND WITH ONLY JSON (no markdown):
 
         client = Groq(api_key=groq_key)
         message = client.chat.completions.create(
-            model="mixtral-8x7b-32768",  # Free model from Groq
+            # mixtral-8x7b-32768 was decommissioned by Groq (confirmed live --
+            # every call fails with model_decommissioned); replaced with a
+            # model still on the account's active list. 400 tokens also
+            # wasn't enough on its own for gpt-oss's more verbose JSON output
+            # and truncated mid-response -- confirmed both fixes live.
+            model="openai/gpt-oss-20b",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
-            max_tokens=400,
+            max_tokens=800,
         )
 
         response_text = message.choices[0].message.content.strip()

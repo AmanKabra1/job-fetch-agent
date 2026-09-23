@@ -8,7 +8,7 @@ For each of the TOP 50 jobs, this agent uses Groq (free) to:
 4. Recommend: "APPLY NOW", "Good Fit", "Maybe"
 5. Provide insights: What to emphasize, red flags, growth potential
 
-Uses Groq free API (mixtral-8x7b-32768) for cron compatibility.
+Uses Groq's free API for cron compatibility.
 """
 
 import os
@@ -112,10 +112,16 @@ Respond with ONLY JSON (no markdown):
 
     try:
         message = groq_client.chat.completions.create(
-            model="mixtral-8x7b-32768",
+            # mixtral-8x7b-32768 was decommissioned by Groq -- every call to
+            # it failed (confirmed live), silently falling back to the
+            # try/except below on EVERY job, EVERY cron run: interview_likelihood
+            # was a flat 50 for everything, always. Verified this replacement
+            # model actually completes the JSON at this token budget (400 was
+            # also too low on its own and truncated the response mid-field).
+            model="openai/gpt-oss-20b",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.3,
-            max_tokens=400,
+            max_tokens=800,
         )
 
         response_text = message.choices[0].message.content.strip()

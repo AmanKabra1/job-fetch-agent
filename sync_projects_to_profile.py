@@ -65,10 +65,14 @@ Return ONLY the 4 bullets as a JSON array of strings, no other text:
 
     try:
         response = groq_client.chat.completions.create(
-            model="mixtral-8x7b-32768",
+            # mixtral-8x7b-32768 was decommissioned by Groq (confirmed live);
+            # replaced with a model still active on the account. Bumped
+            # max_tokens too -- 400-500 alone truncated gpt-oss's JSON output
+            # mid-response in testing.
+            model="openai/gpt-oss-20b",
             messages=[{"role": "user", "content": prompt}],
             temperature=0.7,
-            max_tokens=500
+            max_tokens=900
         )
 
         result_text = response.choices[0].message.content.strip()
