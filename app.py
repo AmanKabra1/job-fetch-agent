@@ -263,6 +263,35 @@ def _india_location(text: str) -> bool:
     return any(c in t for c in _INDIA_CITIES)
 
 
+# python-jobspy converts each job's HTML description to markdown (via the
+# `markdownify` library), which backslash-escapes markdown-special
+# characters -- "5+ years" comes back as "5\+ years", "end-to-end" as
+# "end\-to\-end". That silently broke _min_required_years/_required_years
+# (a real posting explicitly stating "5+ years" scored as "no requirement
+# stated" -- confirmed live against a real Indeed/Bosch listing: the raw
+# scraped text was literally "5\+ years", and _min_required_years returned 0
+# on it but correctly 5 once unescaped) and could just as easily corrupt
+# skill-keyword matching or the JD text shown to you in a cover note. Strip
+# this escaping as soon as a jobspy-sourced row is ingested, before anything
+# else touches its title/description.
+_MD_ESCAPE_RE = re.compile(r"\\([+\-*_.!()\[\]{}#>~`|\\])")
+
+
+def _unescape_markdown(text) -> str:
+    if not text:
+        return text
+    return _MD_ESCAPE_RE.sub(r"\1", str(text))
+
+
+def _clean_job_row(row: dict) -> dict:
+    """Unescape a job row's title/description in place; returns the row."""
+    if row.get("title"):
+        row["title"] = _unescape_markdown(row["title"])
+    if row.get("description"):
+        row["description"] = _unescape_markdown(row["description"])
+    return row
+
+
 def _required_years(text: str) -> int:
     """Largest 'N years' mentioned in a JD (rough seniority signal). 0 if none.
     A 'X-Y years' range counts its upper bound Y toward this."""
@@ -1211,7 +1240,7 @@ def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
         if frames:
             import pandas as pd
             combined = pd.concat(frames, ignore_index=True).fillna("")
-            rows = combined.to_dict("records")
+            rows = [_clean_job_row(r) for r in combined.to_dict("records")]
 
     # Add real remote roles from free APIs (Remotive + RemoteOK) — startups and
     # established companies that the jobspy boards miss. When `career` is on, also
@@ -1326,9 +1355,15 @@ def _read_feed():
             payload = json.load(f)
     if payload is None:
         return [], None
+    # The feed is built by fetch_jobs.py (the cron), which scrapes with the
+    # same jobspy -> same markdown-escaping issue _clean_job_row fixes for
+    # the live path -- clean it here too so already-published feed data
+    # (no need to wait for/re-run the cron) gets the fix immediately. Copy
+    # each row so this never mutates the shared in-process feed cache.
     if isinstance(payload, dict):
-        return payload.get("jobs", []), payload.get("fetched_at")
-    return payload, None                      # tolerate a bare list of job rows
+        jobs = payload.get("jobs", [])
+        return [_clean_job_row(dict(j)) for j in jobs], payload.get("fetched_at")
+    return [_clean_job_row(dict(j)) for j in payload], None   # bare list of job rows
 
 
 def fetch_from_feed(limit: int):
