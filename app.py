@@ -502,18 +502,26 @@ def _experience_level(years: int) -> str:
 
 
 def _infer_titles(text: str) -> list:
-    """Ordered, de-duplicated job titles inferred from resume/position text."""
+    """Ordered, de-duplicated job titles inferred from resume/position text.
+
+    _LANG_HINTS used to only run when _ROLE_HINTS found NOTHING at all -- so
+    a resume mentioning both "backend"/"software developer" (a _ROLE_HINTS
+    hit) AND NestJS/Node.js or LangChain/agentic (a _LANG_HINTS hit, e.g.
+    "Node.js Developer" / "AI/ML Engineer") only ever searched the former,
+    since _ROLE_HINTS matching anything at all suppressed _LANG_HINTS
+    entirely. Now both contribute -- a candidate whose primary skills lead
+    with NestJS/Node.js gets that as an actual search title too, not just an
+    implied skill."""
     low = (text or "").lower()
     out, seen = [], set()
     for needle, role in _ROLE_HINTS:
         if needle in low and role not in seen:
             seen.add(role)
             out.append(role)
-    if not out:
-        for needle, role in _LANG_HINTS:
-            if needle in low and role not in seen:
-                seen.add(role)
-                out.append(role)
+    for needle, role in _LANG_HINTS:
+        if needle in low and role not in seen:
+            seen.add(role)
+            out.append(role)
     return out
 
 
@@ -593,9 +601,13 @@ def build_search_queries(profile: dict) -> list:
     """Targeted board queries built FROM the profile (not 'software engineer').
 
       1. current title + top 3 primary skills   -> "Backend Developer NestJS Node.js TypeScript"
-      2. each alternative title + top 2 skills
+      2. each alternative title + top 2 skills   (now covers up to 4, not 2 --
+         titles[0] is always `cur` and got a query of its own already, so
+         only titles[1:5] were ever left unused before this)
       3. skills-only (niche roles)               -> "NestJS Node.js TypeScript Python"
       4. current title + user-added skills        -> "Backend Developer Kafka GraphQL"
+      5. an explicit junior-titled query ("SDE 1"/"SDE-1"/"SDE I" all appear
+         verbatim as real job titles on Indian boards) for a <=2yr candidate
     """
     prim = list(profile.get("primary_skills") or [])
     added = list(profile.get("user_added_skills") or [])
@@ -613,16 +625,29 @@ def build_search_queries(profile: dict) -> list:
 
     if cur:
         add(f"{cur} {' '.join(prim[:3])}")
-    for t in titles[:2]:
+    # titles[0] == cur already got its own query above; titles[1:5] used to
+    # be silently dropped by the old titles[:2] cap once _infer_titles also
+    # started returning more than 2 alternates (e.g. Node.js Developer,
+    # AI/ML Engineer alongside Backend/Full Stack/Software Engineer/Developer).
+    for t in titles[1:5]:
         add(f"{t} {' '.join(prim[:2])}")
     if prim:
         add(" ".join(prim[:4]))
     if added:
         add(f"{cur} {' '.join(added[:3])}")
+    if profile.get("experience_level") == "JUNIOR":
+        add(f"SDE 1 {' '.join(prim[:2])}")
+    # Explicit, unconditional -- "AI Engineer"/"AI/ML Engineer" only gets
+    # inferred from resume text via _LANG_HINTS if it literally contains a
+    # trigger phrase ("langchain", "agentic", "ai engineer", etc.), which a
+    # resume can easily miss even when the candidate is genuinely building
+    # toward that direction (LLM integration, RAG, AI agents). Requested
+    # explicitly, so search for it regardless of exact resume wording.
+    add(f"AI Engineer {' '.join(prim[:2])}")
     if not queries:
         for t in DEFAULT_SEARCH_TERMS:
             add(t)
-    return queries[:6]
+    return queries[:9]
 
 
 def extract_profile_from_resume(resume_text: str = "", skills_text: str = "",
