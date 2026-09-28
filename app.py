@@ -235,8 +235,18 @@ _SENIOR_RE = re.compile(
 # Junior/mid markers — exempt a role from the senior reject and give it a boost,
 # so initial/mid positions (incl. SDE-1) rank first for a junior/mid candidate.
 _JUNIOR_RE = re.compile(
-    r"\b(junior|jr\.?|entry[- ]?level|entry|graduate|trainee|fresher|intern|"
+    r"\b(junior|jr\.?|entry[- ]?level|entry|"
     r"sde\s*(?:1|i)\b|sde-?1)\b", re.I)
+# Deliberately SEPARATE from _JUNIOR_RE: "intern"/"trainee"/"fresher"/
+# "graduate" target someone with ZERO professional experience (a student or
+# fresh graduate) -- a different labor-market segment from a junior/entry-
+# level FULL-TIME role, even though both sound "junior". Treating them the
+# same (the old _JUNIOR_RE) wrongly boosted internships as a good match for
+# any candidate, and once you have real professional experience an
+# internship is not a fit at all -- reported by the user: intern postings
+# (with intern-stipend-level pay) kept showing up as good matches despite
+# having 2 years of real experience.
+_INTERN_RE = re.compile(r"\b(intern(?:ship)?s?|trainee|fresher|graduate)\b", re.I)
 _YEARS_RE = re.compile(r"(\d{1,2})\s*\+?\s*(?:years|yrs|yr)\b", re.I)
 # 'X-Y years' / 'X to Y yrs' ranges — matched separately because _YEARS_RE can
 # only anchor to the number sitting directly before "years", so on a bare range
@@ -1088,13 +1098,25 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
     # A junior/entry/SDE-1 title in the same string exempts it.
     senior_title = bool(_SENIOR_RE.search(title))
     junior_title = bool(_JUNIOR_RE.search(title))
+    intern_title = bool(_INTERN_RE.search(title))
     if senior_title and not junior_title and cy and cy < 5:
         return {"reject": True, "reason":
                 f"senior-level title '{title}' — you have {cy} yrs (targeting junior/mid)",
                 **_summary({"req_years": req_floor})}
+    # Once you have ANY real professional experience, an internship/trainee/
+    # fresher/graduate posting is a different market segment, not a lesser
+    # version of a junior role -- reject it outright rather than boosting it.
+    if intern_title and cy and cy >= 1:
+        return {"reject": True, "reason":
+                f"internship/fresher-level title '{title}' — you have {cy} yrs of professional "
+                f"experience (not the target audience for this posting)",
+                **_summary({"req_years": req_floor})}
     if junior_title:                                     # initial/mid role — boost
         score += 8
         reasons.append("junior/mid-level fit")
+    elif intern_title and not cy:                         # genuinely 0/unknown experience
+        score += 8
+        reasons.append("entry-level fit (no experience listed)")
 
     exp_label = (f"Your {cy}yr · needs {req_floor}+yr" if (cy and req_floor)
                  else (f"Your {cy}yr · no req stated" if cy
