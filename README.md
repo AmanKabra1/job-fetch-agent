@@ -182,6 +182,61 @@ GitHub Actions cron) and still builds tailored resumes on demand.
 > Keep the daily GitHub Actions cron running (or run `python fetch_jobs.py`
 > locally and commit) to keep the feed current.
 
+## How the daily fetcher screens jobs (Oct 2026 upgrade)
+
+The cron no longer ranks on job *titles*. Every posting's **full description** is read by
+[`jd_screener.py`](jd_screener.py) (pure heuristics — no API key):
+
+| Check | Rule |
+|---|---|
+| **Role** | Backend / SDE-1 / Software Engineer / AI-LLM developer / Python / Node-NestJS / Full Stack. Senior/Lead/Manager/Intern/Fresher/DevOps/QA/etc. are dropped |
+| **Experience** | Reads "2-4 yrs", "3+ years", "min 2 years" next to *experience* wording (ignores "founded 10 years ago"); drops jobs needing ≥ your years + 2 |
+| **Salary** | Parses LPA / ₹ per month / USD·EUR·GBP ranges → LPA; drops jobs whose **stated** pay is below `MIN_ACCEPT_LPA` (default 6); unknown pay is never dropped; pay ≥ `CURRENT_LPA` is boosted |
+| **Java** | Java was removed from the search terms. Java-*primary* JDs are dropped; Java next to Node/Python is kept with a small penalty |
+| **India-eligible** | "US only", "must be located in…", work-authorisation and similar remote roles are dropped |
+| **Genuine** | Scam signals (fees, WhatsApp/Telegram, "guaranteed placement") and ghost signals ("talent pool", "evergreen") are dropped; the same company+title+city re-posted for 30 days is flagged, 45 days dropped |
+| **Competition** | Each kept job is tagged `LOW / MEDIUM / HIGH`: direct company-ATS and niche portals, <24 h old, small company and real LinkedIn applicant counts ("first 25 applicants") score LOW; staffing-agency reposts and 100+ applicants score HIGH. LOW-competition jobs are boosted and show a teal **low competition** chip |
+
+`data/jobs.json` now stores each job's (trimmed) description, so *Apply / Tailor* uses the real JD.
+
+**New low-competition sources** ([`new_sources.py`](new_sources.py), free, no login, verified 2026-10-06):
+Workable Jobs (India + remote), Working Nomads, Himalayas (India filter), Hasjob, plus India-heavy
+company boards on Greenhouse/Ashby (Sarvam AI, Atlan, Navi, Observe.AI, Sigmoid, InMobi, Glance,
+Druva, Porter, HackerRank, BlueStone, Rubrik, Zscaler, Thoughtworks…). Greenhouse/Lever/Ashby now
+return the **full JD** so it can be screened.
+**Hard-to-reach portals are fetched too** ([`more_portals.py`](more_portals.py), daily cron only, ~3-4 min of
+polite page fetching, caps via `MP_INSTAHYRE` / `MP_CUTSHORT` / `MP_RR` / `MP_YC`): Instahyre (public search JSON +
+JSON-LD), Cutshort (sitemap + JSON-LD; most listings are years old, so it opens many pages and keeps only recent
+ones), Remote Rocketship (India sitemap + its embedded job JSON and own ghost score), Wellfound (server-rendered
+role pages), YC Work at a Startup (mostly US-only, so few survive the India filter) and r/developersIndia hiring posts.
+Still not fetchable: **Hirist** (job pages ship no JD) and **startup.jobs** (403 to scripts) — open those by hand.
+
+## Applying (semi-automatic by design)
+
+**Apply kit** builds the evergreen-named resume + cover note for a job; **Auto-fill in browser** (run `python app.py`
+locally; needs `pip install playwright && playwright install chromium`) opens the real application form and pre-fills
+name / email / phone / resume / links / CTC & notice-period text answers for **Greenhouse, Lever, Workable and now Ashby**
+(the new Workable and Remote Rocketship sources mostly link to these). It never clicks Submit: these forms carry
+reCAPTCHA/hCaptcha and per-job screening questions (work authorisation etc.) that only you may answer, and LinkedIn Easy
+Apply / Naukri 1-click / Indeed Apply / Wellfound / Instahyre / Cutshort act through your logged-in account and are against
+those sites' terms to automate. Use the **Low competition** chip + **Auto-fill all** to work through the best jobs quickly.
+
+## How resumes are tailored (2026 ATS research)
+
+- **File name is evergreen:** `Aman_Kabra_Resume.pdf` / `.docx` — no job title, company, date or "ATS"
+  (the name is visible to recruiters and ATS uploads; tailoring lives *inside* the file).
+- [`resume_keywords.py`](resume_keywords.py) reads the JD, mirrors its exact wording **only for skills
+  you have evidence for** in `resume_profile.py` / the matched project, and reports the rest as
+  **gaps** (never written into the resume). It sets a role **headline** under your name (e.g.
+  `Backend Software Engineer | Node.js · NestJS · TypeScript · PostgreSQL`), leads the summary with the
+  JD-matched stack (Java last), re-orders each role's bullets so the most JD-relevant one is first, and
+  adds missing-but-true terms (acronym + expansion) to *Core Competencies*.
+- [`ats_scorer.py`](ats_scorer.py) gives an honest **estimate** (JD-keyword coverage 45, experience quality 20,
+  structure 15, contact 10, format 10). There is no universal ATS score; the old free bonuses and the 85 floor
+  were removed.
+- Format rules followed: single column, plain text (no tables/icons), standard headings, contact in the
+  body, one page, consistent `Mon YYYY` dates, real text PDF + DOCX.
+
 ## Notes
 - LinkedIn is the most rate-limited board; if it returns few/zero results in CI,
   Indeed + Google usually carry the run.

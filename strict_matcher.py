@@ -19,7 +19,9 @@ from resume_tailor import SKILL_LEXICON, _clean_label, _word_in
 CORE_STACK = {
     # Backend Languages & Frameworks - Node.js/NestJS focus
     "Node.js", "NestJS", "Express.js", "TypeScript", "JavaScript",
-    "Python", "FastAPI", "Java", "Spring Boot",
+    # Java/Spring Boot intentionally NOT here: you know them but want fewer Java roles,
+    # so a JD that only matches on Java must not count as "your field".
+    "Python", "FastAPI",
     # General backend/full stack
     "Backend", "Full Stack", "API", "REST",
     # Databases & Infrastructure
@@ -112,12 +114,14 @@ def _extract_required_skills(description: str) -> set:
 
 
 def _extract_required_years(description: str) -> int:
-    """Extract minimum required years from description."""
-    matches = re.findall(r"(\d+)\s*(?:\+|\-)?.*?years?", description, re.IGNORECASE)
-    if matches:
-        yrs = [int(m) for m in matches if int(m) <= 20]
-        return min(yrs) if yrs else 0
-    return 0
+    """Minimum years of experience the JD asks for (0 if none stated).
+
+    Delegates to jd_screener.required_years, which only counts numbers sitting next to
+    experience wording and ignores "founded 10 years ago" / "5 years in the market".
+    The old greedy regex here paired the first number anywhere in the text with a later
+    "years" and wrongly rejected jobs now that real descriptions are kept."""
+    import jd_screener as JDS
+    return JDS.required_years(description)[0]
 
 
 def _get_role_category(title: str) -> str | None:

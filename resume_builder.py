@@ -76,12 +76,15 @@ def tailor_skills(matched: set):
 def build_summary(matched: set) -> str:
     """Rewrite the summary line to lead with the top matching stack."""
     # Preferred display order for the summary lead-in.
+    # Java sits LAST on purpose: you're steering toward Node/Python/AI roles, so the
+    # summary should lead with those and only mention Java when the JD asks for it.
     priority = [
-        "NestJS", "Node.js", "TypeScript", "Express.js", "Python",
-        "Java (Spring Boot)", "Spring Boot", "FastAPI", "Django", "Go (Golang)",
-        "Angular 17 (Signals, standalone components, RxJS)",
-        "Microservices", "RESTful APIs", "AWS S3", "Docker",
-        "LLM Integration", "RAG (Retrieval-Augmented Generation)",
+        # languages / frameworks only: LLM, RAG, REST, Microservices, AWS, Docker are
+        # already stated by the fixed template text and the skills section, so listing
+        # them in {stack} produced "...RESTful APIs using RESTful APIs, LLM Integration".
+        "NestJS", "Node.js", "TypeScript", "Express.js", "Python", "FastAPI", "Django",
+        "Go (Golang)", "Angular 17 (Signals, standalone components, RxJS)",
+        "Java (Spring Boot)", "Spring Boot",
     ]
     # Friendly short names for the summary sentence.
     short = {
@@ -102,21 +105,80 @@ def build_summary(matched: set) -> str:
     return P.SUMMARY_TEMPLATE.format(stack=stack)
 
 
+def resume_plain_text(summary, skills, ats_keywords=None, headline=None,
+                      experience=None, best_project=None) -> str:
+    """The resume's text exactly as an ATS parser would read it (same content the PDF /
+    DOCX renderers draw). Used to ESTIMATE the ATS score from the real document rather
+    than from a few fragments."""
+    L = [P.NAME, " | ".join([P.LOCATION, P.PHONE, P.EMAIL, P.LINKEDIN, P.GITHUB])]
+    if headline:
+        L.append(headline)
+    L += ["", "PROFESSIONAL SUMMARY", summary, "", "EXPERIENCE"]
+    for j in (experience or P.EXPERIENCE):
+        L += [f"{j['company']} {j['dates']}", f"{j['title']} {j['location']}"]
+        L += [f"- {b}" for b in j["bullets"]]
+    L += ["", "TECHNICAL SKILLS"]
+    for cat, items in skills.items():
+        L.append(f"{cat}: " + ", ".join(items))
+    if ats_keywords:
+        L.append("Core Competencies: " + ", ".join(ats_keywords))
+    L += ["", "PROJECTS"]
+    projs = []
+    if best_project and best_project.get("name"):
+        projs.append((best_project.get("name"), best_project.get("tech_stack") or "",
+                      [best_project.get("tailored_description") or best_project.get("description", "")]
+                      + list(best_project.get("tailored_bullets") or best_project.get("bullets") or [])))
+    for p in P.PROJECTS:
+        if best_project and p.get("name") == best_project.get("name"):
+            continue
+        projs.append((p.get("name"), p.get("stack", ""), list(p.get("bullets", []))))
+    for name, stack, bl in projs:
+        stack = ", ".join(stack) if isinstance(stack, list) else stack
+        L.append(f"{name} | {stack}")
+        L += [f"- {b}" for b in bl if b]
+    L += ["", "EDUCATION", f"{P.EDUCATION['school']} {P.EDUCATION['dates']}",
+          f"{P.EDUCATION['degree']} {P.EDUCATION['location']}", "", "CERTIFICATIONS",
+          " | ".join(P.CERTIFICATIONS)]
+    return "\n".join(L)
+
+
 def slugify(text: str) -> str:
     text = re.sub(r"[^A-Za-z0-9]+", "-", text).strip("-")
     return text or "x"
 
 
-def base_filename(company: str, title: str) -> str:
-    today = dt.date.today().isoformat()
-    return f"{slugify(P.NAME)}_{slugify(company)}_{slugify(title)}_{today}"
+def base_filename(company: str = "", title: str = "") -> str:
+    """Evergreen file name: <First>_<Last>_Resume (e.g. Aman_Kabra_Resume).
+
+    Deliberately carries NO job title, company, date or 'ATS' word. Recruiters and
+    ATS portals show the file name as-is, so a name stuck to one job or one day looks
+    stale/mass-produced the moment the file is reused or forwarded. Tailoring lives
+    INSIDE the document; the name stays valid for any job on any day. The
+    `company`/`title` args are accepted (and ignored) so old call sites keep working."""
+    return f"{slugify(P.NAME).replace('-', '_')}_Resume"
+
+
+_NAME_NOISE = re.compile(
+    r"(tailor(?:ed)?|ats|optimi[sz]ed|standard|version|final|latest|new|copy|"
+    r"resume|cv|\d{1,4}[-_.]\d{1,2}[-_.]\d{1,4}|\d+)", re.I)
+
+
+def evergreen_name_from(filename_stem: str) -> str:
+    """Reduce an UPLOADED file's stem to a job/date-free person name (for the
+    upload-tailor flow), falling back to the saved profile's name."""
+    # Drop only WHOLE noise tokens (so "Chandrashekhar" or "Newman" survive).
+    toks = [t for t in re.split(r"[\s_\-.]+", filename_stem or "") if t]
+    keep = [re.sub(r"[^A-Za-z]", "", t) for t in toks
+            if not re.fullmatch(_NAME_NOISE.pattern, t, re.I) and not re.fullmatch(r"v?\d+", t, re.I)]
+    s = "_".join(k for k in keep if k)
+    return s if len(s) >= 2 else "Resume"
 
 
 # --------------------------------------------------------------------------- #
 # PDF RENDERER  (reportlab)
 # --------------------------------------------------------------------------- #
 def render_pdf(path, summary, skills, matched, target_title, target_company,
-               ats_keywords=None, best_project=None):
+               ats_keywords=None, best_project=None, headline=None, experience=None):
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.units import mm
     from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
@@ -133,7 +195,7 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
     doc = SimpleDocTemplate(
         path, pagesize=A4,
         leftMargin=14 * mm, rightMargin=14 * mm,
-        topMargin=8 * mm, bottomMargin=8 * mm,
+        topMargin=6 * mm, bottomMargin=6 * mm,
         title=f"{P.NAME} - Resume", author=P.NAME,
     )
     content_w = doc.width
@@ -144,9 +206,9 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
     contact_st = ParagraphStyle("contact", fontName="Helvetica", fontSize=8.2,
                                 alignment=TA_CENTER, textColor=DARK, leading=10)
     summary_st = ParagraphStyle("summary", fontName="Helvetica", fontSize=8.5,
-                                alignment=TA_JUSTIFY, textColor=DARK, leading=10.4)
+                                alignment=TA_JUSTIFY, textColor=DARK, leading=10.0)
     body_st = ParagraphStyle("body", fontName="Helvetica", fontSize=8.5,
-                             textColor=DARK, leading=10.4)
+                             textColor=DARK, leading=10.0)
     bullet_st = ParagraphStyle("bullet", parent=body_st, leftIndent=10, bulletIndent=0)
     role_l = ParagraphStyle("role_l", fontName="Helvetica-Bold", fontSize=9.4, textColor=DARK)
     role_r = ParagraphStyle("role_r", fontName="Helvetica-Bold", fontSize=8.6,
@@ -201,6 +263,12 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
         f'<a href="{P.GITHUB}">GitHub</a>',
     ])
     story.append(Paragraph(contact, contact_st))
+    if headline:
+        # Role headline directly under the name: title + top stack mirrors the JD's
+        # wording — the highest-weighted spot for recruiter/ATS title matching.
+        story.append(Paragraph(headline, ParagraphStyle(
+            "headline", fontName="Helvetica-Bold", fontSize=9.4, alignment=TA_CENTER,
+            textColor=ACCENT, leading=11.5, spaceBefore=1)))
     story.append(Spacer(1, 2))
 
     # Professional summary
@@ -209,7 +277,7 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
 
     # Experience
     section("Experience")
-    for i, job in enumerate(P.EXPERIENCE):
+    for i, job in enumerate(experience or P.EXPERIENCE):
         if i:
             story.append(Spacer(1, 2.5))
         story.append(two_col(job["company"], job["dates"], role_l, role_r))
@@ -294,7 +362,7 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
 # WORD RENDERER  (python-docx)
 # --------------------------------------------------------------------------- #
 def render_docx(path, summary, skills, matched, target_title, target_company,
-                ats_keywords=None, best_project=None):
+                ats_keywords=None, best_project=None, headline=None, experience=None):
     from docx import Document
     from docx.shared import Pt, RGBColor, Inches
     from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
@@ -377,13 +445,21 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
     c = p.add_run(" | ".join([P.LOCATION, P.PHONE, P.EMAIL, P.LINKEDIN, P.GITHUB]))
     c.font.size = Pt(8)
 
+    if headline:
+        p = no_space(doc.add_paragraph(), after=1)
+        p.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        hr = p.add_run(headline)
+        hr.bold = True
+        hr.font.size = Pt(9.5)
+        hr.font.color.rgb = ACCENT
+
     # Summary
     section_heading("Professional Summary")
     no_space(doc.add_paragraph()).add_run(summary)
 
     # Experience
     section_heading("Experience")
-    for job in P.EXPERIENCE:
+    for job in (experience or P.EXPERIENCE):
         two_col(job["company"], job["dates"], left_bold=True, italic=False)
         two_col(job["title"], job["location"], left_bold=False, italic=True)
         for b in job["bullets"]:

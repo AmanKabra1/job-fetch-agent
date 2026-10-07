@@ -26,16 +26,14 @@ GITHUB = "https://github.com/AmanKabra1"
 #   {stack} is replaced at render time with your top matching skills for the
 #   target job (or the DEFAULT_STACK below when no JD is supplied).
 # --------------------------------------------------------------------------- #
-DEFAULT_STACK = ["NestJS", "Node.js", "TypeScript", "Python", "Java"]
+DEFAULT_STACK = ["NestJS", "Node.js", "TypeScript", "Python", "FastAPI"]
 
 SUMMARY_TEMPLATE = (
     "Backend-focused Software Developer with 2 years of experience building "
-    "scalable microservices and RESTful APIs using {stack}. Proven expertise in "
-    "optimizing relational databases (MySQL, PostgreSQL) and integrating "
-    "cloud-native AWS services to achieve 99.9% uptime. Strong foundation in Go "
-    "(Golang) for performance-critical services. Passionate about distributed "
-    "systems, clean architecture, and leveraging Spring Boot for high-throughput "
-    "applications."
+    "scalable microservices and RESTful APIs using {stack}. Optimized MySQL and "
+    "PostgreSQL databases and integrated AWS services for 99.9% uptime. Hands-on "
+    "with LLM integration, RAG and agentic AI (LangChain, LangGraph); foundation "
+    "in Go and Java (Spring Boot)."
 )
 
 # --------------------------------------------------------------------------- #
@@ -191,28 +189,28 @@ CERTIFICATIONS = [
 SKILL_KEYWORDS = {
     "NestJS": ["nestjs", "nest.js"],
     "Node.js": ["node.js", "nodejs", "node js", "node"],
-    "Express.js": ["express.js", "express", "expressjs"],
-    "TypeScript": ["typescript", "ts"],
-    "JavaScript (ES6+)": ["javascript", "js", "es6", "ecmascript"],
+    "Express.js": ["express.js", "expressjs"],
+    "TypeScript": ["typescript"],
+    "JavaScript (ES6+)": ["javascript", "es6", "ecmascript"],
     "Python": ["python"],
     "FastAPI": ["fastapi", "fast api"],
     "Flask": ["flask"],
     "Django": ["django"],
     "Java (Spring Boot)": ["java"],
-    "Spring Boot": ["spring boot", "spring", "springboot"],
-    "Go (Golang)": ["golang", "go lang", " go "],
+    "Spring Boot": ["spring boot", "springboot"],
+    "Go (Golang)": ["golang", "go lang"],
     "SQL": ["sql"],
     "MySQL (schema design, query optimization, stored procedures)": ["mysql"],
     "PostgreSQL": ["postgresql", "postgres"],
     "AWS S3": ["aws", "s3", "amazon web services"],
-    "AWS SES": ["ses"],
+    "AWS SES": ["aws ses", "amazon ses"],
     "Docker": ["docker", "container", "containeri"],
     "CI/CD Pipelines": ["ci/cd", "cicd", "continuous integration", "continuous delivery"],
     "GitHub Actions": ["github actions"],
     "Jenkins": ["jenkins"],
     "Git": ["git"],
     "Microservices": ["microservice", "micro service", "distributed system"],
-    "RESTful APIs": ["rest api", "restful", "rest"],
+    "RESTful APIs": ["rest api", "rest apis", "restful"],
     "JWT Authentication": ["jwt"],
     "OAuth 2.0": ["oauth"],
     "Angular 17 (Signals, standalone components, RxJS)": ["angular", "rxjs"],

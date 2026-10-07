@@ -23,7 +23,7 @@ DIRECT COMPANY CAREER PAGES (scrape_career_pages):
       * Ashby       api.ashbyhq.com/posting-api/job-board/{slug}
 
     COMPANY_CAREER_PAGES below maps ~50 companies (incl. Indian ones — PhonePe,
-    Groww, Slice, Postman) to their ATS slug. Every slug here was live-validated
+    Groww, Slice, Postman) to their ATS slug. Slugs were live-checked 2026-10-06 (404/empty ones removed)
     to return jobs; unknown/closed boards 404 and are skipped silently. Also:
 
       * Hacker News "Who is Hiring?"  — current monthly thread via the Algolia +
@@ -57,6 +57,8 @@ from urllib import robotparser
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import requests
+
+import jd_screener as JDS          # geo_ok(): drop postings closed to India-based candidates
 
 _UA = {"User-Agent": "Mozilla/5.0 (compatible; job-fetch-agent/1.0)"}
 _TIMEOUT = 20
@@ -373,20 +375,30 @@ GREENHOUSE_BOARDS = {
     "Cloudflare": "cloudflare", "Pinterest": "pinterest", "Twilio": "twilio",
     "Figma": "figma", "Instacart": "instacart", "Reddit": "reddit",
     "Affirm": "affirm", "Robinhood": "robinhood", "GitLab": "gitlab",
-    "Asana": "asana", "Lyft": "lyft", "Postman": "postman",
+    "Asana": "asana", "Lyft": "lyft", 
     "Flexport": "flexport", "Coinbase": "coinbase", "SoFi": "sofi",
-    "Gusto": "gusto", "Slice": "slice", "PhonePe": "phonepe",
+    "Gusto": "gusto", "Slice": "slice",
     "Discord": "discord", "Dropbox": "dropbox", "Twitch": "twitch",
     "Airtable": "airtable", "Groww": "groww",
+    # India-heavy hiring, verified live 2026-10-06 (small/mid Indian product & AI
+    # companies get far fewer applicants than the big brands above).
+    "Observe.AI": "observeai", "Sigmoid": "sigmoid", "Druva": "druva",
+    "Porter": "porter", "InMobi": "inmobi", "Glance": "glance",
+    "HackerRank": "hackerrank", "BlueStone": "bluestone", "Rubrik": "rubrik",
+    "Zscaler": "zscaler", "Thoughtworks": "thoughtworks", "Coursera": "coursera",
+    "Okta": "okta",
 }
 LEVER_BOARDS = {
-    "Palantir": "palantir", "Mistral AI": "mistral", "Spotify": "spotify",
+    "Mistral AI": "mistral", "Spotify": "spotify",
 }
 ASHBY_BOARDS = {
     "OpenAI": "openai", "ElevenLabs": "elevenlabs", "Notion": "notion",
     "Cohere": "cohere", "Ramp": "ramp", "Cursor": "cursor", "Replit": "replit",
     "Perplexity": "perplexity", "Supabase": "supabase", "Linear": "linear",
     "Render": "render", "PostHog": "posthog", "Mux": "mux",
+    # Indian AI / fintech startups on Ashby (verified live 2026-10-06)
+    "Sarvam AI": "sarvam", "Navi": "navi", "Atlan": "atlan",
+    "Smallest.ai": "smallest",
 }
 # Kept for reference / the UI label "via {company} careers". The big-tech vanity
 # pages (Google/Amazon/Meta/Apple/Netflix) are JS apps with no jobs in the raw
@@ -399,7 +411,7 @@ COMPANY_CAREER_PAGES = {**{k: f"greenhouse:{v}" for k, v in GREENHOUSE_BOARDS.it
 # Recruitee all return nothing) and whose own careers site is a JS app a plain GET
 # can't read. We still surface their roles via a company-targeted Tavily web search
 # (needs TAVILY_API_KEY). company -> careers domain to restrict the search to.
-# (PhonePe IS on Greenhouse, so it lives in GREENHOUSE_BOARDS above, not here.)
+# (PhonePe and Postman have no public Greenhouse/Lever/Ashby board as of 2026-10.)
 COMPANY_CAREER_SEARCH = {
     "Razorpay": "razorpay.com",
     "Zerodha": "zerodha.com",
@@ -473,7 +485,9 @@ def _cache_put(key, value):
 
 
 _KW_STOP = {"developer", "engineer", "engineering", "the", "and", "for", "with",
-            "senior", "junior", "lead", "sde", "dev"}
+            "senior", "junior", "lead", "dev"}
+# 2-char AI/ML titles and "SDE"/"SWE" are the point of the search — keep them despite len<3.
+_KW_SHORT_OK = {"ai", "ml", "sde", "swe", "llm"}
 
 
 def _kw_tokens(keywords):
@@ -484,7 +498,7 @@ def _kw_tokens(keywords):
     toks = set()
     for k in keywords or []:
         for t in re.split(r"[^a-z0-9+#]+", (k or "").lower()):
-            if len(t) >= 3 and t not in _KW_STOP:
+            if (len(t) >= 3 or t in _KW_SHORT_OK) and t not in _KW_STOP:
                 toks.add(t)
     return toks
 
@@ -514,9 +528,11 @@ def _level_ok(title, experience_level):
 
 # --- ATS fetchers (one company each) --------------------------------------- #
 def _fetch_greenhouse(company, slug, keywords, max_age_hours):
-    url = f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs"
+    # content=true returns the FULL job description, so the JD screener can read the
+    # real requirements (years, stack, pay) instead of just "<title> at <company>".
+    url = f"https://boards-api.greenhouse.io/v1/boards/{slug}/jobs?content=true"
     try:
-        r = _get(url, min_interval=_API_INTERVAL)
+        r = _get(url, min_interval=_API_INTERVAL, timeout=40)
         if r.status_code != 200:
             return []
         jobs = r.json().get("jobs", [])
@@ -528,15 +544,22 @@ def _fetch_greenhouse(company, slug, keywords, max_age_hours):
         if not _kw_match(title, keywords):
             continue
         loc = (j.get("location") or {}).get("name", "") or ""
-        if not _within_age(j.get("updated_at", ""), max_age_hours):
+        posted = j.get("first_published") or j.get("updated_at") or ""   # updated_at is bumped by any edit
+        if not _within_age(posted, max_age_hours):
             continue
+        # Greenhouse HTML-escapes its HTML ("&lt;p&gt;"): unescape, then strip tags.
+        body = _strip_html(html.unescape(j.get("content") or ""))
+        if len(body) > 7000:                          # keep the head AND the tail (pay/years often sit at the end)
+            body = body[:4000] + " … " + body[-3000:]
+        if not JDS.geo_ok(loc, body):
+            continue                                  # not open to India
         rows.append({
             "title": title, "company": company,
             "location": loc or "—", "site": f"{company} careers (Greenhouse)",
-            "date_posted": str(j.get("updated_at", ""))[:10],
+            "date_posted": str(posted)[:10],
             "is_remote": "remote" in (title + " " + loc).lower(),
             "job_url": j.get("absolute_url", ""),
-            "description": f"{title} at {company}. {loc}".strip(),
+            "description": body or f"{title} at {company}. {loc}".strip(),
         })
     return rows
 
@@ -555,8 +578,12 @@ def _fetch_lever(company, slug, keywords, max_age_hours):
         title = j.get("text", "")
         cats = j.get("categories") or {}
         loc = cats.get("location", "") or ""
-        desc = (j.get("descriptionPlain") or "")[:1500]
-        if not _kw_match(f"{title} {desc}", keywords):
+        desc = " ".join([(j.get("descriptionPlain") or ""),
+                         " ".join((l.get("text", "") + " " + _strip_html(l.get("content", "")))
+                                  for l in (j.get("lists") or []))])[:6000]
+        if not _kw_match(f"{title} {desc[:1500]}", keywords):
+            continue
+        if not JDS.geo_ok(loc, desc):
             continue
         created = j.get("createdAt")
         iso = ""
@@ -590,8 +617,10 @@ def _fetch_ashby(company, slug, keywords, max_age_hours):
     for j in jobs:
         title = j.get("title", "")
         loc = j.get("location", "") or ""
-        desc = (j.get("descriptionPlain") or "")[:1500]
-        if not _kw_match(f"{title} {desc}", keywords):
+        desc = (j.get("descriptionPlain") or "")[:6000]
+        if not _kw_match(f"{title} {desc[:1500]}", keywords):
+            continue
+        if not JDS.geo_ok(loc, desc):
             continue
         if not _within_age(j.get("publishedAt", ""), max_age_hours):
             continue
@@ -1191,7 +1220,7 @@ def fetch_shine(terms, max_age_hours=24):
 
 
 def fetch_extra(terms, per_term=20, max_age_hours=0, include_career=False,
-                experience_level=None, location="", use_tavily=True):
+                experience_level=None, location="", use_tavily=True, deep_portals=False):
     """All extra sources combined. Never raises — returns whatever came back.
     Free remote-job APIs (Remotive, RemoteOK, Jobicy, Arbeitnow, Himalayas), plus —
     when include_career — direct company career pages via scrape_career_pages().
@@ -1221,6 +1250,25 @@ def fetch_extra(terms, per_term=20, max_age_hours=0, include_career=False,
                                         use_tavily=use_tavily)
         except Exception as e:
             print(f"  ! career pages failed: {e}", flush=True)
+    # 2026 low-competition portals (Workable, Working Nomads, Himalayas-India, Hasjob).
+    # Free, no key — see new_sources.py.
+    try:
+        import new_sources as NS
+        new_rows, counts = NS.fetch_all(terms, max_age_hours=max_age_hours)
+        rows += new_rows
+        print("    -> new portals: " + ", ".join(f"{k}={v}" for k, v in counts.items()), flush=True)
+    except Exception as e:
+        print(f"  ! new portals failed: {e}", flush=True)
+    # Hard-to-reach portals (Instahyre, Cutshort, Remote Rocketship, Wellfound, YC, Reddit):
+    # ~2-3 min of polite page fetching, so only the daily cron asks for it (deep_portals=True).
+    if deep_portals:
+        try:
+            import more_portals as MP
+            m_rows, m_counts = MP.fetch_all(terms, max_age_hours=max_age_hours)
+            rows += m_rows
+            print("    -> deep portals: " + ", ".join(f"{k}={v}" for k, v in m_counts.items()), flush=True)
+        except Exception as e:
+            print(f"  ! deep portals failed: {e}", flush=True)
     if use_tavily:
         try:
             rows += fetch_foundit(terms, location=location, max_age_hours=max_age_hours)

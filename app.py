@@ -57,6 +57,7 @@ import resume_profile as P
 import extra_sources as ES
 import apply_agent as AA
 import ats_scorer as ATS
+import resume_keywords as KW
 
 # NEW: API and project management modules
 import api_handlers as AH
@@ -337,23 +338,22 @@ def _is_big_company(name: str) -> bool:
     return any(b in n for b in BIG_COMPANIES)
 
 
+def _truthy(v) -> bool:
+    """Feed rows are all strings after pandas astype(str): "False" must not count as remote."""
+    return v is True or str(v).strip().lower() in ("true", "1", "yes", "y")
+
+
 def _salary_lpa(r) -> float:
     """Best-effort annual salary in lakhs (INR). Returns 0 when unknown/ambiguous
     (most boards don't publish salary, especially in India)."""
-    amt = r.get("max_amount") or r.get("min_amount")
+    # Currency-aware (USD/EUR/GBP converted, monthly/hourly annualised) — delegated to the
+    # JD screener so there is ONE salary parser. The old local version read any yearly
+    # USD figure >= 100k as rupees.
     try:
-        amt = float(amt)
-    except (TypeError, ValueError):
+        import jd_screener as JDS
+        return JDS.salary_lpa("", r)
+    except Exception:
         return 0.0
-    if amt <= 0:
-        return 0.0
-    interval = str(r.get("interval") or "").lower()
-    if "month" in interval:
-        amt *= 12
-    elif "hour" in interval or "day" in interval or "week" in interval:
-        return 0.0  # too noisy to annualise reliably
-    # Heuristic: large rupee figures -> lakhs; ignore small (likely USD/hourly).
-    return amt / 100000.0 if amt >= 100000 else 0.0
 
 
 # Your current pay (LPA). Jobs that explicitly pay MORE than this are boosted so
@@ -927,10 +927,10 @@ def _score_and_rank(rows, limit, target_text=None, cand_years=0):
             exp_fit = False
 
         # --- preferences (soft boosts) ---
-        is_remote = bool(r.get("is_remote"))
+        is_remote = _truthy(r.get("is_remote"))
         employees = _employees_min(r.get("company_num_employees"))
         big = _is_big_company(company)
-        lpa = _salary_lpa(r)
+        lpa = _salary_lpa(r) or float(r.get("_salary_lpa") or 0)   # stated pay (structured, else parsed from the JD)
         if is_remote:
             score += 8
         if employees >= 500:
@@ -941,10 +941,19 @@ def _score_and_rank(rows, limit, target_text=None, cand_years=0):
             score += 10
         score += _salary_boost(lpa)              # pay above your current salary
         score += _recency_boost(r.get("date_posted"))   # freshest first
+        # Nudge computed by the daily fetcher's JD screener (Java-heavy -> down,
+        # low-competition / direct-ATS / stated pay above target -> up). Rows that
+        # never went through the fetcher simply have no boost.
+        try:
+            score += int(r.get("_jd_boost") or 0)
+        except (TypeError, ValueError):
+            pass
 
         score = max(0, min(100, score))
 
         scored.append({
+            "competition": r.get("_competition") or "",
+            "jd_flags": r.get("_jd_flags") or [],
             "score": score,
             "base": max(0, min(100, base)),
             "matched": matched,
@@ -1146,7 +1155,7 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
     # You apply from India, so India-based roles (onsite / hybrid / WFH-in-India)
     # are the most actionable and get the biggest boost; global remote-anywhere is
     # still welcome but ranked a bit lower.
-    is_remote = bool(r.get("is_remote"))
+    is_remote = _truthy(r.get("is_remote"))
     loc = str(r.get("location") or "")
     in_india = _india_location(loc) or _india_location(blob)
     if in_india:
@@ -1174,7 +1183,25 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
     if lpa and lpa > CURRENT_LPA:
         reasons.append(f"pays ~{round(lpa, 1)} LPA (> your {CURRENT_LPA})")
 
-    score = max(0, min(100, round(score)))
+    # 6. JD SCREEN: read the full description for things the title can't tell us —
+    # Java-primary roles, scam/ghost postings, stated pay below your floor, and how
+    # crowded the applicant pool is likely to be (direct-ATS / <24h / small co = low).
+    competition = r.get("_competition") or ""
+    try:
+        import jd_screener as JDS
+        verdict = JDS.screen_job(r, cy or 2, list(pskills), strict_role=False)
+        if not verdict["keep"]:
+            return {"reject": True, "reason": verdict["reason"], **_summary()}
+        score += verdict["boost"]
+        competition = verdict["competition"]
+        reasons += [f for f in verdict["flags"] if f not in reasons][:4]
+        if not lpa and verdict["salary_lpa"]:
+            lpa = verdict["salary_lpa"]
+    except Exception:
+        pass                                          # screener must never break ranking
+
+    score_raw = round(score)                 # unclamped: keeps ordering when many jobs hit the 100 cap
+    score = max(0, min(100, score_raw))
 
     # Calculate skill match percentage for display
     skill_pct = round(skill_ratio * 100) if skill_ratio is not None else 0
@@ -1184,6 +1211,7 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
 
     return {"reject": False, "job": {
         "score": score,
+        "score_raw": score_raw,
         "matched": matched,
         "missing": missing[:6],
         "skill_pct": skill_pct,
@@ -1200,6 +1228,7 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
         "exp_fit": exp_fit,
         "exp_label": exp_label,
         "salary_lpa": round(lpa, 1) if lpa else 0,
+        "competition": competition,
         "why": reasons,
         "job_url": str(r.get("job_url") or ""),
         "description": desc,
@@ -1232,7 +1261,7 @@ def _rank_jobs(rows, limit, profile, min_ratio, min_score=0):
         seen.add(url)
         kept.append(job)
     # Best match first; for ties, the fresher posting wins.
-    kept.sort(key=lambda s: (s["score"], -_days_old(s.get("date_posted"))),
+    kept.sort(key=lambda s: (s.get("score_raw", s["score"]), -_days_old(s.get("date_posted"))),
               reverse=True)
     return kept[:limit], rejected
 
@@ -1593,10 +1622,11 @@ async def api_ats_improve(resume_text: str = Form("")):
     buf.seek(0)
     data = buf.getvalue()
 
-    return FileResponse(
-        io.BytesIO(data),
+    # FileResponse needs a PATH (a BytesIO made this endpoint 500 every time).
+    return Response(
+        content=data,
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        filename=f"resume_ats_optimized.docx"
+        headers={"Content-Disposition": f'attachment; filename="{RB.base_filename()}.docx"'},
     )
 
 
@@ -1735,6 +1765,63 @@ def _save_resume_copy(fname: str, data: bytes):
 _DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
 
 
+def _render_resume_files(title: str, company: str, description: str, fmt: str,
+                         best_project=None) -> dict:
+    """Single place that turns (job title + JD) into the tailored resume files.
+
+    2026 ATS-driven tailoring (see resume_keywords.py for the research behind it):
+      * role HEADLINE under the name mirrors the JD's title family + matched stack
+      * summary leads with the JD-matched stack (Java deliberately last)
+      * skills reordered, JD-matched ones bold; only skills with REAL evidence in your
+        profile/project are mirrored into "Core Competencies" — gaps are reported,
+        never added
+      * each role's bullets re-ordered so the JD-relevant one comes first (text untouched)
+      * file name is evergreen (Aman_Kabra_Resume.pdf) — no job/date/company in it
+      * ATS score is an honest estimate computed from the real document text
+    """
+    description = (description or "").strip()
+    matched = RB.find_matched_skills(description)
+    skills = RB.tailor_skills(matched)
+
+    extra_ev = ""
+    if best_project:
+        extra_ev = " ".join([str(best_project.get("name", "")), str(best_project.get("description", "")),
+                             " ".join(best_project.get("tech_stack") or []),
+                             " ".join(best_project.get("bullets") or [])])
+    kw = KW.analyze(description, title, extra_evidence=extra_ev)
+    summary = RB.build_summary(matched)
+    experience = KW.ordered_experience(kw["matched"])
+    headline = kw["headline"]
+    ats_keywords = kw["mirror"] or None
+
+    text = RB.resume_plain_text(summary, skills, ats_keywords, headline, experience, best_project)
+    ats = ATS.calculate_ats_score(text, jd_text=description, title=title)
+
+    base = RB.base_filename()
+    out_files = []
+    if fmt in ("pdf", "both"):
+        buf = io.BytesIO()
+        RB.render_pdf(buf, summary, skills, matched, title, company, ats_keywords,
+                      best_project=best_project, headline=headline, experience=experience)
+        data = buf.getvalue()
+        _save_resume_copy(base + ".pdf", data)
+        out_files.append({"name": base + ".pdf", "mime": "application/pdf",
+                          "b64": base64.b64encode(data).decode()})
+    if fmt in ("docx", "both"):
+        buf = io.BytesIO()
+        RB.render_docx(buf, summary, skills, matched, title, company, ats_keywords,
+                       best_project=best_project, headline=headline, experience=experience)
+        data = buf.getvalue()
+        _save_resume_copy(base + ".docx", data)
+        out_files.append({"name": base + ".docx", "mime": _DOCX_MIME,
+                          "b64": base64.b64encode(data).decode()})
+    return {"files": out_files, "emphasized": sorted(set(matched) | set(kw["matched"])),
+            "ats_keywords": ats_keywords or [], "ats_score": ats.get("score", 0),
+            "ats_note": ats.get("note", ""), "headline": headline,
+            "coverage": kw["coverage"], "gaps": kw["gaps"],
+            "ats_missing": ats.get("missing_keywords", []), "matched_terms": kw["matched"]}
+
+
 @app.post("/api/resume/build")
 def api_resume_build(payload: dict):
     """Generate the saved resume (resume_profile.py) in its one-page format,
@@ -1751,10 +1838,6 @@ def api_resume_build(payload: dict):
     fmt = (payload.get("format") or "both").lower()
     if fmt not in ("pdf", "docx", "both"):
         raise HTTPException(400, "format must be 'pdf', 'docx', or 'both'")
-
-    matched = RB.find_matched_skills(description)
-    skills = RB.tailor_skills(matched)
-    summary = RB.build_summary(matched)
 
     # PROJECT MATCHING (for authenticated user only)
     best_project = None
@@ -1773,48 +1856,12 @@ def api_resume_build(payload: dict):
         except Exception as e:
             print(f"  BUILD: Project matching skipped - {e}", flush=True)
 
-    # Simplified filename: just title + date (short)
-    import datetime as dt
-    today = dt.date.today().isoformat()
-    short_title = (title or "Resume").replace(" ", "-")[:20]
-    base = f"resume_{short_title}_{today}"
-
-    # ATS: add only the JD keywords NOT already in the profile
-    ats_keywords = None
-    if description:
-        profile_blob = " ".join(
-            [P.SUMMARY_TEMPLATE] +
-            [s for items in P.SKILLS.values() for s in items] +
-            [b for j in P.EXPERIENCE for b in j["bullets"]]
-        )
-        have = _labels_in(profile_blob)
-        ats_keywords = sorted(_labels_in(description) - have) or None
-
-    # Calculate ATS score
-    resume_text = f"{summary}\n" + "\n".join(skills.get("Technical Skills", [])) + (("\n" + ", ".join(ats_keywords)) if ats_keywords else "")
-    ats_result = ATS.calculate_ats_score(resume_text, is_generated=True)
-    ats_score = ats_result.get("score", 0)
-
-    out_files = []
-    if fmt in ("pdf", "both"):
-        buf = io.BytesIO()
-        RB.render_pdf(buf, summary, skills, matched, title, company, ats_keywords, best_project=best_project)
-        data = buf.getvalue()
-        name = base + ".pdf"
-        _save_resume_copy(name, data)
-        out_files.append({"name": name, "mime": "application/pdf",
-                          "b64": base64.b64encode(data).decode()})
-    if fmt in ("docx", "both"):
-        buf = io.BytesIO()
-        RB.render_docx(buf, summary, skills, matched, title, company, ats_keywords, best_project=best_project)
-        data = buf.getvalue()
-        name = base + ".docx"
-        _save_resume_copy(name, data)
-        out_files.append({"name": name, "mime": _DOCX_MIME,
-                          "b64": base64.b64encode(data).decode()})
-
-    return {"files": out_files, "emphasized": sorted(matched),
-            "ats_keywords": ats_keywords or [], "ats_score": ats_score,
+    built = _render_resume_files(title, company, description, fmt, best_project)
+    return {"files": built["files"], "emphasized": built["emphasized"],
+            "ats_keywords": built["ats_keywords"], "ats_score": built["ats_score"],
+            "ats_estimate_note": built["ats_note"], "headline": built["headline"],
+            "keyword_coverage": built["coverage"], "skill_gaps": built["gaps"],
+            "ats_missing": built["ats_missing"],
             "project_match": best_project.get("name") if best_project else None,
             "project_score": project_match_score if best_project else 0}
 
@@ -1861,6 +1908,7 @@ def _build_apply_kit(title: str, company: str, description: str, job_url: str,
             fmt = "pdf"
 
         # Fallback: if description empty, generate generic one from title
+        real_description = description          # the synthetic fallback below must not drive keyword matching
         if not description:
             description = f"Position: {title} at {company}. Role requiring strong technical skills and relevant experience with modern technologies and frameworks."
             print(f"[APPLY] Empty description - generated generic fallback", flush=True)
@@ -1894,73 +1942,23 @@ def _build_apply_kit(title: str, company: str, description: str, job_url: str,
             }, status_code=500)
 
         # DEFENSIVE: safely extract from result dict
-        resume_data = result.get("resume") or {}
-        if not isinstance(resume_data, dict):
-            resume_data = {}
-        resume_text = resume_data.get("summary", "")
         best_project = result.get("best_project") or {}
         project_match_score = result.get("project_match_score", 0)
+        project_action = result.get("project_action", "kept")
 
         # DEBUG: Log project matching
         print(f"  APPLY: best_project={best_project.get('name', 'NONE')}, score={project_match_score}", flush=True)
 
-        # Get matched skills from result (DRG returns matched_skills as list)
-        matched = result.get("matched_skills", [])
-        if isinstance(matched, dict):  # Fallback if it's a dict
-            matched = matched.get("Technical Skills", [])
-        matched = list(set(matched or []))[:12]
-        ats_score = result.get("ats_score", 0)
-        project_action = result.get("project_action", "kept")
+        # Pass the matched project ONLY if it has data AND score >= 75%
+        matched_project = best_project if (best_project and best_project.get("name")
+                                           and project_match_score >= 75) else None
 
-        # Generate files with swapped project
-        out_files = []
-        import datetime as dt
-        today = dt.date.today().isoformat()
-        short_title = (title or "Resume").replace(" ", "-")[:20]
-        base = f"resume_{short_title}_{today}"
-
-        if fmt in ("pdf", "both"):
-            import io
-            buf = io.BytesIO()
-            # Pass matched project ONLY if: has data AND score >= 75%
-            project_match_score = result.get("project_match_score", 0)
-            matched_project = best_project if (best_project and best_project.get("name") and project_match_score >= 75) else None
-
-            # Build skills dict from matched skills (format expected by render_pdf)
-            skills_for_pdf = P.SKILLS.copy()
-            if matched:  # Prioritize matched skills
-                if "Technical Skills" in skills_for_pdf:
-                    skills_for_pdf["Technical Skills"] = matched + [s for s in skills_for_pdf["Technical Skills"] if s not in matched]
-
-            RB.render_pdf(buf, resume_text, skills_for_pdf,
-                         matched, title, company, None,
-                         best_project=matched_project)
-            data = buf.getvalue()
-            name = base + ".pdf"
-            _save_resume_copy(name, data)
-            out_files.append({"name": name, "mime": "application/pdf",
-                            "b64": base64.b64encode(data).decode()})
-
-        if fmt in ("docx", "both"):
-            import io
-            buf = io.BytesIO()
-            project_match_score = result.get("project_match_score", 0)
-            matched_project = best_project if (best_project and best_project.get("name") and project_match_score >= 75) else None
-
-            # Build skills dict from matched skills (format expected by render_docx)
-            skills_for_docx = P.SKILLS.copy()
-            if matched:  # Prioritize matched skills
-                if "Technical Skills" in skills_for_docx:
-                    skills_for_docx["Technical Skills"] = matched + [s for s in skills_for_docx["Technical Skills"] if s not in matched]
-
-            RB.render_docx(buf, resume_text, skills_for_docx,
-                          matched, title, company, None,
-                          best_project=matched_project)
-            data = buf.getvalue()
-            name = base + ".docx"
-            _save_resume_copy(name, data)
-            out_files.append({"name": name, "mime": _DOCX_MIME,
-                            "b64": base64.b64encode(data).decode()})
+        # Same ATS-tailored pipeline as /api/resume/build: headline + evidence-based
+        # keywords + bullet ordering + evergreen file name + honest ATS estimate.
+        built = _render_resume_files(title, company, real_description, fmt, matched_project)
+        out_files = built["files"]
+        matched = built["emphasized"][:12]
+        ats_score = built["ats_score"]
 
         # Build matching explanation
         matched_skills_str = ", ".join(matched[:5]) if matched else "Your profile skills"
@@ -1970,8 +1968,12 @@ def _build_apply_kit(title: str, company: str, description: str, job_url: str,
         return {
             "files": out_files,
             "emphasized": matched,
-            "ats_keywords": result.get("resume", {}).get("ats_keywords", []),
+            "ats_keywords": built["ats_keywords"],
             "ats_score": ats_score,
+            "ats_estimate_note": built["ats_note"],
+            "headline": built["headline"],
+            "keyword_coverage": built["coverage"],
+            "skill_gaps": built["gaps"],
             "cover_note": _build_cover_note(title, company, matched),
             "job_url": job_url, "title": title, "company": company,
             "best_project": best_project,
@@ -2040,8 +2042,11 @@ def api_apply_autofill(payload: dict):
     resume_path = None
     if resume_file:
         import tempfile
-        fd, resume_path = tempfile.mkstemp(suffix="_" + resume_file["name"])
-        with os.fdopen(fd, "wb") as f:
+        # Write inside a private temp DIR so the file keeps its clean evergreen name
+        # (Aman_Kabra_Resume.pdf) — the employer's form shows the uploaded file name,
+        # so a mkstemp "tmpab12_" prefix would leak into it.
+        resume_path = os.path.join(tempfile.mkdtemp(), resume_file["name"])
+        with open(resume_path, "wb") as f:
             f.write(base64.b64decode(resume_file["b64"]))
 
     autofill = AA.autofill_application(
@@ -2082,8 +2087,8 @@ async def api_resume_tailor(
     want_pdf = fmt in ("pdf", "both")
     want_docx = fmt in ("docx", "both")
 
-    base = _slugify(os.path.splitext(os.path.basename(file.filename or "resume"))[0])
-    base = base or "resume"
+    # Evergreen name (person name only) — never carries job/date/"tailored"/"ats"
+    base = RB.evergreen_name_from(os.path.splitext(os.path.basename(file.filename or ""))[0])
 
     # Build TWO versions from the same upload (tailor_upload is blocking — parses
     # files and launches Word for PDF — so run each off the event loop):
@@ -2114,7 +2119,9 @@ async def api_resume_tailor(
             if ats:
                 ats_added = result.get("ats_added", 0)
 
-            vbase = f"{base}_tailored_{suffix}"
+            # A = <Name>_Resume ; B = <Name>_Resume_v2 (version tag only; downloads
+            # land side by side). The UI tells A/B apart by `version`, not the name.
+            vbase = f"{base}_Resume" + ("_v2" if ats else "")
             if result.get("docx"):
                 name = vbase + ".docx"
                 _save_resume_copy(name, result["docx"])
@@ -2981,7 +2988,7 @@ function renderJobs(){
       return `<tr>
         <td>${idx}</td>
         <td><span class="score ${scoreClass(j.score)}">${j.score}%</span>${j.interview_likelihood!=null?('<div class="note" style="font-size:10px;margin-top:2px;color:#4dd0e1">AI: '+j.interview_likelihood+'%</div>'):j.skill_pct!=null?('<div class="note" style="font-size:10px;margin-top:2px">skills '+j.skill_pct+'%</div>'):''}${j.fit_level?' <div class="note" style="font-size:9px;margin-top:2px">'+j.fit_level+'</div>':''}</td>
-        <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${exp}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.salary_lpa>0?(' <span class="chip"'+(j.salary_lpa>CURRENT_LPA?' style="background:#1c7c3f;color:#fff" title="above your current pay"':'')+'>'+j.salary_lpa+' LPA'+(j.salary_lpa>CURRENT_LPA?' ↑':'')+'</span>'):''}${matchLine}${missLine}</td>
+        <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${exp}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.competition==='LOW'?' <span class="chip" style="background:#0e7490;color:#fff" title="'+esc((j.jd_flags||j.why||[]).join(' · '))+'">low competition</span>':(j.competition==='HIGH'?' <span class="chip" style="opacity:.7" title="crowded: many applicants expected">crowded</span>':'')}${j.salary_lpa>0?(' <span class="chip"'+(j.salary_lpa>CURRENT_LPA?' style="background:#1c7c3f;color:#fff" title="above your current pay"':'')+'>'+j.salary_lpa+' LPA'+(j.salary_lpa>CURRENT_LPA?' ↑':'')+'</span>'):''}${matchLine}${missLine}</td>
         <td>${esc(j.company)}</td>
         <td class="note">${size}</td>
         <td>${esc(j.location)}</td>
@@ -3338,6 +3345,8 @@ function showApplyModal(j, d){
   const atsScore=d.ats_score||0;
   const atsColor=atsScore>=80?'#16a34a':atsScore>=70?'#eab308':atsScore>=50?'#f97316':'#dc2626';
   const atsLabel=atsScore>=80?'Excellent':atsScore>=70?'Good':atsScore>=50?'Fair':'Poor';
+  const kitGaps=(d.skill_gaps||[]).slice(0,6);
+  const kitGapHtml=kitGaps.length?'<div class="note" style="margin-top:6px">JD wants, not on your resume (add only if true): '+kitGaps.map(k=>'<b>'+esc(k)+'</b>').join(', ')+'</div>':'';
   const projectAction=d.project_action||'kept';
   const actionEmoji=(projectAction==='swapped'?'🔄':'✓');
   const actionText=(projectAction==='swapped'?'Swapped to best match':'Kept (best match)');
@@ -3375,8 +3384,10 @@ function showApplyModal(j, d){
     +'<div class="modal-body">'
     +'<div class="note" style="margin:-4px 0 14px">'+esc(j.company||'')+(j.location?(' · '+esc(j.location)):'')+'</div>'
     +'<div style="padding:8px 12px; background:'+atsColor+'; border-radius:4px; margin-bottom:12px; color:white; font-weight:600;">'
-    +'ATS Score: '+atsScore+'/100 ('+atsLabel+')'
+    +'ATS estimate: '+atsScore+'/100 ('+atsLabel+')'
+    +(d.keyword_coverage!=null?(' · JD keyword coverage '+d.keyword_coverage+'%'):'')
     +'</div>'
+    +(d.headline?('<div class="note" style="margin:-4px 0 10px">Resume headline: <b>'+esc(d.headline)+'</b>'+kitGapHtml+'</div>'):'')
     +projectSection
     +'<div class="field"><label>1 · Resume tailored to this job</label>'
     +'<div class="bar">'+(dl||'<span class="note">No file.</span>')+'</div>'
@@ -3561,7 +3572,10 @@ async function generateResume(){
     const scoreColor=atsScore>=80?'#16a34a':atsScore>=70?'#eab308':atsScore>=50?'#f97316':'#dc2626';
     const scoreLabel=atsScore>=80?'Excellent':atsScore>=70?'Good':atsScore>=50?'Fair':'Poor';
     const keywordTags=atsKeywords.length?'<br><span style="font-size:11px;color:var(--mut)">Keywords: '+atsKeywords.map(k=>'<b>'+esc(k)+'</b>').join(', ')+'</span>':'';
-    $('#genResult').innerHTML='<div style="margin-bottom:8px">Downloaded · <b style="font-size:16px;color:'+scoreColor+'">ATS: '+atsScore+'/100 ('+scoreLabel+')</b></div><span style="font-size:12px">'+emph+' skills matched to job description'+keywordTags+'</span>';
+    const gaps=(d.skill_gaps||[]).slice(0,8);
+    const gapLine=gaps.length?'<br><span style="font-size:11px;color:var(--mut)">Not on your resume (JD wants — add only if you truly have them): '+gaps.map(k=>'<b>'+esc(k)+'</b>').join(', ')+'</span>':'';
+    const headLine=d.headline?'<br><span style="font-size:11px;color:var(--mut)">Headline: <b>'+esc(d.headline)+'</b> · JD keyword coverage: <b>'+(d.keyword_coverage||0)+'%</b></span>':'';
+    $('#genResult').innerHTML='<div style="margin-bottom:8px">Downloaded · <b style="font-size:16px;color:'+scoreColor+'">ATS estimate: '+atsScore+'/100 ('+scoreLabel+')</b></div><span style="font-size:12px">'+emph+' skills matched to job description'+keywordTags+headLine+gapLine+'<br><span style="font-size:10px;color:var(--mut)">'+esc(d.ats_estimate_note||'')+' File name stays Aman_Kabra_Resume — safe for any job.</span></span>';
     toast('✓ Resume generated! ATS Score: '+atsScore+'/100 ('+scoreLabel+')');
     // Clear the pasted JD / title / company so the next resume starts fresh
     // (the old JD no longer lingers on the form) -- and auto-clear this
@@ -3569,7 +3583,7 @@ async function generateResume(){
     // for a job description that's no longer even in the form.
     $('#genJD').value=''; $('#genTitle').value=''; $('#genCompany').value='';
     clearTimeout(window._genResultTimer);
-    window._genResultTimer=setTimeout(()=>{ $('#genResult').innerHTML=''; }, 9000);
+    window._genResultTimer=setTimeout(()=>{ $('#genResult').innerHTML=''; }, 30000);
     loadResumes();
   }catch(e){ $('#genResult').textContent='Error: '+e; }
   finally{ stopTimer(); setBusy(btn,false); btn.textContent=old; }
@@ -3725,7 +3739,7 @@ async function applyAtsImprovements(){
     const url=URL.createObjectURL(blob);
     const a=document.createElement('a');
     a.href=url;
-    a.download='resume_ats_optimized.docx';
+    a.download='Aman_Kabra_Resume.docx';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

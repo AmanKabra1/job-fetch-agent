@@ -57,10 +57,9 @@ def detect_ats(job_url: str) -> str:
       - SmartRecruiters — checked live: its "I'm interested" button redirects
         to a separate "oneclick-ui" flow (typically a LinkedIn/Google social-
         login quick-apply), the same account-gated pattern, not a plain form.
-    Ashby IS a public form but renders a fully custom React layout per job
-    with no stable selectors across postings, so detect_ats() recognizes it
-    (for the UI badge) but autofill_application() below has no filler for it —
-    the browser still opens on the real posting, nothing gets pre-filled."""
+    Ashby is a public form with custom per-job questions, but its SYSTEM fields
+    (name / email / phone / resume) have stable ids, so _fill_ashby pre-fills
+    those; the custom questions and the reCAPTCHA stay for you."""
     host = urlparse(job_url or "").netloc.lower()
     if "lever.co" in host:
         return "lever"
@@ -298,10 +297,24 @@ def _fill_greenhouse(page, full_name, email, phone, resume_path, cover_note, lin
 
 
 def _fill_ashby(page, full_name, email, phone, resume_path, cover_note, linkedin, github, screening):
-    # Ashby renders a fully custom React form per job — no selector is stable
-    # across postings, so there's nothing generic worth auto-filling here. The
-    # browser still opens on the real posting, saving the click-through.
-    return []
+    # Ashby's custom per-job questions vary, but its SYSTEM fields have stable ids
+    # (checked live on a real posting 2026-10-07): #_systemfield_name, #_systemfield_email,
+    # #_systemfield_resume (file) and a type=tel phone input. The form lives at
+    # <job url>/application, so open that tab first. Like every filler here this never
+    # touches Submit — Ashby forms carry a reCAPTCHA, which only you may solve.
+    try:
+        if "/application" not in page.url:
+            page.goto(page.url.split("?")[0].rstrip("/") + "/application", timeout=30000)
+            page.wait_for_timeout(2500)
+    except Exception:
+        pass
+    filled = []
+    _try_fill(page, "#_systemfield_name", full_name, "name", filled)
+    _try_fill(page, "#_systemfield_email", email, "email", filled)
+    _try_fill(page, "input[type='tel']", phone, "phone", filled)
+    _try_upload(page, ["#_systemfield_resume", "input[type='file']"], resume_path, filled)
+    filled += _answer_text_questions(page, _with_profile_links(screening, linkedin, github))
+    return filled
 
 
 def _fill_workable(page, full_name, email, phone, resume_path, cover_note, linkedin, github, screening):

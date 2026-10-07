@@ -28,6 +28,8 @@ import strict_matcher as SM        # strict filtering before ranking
 import job_analyzer as JA          # free heuristic-based job analysis (no API needed)
 import job_requirement_agent as JRA  # LangGraph agent: check JD + expiration
 import job_fit_analyzer as JFA     # AI agent: analyzes top 50 jobs for interview likelihood
+import jd_screener as JDS          # reads each JD: skills / years / pay / Java / scam / competition
+import new_sources as NS           # LinkedIn JD + applicant-count enrichment
 
 
 def _quiet_jobspy():
@@ -51,34 +53,31 @@ def _quiet_jobspy():
 # Node / full-stack) plus the SDE and AI/ML roles you want. Boards search by role,
 # so we keep these as roles; your detailed SKILLS drive the RANKING below.
 SEARCH_TERMS = [
-    # TOP PRIORITY: Node.js, NestJS, Full Stack, AI (your preferred tech)
-    "Node.js developer", "NestJS developer", "full stack developer",
-    "AI engineer", "LLM engineer", "AI developer",
-    "Node.js backend engineer", "NestJS backend engineer", "full stack engineer",
+    # Roles you asked for: Backend, SDE-1, Software Engineer, AI Developer, Python Developer
+    "backend developer", "backend engineer",
+    "SDE 1", "SDE-1 software development engineer", "software development engineer 1",
+    "software engineer", "software developer", "associate software engineer",
+    "AI developer", "AI engineer", "Python developer", "Python backend developer",
 
-    # HIGH PRIORITY: Python, Backend, AI/ML
-    "Python developer", "Python backend engineer", "backend developer", "backend engineer",
-    "TypeScript backend developer", "Express.js developer",
-    "machine learning engineer", "ML engineer",
+    # Your strongest stack
+    "Node.js developer", "Node.js backend engineer", "NestJS developer",
+    "TypeScript backend developer", "full stack developer", "FastAPI developer",
 
-    # SECONDARY: Java, Go, other backends (expanded to get more jobs)
-    "Java backend engineer", "Java developer", "Spring Boot developer",
-    "Go developer", "Golang engineer", "Go backend developer",
-    "microservices developer", "API developer", "REST API developer",
+    # AI / LLM (2026's fastest-growing demand for your profile)
+    "LLM engineer", "generative AI engineer", "GenAI developer", "AI agent developer",
+    "applied AI engineer", "machine learning engineer",
 
-    # INCLUSIVE: Junior/Entry-level (1-2 years OK, not just 2+)
-    "Junior developer", "Junior backend developer", "Junior full stack developer",
-    "junior engineer", "entry level developer", "graduate engineer",
-    "Junior Java developer", "Junior Python developer", "Junior Node.js developer",
-
-    # GENERAL: Catch-all for more volume
-    "software developer", "software engineer", "SDE 1",
-    "data engineer", "full stack engineer",
+    # Level / shape of role
+    "junior backend developer", "junior software engineer", "software engineer 1",
+    "API developer", "microservices developer",
 ]
+# NOTE: Java was deliberately cut from the search terms (you wanted fewer Java roles).
+# Java-primary postings that still slip in via the generic terms are rejected by
+# jd_screener.java_profile(); Java as a SECONDARY skill next to Node/Python is kept.
 
 # Extra skills/keywords to emphasise on top of the resume. Edit freely.
 PREFERRED_SKILLS = ["Node.js", "NestJS", "Express.js", "TypeScript", "JavaScript",
-                    "Python", "Java", "Spring Boot", "Go", "Golang", "Docker", "Microservices",
+                    "Python", "Go", "Golang", "Docker", "Microservices",
                     "PostgreSQL", "MongoDB", "REST API", "GraphQL",
                     "AI", "LLM", "RAG", "Machine Learning", "ML Engineer",
                     "LangChain", "LangGraph", "Agentic AI", "Junior", "Entry Level"]
@@ -122,7 +121,7 @@ RESULTS_WANTED = 100
 # Where the daily feed is written. The Vercel app reads this same file.
 OUTPUT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data", "jobs.json")
 # Cap the stored feed so the committed file doesn't grow without bound.
-MAX_STORED = 2000  # Increased to show 300+ jobs
+MAX_STORED = 800   # best-ranked first; each row now carries its JD, so keep the file small
 # Always keep at least this many fresh jobs in the feed (when that many were fetched).
 # Realistic target: 200-300 quality jobs per cron run (more chances to apply)
 MIN_KEEP_BEFORE_RELAX = 200
@@ -140,10 +139,16 @@ COLUMNS = [
     "job_url",          # <-- the real, direct link where it's posted
     "min_amount",
     "max_amount",
+    "interval",         # pay period (yearly/monthly/hourly) — needed to read min/max_amount
+    "currency",
     "is_remote",
     "company_num_employees",
     "search_term",
+    "description",      # the FULL JD: dropped before, so nothing ever really read it
 ]
+# Descriptions are screened at full length but trimmed when written to data/jobs.json
+# (keeps the committed file small; still plenty for tailoring a resume to the job).
+DESC_STORE_CHARS = 3500
 # --------------------------------------------------------------------------- #
 
 
@@ -161,14 +166,82 @@ def load_existing() -> list:
     return payload if isinstance(payload, list) else []
 
 
-def write_feed(jobs: list):
+SEEN_KEEP_DAYS = 90        # forget a role after this long
+REPOST_FLAG_DAYS = 30      # same role seen ≥30 days ago under a NEW url → likely ghost/evergreen
+REPOST_REJECT_DAYS = 45    # ...≥45 days → drop it
+
+
+def _job_key(r: dict) -> str:
+    """Stable identity for 'the same role at the same company' across re-posts."""
+    import hashlib
+    t = re.sub(r"[^a-z0-9]+", " ", str(r.get("title", "")).lower()).strip()
+    c = re.sub(r"[^a-z0-9]+", " ", str(r.get("company", "")).lower()).strip()
+    loc = re.sub(r"[^a-z]+", " ", str(r.get("location", "")).lower()).split()[:1]
+    return hashlib.sha1(f"{c}|{t}|{' '.join(loc)}".encode()).hexdigest()[:12]
+
+
+def load_seen() -> dict:
+    """{job_key: first_seen 'YYYY-MM-DD'} persisted inside data/jobs.json (so it rides
+    the same feed-branch round trip as the jobs themselves)."""
+    try:
+        with open(OUTPUT_FILE, "r", encoding="utf-8") as f:
+            payload = json.load(f)
+        seen = payload.get("seen", {}) if isinstance(payload, dict) else {}
+        return seen if isinstance(seen, dict) else {}
+    except (OSError, json.JSONDecodeError):
+        return {}
+
+
+def apply_repost_signals(rows: list, seen: dict) -> list:
+    """Ghost-job guard (research: ~27% of listings are ghost/evergreen; the tell is the
+    same company+title+city re-posted under a fresh URL for weeks). Flag at 30 days,
+    drop at 45. Records first-seen dates in `seen` and prunes entries older than 90d."""
+    today = datetime.now(timezone.utc).date()
+    kept, flagged, dropped = [], 0, 0
+    for r in rows:
+        k = _job_key(r)
+        first = seen.get(k)
+        age = 0
+        if first:
+            try:
+                age = (today - datetime.strptime(first, "%Y-%m-%d").date()).days
+            except ValueError:
+                age = 0
+        else:
+            seen[k] = today.isoformat()
+        if age >= REPOST_REJECT_DAYS:
+            dropped += 1
+            continue
+        if age >= REPOST_FLAG_DAYS:
+            r["_jd_boost"] = int(r.get("_jd_boost", 0)) - 4
+            r["_jd_flags"] = (r.get("_jd_flags") or []) + [f"re-posted for {age} days (ghost risk)"]
+            flagged += 1
+        kept.append(r)
+    for k in [k for k, d in seen.items()
+              if (today - datetime.strptime(d, "%Y-%m-%d").date()).days > SEEN_KEEP_DAYS]:
+        del seen[k]
+    if flagged or dropped:
+        print(f"  repost guard: {flagged} flagged, {dropped} dropped (same role re-posted for weeks)", flush=True)
+    return kept
+
+
+def write_feed(jobs: list, seen: dict = None):
     """Write the combined job list to data/jobs.json (newest first, capped)."""
     os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
+    stored = []
+    for j in jobs[:MAX_STORED]:
+        j = dict(j)
+        d = str(j.get("description") or "")
+        if len(d) > DESC_STORE_CHARS:
+            j["description"] = d[:DESC_STORE_CHARS].rsplit(" ", 1)[0] + " …"
+        stored.append(j)
     payload = {
         "fetched_at": datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC"),
-        "count": len(jobs),
-        "jobs": jobs[:MAX_STORED],
+        "count": len(stored),
+        "jobs": stored,
     }
+    if seen is not None:
+        payload["seen"] = seen
     with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
         json.dump(payload, f, ensure_ascii=False, indent=0)
 
@@ -208,7 +281,7 @@ def fetch_all_jobs() -> pd.DataFrame:
           flush=True)
     try:
         extra = ES.fetch_extra(SEARCH_TERMS, per_term=20, max_age_hours=HOURS_OLD,
-                               include_career=True, use_tavily=use_tavily)
+                               include_career=True, use_tavily=use_tavily, deep_portals=True)
         if extra:
             edf = pd.DataFrame(extra)
             edf["search_term"] = "remote-api"
@@ -298,7 +371,19 @@ def rank_for_feed(rows):
         print(f"  relaxed skill gate (strict pass kept {len(ranked)})", flush=True)
 
     by_url = {str(r.get("job_url", "")): r for r in rows}
-    ordered = [by_url[j["job_url"]] for j in ranked if j.get("job_url") in by_url]
+    ordered = []
+    for j in ranked:
+        row = by_url.get(j.get("job_url"))
+        if row is None:
+            continue
+        # Persist the personalised score + reasons on the row. These were never saved
+        # before, so every "_match_score" read below was 0 and the ranking was lost.
+        row["_match_score"] = j.get("score", 0)
+        row["_score_raw"] = j.get("score_raw", j.get("score", 0))   # un-capped, for ordering
+        row["_skill_pct"] = j.get("skill_pct", 0)
+        row["_matched"] = j.get("matched", [])
+        row["_why"] = j.get("why", [])
+        ordered.append(row)
 
     # AI job intelligence: read job descriptions and adjust ranking based on actual fit,
     # not just posted experience years. E.g., "5 years posted but mentors juniors" -> boost.
@@ -315,8 +400,14 @@ def rank_for_feed(rows):
             if delta:
                 job["_ai_analysis"] = analysis
                 job["_ai_delta"] = delta
-        # Re-rank with AI adjustments
-        ordered.sort(key=lambda j: (j.get("_ai_delta", 0), -APP._days_old(j.get("date_posted"))),
+        # Re-rank: personalised match score + AI adjustment (previously only the AI delta
+        # was used, which threw the match ranking away and left the feed sorted by date).
+        for j in ordered:
+            j["_score_raw"] = int(j.get("_score_raw", j.get("_match_score", 0))) + int(j.get("_ai_delta", 0))
+            j["_match_score"] = max(0, min(100, j["_score_raw"]))
+        # order by the UN-capped score so the low-competition / pay boosts still separate
+        # jobs that all display "100%"
+        ordered.sort(key=lambda j: (j.get("_score_raw", 0), -APP._days_old(j.get("date_posted"))),
                      reverse=True)
         boosted = len([j for j in ordered if j.get("_ai_delta", 0) > 0])
         penalised = len([j for j in ordered if j.get("_ai_delta", 0) < 0])
@@ -325,23 +416,58 @@ def rank_for_feed(rows):
     except Exception as e:
         print(f"  ! AI analysis skipped: {e}", flush=True)
 
-    # Floor: if the gate left fewer than MIN_FEED, top up with the remaining
-    # (deduped) raw rows so the feed is never sparse. But NEVER include jobs with
-    # 0 skill matches (completely irrelevant roles).
+    # Floor: if the gate left fewer than MIN_FEED, add the rows that still clear every
+    # HARD gate (experience, seniority, title, JD screen) but have a lower skill overlap.
+    # The old top-up re-added rows the scorer had REJECTED (wrong title, too senior) with
+    # no score at all, which put exactly the jobs you do not want back in the feed.
     if len(ordered) < MIN_FEED:
-        seen = {str(r.get("job_url", "")) for r in ordered}
-        for r in rows:
-            u = str(r.get("job_url", ""))
-            if u and u not in seen:
-                # Only add if it has at least 1 skill match (not completely irrelevant)
-                has_skill_match = any(skill in r.get('description', '').lower()
-                                     for skill in SEARCH_TERMS)
-                if has_skill_match or r.get('search_term') in SEARCH_TERMS:
-                    ordered.append(r)
-                    seen.add(u)
+        have = {str(r.get("job_url", "")) for r in ordered}
+        extra, _ = APP._rank_jobs(rows, MAX_STORED, profile, 0.3, min_score=0)
+        for j in extra:
+            row = by_url.get(j.get("job_url"))
+            if row is None or str(j.get("job_url")) in have:
+                continue
+            row["_match_score"] = j.get("score", 0)
+            row["_score_raw"] = j.get("score_raw", j.get("score", 0))
+            row["_skill_pct"] = j.get("skill_pct", 0)
+            row["_matched"] = j.get("matched", [])
+            row["_why"] = j.get("why", [])
+            ordered.append(row); have.add(str(j.get("job_url")))
             if len(ordered) >= MIN_FEED:
                 break
     return ordered[:MAX_STORED]
+
+
+# How many LinkedIn postings to open for their real JD + applicant count each run.
+# (~1 request/second, so 60 ≈ 1 minute; set 0 to disable.)
+LINKEDIN_ENRICH_MAX = int(os.environ.get("LINKEDIN_ENRICH_MAX", "60"))
+CANDIDATE_YEARS = 2
+
+
+def screen_rows(rows, label):
+    """Run jd_screener over every row; keep the survivors, annotate them, and print the
+    top rejection reasons so you can see WHY jobs were dropped."""
+    kept, reasons = [], {}
+    for r in rows:
+        v = JDS.screen_job(r, candidate_years=CANDIDATE_YEARS, skills=RESUME_SKILLS)
+        if not v["keep"]:
+            key = re.sub(r"\d+(\.\d+)?", "N", v["reason"])[:70]
+            reasons[key] = reasons.get(key, 0) + 1
+            continue
+        r["_jd_boost"] = v["boost"]
+        r["_competition"] = v["competition"]
+        r["_jd_flags"] = v["flags"][:6]
+        r["_jd_fit"] = v["fit"]
+        r["_salary_lpa"] = v["salary_lpa"]
+        lo, hi = v["req_years"]
+        r["_req_years"] = f"{lo}-{hi}" if hi != lo else (str(lo) if lo else "")
+        kept.append(r)
+    low = sum(1 for r in kept if r.get("_competition") == "LOW")
+    print(f"  JD screen [{label}]: kept {len(kept)}/{len(rows)} "
+          f"({low} low-competition)", flush=True)
+    for reason, n in sorted(reasons.items(), key=lambda x: -x[1])[:6]:
+        print(f"      {n}× {reason}", flush=True)
+    return kept
 
 
 def main():
@@ -374,6 +500,22 @@ def main():
 
     today_rows = filtered_rows  # Use filtered jobs from now on
 
+    # JD SCREEN (pass 1): read every job description for skills / experience / pay /
+    # Java-heaviness / India-eligibility / scam + ghost signals, and tag each survivor
+    # with its expected application crowding. Rows with no JD yet (LinkedIn bulk scrape)
+    # are judged on title/location now and re-screened after enrichment below.
+    today_rows = screen_rows(today_rows, "pass 1")
+
+    # LinkedIn rows come back without a description (fetching one per job is slow).
+    # Fetch the real JD + applicant count only for survivors, newest first, then re-screen.
+    try:
+        n = NS.enrich_linkedin(today_rows, max_n=LINKEDIN_ENRICH_MAX)
+        if n:
+            print(f"  enriched {n} LinkedIn jobs with full JD + applicant counts", flush=True)
+            today_rows = screen_rows(today_rows, "pass 2 (after LinkedIn JDs)")
+    except Exception as e:
+        print(f"  ! LinkedIn enrichment skipped: {e}", flush=True)
+
     # DEDUPLICATION STEP 1: Remove exact URL duplicates within this run
     print(f"  deduplicating jobs within this run ...", flush=True)
     today_rows, dedup_stats = JRA.deduplicate_jobs(today_rows)
@@ -388,6 +530,10 @@ def main():
     if dedup_removed > 0:
         print(f"    removed {dedup_removed} duplicate jobs from previous runs", flush=True)
     print(f"    now have {len(today_rows)} new unique jobs", flush=True)
+
+    # GHOST-JOB GUARD: same company+title+city under a new URL for weeks = evergreen post.
+    seen_history = load_seen()
+    today_rows = apply_repost_signals(today_rows, seen_history)
 
     # REQUIREMENT AGENT: Temporarily disabled to debug why only 12 jobs show
     # Uncomment below to re-enable Groq verification
@@ -506,7 +652,7 @@ def main():
     except Exception as e:
         print(f"    ! fit analysis failed: {e} (continuing without analysis)", flush=True)
 
-    write_feed(ranked)
+    write_feed(ranked, seen_history)
     print(f"Replaced feed with today's latest: {len(ranked)} jobs "
           f"({quality_breakdown}, organized by quality + match score, floor {MIN_FEED}).", flush=True)
 

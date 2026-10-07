@@ -110,8 +110,9 @@ def generate_tailored_resume(job: dict, user_resume: dict = None, format_type: s
         matched_skills = _extract_job_skills(jd_desc)
 
         # Calculate ATS score for tailored resume
-        ats_score = ATS.score_resume_for_jd(tailored, jd_desc)
-        ats_score = max(ats_score, 85)  # Ensure 85+ for tailored resumes
+        # Honest estimate only — no forced 85+ floor (the real score for the final
+        # document is computed in app._render_resume_files from the rendered text).
+        ats_score = ATS.score_resume_for_jd(tailored, jd_desc, jd_title)
 
         return {
             "resume": tailored,
