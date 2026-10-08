@@ -586,6 +586,8 @@ def main():
     carried = [r for r in existing
                if _tavily_row(r) and _fresh(r) and str(r.get("job_url", "")) not in seen]
     if carried:
+        carried = screen_rows(carried, "carried rows")   # old rows get today's rules too
+    if carried:
         today_rows = today_rows + carried
         seen |= {str(r.get("job_url", "")) for r in carried}
         print(f"  carried forward {len(carried)} Tavily rows (LinkedIn posts / career "
@@ -618,6 +620,8 @@ def main():
                                and _is_fresh(r)
                                and r.get("_match_score", 0) < 95]  # These are older, lower quality
 
+        # re-check old rows against the current experience cap before reusing them
+        high_quality_existing = screen_rows(high_quality_existing, "previous-feed top-up")
         feed_rows = today_rows + high_quality_existing
         removed_low = len(low_quality_existing)
 
