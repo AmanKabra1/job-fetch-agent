@@ -161,9 +161,10 @@ def should_include_job(job: dict, candidate_experience_years: int = 2) -> tuple[
         return False, f"wrong field: {title} (not backend/dev)"
 
     # HARD GATE 2: Experience filter - reject if asks for 5+ years
-    req_years = _extract_required_years(desc)
-    if req_years >= 5:
-        return False, f"too senior: asks for {req_years}+ years (you have {candidate_experience_years})"
+    import jd_screener as JDS
+    lo, hi = JDS.required_years(desc)
+    if JDS.too_senior(lo, hi, candidate_experience_years):
+        return False, f"too senior: asks for {lo}-{hi} years (you have {candidate_experience_years})"
 
     # GATE 3: Skill matching - check if job is IN YOUR FIELD
     job_required_skills = _extract_required_skills(desc)

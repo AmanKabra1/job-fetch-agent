@@ -112,6 +112,9 @@ _t("LLM", ["llm", "llms", "large language model", "large language models", "gpt"
    r"\bllm\b|large language model", kind="ai")
 _t("Generative AI", ["generative ai", "genai", "gen ai", "gen-ai"], r"\bllm\b|\brag\b|langchain|langgraph", kind="ai")
 _t("RAG", ["rag", "retrieval-augmented generation", "retrieval augmented generation"], r"\brag\b|retrieval", kind="ai")
+_t("AI-Assisted Development", ["ai-assisted development", "ai assisted development", "ai coding",
+                               "ai-native", "ai native", "ai tools", "copilot", "cursor", "codex", "claude code"],
+   r"claude|codex|ai[- ]native|ai coding", kind="ai")
 _t("LangChain", ["langchain", "lang chain"], kind="ai")
 _t("LangGraph", ["langgraph", "lang graph"], kind="ai")
 _t("AI Agents", ["ai agent", "ai agents", "agentic", "agentic ai", "multi-agent", "multi agent", "autonomous agents"],
@@ -222,11 +225,11 @@ def role_family(title: str, jd_text: str = "") -> str:
 
 
 _FAMILY_TITLE = {
-    "ai": "Software Engineer (AI / LLM Applications)",
+    "ai": "SDE-1 (AI / LLM Applications)",
     "python": "Python Backend Developer",
     "node": "Node.js Backend Developer",
     "fullstack": "Full Stack Engineer",
-    "sde": "Software Development Engineer",
+    "sde": "Software Development Engineer I (SDE-1)",
     "software": "Software Engineer",
     "backend": "Backend Software Engineer",
 }

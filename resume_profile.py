@@ -29,11 +29,12 @@ GITHUB = "https://github.com/AmanKabra1"
 DEFAULT_STACK = ["NestJS", "Node.js", "TypeScript", "Python", "FastAPI"]
 
 SUMMARY_TEMPLATE = (
-    "Backend-focused Software Developer with 2 years of experience building "
-    "scalable microservices and RESTful APIs using {stack}. Optimized MySQL and "
-    "PostgreSQL databases and integrated AWS services for 99.9% uptime. Hands-on "
-    "with LLM integration, RAG and agentic AI (LangChain, LangGraph); foundation "
-    "in Go and Java (Spring Boot)."
+    "Backend-focused Software Development Engineer (SDE-1) with 2 years of experience "
+    "building scalable microservices and RESTful APIs using {stack}. Optimized MySQL and "
+    "PostgreSQL databases and integrated AWS services for 99.9% uptime. Works in an "
+    "AI-native engineering setup: LLM integration, RAG and agentic AI (LangChain, "
+    "LangGraph) in Python, shipping with AI coding tools (Claude, Codex); foundation in "
+    "Go and Java (Spring Boot)."
 )
 
 # --------------------------------------------------------------------------- #
@@ -42,10 +43,13 @@ SUMMARY_TEMPLATE = (
 EXPERIENCE = [
     {
         "company": "Sanchi Connect Pvt Ltd",
-        "title": "Software Developer",
+        "title": "Software Development Engineer I (SDE-1)",
         "dates": "Aug 2024 - Present",
         "location": "Noida, Uttar Pradesh, India",
         "bullets": [
+            "Part of the company's move to an AI-native engineering setup: use AI coding "
+            "tools (Claude, Codex) and LLM-powered workflows in day-to-day development, and "
+            "build AI/LLM features in Python (LLM integration, RAG, agentic workflows).",
             "Architected scalable RESTful APIs and microservices using NestJS, "
             "Node.js, Express.js, and TypeScript, enabling seamless inter-service "
             "communication across distributed systems.",
@@ -58,11 +62,10 @@ EXPERIENCE = [
             "Designed backend services using Docker, configured CI/CD pipelines "
             "(GitHub Actions, Jenkins), ensuring 99.9% uptime; resolved "
             "bottlenecks through profiling and monitoring.",
-            "Actively learning Java (Spring Boot) and Go (Golang) for "
-            "high-performance microservices; implemented Python scripts for data "
-            "processing and ETL automation.",
-            "Participated in Agile/Scrum ceremonies, daily standups, sprint "
-            "planning, and peer code reviews, improving team velocity by 20%.",
+            "Wrote Python scripts for data processing and ETL automation; building "
+            "Java (Spring Boot) and Go (Golang) microservice skills.",
+            "Active in Agile/Scrum ceremonies and peer code reviews, improving team "
+            "velocity by 20%.",
         ],
     },
     {
@@ -85,12 +88,8 @@ EXPERIENCE = [
         "dates": "Jan 2024 - Apr 2024",
         "location": "Jaipur, Rajasthan, India",
         "bullets": [
-            "Contributed to enterprise software development, gaining exposure to "
-            "large-scale Java-based system design and production engineering "
-            "practices.",
-            "Developed and tested backend modules using Java, Spring Framework, "
-            "and MySQL, strengthened fundamentals in OOP and design patterns "
-            "(JUnit, TDD).",
+            "Developed and tested backend modules using Java, Spring Framework and MySQL on "
+            "enterprise systems; strengthened OOP and design-pattern fundamentals (JUnit, TDD).",
         ],
     },
 ]
@@ -119,8 +118,8 @@ SKILLS = {
         "Jenkins",
     ],
     "AI/ML": [
-        "Python", "Machine Learning", "LLM Integration",
-        "RAG (Retrieval-Augmented Generation)", "LangChain", "LangGraph",
+        "Python", "Machine Learning", "LLM Integration", "AI Coding Assistants (Claude, Codex)",
+        "RAG", "LangChain", "LangGraph",
         "AI Agents (Agentic AI)",
     ],
     "Architecture & Patterns": [
@@ -138,25 +137,34 @@ SKILLS = {
 # --------------------------------------------------------------------------- #
 PROJECTS = [
     {
+        "name": "AI Job Search & Resume Agent",
+        "stack": "Python, FastAPI, LLM (Groq), Tavily, GitHub Actions, Vercel",
+        "github": "https://github.com/AmanKabra1/job-fetch-agent",
+        "live": "https://job-fetch-agent.vercel.app",
+        "bullets": [
+            "Built a Python/FastAPI agent that pulls jobs from LinkedIn, Indeed, Naukri and ATS career pages, reads each full job description, and ranks roles by skills, experience and salary.",
+            "Integrated an LLM (Groq) and Tavily web research to write interview answers grounded in the candidate's own data, flagging any invented figures.",
+            "Generates ATS-tailored PDF/Word resumes per job (keyword mirroring, ATS score) with ReportLab and python-docx; scheduled on GitHub Actions, deployed on Vercel.",
+        ],
+    },
+    {
         "name": "Shaadi Vidhaan",
         "stack": "NestJS, Angular 17, TypeScript, MySQL, Docker, Render, Vercel",
-        "link": "https://wedding-planner-wine-six.vercel.app/",
+        "live": "https://wedding-planner-wine-six.vercel.app/",
         "bullets": [
-            "Independently built a production full-stack platform for Indian wedding & cultural event planning, covering 28+ states, 7 event types, and 50+ seeded rituals with ceremony details.",
-            "Engineered a NestJS REST API with TypeORM + MySQL, JWT auth with role separation (user vs. organizer), Swagger/OpenAPI docs, validation pipes, and CORS configuration.",
-            "Developed Angular 17 frontend using Signals, standalone components, lazy-loaded routes, and RxJS Map-based response caching for improved load performance.",
-            "Containerized backend with Docker and configured CI/CD via GitHub Actions, enabling auto-redeploy on Render (backend) and Vercel (frontend) on every push.",
+            "Independently built a production full-stack platform for Indian wedding & cultural event planning (28+ states, 7 event types, 50+ seeded rituals).",
+            "Engineered a NestJS REST API with TypeORM + MySQL, role-based JWT auth (user vs. organizer), Swagger/OpenAPI docs and validation pipes.",
+            "Built the Angular 17 frontend with Signals, standalone components, lazy-loaded routes and RxJS response caching.",
+            "Containerized the backend with Docker; CI/CD via GitHub Actions auto-redeploys to Render and Vercel on every push.",
         ],
     },
     {
         "name": "Personal Portfolio",
         "stack": "HTML, CSS, JavaScript",
-        "link": "https://amankabra.dev",
+        "live": "https://dark-mode-portfolio--amankabrait24.replit.app",
         "bullets": [
-            "Full-stack portfolio website showcasing projects, skills, and professional background with responsive design.",
-            "Built with vanilla HTML, CSS, and JavaScript without heavy frameworks for lightweight performance.",
-            "Implemented SEO optimization, mobile-first responsive design, and smooth animations for enhanced user experience.",
-            "Deployed as production-ready website with focus on performance and accessibility standards.",
+            "Dark-mode portfolio site showcasing projects, skills and experience, built with vanilla HTML, CSS and JavaScript.",
+            "Mobile-first responsive layout with SEO optimization and smooth animations; deployed live on Replit.",
         ],
     },
 ]
@@ -215,10 +223,12 @@ SKILL_KEYWORDS = {
     "OAuth 2.0": ["oauth"],
     "Angular 17 (Signals, standalone components, RxJS)": ["angular", "rxjs"],
     "LLM Integration": ["llm", "large language model", "gpt", "openai", "claude", "gemini"],
-    "RAG (Retrieval-Augmented Generation)": ["rag", "retrieval-augmented", "retrieval augmented", "vector"],
+    "RAG": ["rag", "retrieval-augmented", "retrieval augmented", "vector"],
     "Machine Learning": ["machine learning", "ml ", "deep learning", "pytorch", "tensorflow"],
     "LangChain": ["langchain", "lang chain"],
     "LangGraph": ["langgraph", "lang graph"],
+    "AI Coding Assistants (Claude, Codex)": ["claude", "codex", "copilot", "cursor", "ai coding",
+                                            "ai-assisted", "ai assisted", "ai tools", "ai-native"],
     "AI Agents (Agentic AI)": ["agentic ai", "agentic", "ai agent", "ai agents",
                               "autonomous agent", "multi-agent", "multi agent"],
     "n8n": ["n8n", "workflow automation"],

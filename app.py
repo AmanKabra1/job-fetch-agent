@@ -26,6 +26,8 @@ import io
 import re
 import json
 import base64
+import hmac
+import hashlib
 import logging
 import time
 import datetime as dt
@@ -48,7 +50,7 @@ def _quiet_jobspy():
         logging.getLogger(name).disabled = True
 
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form, Request, Response
-from fastapi.responses import HTMLResponse, JSONResponse, FileResponse
+from fastapi.responses import HTMLResponse, JSONResponse, FileResponse, RedirectResponse
 from starlette.concurrency import run_in_threadpool
 
 import resume_tailor as RT
@@ -1078,10 +1080,17 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
         score += min(50, len(job_req) * 8)
 
     # 2. EXPERIENCE (20) + hard gate -------------------------------------------
-    req_floor = _min_required_years(blob)
-    req_ceiling = _required_years(blob)   # upper bound of a range, or the lone number
+    # ONE experience parser (jd_screener): reads decimals ("2.5 yrs"), ignores company-history
+    # numbers, and applies the your-years+1 cap incl. "3-5 yrs" mid-level ranges.
+    import jd_screener as _JDX
+    req_floor, req_ceiling = _JDX.required_years(blob)
     exp_fit = True
     if req_floor and cy:
+        if _JDX.too_senior(req_floor, req_ceiling, cy):
+            return {"reject": True, "reason":
+                    f"needs {req_floor}{'-' + str(req_ceiling) if req_ceiling and req_ceiling != req_floor else '+'} yrs, "
+                    f"you have {cy} (too senior)",
+                    **_summary({"req_years": req_floor})}
         if req_floor <= cy:
             score += 20  # perfect match for your level
             # Extra boost for a TIGHTLY-scoped junior/mid range close to your
@@ -1132,8 +1141,10 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
         score += 8
         reasons.append("entry-level fit (no experience listed)")
 
+    jd_unread = len(desc.strip()) < 200
     exp_label = (f"Your {cy}yr · needs {req_floor}+yr" if (cy and req_floor)
-                 else (f"Your {cy}yr · no req stated" if cy
+                 else (f"Your {cy}yr · JD not read — verify" if (cy and jd_unread)
+                 else f"Your {cy}yr · no req stated" if cy
                        else (f"needs {req_floor}+yr" if req_floor else "no exp info")))
 
     # 3. TITLE RELEVANCE (15) + unrelated-role gate ----------------------------
@@ -1743,11 +1754,77 @@ async def api_profile(
             "api_terms": _api_search_terms(profile, position)}
 
 
+# --------------------------------------------------------------------------- #
+# MY PROFILE PIN LOCK — "My Profile" mode holds your personal details (screening
+# answers, saved resume data), so it asks for a PIN first. Enforced server-side:
+# the page AND the personal APIs check a signed cookie, not just a hidden form.
+# Set PROFILE_PIN in .env (and in Vercel's env vars). No PIN set = locked, never open.
+# --------------------------------------------------------------------------- #
+_PIN_FAILS = {}          # ip -> (count, first_fail_ts)
+
+
+def _profile_pin() -> str:
+    return os.environ.get("PROFILE_PIN", "").strip()
+
+
+def _pin_token() -> str:
+    key = (_profile_pin() + "|" + os.environ.get("PROFILE_SECRET", "job-agent")).encode()
+    return hmac.new(key, b"profile-unlocked", hashlib.sha256).hexdigest()
+
+
+def _profile_unlocked(request: Request) -> bool:
+    return bool(_profile_pin()) and hmac.compare_digest(
+        request.cookies.get("profile_auth", ""), _pin_token())
+
+
+_LOCK_HTML = """<!doctype html><html lang="en"><head><meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/><title>Unlock My Profile</title>
+<style>body{margin:0;background:#0b111c;color:#e7eef9;font:15px system-ui,Segoe UI,sans-serif;display:flex;
+align-items:center;justify-content:center;min-height:100vh}form{background:#16203140;border:1px solid #27364d;
+border-radius:12px;padding:28px;width:min(92vw,340px);text-align:center}h1{font-size:18px;margin:0 0 6px}
+p{color:#8aa0bd;font-size:13px;margin:0 0 16px}input{width:100%;box-sizing:border-box;background:#0e1726;color:#e7eef9;
+border:1px solid #27364d;border-radius:8px;padding:10px;font-size:16px;text-align:center;margin-bottom:12px}
+button{width:100%;background:#3b82f6;color:#fff;border:0;border-radius:8px;padding:10px;font-size:15px;cursor:pointer}
+.err{color:#f0a0a0;font-size:13px;margin-bottom:10px}a{color:#7db0ff;font-size:13px}</style></head><body>
+<form method="post" action="/unlock"><h1>&#128274; My Profile</h1><p>Enter your PIN to open your profile.</p>
+__ERR__<input type="password" name="pin" placeholder="PIN / password" autofocus autocomplete="current-password"/>
+<button type="submit">Unlock</button><p style="margin-top:14px"><a href="/dashboard?mode=visitor">Continue as visitor</a></p></form></body></html>"""
+
+
+def _lock_page(error: str = "", status: int = 401):
+    err = f'<div class="err">{error}</div>' if error else ""
+    return HTMLResponse(_LOCK_HTML.replace("__ERR__", err), status_code=status)
+
+
+@app.post("/unlock")
+async def unlock(request: Request, pin: str = Form("")):
+    ip = (request.client.host if request.client else "?")
+    cnt, first = _PIN_FAILS.get(ip, (0, 0.0))
+    now = time.time()
+    if now - first > 300:
+        cnt, first = 0, now
+    if cnt >= 5:
+        return _lock_page("Too many wrong tries. Wait a few minutes.", 429)
+    real = _profile_pin()
+    if not real:
+        return _lock_page("PROFILE_PIN is not set on the server (.env / Vercel env var).", 503)
+    if not hmac.compare_digest(pin.strip().encode(), real.encode()):
+        _PIN_FAILS[ip] = (cnt + 1, first or now)
+        return _lock_page("Wrong PIN.")
+    _PIN_FAILS.pop(ip, None)
+    resp = RedirectResponse("/dashboard?mode=profile", status_code=303)
+    resp.set_cookie("profile_auth", _pin_token(), max_age=30 * 86400, httponly=True,
+                    samesite="lax", secure=request.url.scheme == "https")
+    return resp
+
+
 @app.get("/api/saved-profile")
-def api_saved_profile():
+def api_saved_profile(request: Request):
     """Return the saved profile (resume_profile.py) — used by Vercel to auto-rank
     feed to your profile without requiring a resume upload. Returns 404 if no
     saved profile is configured."""
+    if not _profile_unlocked(request):
+        raise HTTPException(401, "Locked — open My Profile and enter your PIN.")
     try:
         profile = build_saved_profile()
         if not profile:
@@ -2358,6 +2435,7 @@ def api_interview_common():
 
 @app.post("/api/interview/answer")
 async def api_interview_answer(
+    request: Request,
     question: str = Form(""),
     company: str = Form(""),
     role: str = Form(""),
@@ -2383,6 +2461,8 @@ async def api_interview_answer(
             raise HTTPException(400, "Upload your resume (.docx or .pdf) first.")
         context = resume_text[:IA.MAX_CONTEXT_CHARS]
     else:
+        if not _profile_unlocked(request):
+            raise HTTPException(401, "Locked — open My Profile and enter your PIN.")
         context = IA.saved_profile_text(notes, SCREENING_ANSWERS)
     res = {}
     if research and company.strip():
@@ -2404,16 +2484,18 @@ def index():
             return HTMLResponse(f.read())
     except FileNotFoundError:
         # Fallback: if landing page doesn't exist, go directly to dashboard (My Profile mode)
-        return dashboard(mode="profile")
+        return RedirectResponse("/dashboard?mode=profile")
 
 
 @app.get("/dashboard", response_class=HTMLResponse)
-def dashboard(mode: str = "profile"):
+def dashboard(request: Request, mode: str = "profile"):
     """
     Main dashboard — same UI for both users.
     mode="profile": Show BOTH "Fetch live jobs" + "Load latest jobs" (cron)
     mode="visitor": Show ONLY "Fetch live jobs" (hide cron-personalized jobs)
     """
+    if mode != "visitor" and not _profile_unlocked(request):
+        return _lock_page(status=200)
     live = not _is_feed_mode()
     feed_mode = _is_feed_mode()
     html = INDEX_HTML.replace("__LIVE__", "true" if live else "false")

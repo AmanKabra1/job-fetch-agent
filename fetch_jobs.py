@@ -443,7 +443,7 @@ def rank_for_feed(rows):
 
 # How many LinkedIn postings to open for their real JD + applicant count each run.
 # (~1 request/second, so 60 ≈ 1 minute; set 0 to disable.)
-LINKEDIN_ENRICH_MAX = int(os.environ.get("LINKEDIN_ENRICH_MAX", "60"))
+LINKEDIN_ENRICH_MAX = int(os.environ.get("LINKEDIN_ENRICH_MAX", "150"))
 CANDIDATE_YEARS = 2
 
 
@@ -461,6 +461,7 @@ def screen_rows(rows, label):
         r["_competition"] = v["competition"]
         r["_jd_flags"] = v["flags"][:6]
         r["_jd_fit"] = v["fit"]
+        r["_jd_read"] = v["jd_read"]
         r["_salary_lpa"] = v["salary_lpa"]
         lo, hi = v["req_years"]
         r["_req_years"] = f"{lo}-{hi}" if hi != lo else (str(lo) if lo else "")

@@ -128,9 +128,10 @@ def resume_plain_text(summary, skills, ats_keywords=None, headline=None,
         projs.append((best_project.get("name"), best_project.get("tech_stack") or "",
                       [best_project.get("tailored_description") or best_project.get("description", "")]
                       + list(best_project.get("tailored_bullets") or best_project.get("bullets") or [])))
-    for p in P.PROJECTS:
-        if best_project and p.get("name") == best_project.get("name"):
-            continue
+    if not (best_project and best_project.get("name")) and P.PROJECTS:
+        p0 = P.PROJECTS[0]
+        projs.append((p0.get("name"), p0.get("stack", ""), list(p0.get("bullets", []))))
+    for p in _other_projects(best_project):
         projs.append((p.get("name"), p.get("stack", ""), list(p.get("bullets", []))))
     for name, stack, bl in projs:
         stack = ", ".join(stack) if isinstance(stack, list) else stack
@@ -140,6 +141,34 @@ def resume_plain_text(summary, skills, ats_keywords=None, headline=None,
           f"{P.EDUCATION['degree']} {P.EDUCATION['location']}", "", "CERTIFICATIONS",
           " | ".join(P.CERTIFICATIONS)]
     return "\n".join(L)
+
+
+MAX_HIGHLIGHT_PER_LINE = 3
+
+
+def _top_matches(items, matched):
+    """The JD-matched skills to highlight on one skills line: only the first few (matched
+    skills are already sorted to the front), so the section stays readable."""
+    return set([s for s in items if s in matched][:MAX_HIGHLIGHT_PER_LINE])
+
+
+def _proj_links(proj, html=True):
+    """GitHub + live-demo links of a profile project (either may be missing)."""
+    out = []
+    for label, key in (("GitHub", "github"), ("Live Demo", "live")):
+        url = proj.get(key) or (proj.get("link") if key == "live" else "")
+        if url:
+            out.append((label, url))
+    if html:
+        return " | ".join(f'<a href="{u}">{l}</a>' for l, u in out)
+    return " | ".join(f"{l}: {u.replace('https://', '').rstrip('/')}" for l, u in out)
+
+
+def _other_projects(best_project=None):
+    """The extra projects shown beside the lead project (3 in total; kept short so the
+    resume stays one page). Lead = the JD-matched project if any, else the first profile project."""
+    lead = (best_project or {}).get("name") or (P.PROJECTS[0]["name"] if P.PROJECTS else "")
+    return [p for p in P.PROJECTS if p.get("name") != lead][:2]
 
 
 def slugify(text: str) -> str:
@@ -251,8 +280,8 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
         )
 
     def bold_matched(skill):
-        """Bold a skill label in PDF markup if it matched the JD."""
-        return f"<b>{skill}</b>" if skill in matched else skill
+        """Plain text; callers bold only the top JD matches of a line (see _top_matches)."""
+        return skill
 
     # Header
     story.append(Paragraph(P.NAME, name_st))
@@ -288,7 +317,8 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
     # Technical skills
     section("Technical Skills")
     for category, items in skills.items():
-        line = f"<b>{category}:</b> " + ", ".join(bold_matched(s) for s in items)
+        top = _top_matches(items, matched)
+        line = f"<b>{category}:</b> " + ", ".join(f"<b>{s}</b>" if s in top else s for s in items)
         story.append(Paragraph(line, body_st))
         story.append(Spacer(1, 1))
     if ats_keywords:
@@ -326,7 +356,7 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
         # No match: show first project from profile (default)
         proj = P.PROJECTS[0] if P.PROJECTS else {}
         head = (f'<b>{proj.get("name", "Project")}</b> | <i>{proj.get("stack", "")}</i> | '
-                f'<a href="{proj.get("link", "#")}">{proj.get("link", "GitHub")}</a>')
+                f'{_proj_links(proj)}')
         story.append(Paragraph(head, body_st))
         story.append(Spacer(1, 1))
         if proj.get("bullets"):
@@ -334,13 +364,10 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
 
     # Show OTHER projects from profile (2nd onwards, always visible)
     # Skip matched project to avoid duplication
-    matched_proj_name = best_project.get("name", "") if best_project else ""
-    for proj in P.PROJECTS[1:]:
-        if proj.get("name") == matched_proj_name:
-            continue  # Skip if already shown as matched project
+    for proj in _other_projects(best_project):
         story.append(Spacer(1, 2.5))
         head = (f'<b>{proj.get("name", "Project")}</b> | <i>{proj.get("stack", "")}</i> | '
-                f'<a href="{proj.get("link", "#")}">{proj.get("link", "GitHub")}</a>')
+                f'{_proj_links(proj)}')
         story.append(Paragraph(head, body_st))
         story.append(Spacer(1, 1))
         if proj.get("bullets"):
@@ -471,9 +498,10 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
         p = no_space(doc.add_paragraph(), after=2)
         cr = p.add_run(f"{category}: ")
         cr.bold = True
+        top = _top_matches(items, matched)
         for idx, s in enumerate(items):
             run = p.add_run(s + (", " if idx < len(items) - 1 else ""))
-            if s in matched:
+            if s in top:
                 run.bold = True
     if ats_keywords:
         p = no_space(doc.add_paragraph(), after=2)
@@ -481,8 +509,6 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
         cr.bold = True
         for idx, k in enumerate(ats_keywords):
             run = p.add_run(k + (", " if idx < len(ats_keywords) - 1 else ""))
-            if k in matched:
-                run.bold = True
 
     # Projects
     section_heading("Projects")
@@ -519,22 +545,19 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
         nr.bold = True
         sr = p.add_run(f' | {proj.get("stack", "")} | ')
         sr.italic = True
-        p.add_run(proj.get("link", "GitHub")).font.color.rgb = ACCENT
+        p.add_run(_proj_links(proj, html=False)).font.color.rgb = ACCENT
         for b in proj.get("bullets", []):
             bullet(b)
 
     # Show OTHER projects from profile (2nd onwards, always visible)
     # Skip matched project to avoid duplication
-    matched_proj_name = best_project.get("name", "") if best_project else ""
-    for proj in P.PROJECTS[1:]:
-        if proj.get("name") == matched_proj_name:
-            continue  # Skip if already shown as matched project
+    for proj in _other_projects(best_project):
         p = no_space(doc.add_paragraph())
         nr = p.add_run(proj.get("name", "Project"))
         nr.bold = True
         sr = p.add_run(f' | {proj.get("stack", "")} | ')
         sr.italic = True
-        p.add_run(proj.get("link", "GitHub")).font.color.rgb = ACCENT
+        p.add_run(_proj_links(proj, html=False)).font.color.rgb = ACCENT
         for b in proj.get("bullets", []):
             bullet(b)
 

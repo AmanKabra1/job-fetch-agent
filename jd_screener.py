@@ -138,7 +138,7 @@ def java_profile(title: str, text: str) -> str:
 # --------------------------------------------------------------------------- #
 # Experience requirement
 # --------------------------------------------------------------------------- #
-_NUM = r"(\d{1,2})(?:\.\d)?"
+_NUM = r"(\d{1,2}(?:\.\d)?)"
 _RANGE = re.compile(_NUM + r"\s*(?:-|–|—|to)\s*" + _NUM + r"\s*\+?\s*(?:years?|yrs?)\b", re.I)
 _PLUS = re.compile(_NUM + r"\s*\+\s*(?:years?|yrs?)\b", re.I)
 _SINGLE = re.compile(_NUM + r"\s*(?:years?|yrs?)\b", re.I)
@@ -152,6 +152,22 @@ _WORDNUM = {"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "sev
 _WORDNUM_RX = re.compile(r"\b(" + "|".join(_WORDNUM) + r")\b(?=\s*(?:\+\s*)?(?:to\s+\w+\s+|-\s*\w+\s*)?(?:years?|yrs?)\b)", re.I)
 
 
+def _n(x):
+    """'2.5' -> 2.5, '3' / '3.0' -> 3 (so labels read 'needs 3+ yrs', not '3.0')."""
+    f = float(x)
+    return int(f) if f == int(f) else f
+
+
+def too_senior(lo, hi, candidate_years) -> bool:
+    """True when a JD asks for more experience than you should apply for. The cap is your
+    years + 1 (2 yrs -> 3). Neither the floor NOR the top of a range may pass it, so
+    '1-4' / '2-5' / '3-5' / '4+' are out while '1-2' / '2-3' / '2.5' / '3' / '3+' stay."""
+    if not lo and not hi:
+        return False
+    cap = (candidate_years or 2) + 1
+    return (lo or 0) > cap or (hi or 0) > cap
+
+
 def required_years(text: str):
     """(min, max) years of experience the JD asks for for THE ROLE. (0, 0) if none.
 
@@ -163,14 +179,14 @@ def required_years(text: str):
     cands = []                                   # (pos, lo, hi)
     taken = []
     for m in _RANGE.finditer(t):
-        a, b = int(m.group(1)), int(m.group(2))
+        a, b = _n(m.group(1)), _n(m.group(2))
         if a <= b <= 25:
             cands.append((m.start(), a, b)); taken.append((m.start(), m.end()))
     for rx in (_PLUS, _SINGLE):
         for m in rx.finditer(t):
             if any(s <= m.start() < e for s, e in taken):
                 continue
-            n = int(m.group(1))
+            n = _n(m.group(1))
             if 0 <= n <= 25:
                 cands.append((m.start(), n, n)); taken.append((m.start(), m.end()))
     good = []
@@ -465,6 +481,10 @@ def _days_old(date_posted) -> float:
         return 999.0
 
 
+_GENERIC_SKILLS = {"git", "sql", "html", "css", "go", "vs code", "postman", "agile/scrum", "mvc",
+                   "linux/unix", "javascript", "ci/cd pipelines", "github actions", "jenkins"}
+
+
 def screen_job(job: dict, candidate_years: int = 2, skills=None, strict_role: bool = True) -> dict:
     """Judge one job posting from its title + full description."""
     title = _clean(job.get("title"))
@@ -472,7 +492,8 @@ def screen_job(job: dict, candidate_years: int = 2, skills=None, strict_role: bo
     blob = f"{title}. {desc}"
     company = _clean(job.get("company"))
     flags = []
-    out = {"keep": True, "reason": "ok", "fit": 50, "competition": "MEDIUM", "boost": 0,
+    jd_read = len(desc) >= 200          # a real description, not just a title/snippet
+    out = {"keep": True, "reason": "ok", "fit": 50, "jd_read": jd_read, "competition": "MEDIUM", "boost": 0,
            "flags": flags, "salary_lpa": 0.0, "req_years": (0, 0)}
 
     def reject(reason):
@@ -512,8 +533,8 @@ def screen_job(job: dict, candidate_years: int = 2, skills=None, strict_role: bo
     if candidate_years >= 2 and ((lo == 0 and hi == 1) or re.search(r"\bfreshers?\s+only\b|0\s*-\s*6\s+months", blob, re.I)):
         return reject(f"fresher-level ({lo}-{hi} yrs) — below your experience")
     if lo:
-        if lo > candidate_years + 1:
-            return reject(f"needs {lo}+ yrs (you have {candidate_years})")
+        if too_senior(lo, hi, candidate_years):
+            return reject(f"needs {lo}{'-' + str(hi) if hi and hi != lo else '+'} yrs (you have {candidate_years})")
         if lo <= candidate_years:
             fit += 15
             if hi and lo and hi <= candidate_years + 1 and hi != lo:
@@ -521,8 +542,11 @@ def screen_job(job: dict, candidate_years: int = 2, skills=None, strict_role: bo
             flags.append(f"exp ok ({lo}+ vs your {candidate_years})")
         else:
             fit += 4; flags.append("1-yr experience stretch")
+    elif jd_read:
+        fit += 8                          # JD read and it states no experience ask
     else:
-        fit += 8
+        fit -= 6                          # JD never read: requirement is unverified, no bonus
+        flags.append("JD not read — verify experience/skills")
     if _JUNIOR_OK.search(title):
         fit += 6; flags.append("junior/SDE-1 level")
 
@@ -550,6 +574,11 @@ def screen_job(job: dict, candidate_years: int = 2, skills=None, strict_role: bo
         low = " " + blob.lower() + " "
         hits = [s for s in skills if re.search(r"(?<![a-z0-9])" + re.escape(s.lower()) + r"(?![a-z0-9])", low)]
         n = len(set(hits))
+        # Generic tools every dev lists don't prove a fit; a JD that was actually read and
+        # names NONE of your real stack is a different job — drop it.
+        core = [h for h in set(hits) if h.lower() not in _GENERIC_SKILLS]
+        if jd_read and len(desc) >= 300 and not core:
+            return reject("JD read: none of your core skills are mentioned")
         fit += min(20, n * 3)
         if n:
             flags.append(f"{n} of your skills in JD")
