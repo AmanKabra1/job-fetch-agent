@@ -2443,6 +2443,7 @@ async def api_interview_answer(
     mode: str = Form("profile"),
     notes: str = Form(""),
     research: bool = Form(True),
+    max_words: int = Form(0),
     file: UploadFile = File(None),
 ):
     import interview_answers as IA
@@ -2467,13 +2468,13 @@ async def api_interview_answer(
     res = {}
     if research and company.strip():
         res = await run_in_threadpool(IA.research_company, company, role)
-    out = await run_in_threadpool(IA.generate_answer, question, context, company, role, res, jd)
+    out = await run_in_threadpool(IA.generate_answer, question, context, company, role, res, jd, max_words)
     if out.get("error"):
         raise HTTPException(400, out["error"])
     return {"answer": out["answer"], "company_research": res.get("summary", ""),
             "sources": res.get("sources", []), "research_note": res.get("note", ""),
             "researched": bool(res.get("available")),
-            "unverified": out.get("unverified", [])}
+            "unverified": out.get("unverified", []), "words": out.get("words", 0)}
 
 
 @app.get("/", response_class=HTMLResponse)
@@ -3009,6 +3010,12 @@ INDEX_HTML = r"""<!doctype html>
         <label>Question asked by the company / HR</label>
         <textarea id="qaQuestion" placeholder="Paste the question exactly as the application asks it…" style="min-height:70px"></textarea>
         <div class="tagrow" id="qaChips"></div>
+        <div class="bar" style="margin:10px 0 0">
+          <label class="note">Word limit
+            <input id="qaWords" type="number" min="20" max="1000" placeholder="auto" style="width:80px"/></label>
+          <span class="tagrow" id="qaLimits" style="margin:0"></span>
+          <span class="note">(blank = natural length; with a limit the answer never goes over it)</span>
+        </div>
       </div>
       <div class="field">
         <label>Job description <span style="opacity:.7">(optional — makes the answer fit the role)</span></label>
@@ -3023,6 +3030,7 @@ INDEX_HTML = r"""<!doctype html>
     <div class="card" id="qaResult" style="display:none;border-left:4px solid var(--accent)">
       <div class="bar" style="margin-bottom:8px"><strong>Your answer</strong>
         <span class="note">edit freely, then copy</span>
+        <span class="note" id="qaCount"></span>
         <button class="secondary" id="qaCopy">Copy</button>
         <button class="secondary" id="qaRegen">Rewrite differently</button>
       </div>
@@ -4030,19 +4038,25 @@ if (githubBtn) {
     $('#qaChips').innerHTML=(d.questions||[]).map((q,i)=>'<span class="tag add" style="cursor:pointer" data-q="'+i+'">'+esc(q.replace(/[?.]$/,''))+'</span>').join('');
     $('#qaChips').querySelectorAll('[data-q]').forEach(el=>el.onclick=()=>{ $('#qaQuestion').value=d.questions[+el.dataset.q]; });
   }).catch(()=>{});
+  $('#qaLimits').innerHTML=[50,100,150,200,250,300].map(n=>'<span class="tag add" style="cursor:pointer" data-w="'+n+'">'+n+'</span>').join('');
+  $('#qaLimits').querySelectorAll('[data-w]').forEach(el=>el.onclick=()=>{ $('#qaWords').value=el.dataset.w; });
+  const countWords=()=>{ const t=$('#qaAnswer').value.trim(); const n=t?t.split(/\s+/).length:0; const lim=+$('#qaWords').value||0;
+    $('#qaCount').textContent=n+' words'+(lim?' / limit '+lim:''); $('#qaCount').style.color=(lim&&n>lim)?'#f0a0a0':''; };
+  $('#qaAnswer').addEventListener('input',countWords);
   async function ask(){
     const q=$('#qaQuestion').value.trim(); if(!q){ toast('Paste the question first.'); return; }
     const fd=new FormData();
     fd.append('question',q); fd.append('company',$('#qaCompany').value); fd.append('role',$('#qaRole').value);
     fd.append('jd',$('#qaJD').value); fd.append('mode',MODE); fd.append('notes',VIS?'':$('#qaNotes').value);
     fd.append('research',$('#qaResearch').checked?'true':'false');
+    fd.append('max_words',$('#qaWords').value||'0');
     if(VIS){ const f=$('#qaFile').files[0]; if(!f){ toast('Upload your resume first.'); return; } fd.append('file',f); }
     const btn=$('#qaBtn'), old=btn.textContent; btn.disabled=true; $('#qaRegen').disabled=true;
     btn.textContent='Writing…'; $('#qaStatus').textContent=$('#qaCompany').value.trim()&&$('#qaResearch').checked?'researching the company, then writing…':'';
     try{
       const r=await fetch('/api/interview/answer',{method:'POST',body:fd}); const d=await r.json();
       if(!r.ok){ toast(d.detail||('Failed: '+r.status)); return; }
-      $('#qaAnswer').value=d.answer; $('#qaResult').style.display='block';
+      $('#qaAnswer').value=d.answer; $('#qaResult').style.display='block'; countWords();
       let h='';
       if(d.researched){
         h+='<div class="note"><b>Company research used</b></div><div class="note" style="white-space:pre-wrap;margin-top:4px">'+esc((d.company_research||'').slice(0,900))+'</div>';

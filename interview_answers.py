@@ -17,6 +17,7 @@ The LLM is Groq (free tier) over its OpenAI-compatible REST API, called with pla
 """
 import os
 import re
+import time
 import requests
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
@@ -141,7 +142,7 @@ Rules:
    99.9% uptime, the named project). Do NOT invent incidents, latencies, user counts, causes or
    timelines. If the data holds no real incident, tell the true part briefly and end with
    "[add the specific incident you handled]" so the candidate can fill it in.
-4. Length: 60-110 words for normal questions, up to 150 for "tell me about yourself" or story
+4. Length (unless a WORD LIMIT is given, which always wins): 60-110 words for normal questions, up to 150 for "tell me about yourself" or story
    questions. For CTC / notice / relocation give 1-3 direct sentences. State only the stored facts; add no extra claims about past experience.
 5. When the company is known and research is provided, weave in ONE or TWO concrete, accurate
    company details (what they build, a product, a value) so it clearly isn't generic. Don't flatter.
@@ -149,19 +150,76 @@ Rules:
 Return only the answer text, no preamble, no quotes, no markdown headings."""
 
 
+def _words(text: str) -> int:
+    return len(text.split())
+
+
+def _trim_to_words(text: str, limit: int) -> str:
+    """Last resort: cut at the last full sentence that fits in `limit` words."""
+    if _words(text) <= limit:
+        return text
+    cut = " ".join(text.split()[:limit])
+    m = list(re.finditer(r"[.!?](?=\s|$)", cut))
+    if m and m[-1].end() >= len(cut) * 0.5:
+        return cut[:m[-1].end()]
+    return cut.rstrip(",;:- ") + "."
+
+
+def _scrub(text: str) -> str:
+    text = text.strip().strip('"').strip()
+    # Typographic tells that make pasted text look machine-written / break forms.
+    for bad, good in (("\u202f", " "), ("\u00a0", " "), ("\u2009", " "), ("\u2011", "-"),
+                      ("\u2014", ", "), ("\u2013", "-"), ("\u2018", "'"), ("\u2019", "'"),
+                      ("\u201c", '"'), ("\u201d", '"')):
+        text = text.replace(bad, good)
+    return re.sub(r"(?<=\d)\s+%", "%", text)
+
+
+def _call_groq(key: str, messages: list) -> str:
+    body = {
+        "model": GROQ_MODEL,
+        "messages": messages,
+        "temperature": 0.4,
+        "max_tokens": 1500,          # gpt-oss spends part of this on hidden reasoning
+    }
+    if "gpt-oss" in GROQ_MODEL:
+        body["reasoning_effort"] = "low"
+    for attempt in range(2):
+        r = requests.post(GROQ_URL, headers={"Authorization": f"Bearer {key}"}, json=body, timeout=_TIMEOUT)
+        if r.status_code == 429 and attempt == 0:      # free-tier rate limit: wait, retry once
+            time.sleep(min(float(r.headers.get("retry-after", 4) or 4), 8))
+            continue
+        break
+    if r.status_code == 429:
+        raise RuntimeError("Groq's free-tier rate limit was hit. Wait ~30 seconds and try again.")
+    r.raise_for_status()
+    return _scrub(r.json()["choices"][0]["message"]["content"] or "")
+
+
 def generate_answer(question: str, context: str, company: str = "", role: str = "",
-                    research: dict = None, job_description: str = "") -> dict:
-    """Write one answer. Returns {answer} or {error}."""
+                    research: dict = None, job_description: str = "", max_words: int = 0) -> dict:
+    """Write one answer. `max_words` (0 = off) is a HARD limit: the model is told it, one
+    retry asks for a shorter rewrite if it overshoots, and a sentence-boundary trim
+    guarantees the result never exceeds it. Returns {answer, words} or {error}."""
     key = os.environ.get("GROQ_API_KEY")
     if not key:
-        return {"error": "GROQ_API_KEY is not set — add it to .env (free key at console.groq.com)."}
+        return {"error": "GROQ_API_KEY is not set — add it to .env locally, or to the Vercel "
+                         "project's Environment Variables (Production) and redeploy."}
     question = (question or "").strip()
     if not question:
         return {"error": "Paste the question first."}
     if len(re.sub(r"\s", "", context or "")) < 80:
         return {"error": "No candidate details available — upload your resume first."}
+    try:
+        max_words = max(0, min(int(max_words or 0), 1000))
+    except (TypeError, ValueError):
+        max_words = 0
     research = research or {}
     user = [f"QUESTION:\n{question}"]
+    if max_words:
+        user.append(f"WORD LIMIT: the answer must be at most {max_words} words in total. This "
+                    f"overrides the length guidance in the rules. Aim for about {max(1, int(max_words * 0.85))}-"
+                    f"{max_words} words and finish on a complete sentence.")
     if company or role:
         user.append(f"TARGET: {role or 'the role'} at {company or 'the company'}")
     if research.get("summary"):
@@ -171,27 +229,21 @@ def generate_answer(question: str, context: str, company: str = "", role: str = 
     if (job_description or "").strip():
         user.append("JOB DESCRIPTION:\n" + job_description.strip()[:3000])
     user.append("CANDIDATE DATA:\n" + context)
+    messages = [{"role": "system", "content": _SYSTEM},
+                {"role": "user", "content": "\n\n".join(user)}]
     try:
-        r = requests.post(GROQ_URL, headers={"Authorization": f"Bearer {key}"}, json={
-            "model": GROQ_MODEL,
-            "messages": [{"role": "system", "content": _SYSTEM},
-                         {"role": "user", "content": "\n\n".join(user)}],
-            "temperature": 0.4,
-            "max_tokens": 700,
-        }, timeout=_TIMEOUT)
-        r.raise_for_status()
-        text = (r.json()["choices"][0]["message"]["content"] or "").strip()
+        text = _call_groq(key, messages)
+        if max_words and _words(text) > max_words:
+            messages += [{"role": "assistant", "content": text},
+                         {"role": "user", "content": f"That is {_words(text)} words. Rewrite it in at most "
+                                                     f"{max_words} words, keeping the strongest points and the same facts."}]
+            text = _call_groq(key, messages) or text
     except Exception as e:
         return {"error": f"Answer generation failed: {e}"}
-    text = text.strip().strip('"').strip()
-    # Scrub typographic tells that make pasted text look machine-written / break forms.
-    for bad, good in (("\u202f", " "), ("\u00a0", " "), ("\u2009", " "), ("\u2011", "-"),
-                      ("\u2014", ", "), ("\u2013", "-"), ("\u2018", "'"), ("\u2019", "'"),
-                      ("\u201c", '"'), ("\u201d", '"')):
-        text = text.replace(bad, good)
-    text = re.sub(r"(?<=\d)\s+%", "%", text)
     if not text:
         return {"error": "The model returned an empty answer — try again."}
+    if max_words:
+        text = _trim_to_words(text, max_words)
     # Guard against invented specifics: any figure in the answer that appears nowhere in
     # the sources we gave the model is surfaced so the candidate can verify or remove it.
     source_blob = " ".join([question, context, job_description or "", research.get("summary", "")])
@@ -201,4 +253,4 @@ def generate_answer(question: str, context: str, company: str = "", role: str = 
         num = re.match(r"\d+(?:\.\d+)?", m.group()).group()
         if num not in known and m.group().strip() not in unverified:
             unverified.append(m.group().strip())
-    return {"answer": text, "unverified": unverified[:6]}
+    return {"answer": text, "words": _words(text), "unverified": unverified[:6]}
