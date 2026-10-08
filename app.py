@@ -2716,6 +2716,7 @@ INDEX_HTML = r"""<!doctype html>
     <button id="tabFind" class="tab active">&#9312; Find jobs</button>
     <button id="tabCreate" class="tab">&#9313; Create resume</button>
     <button id="tabATS" class="tab">&#9314; ATS Resume</button>
+    <button id="tabQA" class="tab">&#9315; Interview answers</button>
   </div>
 
   <!-- ============ SECTION 1 — FIND JOBS ============ -->
@@ -2846,53 +2847,6 @@ INDEX_HTML = r"""<!doctype html>
       <button class="secondary" id="loadMoreBtn">Load more</button>
     </div>
     <div id="debugPanel" class="note" style="margin-top:10px"></div>
-    <!-- ===== Interview / application answers (inside Find jobs, below the results) ===== -->
-  <div id="interviewQA" style="margin-top:28px;border-top:1px solid var(--line);padding-top:18px">
-    <h2 class="sec-title">&#128172; Interview &amp; application answers</h2>
-    <p class="note" id="qaIntro"></p>
-    <div class="card">
-      <div id="qaProfileBox" class="field" style="display:none">
-        <label>Your background notes <span style="opacity:.7">(saved in this browser — paste everything the resume doesn't say: why you switch, hardest challenge, notice period, expected CTC, what you want next…)</span></label>
-        <textarea id="qaNotes" placeholder="e.g. Notice period 30 days. Expected CTC 12 LPA. Hardest challenge: ... Why I'm switching: ..." style="min-height:90px"></textarea>
-      </div>
-      <div id="qaVisitorBox" class="field" style="display:none">
-        <label>Your resume <span style="opacity:.7">(.docx / .pdf — answers are written only from this)</span></label>
-        <input type="file" id="qaFile" accept=".docx,.pdf"/>
-      </div>
-      <div class="grid2">
-        <div class="field">
-          <label>Company <span style="opacity:.7">(optional — researched on the web so the answer mentions what they really do)</span></label>
-          <input type="text" id="qaCompany" placeholder="e.g. Epam Systems" style="width:100%"/>
-        </div>
-        <div class="field">
-          <label>Role <span style="opacity:.7">(optional)</span></label>
-          <input type="text" id="qaRole" placeholder="e.g. Python Backend Developer" style="width:100%"/>
-        </div>
-      </div>
-      <div class="field">
-        <label>Question asked by the company / HR</label>
-        <textarea id="qaQuestion" placeholder="Paste the question exactly as the application asks it…" style="min-height:70px"></textarea>
-        <div class="tagrow" id="qaChips"></div>
-      </div>
-      <div class="field">
-        <label>Job description <span style="opacity:.7">(optional — makes the answer fit the role)</span></label>
-        <textarea id="qaJD" style="min-height:46px" placeholder="Paste the JD if you have it…"></textarea>
-      </div>
-      <div class="bar" style="margin-bottom:0">
-        <button id="qaBtn">Write my answer</button>
-        <label class="switch note"><input type="checkbox" id="qaResearch" checked/> Research the company first</label>
-        <span class="note" id="qaStatus"></span>
-      </div>
-    </div>
-    <div class="card" id="qaResult" style="display:none;border-left:4px solid var(--accent)">
-      <div class="bar" style="margin-bottom:8px"><strong>Your answer</strong>
-        <span class="note">edit freely, then copy</span>
-        <button class="secondary" id="qaCopy">Copy</button>
-        <button class="secondary" id="qaRegen">Rewrite differently</button>
-      </div>
-      <textarea id="qaAnswer" style="min-height:150px"></textarea>
-      <div id="qaResearchBox" style="margin-top:10px"></div>
-    </div>
   </div>
   </section>
 
@@ -3028,6 +2982,53 @@ INDEX_HTML = r"""<!doctype html>
     </div>
   </section>
 
+  <!-- ============ SECTION 4 — INTERVIEW / APPLICATION ANSWERS ============ -->
+  <section id="interviewQA" class="panel" style="display:none">
+    <h2 class="sec-title"><span class="sec-num">4</span> Interview &amp; application answers</h2>
+    <p class="note" id="qaIntro"></p>
+    <div class="card">
+      <div id="qaProfileBox" class="field" style="display:none">
+        <label>Your background notes <span style="opacity:.7">(saved in this browser — paste everything the resume doesn't say: why you switch, hardest challenge, notice period, expected CTC, what you want next…)</span></label>
+        <textarea id="qaNotes" placeholder="e.g. Notice period 30 days. Expected CTC 12 LPA. Hardest challenge: ... Why I'm switching: ..." style="min-height:90px"></textarea>
+      </div>
+      <div id="qaVisitorBox" class="field" style="display:none">
+        <label>Your resume <span style="opacity:.7">(.docx / .pdf — answers are written only from this)</span></label>
+        <input type="file" id="qaFile" accept=".docx,.pdf"/>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>Company <span style="opacity:.7">(optional — researched on the web so the answer mentions what they really do)</span></label>
+          <input type="text" id="qaCompany" placeholder="e.g. Epam Systems" style="width:100%"/>
+        </div>
+        <div class="field">
+          <label>Role <span style="opacity:.7">(optional)</span></label>
+          <input type="text" id="qaRole" placeholder="e.g. Python Backend Developer" style="width:100%"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Question asked by the company / HR</label>
+        <textarea id="qaQuestion" placeholder="Paste the question exactly as the application asks it…" style="min-height:70px"></textarea>
+        <div class="tagrow" id="qaChips"></div>
+      </div>
+      <div class="field">
+        <label>Job description <span style="opacity:.7">(optional — makes the answer fit the role)</span></label>
+        <textarea id="qaJD" style="min-height:46px" placeholder="Paste the JD if you have it…"></textarea>
+      </div>
+      <div class="bar" style="margin-bottom:0">
+        <button id="qaBtn">Write my answer</button>
+        <label class="switch note"><input type="checkbox" id="qaResearch" checked/> Research the company first</label>
+        <span class="note" id="qaStatus"></span>
+      </div>
+    </div>
+    <div class="card" id="qaResult" style="display:none;border-left:4px solid var(--accent)">
+      <div class="bar" style="margin-bottom:8px"><strong>Your answer</strong>
+        <span class="note">edit freely, then copy</span>
+        <button class="secondary" id="qaCopy">Copy</button>
+        <button class="secondary" id="qaRegen">Rewrite differently</button>
+      </div>
+      <textarea id="qaAnswer" style="min-height:150px"></textarea>
+      <div id="qaResearchBox" style="margin-top:10px"></div>
+    </section>
 </main>
 <div id="toast"></div>
 <div id="applyModal"></div>
@@ -3497,6 +3498,9 @@ function showTab(which){
   const find = which==='find';
   const create = which==='create';
   const ats = which==='ats';
+  const qa = which==='qa';
+  document.getElementById('interviewQA').style.display = qa?'block':'none';
+  $('#tabQA').classList.toggle('active', qa);
   document.getElementById('findJobs').style.display = find?'block':'none';
   document.getElementById('createResume').style.display = create?'block':'none';
   document.getElementById('atsResume').style.display = ats?'block':'none';
@@ -3955,6 +3959,7 @@ if(fileInput && window._bestResume){
 $('#tabFind').onclick=()=>showTab('find');
 $('#tabCreate').onclick=()=>showTab('create');
 $('#tabATS').onclick=()=>showTab('ats');
+$('#tabQA').onclick=()=>showTab('qa');
 $('#fetchBtn').onclick=fetchJobs;
 $('#matchBtn').onclick=matchFeed;
 $('#previewBtn').onclick=previewProfile;
