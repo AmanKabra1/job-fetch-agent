@@ -300,6 +300,11 @@ def _clean_job_row(row: dict) -> dict:
         row["title"] = _unescape_markdown(row["title"])
     if row.get("description"):
         row["description"] = _unescape_markdown(row["description"])
+    try:
+        import jd_screener as _JDS
+        _JDS.fold_experience_range(row)   # Naukri's separate experience field
+    except Exception:
+        pass
     return row
 
 
@@ -2340,6 +2345,57 @@ async def api_analyze_job(request: Request):
         return JSONResponse({"success": False, "error": str(e)}, status_code=400)
 
 
+# --------------------------------------------------------------------------- #
+# INTERVIEW ANSWERS — paste an application / HR question, get a human-sounding
+# answer from your real history (profile mode) or an uploaded resume (visitor
+# mode), optionally researched against the company via Tavily.
+# --------------------------------------------------------------------------- #
+@app.get("/api/interview/common")
+def api_interview_common():
+    import interview_answers as IA
+    return {"questions": IA.COMMON_QUESTIONS}
+
+
+@app.post("/api/interview/answer")
+async def api_interview_answer(
+    question: str = Form(""),
+    company: str = Form(""),
+    role: str = Form(""),
+    jd: str = Form(""),
+    mode: str = Form("profile"),
+    notes: str = Form(""),
+    research: bool = Form(True),
+    file: UploadFile = File(None),
+):
+    import interview_answers as IA
+    if mode == "visitor":
+        resume_text = ""
+        if file is not None and file.filename:
+            try:
+                data = await file.read()
+                if data:
+                    resume_text = RT.extract_text(file.filename, data)
+            except ValueError as e:
+                raise HTTPException(400, str(e))
+            except Exception as e:
+                raise HTTPException(400, f"Could not read resume: {e}")
+        if len(resume_text.strip()) < 80:
+            raise HTTPException(400, "Upload your resume (.docx or .pdf) first.")
+        context = resume_text[:IA.MAX_CONTEXT_CHARS]
+    else:
+        context = IA.saved_profile_text(notes, SCREENING_ANSWERS)
+    res = {}
+    if research and company.strip():
+        res = await run_in_threadpool(IA.research_company, company, role)
+    out = await run_in_threadpool(IA.generate_answer, question, context, company, role, res, jd)
+    if out.get("error"):
+        raise HTTPException(400, out["error"])
+    return {"answer": out["answer"], "company_research": res.get("summary", ""),
+            "sources": res.get("sources", []), "research_note": res.get("note", ""),
+            "researched": bool(res.get("available")),
+            "unverified": out.get("unverified", [])}
+
+
 @app.get("/", response_class=HTMLResponse)
 def index():
     """Landing page: choose between 'My Profile' (with cron) or 'Quick Analysis' (visitor, no cron)"""
@@ -2362,6 +2418,7 @@ def dashboard(mode: str = "profile"):
     feed_mode = _is_feed_mode()
     html = INDEX_HTML.replace("__LIVE__", "true" if live else "false")
     html = html.replace("__CURRENT_LPA__", str(CURRENT_LPA))
+    html = html.replace("__MODE__", "visitor" if mode == "visitor" else "profile")
     html = html.replace("__FEED_MODE__", "true" if feed_mode else "false")
     # Your saved screening answers (CTC/notice period/etc.) are personal — never
     # send them to a visitor's page source, only to yourself in "profile" mode.
@@ -2396,7 +2453,8 @@ def dashboard(mode: str = "profile"):
 # Free data only: OpenStreetMap (Overpass + Nominatim) + on-demand website enrich.
 # --------------------------------------------------------------------------- #
 @app.get("/api/companies")
-async def api_companies(area: str, limit: int = 500, search_broader: bool = True):
+async def api_companies(area: str, limit: int = 500, search_broader: bool = True,
+                        radius_km: float = 3):
     """Discover every named business inside `area` (city/locality/sector/pincode)
     from OpenStreetMap + Tavily. Includes size classification & coworking detection."""
     import company_discovery as CD
@@ -2404,7 +2462,8 @@ async def api_companies(area: str, limit: int = 500, search_broader: bool = True
     if not area or not area.strip():
         raise HTTPException(400, "Provide an area, e.g. 'Noida Sector 62'.")
 
-    result = await run_in_threadpool(CD.discover, area.strip(), limit, search_broader=search_broader)
+    result = await run_in_threadpool(CD.discover, area.strip(), limit,
+                                     search_broader=search_broader, radius_km=radius_km)
 
     # Add size & type classification
     if result.get("companies"):
@@ -2705,6 +2764,54 @@ INDEX_HTML = r"""<!doctype html>
       <button class="secondary" id="loadMoreBtn">Load more</button>
     </div>
     <div id="debugPanel" class="note" style="margin-top:10px"></div>
+    <!-- ===== Interview / application answers (inside Find jobs, below the results) ===== -->
+  <div id="interviewQA" style="margin-top:28px;border-top:1px solid var(--line);padding-top:18px">
+    <h2 class="sec-title">&#128172; Interview &amp; application answers</h2>
+    <p class="note" id="qaIntro"></p>
+    <div class="card">
+      <div id="qaProfileBox" class="field" style="display:none">
+        <label>Your background notes <span style="opacity:.7">(saved in this browser — paste everything the resume doesn't say: why you switch, hardest challenge, notice period, expected CTC, what you want next…)</span></label>
+        <textarea id="qaNotes" placeholder="e.g. Notice period 30 days. Expected CTC 12 LPA. Hardest challenge: ... Why I'm switching: ..." style="min-height:90px"></textarea>
+      </div>
+      <div id="qaVisitorBox" class="field" style="display:none">
+        <label>Your resume <span style="opacity:.7">(.docx / .pdf — answers are written only from this)</span></label>
+        <input type="file" id="qaFile" accept=".docx,.pdf"/>
+      </div>
+      <div class="grid2">
+        <div class="field">
+          <label>Company <span style="opacity:.7">(optional — researched on the web so the answer mentions what they really do)</span></label>
+          <input type="text" id="qaCompany" placeholder="e.g. Epam Systems" style="width:100%"/>
+        </div>
+        <div class="field">
+          <label>Role <span style="opacity:.7">(optional)</span></label>
+          <input type="text" id="qaRole" placeholder="e.g. Python Backend Developer" style="width:100%"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Question asked by the company / HR</label>
+        <textarea id="qaQuestion" placeholder="Paste the question exactly as the application asks it…" style="min-height:70px"></textarea>
+        <div class="tagrow" id="qaChips"></div>
+      </div>
+      <div class="field">
+        <label>Job description <span style="opacity:.7">(optional — makes the answer fit the role)</span></label>
+        <textarea id="qaJD" style="min-height:46px" placeholder="Paste the JD if you have it…"></textarea>
+      </div>
+      <div class="bar" style="margin-bottom:0">
+        <button id="qaBtn">Write my answer</button>
+        <label class="switch note"><input type="checkbox" id="qaResearch" checked/> Research the company first</label>
+        <span class="note" id="qaStatus"></span>
+      </div>
+    </div>
+    <div class="card" id="qaResult" style="display:none;border-left:4px solid var(--accent)">
+      <div class="bar" style="margin-bottom:8px"><strong>Your answer</strong>
+        <span class="note">edit freely, then copy</span>
+        <button class="secondary" id="qaCopy">Copy</button>
+        <button class="secondary" id="qaRegen">Rewrite differently</button>
+      </div>
+      <textarea id="qaAnswer" style="min-height:150px"></textarea>
+      <div id="qaResearchBox" style="margin-top:10px"></div>
+    </div>
+  </div>
   </section>
 
   <!-- ============ SECTION 2 — CREATE A RESUME ============ -->
@@ -2838,12 +2945,14 @@ INDEX_HTML = r"""<!doctype html>
       </div>
     </div>
   </section>
+
 </main>
 <div id="toast"></div>
 <div id="applyModal"></div>
 
 <script>
 const LIVE = __LIVE__;
+const MODE = "__MODE__";
 const _isFeedMode = __FEED_MODE__;
 const CURRENT_LPA = __CURRENT_LPA__;
 const SCREENING = __SCREENING_JSON__;   // {} in visitor mode -- never your data
@@ -3818,6 +3927,49 @@ if (githubBtn) {
   };
 }
 
+
+// ---- Interview / application answers --------------------------------------
+(function(){
+  const VIS = MODE==='visitor';
+  const lsGet=(k)=>{ try{ return localStorage.getItem(k)||''; }catch(e){ return ''; } };
+  const lsSet=(k,v)=>{ try{ localStorage.setItem(k,v); }catch(e){} };
+  $('#qaIntro').innerHTML = VIS
+    ? 'Upload your resume, paste a question an application or HR asks, and get an answer written from <b>your resume only</b>. Add the company and it is researched on the web first.'
+    : 'Answers are written from <b>your saved profile</b> (resume, jobs, projects, education) plus the notes below. Paste any question from an application or HR round; add the company and it is researched first.';
+  $(VIS?'#qaVisitorBox':'#qaProfileBox').style.display='block';
+  $('#qaNotes').value = lsGet('qaNotes');
+  $('#qaNotes').addEventListener('input',()=>lsSet('qaNotes',$('#qaNotes').value));
+  fetch('/api/interview/common').then(r=>r.json()).then(d=>{
+    $('#qaChips').innerHTML=(d.questions||[]).map((q,i)=>'<span class="tag add" style="cursor:pointer" data-q="'+i+'">'+esc(q.replace(/[?.]$/,''))+'</span>').join('');
+    $('#qaChips').querySelectorAll('[data-q]').forEach(el=>el.onclick=()=>{ $('#qaQuestion').value=d.questions[+el.dataset.q]; });
+  }).catch(()=>{});
+  async function ask(){
+    const q=$('#qaQuestion').value.trim(); if(!q){ toast('Paste the question first.'); return; }
+    const fd=new FormData();
+    fd.append('question',q); fd.append('company',$('#qaCompany').value); fd.append('role',$('#qaRole').value);
+    fd.append('jd',$('#qaJD').value); fd.append('mode',MODE); fd.append('notes',VIS?'':$('#qaNotes').value);
+    fd.append('research',$('#qaResearch').checked?'true':'false');
+    if(VIS){ const f=$('#qaFile').files[0]; if(!f){ toast('Upload your resume first.'); return; } fd.append('file',f); }
+    const btn=$('#qaBtn'), old=btn.textContent; btn.disabled=true; $('#qaRegen').disabled=true;
+    btn.textContent='Writing…'; $('#qaStatus').textContent=$('#qaCompany').value.trim()&&$('#qaResearch').checked?'researching the company, then writing…':'';
+    try{
+      const r=await fetch('/api/interview/answer',{method:'POST',body:fd}); const d=await r.json();
+      if(!r.ok){ toast(d.detail||('Failed: '+r.status)); return; }
+      $('#qaAnswer').value=d.answer; $('#qaResult').style.display='block';
+      let h='';
+      if(d.researched){
+        h+='<div class="note"><b>Company research used</b></div><div class="note" style="white-space:pre-wrap;margin-top:4px">'+esc((d.company_research||'').slice(0,900))+'</div>';
+        h+=(d.sources||[]).map(s=>'<div class="note"><a href="'+esc(s.url)+'" target="_blank" rel="noopener" style="color:#7db0ff">'+esc(s.title)+'</a></div>').join('');
+      } else if(d.research_note){ h='<div class="note">'+esc(d.research_note)+'</div>'; }
+      if((d.unverified||[]).length) h='<div class="note" style="color:#f0d98a;margin-bottom:8px">&#9888; Check before sending: <b>'+d.unverified.map(esc).join(', ')+'</b> is not in your resume/notes — confirm it is true or delete it.</div>'+h;
+      $('#qaResearchBox').innerHTML=h;
+    }catch(e){ toast('Error: '+e); }
+    finally{ btn.disabled=false; $('#qaRegen').disabled=false; btn.textContent=old; $('#qaStatus').textContent=''; }
+  }
+  $('#qaBtn').onclick=ask; $('#qaRegen').onclick=ask;
+  $('#qaCopy').onclick=async()=>{ try{ await navigator.clipboard.writeText($('#qaAnswer').value); toast('Copied.'); }catch(e){ $('#qaAnswer').select(); toast('Press Ctrl+C to copy.'); } };
+})();
+
 showTab('find');
 // SAME all-websites result everywhere:
 //   The cron scrapes ALL boards (LinkedIn/Indeed/Google/Glassdoor/ZipRecruiter/
@@ -4007,6 +4159,8 @@ COMPANIES_HTML = r"""<!doctype html>
 <main>
   <div class="bar">
     <input id="area" placeholder="Area, locality, sector or pincode — e.g. Noida Sector 62" style="flex:1;min-width:240px"/>
+    <label class="note" title="Also include companies in neighbouring localities within this distance">Radius
+      <select id="radius"><option value="2">2 km</option><option value="3" selected>3 km</option><option value="5">5 km</option><option value="0">Just this area</option></select></label>
     <label class="note">Max <input id="limit" type="number" value="500" min="20" max="2000" style="width:80px"/></label>
     <button id="go">Find companies</button>
     <button class="sec" id="exCsv">CSV</button>
@@ -4020,6 +4174,7 @@ COMPANIES_HTML = r"""<!doctype html>
       <div class="filters">
         <input id="fSearch" placeholder="search name / industry…" style="flex:1;min-width:120px"/>
         <label class="note" style="color:#7db0ff" title="Show only IT / software / AI companies — where developer roles are"><input type="checkbox" id="fIT" checked/> 💻 IT / dev only</label>
+        <select id="fSize"><option value="">Any size</option><option value="startup">Startup</option><option value="small">Small</option><option value="mid">Mid-size</option><option value="large">Large</option><option value="mnc">MNC</option><option value="enterprise">Enterprise</option></select>
         <select id="fType"><option value="">All types</option></select>
         <select id="fIndustry"><option value="">All industries</option></select>
         <label class="note"><input type="checkbox" id="fWeb"/> has website</label>
@@ -4034,7 +4189,7 @@ COMPANIES_HTML = r"""<!doctype html>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
 const $=s=>document.querySelector(s);
-let ALL=[], VIEW=[], markers=[], map, layer, active=null;
+let ALL=[], VIEW=[], markers=[], map, layer, active=null, radiusCircle=null;
 
 function initMap(){
   map=L.map('map',{scrollWheelZoom:true}).setView([28.61,77.37],12);
@@ -4055,7 +4210,7 @@ function esc(s){return (s||'').toString().replace(/[&<>"]/g,c=>({'&':'&amp;','<'
 
 // Lock every input / filter / export control while a search runs, so the
 // entered data can't be edited mid-fetch. Unlocked again when it finishes.
-const CONTROLS=['area','limit','go','exCsv','exJson','exGeo','fSearch','fType','fIndustry','fWeb','fCowork','fIT'];
+const CONTROLS=['area','radius','fSize','limit','go','exCsv','exJson','exGeo','fSearch','fType','fIndustry','fWeb','fCowork','fIT'];
 function lock(on){ CONTROLS.forEach(id=>{const el=$('#'+id); if(el) el.disabled=on;}); }
 
 async function go(){
@@ -4063,12 +4218,14 @@ async function go(){
   const btn=$('#go'), old=btn.textContent; lock(true); btn.innerHTML='<span class="spin"></span> Searching…';
   $('#status').textContent=''; $('#list').innerHTML='<div class="co note"><span class="spin"></span> Querying OpenStreetMap…</div>';
   try{
-    const r=await fetch('/api/companies?area='+encodeURIComponent(area)+'&limit='+($('#limit').value||500));
+    const r=await fetch('/api/companies?area='+encodeURIComponent(area)+'&limit='+($('#limit').value||500)+'&radius_km='+$('#radius').value);
     const d=await r.json();
     if(d.error){ $('#list').innerHTML='<div class="co note">'+esc(d.error)+'</div>'; $('#status').textContent=''; return; }
     ALL=d.companies||[];
     $('#status').textContent=d.resolved? ('📍 '+d.resolved.slice(0,52)+' · '+d.total_found+' found · '+((d.sources||[]).join(' + '))+(d.cached?' · cached':'')):'';
-    if(d.center) map.setView([d.center.lat,d.center.lon],14);
+    if(radiusCircle){ map.removeLayer(radiusCircle); radiusCircle=null; }
+    if(d.center&&d.radius_km){ radiusCircle=L.circle([d.center.lat,d.center.lon],{radius:d.radius_km*1000,color:'#3b82f6',weight:1,fillOpacity:.04}).addTo(map); map.fitBounds(radiusCircle.getBounds()); }
+    else if(d.center) map.setView([d.center.lat,d.center.lon],14);
     buildFilters(); applyFilters();
   }catch(e){ $('#list').innerHTML='<div class="co note">Error: '+esc(e)+'</div>'; }
   finally{ lock(false); btn.textContent=old; }
@@ -4082,9 +4239,10 @@ function buildFilters(){
 }
 function applyFilters(){
   const q=$('#fSearch').value.toLowerCase(), ty=$('#fType').value, ind=$('#fIndustry').value,
-        web=$('#fWeb').checked, cow=$('#fCowork').checked, itOnly=$('#fIT').checked;
+        web=$('#fWeb').checked, cow=$('#fCowork').checked, itOnly=$('#fIT').checked, sz=$('#fSize').value;
   VIEW=ALL.filter(c=>{
     if(itOnly && !['IT / Software','AI / ML'].includes(c.industry)) return false;
+    if(sz && c.company_size!==sz) return false;
     if(ty && c.business_type!==ty) return false;
     if(ind && c.industry!==ind) return false;
     if(web && !c.website) return false;
@@ -4107,8 +4265,9 @@ function render(){
     const row=document.createElement('div'); row.className='co'; row.dataset.i=i;
     const webOnly=!c.latitude;
     row.innerHTML='<span class="conf '+conf+'">'+c.confidence+'</span><div class="nm">'+esc(c.company_name)+'</div>'
-      +'<div class="meta">'+esc(c.industry||'')+(c.address?' · '+esc(c.address.slice(0,50)):'')+'</div>'
+      +'<div class="meta">'+esc(c.industry||'')+(c.address?' · '+esc(c.address.slice(0,50)):'')+(c.distance_km!=null?' · '+c.distance_km+' km away':'')+'</div>'
       +'<div style="margin-top:3px"><span class="tag" style="border-color:'+cc+';color:'+cc+'">'+esc(c.business_type||'')+'</span>'
+      +(c.company_size?'<span class="tag">'+esc(c.company_size==='mnc'?'MNC':c.company_size)+'</span>':'')
       +(c.website?'<span class="tag">🌐 web</span>':'')+(c.phones&&c.phones.length?'<span class="tag">📞</span>':'')
       +(webOnly?'<span class="tag" title="found via web search — no map pin; click opens site">🔗 web-listed</span>':'')+'</div>';
     row.onclick=()=>focusCo(i);
@@ -4189,7 +4348,7 @@ function exGeo(){
 initMap();
 $('#go').onclick=go;
 $('#area').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
-['fSearch','fType','fIndustry','fWeb','fCowork','fIT'].forEach(id=>$('#'+id).addEventListener('input',applyFilters));
+['fSearch','fSize','fType','fIndustry','fWeb','fCowork','fIT'].forEach(id=>$('#'+id).addEventListener('input',applyFilters));
 $('#exCsv').onclick=exCsv; $('#exJson').onclick=exJson; $('#exGeo').onclick=exGeo;
 </script>
 </body>

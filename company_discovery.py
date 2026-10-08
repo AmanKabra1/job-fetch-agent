@@ -149,6 +149,22 @@ def geocode_area(area: str):
     }
 
 
+def _haversine_km(lat1, lon1, lat2, lon2):
+    import math
+    p1, p2 = math.radians(lat1), math.radians(lat2)
+    a = (math.sin((p2 - p1) / 2) ** 2
+         + math.cos(p1) * math.cos(p2) * math.sin(math.radians(lon2 - lon1) / 2) ** 2)
+    return 6371.0 * 2 * math.asin(math.sqrt(a))
+
+
+def _radius_bbox(lat, lon, radius_km):
+    """(south, west, north, east) square that fully contains a circle of radius_km."""
+    import math
+    dlat = radius_km / 111.0
+    dlon = radius_km / (111.0 * max(0.2, math.cos(math.radians(lat))))
+    return (lat - dlat, lon - dlon, lat + dlat, lon + dlon)
+
+
 def _overpass_query(bbox):
     s, w, n, e = bbox
     b = f"{s},{w},{n},{e}"
@@ -629,14 +645,19 @@ def _extract_parent_area(area: str, resolved: str) -> str | None:
     return parent.strip() if parent else None
 
 
-def discover(area: str, limit: int = 1000, search_broader: bool = True):
+def discover(area: str, limit: int = 1000, search_broader: bool = True, radius_km: float = 0):
     """Main entry: area text -> list of companies (deduped, scored) + geo center.
     Merges OpenStreetMap (mapped, with coords) with Tavily web search (extra
     company sites + names OSM misses).
 
     If search_broader=True and initial search is thin (<100 results), searches
-    broader area (e.g., "Sector 142" -> "Noida") to get comprehensive coverage."""
-    ck = area.strip().lower()
+    broader area (e.g., "Sector 142" -> "Noida") to get comprehensive coverage.
+
+    radius_km > 0 switches to a "around this locality" search: every business within
+    radius_km of the area's centre (so the neighbouring localities 2-3 km away are
+    included), each tagged with distance_km, nearest first within the same score."""
+    radius_km = max(0.0, min(float(radius_km or 0), 10.0))
+    ck = f"{area.strip().lower()}|r{radius_km}"
     hit = _DISCOVER_CACHE.get(ck)
     if hit and (time.time() - hit[0]) < _CACHE_TTL:
         res = dict(hit[1])
@@ -650,6 +671,9 @@ def discover(area: str, limit: int = 1000, search_broader: bool = True):
         return {"error": f"Could not locate '{area}'. Try a more specific area, "
                          f"locality, or pincode.", "companies": []}
     time.sleep(1)                                 # Nominatim politeness
+    if radius_km:
+        geo["bbox"] = _radius_bbox(geo["lat"], geo["lon"], radius_km)
+        search_broader = False                    # the radius IS the breadth
     osm_rows, web_rows = [], []
     with ThreadPoolExecutor(max_workers=2) as ex:
         f_osm = ex.submit(fetch_overpass, geo["bbox"])
@@ -713,6 +737,18 @@ def discover(area: str, limit: int = 1000, search_broader: bool = True):
 
     # Merge all sources: OSM + Tavily web + coworking spaces.
     allr = osm_rows + web_rows + coworking_rows
+    if radius_km:
+        # Keep only pinned businesses inside the circle (the bbox is a square, so its
+        # corners are further out); unpinned web-listed names stay, they have no coords.
+        kept = []
+        for r in allr:
+            if r.get("latitude") and r.get("longitude"):
+                d = _haversine_km(geo["lat"], geo["lon"], r["latitude"], r["longitude"])
+                if d > radius_km:
+                    continue
+                r["distance_km"] = round(d, 2)
+            kept.append(r)
+        allr = kept
     # Rich records (have coords and/or a website) dedupe by website/coords.
     rich = _dedupe([r for r in allr if r.get("latitude") or r.get("website")])
     rich_names = {_norm_name(r["company_name"]) for r in rich}
@@ -739,6 +775,7 @@ def discover(area: str, limit: int = 1000, search_broader: bool = True):
         "area": area,
         "resolved": geo["display_name"],
         "center": {"lat": geo["lat"], "lon": geo["lon"]},
+        "radius_km": radius_km,
         "count": len(rows[:limit]),
         "total_found": len(rows),
         "sources": sorted({s for r in rows for s in r.get("source", [])}),

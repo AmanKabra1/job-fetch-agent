@@ -9,16 +9,38 @@ Categorizes companies by:
 """
 
 
+# Multinationals with big India engineering offices (name substrings).
+_MNC_NAMES = (
+    "google", "microsoft", "amazon", "adobe", "oracle", "sap ", "ibm", "cisco", "intel",
+    "dell", "hp ", "hewlett", "vmware", "salesforce", "samsung", "qualcomm", "nvidia",
+    "accenture", "capgemini", "cognizant", "deloitte", "ernst", "kpmg", "pwc", "wipro",
+    "infosys", "tcs", "tata consultancy", "hcl", "tech mahindra", "genpact", "ericsson",
+    "nokia", "siemens", "bosch", "honeywell", "ge ", "jpmorgan", "morgan stanley",
+    "goldman", "barclays", "hsbc", "citi", "american express", "paypal", "visa", "mastercard",
+    "walmart", "target ", "optum", "unitedhealth", "epam", "globallogic", "ltimindtree",
+    "mphasis", "persistent", "nagarro", "thoughtworks", "sopra", "concentrix", "hexaware",
+    "coforge", "zensar", "birlasoft", "ubisoft", "paytm", "flipkart", "swiggy", "zomato",
+)
+
+
+import re as _re
+_MNC_RE = _re.compile(r"\b(?:" + "|".join(_re.escape(n.strip()) for n in _MNC_NAMES) + r")\b")
+
+
 def detect_company_size(company_data: dict) -> str:
     """Detect company size from name, website, description, AND address.
 
-    Returns: 'startup', 'small', 'mid', 'large', or 'enterprise'
+    Returns: 'mnc', 'startup', 'small', 'mid', 'large', or 'enterprise'
     """
     name = (company_data.get("company_name") or "").lower()
     website = (company_data.get("website") or "").lower()
     description = (company_data.get("description") or "").lower()
     address = (company_data.get("address") or "").lower()
     building_name = (company_data.get("building_name") or "").lower()
+
+    # Known multinationals / large Indian IT majors first.
+    if _MNC_RE.search(name):
+        return "mnc"
 
     # Enterprise signals
     if any(x in name for x in ["google", "microsoft", "amazon", "facebook", "apple", "ibm", "hp", "dell"]):

@@ -303,6 +303,9 @@ def normalise(jobs: pd.DataFrame) -> pd.DataFrame:
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     jobs = jobs.copy()
     jobs["date_fetched"] = now
+    if "experience_range" in jobs.columns:
+        import jd_screener
+        jobs = pd.DataFrame([jd_screener.fold_experience_range(r) for r in jobs.fillna("").to_dict("records")])
     for col in COLUMNS:
         if col not in jobs.columns:
             jobs[col] = ""

@@ -191,6 +191,21 @@ def required_years(text: str):
     return (lo, hi)
 
 
+def fold_experience_range(row: dict) -> dict:
+    """Naukri (via jobspy) ships the experience ask in a separate `experience_range`
+    field ("5-10 Yrs") and NOT in the description, so every Naukri job read as
+    "no req stated" and 5+ yr roles leaked into a 2-yr feed. Prepend it to the
+    description as an explicit 'Experience:' line so every screener sees it."""
+    rng = str(row.get("experience_range") or "").strip()
+    if rng and rng.lower() not in ("nan", "none"):
+        if not re.search(r"yr|year", rng, re.I):
+            rng += " years"
+        desc = str(row.get("description") or "")
+        if rng not in desc:
+            row["description"] = f"Experience: {rng}. {desc}"
+    return row
+
+
 # --------------------------------------------------------------------------- #
 # Salary parsing (best effort → annual lakh INR)
 # --------------------------------------------------------------------------- #
