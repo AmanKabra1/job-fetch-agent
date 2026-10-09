@@ -126,6 +126,7 @@ MAX_STORED = 800   # best-ranked first; each row now carries its JD, so keep the
 # Realistic target: 200-300 quality jobs per cron run (more chances to apply)
 MIN_KEEP_BEFORE_RELAX = 200
 # even if some fall below the quality gate — so the hosted page is never sparse.
+MAX_AGE_DAYS = 4    # nothing posted longer ago than this stays in the feed (unknown dates are kept, sorted last)
 MIN_FEED = 300  # Target: Show 300+ jobs matching user's skills, experience, requirements
 
 # Columns we keep, in order. (jobspy returns many more; these are the useful ones.)
@@ -443,7 +444,7 @@ def rank_for_feed(rows):
 
 # How many LinkedIn postings to open for their real JD + applicant count each run.
 # (~1 request/second, so 60 ≈ 1 minute; set 0 to disable.)
-LINKEDIN_ENRICH_MAX = int(os.environ.get("LINKEDIN_ENRICH_MAX", "150"))
+LINKEDIN_ENRICH_MAX = int(os.environ.get("LINKEDIN_ENRICH_MAX", "250"))
 CANDIDATE_YEARS = 2
 
 
@@ -597,7 +598,7 @@ def main():
     # from the previous feed so the page is never sparse below the floor.
     # BUT: Only top up with FRESH jobs (< 14 days old) to keep the feed current!
     now = datetime.now(timezone.utc).replace(tzinfo=None)
-    def _is_fresh(r, max_days=14):
+    def _is_fresh(r, max_days=MAX_AGE_DAYS):
         try:
             date_str = str(r.get("date_posted", "")).strip()
             if not date_str:
@@ -659,6 +660,16 @@ def main():
         print(f"    ✓ analyzed top 50 jobs for fit", flush=True)
     except Exception as e:
         print(f"    ! fit analysis failed: {e} (continuing without analysis)", flush=True)
+
+    # FRESHNESS: drop anything older than MAX_AGE_DAYS, then order NEWEST POSTED FIRST (same
+    # day: better match first). The feed is replaced every run, so what you see is the latest.
+    ranked = [r for r in ranked
+              if APP._days_old(r.get("date_posted")) <= MAX_AGE_DAYS
+              or APP._days_old(r.get("date_posted")) >= 9999]
+    ranked = APP._newest_first(ranked)
+    if ranked:
+        print(f"  newest-first: top posted {ranked[0].get('date_posted')}, "
+              f"{sum(1 for r in ranked if APP._days_old(r.get('date_posted')) <= 1)} posted in the last 2 days.", flush=True)
 
     write_feed(ranked, seen_history)
     print(f"Replaced feed with today's latest: {len(ranked)} jobs "

@@ -168,6 +168,19 @@ def too_senior(lo, hi, candidate_years) -> bool:
     return (lo or 0) > cap or (hi or 0) > cap
 
 
+_TITLE_YRS = re.compile(_NUM + r"(?:\s*(?:-|–|—|to)\s*" + _NUM + r")?\s*\+?\s*(?:years?|yrs?)\b", re.I)
+
+
+def _title_years(title: str):
+    """(lo, hi) from an explicit 'N years' / 'N to M years' written in the job TITLE, else (0, 0)."""
+    m = _TITLE_YRS.search(title or "")
+    if not m:
+        return (0, 0)
+    a = _n(m.group(1))
+    b = _n(m.group(2)) if m.group(2) else a
+    return (a, b) if a <= b <= 25 else (0, 0)
+
+
 def required_years(text: str):
     """(min, max) years of experience the JD asks for for THE ROLE. (0, 0) if none.
 
@@ -526,7 +539,15 @@ def screen_job(job: dict, candidate_years: int = 2, skills=None, strict_role: bo
 
     # --- experience --------------------------------------------------------- #
     lo, hi = required_years(blob)
+    # Postings often put the ask in the TITLE ("Angular Developer | 9 to 12 years | Pune"),
+    # where there is no "experience" word nearby for required_years() to anchor on.
+    t_lo, t_hi = _title_years(title)
+    if t_hi and t_hi > (lo if not hi else hi):
+        lo, hi = t_lo, t_hi
     out["req_years"] = (lo, hi)
+    # A "0-5 years" style range has a falsy floor, so it must be checked before `if lo:`.
+    if too_senior(lo, hi, candidate_years):
+        return reject(f"needs {lo}{'-' + str(hi) if hi and hi != lo else '+'} yrs (you have {candidate_years})")
     fit = 55
     # Fresher-level postings ("0-1 years", "freshers only") are below your experience —
     # checked OUTSIDE `if lo:` because a 0 floor is falsy.

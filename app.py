@@ -389,6 +389,21 @@ SCREENING_ANSWERS = {
 }
 
 
+def _newest_first(rows):
+    """Display order = match-% TIER first, newest posted first inside each tier:
+         100%  -> 9 Oct, 8 Oct, 7 Oct ...
+         90-99 -> 9 Oct, 8 Oct, 7 Oct ...
+         80-89 -> ...   and so on down.
+    Within the same tier AND same day the higher raw score comes first; undated jobs go
+    last in their tier. (WHICH jobs are shown is still chosen by score upstream.)"""
+    def key(j):
+        shown = j.get("score", j.get("_match_score", 0)) or 0
+        raw = j.get("score_raw", j.get("_score_raw", shown)) or 0
+        tier = 10 if shown >= 100 else int(shown // 10)
+        return (-tier, _days_old(j.get("date_posted")), -raw)
+    return sorted(rows, key=key)
+
+
 def _salary_boost(lpa: float) -> int:
     """Rank-up jobs paying above your current salary; 0 for unknown/at-or-below
     (we never penalise or hide unknown-salary jobs)."""
@@ -1377,7 +1392,7 @@ def fetch_live(hours_old: int, limit: int, remote_only: bool = False,
         relaxed = True
         used_ratio = RELAX_SKILL_RATIO
 
-    jobs = _diversify_by_site(ranked, limit)
+    jobs = _newest_first(_diversify_by_site(ranked, limit))
     debug = {
         "fetched": total,
         "kept": len(jobs),
@@ -1705,7 +1720,7 @@ async def api_feed_match(
         relaxed = True
 
     return {
-        "jobs": kept,
+        "jobs": _newest_first(kept),
         "fetched_at": fetched_at or "daily feed",
         "source": "feed-match",
         "guided": bool(profile["primary_skills"] or profile["job_titles"]),
