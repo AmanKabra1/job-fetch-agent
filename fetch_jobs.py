@@ -663,13 +663,17 @@ def main():
 
     # FRESHNESS: drop anything older than MAX_AGE_DAYS, then order NEWEST POSTED FIRST (same
     # day: better match first). The feed is replaced every run, so what you see is the latest.
-    ranked = [r for r in ranked
-              if APP._days_old(r.get("date_posted")) <= MAX_AGE_DAYS
-              or APP._days_old(r.get("date_posted")) >= 9999]
-    ranked = APP._newest_first(ranked)
-    if ranked:
-        print(f"  newest-first: top posted {ranked[0].get('date_posted')}, "
-              f"{sum(1 for r in ranked if APP._days_old(r.get('date_posted')) <= 1)} posted in the last 2 days.", flush=True)
+    try:
+        import app as APP                 # (APP is imported locally elsewhere, not at module level)
+        ranked = [r for r in ranked
+                  if APP._days_old(r.get("date_posted")) <= MAX_AGE_DAYS
+                  or APP._days_old(r.get("date_posted")) >= 9999]
+        ranked = APP._newest_first(ranked)
+        if ranked:
+            print(f"  newest-first: top posted {ranked[0].get('date_posted')}, "
+                  f"{sum(1 for r in ranked if APP._days_old(r.get('date_posted')) <= 1)} posted in the last 2 days.", flush=True)
+    except Exception as e:                # never let ordering stop the feed from publishing
+        print(f"  ! freshness/ordering skipped: {e}", flush=True)
 
     write_feed(ranked, seen_history)
     print(f"Replaced feed with today's latest: {len(ranked)} jobs "
