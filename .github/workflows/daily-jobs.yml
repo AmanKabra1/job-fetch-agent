@@ -6,14 +6,18 @@ on:
   # and a writable checkout to git-push the feed branch. Vercel's function can do
   # none of those, so it only SERVES the feed this workflow publishes.
   #
-  # 4 peak posting times, UTC (IST = UTC+5:30):
-  #   03:00 UTC = 08:30 IST   |  07:00 UTC = 12:30 IST
-  #   11:00 UTC = 16:30 IST   |  15:00 UTC = 20:30 IST
+  # 5 runs a day, UTC (IST = UTC+5:30). Minutes are deliberately OFF the hour (:17/:43):
+  # GitHub delays or silently DROPS scheduled runs at :00 when its queue is busy (the old
+  # 03:00 UTC run was never starting; the others started 2-6 hours late). Even so a start
+  # can slip by up to an hour or two, so the first slot is early enough for your morning.
+  #   21:43 UTC = 03:13 IST   |  01:17 UTC = 06:47 IST   |  05:43 UTC = 11:13 IST
+  #   09:17 UTC = 14:47 IST   |  13:43 UTC = 19:13 IST
   schedule:
-    - cron: "0 3 * * *"
-    - cron: "0 7 * * *"
-    - cron: "0 11 * * *"
-    - cron: "0 15 * * *"
+    - cron: "43 21 * * *"
+    - cron: "17 1 * * *"
+    - cron: "43 5 * * *"
+    - cron: "17 9 * * *"
+    - cron: "43 13 * * *"
   workflow_dispatch: {}   # trigger manually from the Actions tab any time
 
 permissions:

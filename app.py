@@ -421,12 +421,19 @@ def _days_old(date_posted) -> float:
         date_posted = date_posted.date()
     if isinstance(date_posted, dt.date):
         return max(0.0, (dt.date.today() - date_posted).days)
-    s = (str(date_posted or "")).strip()[:10]
+    full = (str(date_posted or "")).strip()
+    s = full[:10]
     if not s:
         return 9999.0
     try:
         d = dt.datetime.strptime(s, "%Y-%m-%d").date()
     except ValueError:
+        try:                                   # RSS-style "Sun, 11 Oct 2026 ..." (WeWorkRemotely)
+            m = re.search(r"(\d{1,2})\s+([A-Za-z]{3})[a-z]*\.?\s+(\d{4})", full)
+            d2 = dt.datetime.strptime(f"{m.group(1)} {m.group(2)} {m.group(3)}", "%d %b %Y").date()
+            return max(0.0, (dt.date.today() - d2).days)
+        except Exception:
+            pass
         return 9999.0
     return max(0.0, (dt.date.today() - d).days)
 
