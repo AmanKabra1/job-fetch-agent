@@ -412,6 +412,23 @@ def _salary_boost(lpa: float) -> int:
     return min(15, round((lpa - CURRENT_LPA) * 2))
 
 
+def _today_ist() -> dt.date:
+    """Today in India (IST). The server (Vercel / Actions) runs in UTC, so plain
+    date.today() still says "yesterday" until 05:30 IST and today's postings were
+    mislabelled."""
+    return (dt.datetime.now(dt.timezone.utc) + dt.timedelta(hours=5, minutes=30)).date()
+
+
+def _date_cat(date_posted, stored=None) -> str:
+    """TODAY (0-1 days) / THIS_WEEK (2-7) / RECENT (8+) / UNKNOWN — worked out when the
+    page LOADS, not read from the value the cron stamped hours earlier (that froze a job
+    as "today" or "this week" no matter when you looked at it)."""
+    d = _days_old(date_posted)
+    if d >= 9999:
+        return "UNKNOWN"
+    return "TODAY" if d <= 1 else ("THIS_WEEK" if d <= 7 else "RECENT")
+
+
 def _days_old(date_posted) -> float:
     """How many days ago a job was posted (best-effort). Returns a large number
     when the date is missing/unparseable so unknown-date jobs don't rank as fresh.
@@ -420,7 +437,7 @@ def _days_old(date_posted) -> float:
     if isinstance(date_posted, dt.datetime):
         date_posted = date_posted.date()
     if isinstance(date_posted, dt.date):
-        return max(0.0, (dt.date.today() - date_posted).days)
+        return max(0.0, (_today_ist() - date_posted).days)
     full = (str(date_posted or "")).strip()
     s = full[:10]
     if not s:
@@ -431,11 +448,11 @@ def _days_old(date_posted) -> float:
         try:                                   # RSS-style "Sun, 11 Oct 2026 ..." (WeWorkRemotely)
             m = re.search(r"(\d{1,2})\s+([A-Za-z]{3})[a-z]*\.?\s+(\d{4})", full)
             d2 = dt.datetime.strptime(f"{m.group(1)} {m.group(2)} {m.group(3)}", "%d %b %Y").date()
-            return max(0.0, (dt.date.today() - d2).days)
+            return max(0.0, (_today_ist() - d2).days)
         except Exception:
             pass
         return 9999.0
-    return max(0.0, (dt.date.today() - d).days)
+    return max(0.0, (_today_ist() - d).days)
 
 
 def _recency_boost(date_posted: str) -> int:
@@ -998,7 +1015,7 @@ def _score_and_rank(rows, limit, target_text=None, cand_years=0):
             "salary_lpa": round(lpa, 1) if lpa else 0,
             "job_url": str(r.get("job_url") or ""),
             "description": desc,
-            "_date_category": r.get("_date_category"),
+            "_date_category": _date_cat(r.get("date_posted"), r.get("_date_category")),
         })
     # Relevance gate. When guided by your resume/skills/JD, only keep jobs that
     # actually match your profile — at least 2 of your skills, or one very strong
@@ -1270,7 +1287,7 @@ def calculate_match_score(r: dict, profile: dict, min_ratio: float) -> dict:
         "why": reasons,
         "job_url": str(r.get("job_url") or ""),
         "description": desc,
-        "_date_category": r.get("_date_category", "UNKNOWN"),
+        "_date_category": _date_cat(r.get("date_posted"), r.get("_date_category")),
     }}
 
 
@@ -3234,7 +3251,7 @@ function renderJobs(){
   let offset = 0;
 
   if(selectedFilter==='ALL' || selectedFilter==='TODAY') {
-    if(byDate.TODAY.length) { html += renderSection("TODAY'S JOBS (Posted last 3 days)", byDate.TODAY.length, byDate.TODAY, offset, '📅'); offset += byDate.TODAY.length; }
+    if(byDate.TODAY.length) { html += renderSection("TODAY'S JOBS (posted today or yesterday)", byDate.TODAY.length, byDate.TODAY, offset, '📅'); offset += byDate.TODAY.length; }
   }
   if(selectedFilter==='ALL' || selectedFilter==='THIS_WEEK') {
     if(byDate.THIS_WEEK.length) { html += renderSection("THIS WEEK'S JOBS (Posted 3-7 days ago)", byDate.THIS_WEEK.length, byDate.THIS_WEEK, offset, '⏰'); offset += byDate.THIS_WEEK.length; }
@@ -3808,7 +3825,7 @@ async function generateResume(){
     // for a job description that's no longer even in the form.
     $('#genJD').value=''; $('#genTitle').value=''; $('#genCompany').value='';
     clearTimeout(window._genResultTimer);
-    window._genResultTimer=setTimeout(()=>{ $('#genResult').innerHTML=''; }, 30000);
+    window._genResultTimer=setTimeout(()=>{ $('#genResult').innerHTML=''; }, 10000);
     loadResumes();
   }catch(e){ $('#genResult').textContent='Error: '+e; }
   finally{ stopTimer(); setBusy(btn,false); btn.textContent=old; }
@@ -4086,6 +4103,13 @@ if (githubBtn) {
       } else if(d.research_note){ h='<div class="note">'+esc(d.research_note)+'</div>'; }
       if((d.unverified||[]).length) h='<div class="note" style="color:#f0d98a;margin-bottom:8px">&#9888; Check before sending: <b>'+d.unverified.map(esc).join(', ')+'</b> is not in your resume/notes — confirm it is true or delete it.</div>'+h;
       $('#qaResearchBox').innerHTML=h;
+      // Same as the resume sections: 10 s after each generate, clear the four input
+      // boxes (question / company / role / JD) so the next question starts fresh.
+      // The ANSWER stays on screen so you can still copy it.
+      clearTimeout(window._qaClearTimer);
+      window._qaClearTimer=setTimeout(()=>{
+        ['#qaQuestion','#qaCompany','#qaRole','#qaJD'].forEach(s=>{ const el=$(s); if(el) el.value=''; });
+      }, 10000);
     }catch(e){ toast('Error: '+e); }
     finally{ btn.disabled=false; $('#qaRegen').disabled=false; btn.textContent=old; $('#qaStatus').textContent=''; }
   }
