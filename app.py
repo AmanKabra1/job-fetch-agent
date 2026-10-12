@@ -4042,7 +4042,12 @@ if (githubBtn) {
 
       if (data.success || data.projects_fetched) {
         const count = data.projects_fetched || 0;
-        statusEl.textContent = `✓ Fetched ${count} projects`;
+        const nn = (data.new_project_names || []);
+        statusEl.textContent = data.message || `✓ Fetched ${count} projects`;
+        if (nn.length) statusEl.textContent += ' New: ' + nn.join(', ') + '.';
+        // hover shows WHY each skipped repo was not counted as a project
+        statusEl.title = (data.skipped || []).map(s => s.name + ' — ' + s.reason).join('\n');
+        if (data.note) statusEl.textContent += ' (' + data.note + ')';
 
         // Force reload dropdown after a delay to ensure file is saved
         setTimeout(() => {

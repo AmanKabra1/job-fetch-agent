@@ -1,24 +1,83 @@
 {
   "projects": [
     {
-      "name": "job-fetch-agent",
       "description": "A single-user web app (and optional daily cron): 1. Find jobs across many boards ? generic: ranked to whatever you give it (an uploaded resume / target role / JD / skills), never to any baked-in data. 2. Create a resume two ways: (A) generate your saved resume",
       "github_url": "https://github.com/AmanKabra1/job-fetch-agent",
       "language": "Python",
       "stars": 0,
-      "updated": "2026-08-31T11:28:00Z",
+      "updated": "2026-10-12T08:15:49Z",
       "source": "github",
       "tech_stack": [
         "Python"
-      ]
+      ],
+      "name": "job-fetch-agent",
+      "repo_facts": {
+        "source_files": 34,
+        "code_files": 33,
+        "manifests": [
+          "requirements.txt",
+          "requirements.txt",
+          "vercel.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      }
     },
     {
-      "name": "ai-travel-planner",
+      "name": "formforge",
+      "description": "FormForge \u2014 AI-powered form builder (Laravel 12 + Livewire 3): generate forms from a prompt, drag-and-drop editing, Word/Excel import, response insights.",
+      "github_url": "https://github.com/AmanKabra1/formforge",
+      "language": "Blade",
+      "stars": 0,
+      "updated": "2026-09-23T06:12:02Z",
+      "source": "github",
+      "tech_stack": [
+        "Blade",
+        "AI"
+      ],
+      "repo_facts": {
+        "source_files": 109,
+        "code_files": 108,
+        "manifests": [
+          "Dockerfile",
+          "composer.json",
+          "package.json",
+          "vite.config.js"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      }
+    },
+    {
+      "description": "Vendor Management System (NestJS + Angular) with JWT auth & role-based admin/vendor portals ? evolving into RideFleet, a shared delivery-rider platform",
+      "github_url": "https://github.com/AmanKabra1/vendor-management",
+      "language": "TypeScript",
+      "stars": 0,
+      "updated": "2026-09-17T13:03:40Z",
+      "source": "github",
+      "tech_stack": [
+        "TypeScript"
+      ],
+      "name": "vendor-management",
+      "repo_facts": {
+        "source_files": 146,
+        "code_files": 141,
+        "manifests": [
+          "Dockerfile",
+          "nest-cli.json",
+          "package.json",
+          "vercel.json"
+        ],
+        "has_readme": false,
+        "notebooks": 0
+      }
+    },
+    {
       "description": "Production multi-agent AI travel planner ? LangGraph, Groq LLaMA 3.3, MCP (flights/weather/hotels), human-in-the-loop, PostgreSQL memory, Streamlit UI",
       "github_url": "https://github.com/AmanKabra1/ai-travel-planner",
       "language": "Python",
       "stars": 0,
-      "updated": "2026-08-29T18:27:20Z",
+      "updated": "2026-08-29T18:26:51Z",
       "source": "github",
       "tech_stack": [
         "Python",
@@ -26,335 +85,614 @@
         "PostgreSQL",
         "AI",
         "Machine Learning"
-      ]
+      ],
+      "name": "ai-travel-planner",
+      "repo_facts": {
+        "source_files": 20,
+        "code_files": 20,
+        "manifests": [
+          "requirements.txt"
+        ],
+        "has_readme": false,
+        "notebooks": 0
+      }
     },
     {
-      "name": "singplay",
       "description": "SingPlay ? music streaming, DJ, karaoke & Sing Along app built with Next.js 16, TiDB, Drizzle ORM",
       "github_url": "https://github.com/AmanKabra1/singplay",
       "language": "TypeScript",
       "stars": 0,
-      "updated": "2026-08-12T05:18:27Z",
+      "updated": "2026-08-12T05:18:19Z",
       "source": "github",
       "tech_stack": [
         "TypeScript"
-      ]
+      ],
+      "name": "singplay",
+      "repo_facts": {
+        "source_files": 169,
+        "code_files": 168,
+        "manifests": [
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      }
     },
     {
-      "name": "langgraph-chatbot",
-      "description": "Production LangGraph chatbot with embeddable widget, RAG, web search and multi-tenant client management",
-      "github_url": "https://github.com/AmanKabra1/langgraph-chatbot",
-      "language": "Python",
-      "stars": 0,
-      "updated": "2026-08-07T05:18:22Z",
-      "source": "github",
-      "tech_stack": [
-        "Python",
-        "LangGraph"
-      ]
-    },
-    {
-      "name": "ai-form-builder",
-      "description": "<img src=\"https://img.sh",
-      "github_url": "https://github.com/AmanKabra1/ai-form-builder",
-      "language": "PHP",
-      "stars": 0,
-      "updated": "2026-08-05T17:34:02Z",
-      "source": "github",
-      "tech_stack": [
-        "PHP",
-        "AI"
-      ]
-    },
-    {
-      "name": "langgraph-blog-writer",
       "description": "A LangGraph pipeline that turns a one-line topic into a finished technical blog post ? routing, researching, planning, writing sections in parallel, and generating diagrams ? wrapped in a Streamlit UI that runs on a phone, a tablet or a desktop. It runs in one of two modes, chosen automatically by w",
       "github_url": "https://github.com/AmanKabra1/langgraph-blog-writer",
       "language": "Python",
       "stars": 0,
-      "updated": "2026-08-03T05:54:33Z",
+      "updated": "2026-08-03T05:53:31Z",
       "source": "github",
       "tech_stack": [
         "Python",
         "LangGraph"
-      ]
+      ],
+      "name": "langgraph-blog-writer",
+      "repo_facts": {
+        "source_files": 16,
+        "code_files": 16,
+        "manifests": [
+          "package.json",
+          "requirements.txt"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      }
     },
     {
-      "name": "live-location-share",
       "description": "Live location sharing PWA - connect with share codes and auto-share every 3 hours",
       "github_url": "https://github.com/AmanKabra1/live-location-share",
       "language": "HTML",
       "stars": 0,
-      "updated": "2026-07-15T04:16:07Z",
+      "updated": "2026-07-15T04:16:04Z",
       "source": "github",
       "tech_stack": [
         "HTML"
-      ]
+      ],
+      "name": "live-location-share",
+      "repo_facts": {
+        "source_files": 16,
+        "code_files": 10,
+        "manifests": [
+          "Dockerfile",
+          "package.json"
+        ],
+        "has_readme": false,
+        "notebooks": 0
+      }
     },
     {
-      "name": "SB",
-      "description": null,
-      "github_url": "https://github.com/AmanKabra1/SB",
-      "language": "Java",
-      "stars": 0,
-      "updated": "2026-06-23T09:59:05Z",
-      "source": "github",
-      "tech_stack": [
-        "Java"
-      ]
-    },
-    {
-      "name": "hotel_management_project",
-      "description": null,
-      "github_url": "https://github.com/AmanKabra1/hotel_management_project",
-      "language": "HTML",
-      "stars": 0,
-      "updated": "2026-06-23T09:41:44Z",
-      "source": "github",
-      "tech_stack": [
-        "HTML"
-      ]
-    },
-    {
-      "name": "task-management-api",
       "description": "Express + TypeScript REST API: JWT auth, role-based access, MongoDB (Mongoose), Redis, Zod validation",
       "github_url": "https://github.com/AmanKabra1/task-management-api",
       "language": "TypeScript",
       "stars": 0,
-      "updated": "2026-06-23T09:10:01Z",
+      "updated": "2026-06-23T09:09:57Z",
       "source": "github",
       "tech_stack": [
         "TypeScript",
         "MongoDB",
         "Redis"
-      ]
+      ],
+      "name": "task-management-api",
+      "repo_facts": {
+        "source_files": 12,
+        "code_files": 12,
+        "manifests": [
+          "package.json"
+        ],
+        "has_readme": false,
+        "notebooks": 0
+      }
     },
     {
-      "name": "angular-tut",
-      "description": "Personal Angular learning project. > Note: project source (e.g. package.json, angular.json, src/app/* components) > is not yet present in this folder. Add it here and commit ? the repository is > configured to attribute commits to the personal identity.",
-      "github_url": "https://github.com/AmanKabra1/angular-tut",
-      "language": null,
-      "stars": 0,
-      "updated": "2026-06-23T08:02:33Z",
-      "source": "github",
-      "tech_stack": []
-    },
-    {
-      "name": "Next",
-      "description": "Workspace for a Next.js project (my-app/). > Note: the application source under my-app/ is currently an empty scaffold > (only the folder structure and nodemodules/ exist). Add your code under > my-app/src/ and it will be tracked by git.",
-      "github_url": "https://github.com/AmanKabra1/Next",
-      "language": null,
-      "stars": 0,
-      "updated": "2026-06-23T07:38:10Z",
-      "source": "github",
-      "tech_stack": []
-    },
-    {
-      "name": "demo1",
       "description": "[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
       "github_url": "https://github.com/AmanKabra1/demo1",
       "language": "TypeScript",
       "stars": 0,
-      "updated": "2026-06-23T06:52:00Z",
+      "updated": "2026-06-23T06:51:56Z",
       "source": "github",
       "tech_stack": [
         "TypeScript"
-      ]
+      ],
+      "name": "demo1",
+      "repo_facts": {
+        "source_files": 36,
+        "code_files": 36,
+        "manifests": [
+          "nest-cli.json",
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      }
     },
     {
-      "name": "babbar",
-      "description": null,
-      "github_url": "https://github.com/AmanKabra1/babbar",
-      "language": "C++",
-      "stars": 0,
-      "updated": "2026-06-23T06:42:37Z",
-      "source": "github",
-      "tech_stack": [
-        "C++"
-      ]
-    },
-    {
-      "name": "ML-AI-IT",
-      "description": null,
-      "github_url": "https://github.com/AmanKabra1/ML-AI-IT",
-      "language": "Jupyter Notebook",
-      "stars": 1,
-      "updated": "2026-06-23T06:32:52Z",
-      "source": "github",
-      "tech_stack": [
-        "Jupyter Notebook",
-        "AI",
-        "Machine Learning"
-      ]
-    },
-    {
-      "name": "amrutam-backend1",
       "description": "1. Clone repo 2. Install dependencies: npm install 3. Set environment variables in .env 4. Run DB migrations Sequelize auto-sync 5. Start server: npm run dev",
       "github_url": "https://github.com/AmanKabra1/amrutam-backend1",
       "language": "JavaScript",
       "stars": 0,
-      "updated": "2026-06-23T06:24:44Z",
+      "updated": "2026-06-23T06:24:36Z",
       "source": "github",
       "tech_stack": [
         "JavaScript"
-      ]
+      ],
+      "name": "amrutam-backend1",
+      "repo_facts": {
+        "source_files": 20,
+        "code_files": 20,
+        "manifests": [
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      }
     },
     {
-      "name": "uber-services",
       "description": "[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
       "github_url": "https://github.com/AmanKabra1/uber-services",
       "language": "TypeScript",
       "stars": 0,
-      "updated": "2026-06-23T06:05:51Z",
+      "updated": "2026-06-23T06:05:47Z",
       "source": "github",
       "tech_stack": [
         "TypeScript"
-      ]
+      ],
+      "name": "uber-services",
+      "repo_facts": {
+        "source_files": 25,
+        "code_files": 25,
+        "manifests": [
+          "docker-compose.yml",
+          "nest-cli.json",
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      }
     },
     {
-      "name": "Project-NodeJS",
-      "description": null,
-      "github_url": "https://github.com/AmanKabra1/Project-NodeJS",
-      "language": "CSS",
-      "stars": 0,
-      "updated": "2026-06-23T05:16:31Z",
-      "source": "github",
-      "tech_stack": [
-        "CSS",
-        "Node.js"
-      ]
-    },
-    {
-      "name": "vendor-management",
-      "description": "Vendor Management System (NestJS + Angular) with JWT auth & role-based admin/vendor portals ? evolving into RideFleet, a shared delivery-rider platform",
-      "github_url": "https://github.com/AmanKabra1/vendor-management",
-      "language": "TypeScript",
-      "stars": 0,
-      "updated": "2026-06-23T05:08:50Z",
-      "source": "github",
-      "tech_stack": [
-        "TypeScript"
-      ]
-    },
-    {
-      "name": "finance-backend",
       "description": "[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
       "github_url": "https://github.com/AmanKabra1/finance-backend",
       "language": "TypeScript",
       "stars": 0,
-      "updated": "2026-06-23T05:07:38Z",
+      "updated": "2026-06-23T05:07:32Z",
       "source": "github",
       "tech_stack": [
         "TypeScript"
-      ]
+      ],
+      "name": "finance-backend",
+      "repo_facts": {
+        "source_files": 25,
+        "code_files": 25,
+        "manifests": [
+          "nest-cli.json",
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      }
     },
     {
-      "name": "AgenticAI",
-      "description": "A hands-on collection of projects for learning Agentic AI ? building systems where Large Language Models (LLMs) don't just answer questions, but reason, use tools, remember context, and take actions to accomplish goals. Each subfolder is a self-contained Python project (managed with ) that demonstra",
-      "github_url": "https://github.com/AmanKabra1/AgenticAI",
-      "language": "Jupyter Notebook",
-      "stars": 0,
-      "updated": "2026-06-19T09:27:12Z",
-      "source": "github",
-      "tech_stack": [
-        "Jupyter Notebook",
-        "AI"
-      ]
-    },
-    {
-      "name": "AmanKabra1",
-      "description": "Backend-Focused Software Engineer | API Architect | System Design Enthusiast Building scalable, production-ready systems with clean code and thoughtful design. ? ? ?",
-      "github_url": "https://github.com/AmanKabra1/AmanKabra1",
-      "language": null,
-      "stars": 0,
-      "updated": "2026-06-18T04:59:53Z",
-      "source": "github",
-      "tech_stack": []
-    },
-    {
-      "name": "langchain-learning",
-      "description": "A collection of hands-on projects exploring the modern LangChain (v1) ecosystem ? agents, evaluation, model gateways, and core LangChain concepts. Each subfolder is a self-contained project managed with . | Folder | Focus | Key libraries |",
-      "github_url": "https://github.com/AmanKabra1/langchain-learning",
-      "language": "Jupyter Notebook",
-      "stars": 0,
-      "updated": "2026-06-17T06:14:10Z",
-      "source": "github",
-      "tech_stack": [
-        "Jupyter Notebook",
-        "LangChain",
-        "AI"
-      ]
-    },
-    {
-      "name": "Cricket",
       "description": "A real-time scoring platform for local cricket tournaments and grounds ? inspired by CricHeroes, Cricbuzz, and ESPN Cricinfo, but built for community sport. Cricket-first, with a sport-agnostic core (teams/tournaments/venues) ready to extend to football, kabaddi, etc.",
       "github_url": "https://github.com/AmanKabra1/Cricket",
       "language": "TypeScript",
       "stars": 0,
-      "updated": "2026-06-17T04:48:11Z",
+      "updated": "2026-06-17T04:47:43Z",
       "source": "github",
       "tech_stack": [
         "TypeScript"
-      ]
+      ],
+      "name": "Cricket",
+      "repo_facts": {
+        "source_files": 187,
+        "code_files": 185,
+        "manifests": [
+          "Dockerfile",
+          "requirements.txt",
+          "docker-compose.yml",
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      }
     },
     {
-      "name": "CoWorking-Space",
       "description": "The modern operating system for coworking spaces ? manage buildings, facilities, bookings, billing, members, inventory, vendors, and community from one platform. | Layer | Technology | |-------|-----------| | Backend | Django 5.1 + Django REST Framework, SimpleJWT auth |",
       "github_url": "https://github.com/AmanKabra1/CoWorking-Space",
       "language": "Python",
       "stars": 0,
-      "updated": "2026-06-17T04:46:52Z",
+      "updated": "2026-08-24T09:39:16Z",
       "source": "github",
       "tech_stack": [
         "Python"
-      ]
-    },
-    {
-      "name": "aman_portfolio-app",
-      "description": null,
-      "github_url": "https://github.com/AmanKabra1/aman_portfolio-app",
-      "language": "TypeScript",
-      "stars": 0,
-      "updated": "2026-06-16T10:46:48Z",
-      "source": "github",
-      "tech_stack": [
-        "TypeScript"
-      ]
-    },
-    {
-      "name": "Images",
-      "description": null,
-      "github_url": "https://github.com/AmanKabra1/Images",
-      "language": null,
-      "stars": 0,
-      "updated": "2025-01-09T10:15:06Z",
-      "source": "github",
-      "tech_stack": []
-    },
-    {
-      "name": "demo",
-      "description": null,
-      "github_url": "https://github.com/AmanKabra1/demo",
-      "language": null,
-      "stars": 0,
-      "updated": "2024-12-06T09:29:49Z",
-      "source": "github",
-      "tech_stack": []
-    },
-    {
-      "name": "UAT Test Project",
-      "tech_stack": [
-        "Python",
-        "Testing"
       ],
-      "description": "This is a UAT test project for verification",
-      "github_url": "",
-      "source": "manual",
-      "added_by_email": "amankabra.it24@gmail.com",
-      "added_date": "2026-08-31T20:09:36.539301"
+      "name": "CoWorking-Space",
+      "repo_facts": {
+        "source_files": 324,
+        "code_files": 323,
+        "manifests": [
+          "Dockerfile",
+          "manage.py",
+          "docker-compose.yml",
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      }
     }
   ],
-  "last_updated": "2026-08-31T20:09:36.539905",
+  "last_updated": "2026-10-12T16:01:05.758921",
   "source": "github",
-  "total": 29
+  "total": 14,
+  "repo_checks": {
+    "job-fetch-agent": {
+      "pushed_at": "2026-10-12T08:15:49Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 34,
+        "code_files": 33,
+        "manifests": [
+          "requirements.txt",
+          "requirements.txt",
+          "vercel.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "formforge": {
+      "pushed_at": "2026-09-23T06:12:02Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 109,
+        "code_files": 108,
+        "manifests": [
+          "Dockerfile",
+          "composer.json",
+          "package.json",
+          "vite.config.js"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "vendor-management": {
+      "pushed_at": "2026-09-17T13:03:40Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 146,
+        "code_files": 141,
+        "manifests": [
+          "Dockerfile",
+          "nest-cli.json",
+          "package.json",
+          "vercel.json"
+        ],
+        "has_readme": false,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "ai-travel-planner": {
+      "pushed_at": "2026-08-29T18:26:51Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 20,
+        "code_files": 20,
+        "manifests": [
+          "requirements.txt"
+        ],
+        "has_readme": false,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "singplay": {
+      "pushed_at": "2026-08-12T05:18:19Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 169,
+        "code_files": 168,
+        "manifests": [
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "langgraph-blog-writer": {
+      "pushed_at": "2026-08-03T05:53:31Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 16,
+        "code_files": 16,
+        "manifests": [
+          "package.json",
+          "requirements.txt"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "live-location-share": {
+      "pushed_at": "2026-07-15T04:16:04Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 16,
+        "code_files": 10,
+        "manifests": [
+          "Dockerfile",
+          "package.json"
+        ],
+        "has_readme": false,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "SB": {
+      "pushed_at": "2026-06-23T09:59:01Z",
+      "real": false,
+      "reason": "no manifest and only 1 source files \u2014 looks like snippets, not a project",
+      "facts": {
+        "source_files": 1,
+        "code_files": 1,
+        "manifests": [],
+        "has_readme": false,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "hotel_management_project": {
+      "pushed_at": "2026-06-23T09:41:40Z",
+      "real": false,
+      "reason": "no README and no description",
+      "facts": {
+        "source_files": 23,
+        "code_files": 17,
+        "manifests": [
+          "manage.py"
+        ],
+        "has_readme": false,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "task-management-api": {
+      "pushed_at": "2026-06-23T09:09:57Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 12,
+        "code_files": 12,
+        "manifests": [
+          "package.json"
+        ],
+        "has_readme": false,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "demo1": {
+      "pushed_at": "2026-06-23T06:51:56Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 36,
+        "code_files": 36,
+        "manifests": [
+          "nest-cli.json",
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "babbar": {
+      "pushed_at": "2026-06-23T06:42:29Z",
+      "real": false,
+      "reason": "no manifest and only 78 source files \u2014 looks like snippets, not a project",
+      "facts": {
+        "source_files": 78,
+        "code_files": 78,
+        "manifests": [],
+        "has_readme": false,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "ML-AI-IT": {
+      "pushed_at": "2026-06-23T06:32:42Z",
+      "real": false,
+      "reason": "no manifest and only 19 source files \u2014 looks like snippets, not a project",
+      "facts": {
+        "source_files": 19,
+        "code_files": 14,
+        "manifests": [],
+        "has_readme": false,
+        "notebooks": 20
+      },
+      "v": 2
+    },
+    "amrutam-backend1": {
+      "pushed_at": "2026-06-23T06:24:36Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 20,
+        "code_files": 20,
+        "manifests": [
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "uber-services": {
+      "pushed_at": "2026-06-23T06:05:47Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 25,
+        "code_files": 25,
+        "manifests": [
+          "docker-compose.yml",
+          "nest-cli.json",
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "Project-NodeJS": {
+      "pushed_at": "2026-06-23T05:16:22Z",
+      "real": false,
+      "reason": "no README and no description",
+      "facts": {
+        "source_files": 45,
+        "code_files": 34,
+        "manifests": [
+          "package.json",
+          "package.json"
+        ],
+        "has_readme": false,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "finance-backend": {
+      "pushed_at": "2026-06-23T05:07:32Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 25,
+        "code_files": 25,
+        "manifests": [
+          "nest-cli.json",
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "AgenticAI": {
+      "pushed_at": "2026-06-19T09:27:07Z",
+      "real": false,
+      "reason": "learning/starter/boilerplate repo (14 source files, needs 15+)",
+      "facts": {
+        "source_files": 14,
+        "code_files": 14,
+        "manifests": [
+          "pyproject.toml",
+          "requirements.txt",
+          "pyproject.toml",
+          "requirements.txt"
+        ],
+        "has_readme": true,
+        "notebooks": 6
+      },
+      "v": 2
+    },
+    "langchain-learning": {
+      "pushed_at": "2026-06-17T06:14:01Z",
+      "real": false,
+      "reason": "learning/starter/boilerplate repo (4 source files, needs 15+)",
+      "facts": {
+        "source_files": 4,
+        "code_files": 4,
+        "manifests": [
+          "pyproject.toml",
+          "requirements.txt",
+          "pyproject.toml",
+          "requirements.txt"
+        ],
+        "has_readme": true,
+        "notebooks": 9
+      },
+      "v": 2
+    },
+    "Cricket": {
+      "pushed_at": "2026-06-17T04:47:43Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 187,
+        "code_files": 185,
+        "manifests": [
+          "Dockerfile",
+          "requirements.txt",
+          "docker-compose.yml",
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "CoWorking-Space": {
+      "pushed_at": "2026-08-24T09:39:16Z",
+      "real": true,
+      "reason": "ok",
+      "facts": {
+        "source_files": 324,
+        "code_files": 323,
+        "manifests": [
+          "Dockerfile",
+          "manage.py",
+          "docker-compose.yml",
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "aman_portfolio-app": {
+      "pushed_at": "2026-06-16T10:47:20Z",
+      "real": false,
+      "reason": "no README and no description",
+      "facts": {
+        "source_files": 107,
+        "code_files": 103,
+        "manifests": [
+          "nest-cli.json",
+          "package.json",
+          "angular.json",
+          "package.json"
+        ],
+        "has_readme": false,
+        "notebooks": 0
+      },
+      "v": 2
+    },
+    "Images": {
+      "pushed_at": "2025-01-09T10:15:02Z",
+      "real": false,
+      "reason": "no manifest and only 0 source files \u2014 looks like snippets, not a project",
+      "facts": {
+        "source_files": 0,
+        "code_files": 0,
+        "manifests": [],
+        "has_readme": false,
+        "notebooks": 0
+      },
+      "v": 2
+    }
+  }
 }

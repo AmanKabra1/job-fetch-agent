@@ -162,67 +162,43 @@ def add_project_manually(
 
 def fetch_github_projects() -> dict:
     """
-    API: Fetch projects from GitHub (rate-limited).
-
-    Returns:
-        {
-            "success": true,
-            "projects_added": 5,
-            "new_projects": ["project1", "project2"],
-            "message": "Fetched 5 new projects from GitHub"
-        }
+    API: Fetch projects from GitHub. EVERY button press fetches (no 14-day block):
+    lists your public repos, keeps only the REAL projects (manifest + enough source files +
+    README/description — not snippets, empty repos or boilerplate), merges with the saved
+    list (manual projects are never dropped) and reports what is new and what was skipped.
     """
     try:
-        # Fetch from GitHub
-        projects = PM.fetch_github_projects("AmanKabra1")
-
-        if not projects:
-            return {
-                "success": False,
-                "message": "No new projects found (checked within last 2 weeks)"
-            }
-
-        # Save to portfolio
-        old_data = PM.load_projects()
-        old_names = {p.get("name") for p in old_data.get("projects", [])}
-
-        new_projects = [p for p in projects if p.get("name") not in old_names]
-
-        data = {
-            "projects": projects,
-            "last_updated": datetime.now().isoformat(),
-            "source": "github",
-            "total": len(projects)
-        }
-
-        # Try to save, but gracefully handle read-only filesystems (Vercel)
-        try:
-            PM.save_projects(data)
-        except (OSError, IOError, PermissionError) as e:
-            # Read-only filesystem (Vercel) - return success but note it
-            return {
-                "success": True,
-                "projects_fetched": len(projects),
-                "new_projects_added": len(new_projects),
-                "note": "On read-only filesystem (Vercel) - projects displayed but not saved. Projects are pre-loaded from repository.",
-                "new_projects": [p.get("name") for p in new_projects][:10]
-            }
-
-        return {
-            "success": True,
-            "projects_fetched": len(projects),
-            "new_projects_added": len(new_projects),
-            "new_project_names": [p.get("name") for p in new_projects],
-            "message": f"✓ Fetched {len(projects)} projects. {len(new_projects)} are new."
-        }
-
+        res = PM.sync_github_projects("AmanKabra1")
     except Exception as e:
-        return {
-            "success": False,
-            "error": str(e),
-            "message": f"GitHub fetch failed: {str(e)[:100]}"
-        }
+        return {"success": False, "error": str(e),
+                "message": f"GitHub fetch failed: {str(e)[:100]}"}
 
+    data = res["data"]
+    skipped = res["skipped"]
+    out = {
+        "success": True,
+        "projects_fetched": len(data["projects"]),
+        "new_projects_added": len(res["new"]),
+        "new_project_names": res["new"],
+        "removed": res["removed"],
+        "skipped": skipped,
+        "rate_limited": res["rate_limited"],
+        "repos_seen": res["repos_seen"],
+        "errors": res["errors"],
+    }
+    msg = (f"✓ {len(data['projects'])} real projects ({len(res['new'])} new). "
+           f"Skipped {len(skipped)} repos that aren't real projects.")
+    if res["rate_limited"]:
+        msg += " GitHub rate limit hit — set GITHUB_TOKEN to check every repo."
+    out["message"] = msg
+
+    try:
+        PM.save_projects(data)
+        PM._log_fetch()
+    except (OSError, IOError, PermissionError):
+        out["note"] = ("Read-only filesystem (Vercel): list shown but not saved. "
+                       "Run the fetch locally or via the cron to persist it.")
+    return out
 
 def get_job_with_analysis(job: dict) -> dict:
     """

@@ -1,0 +1,59 @@
+name: Sync GitHub Projects
+
+# Keeps data/projects.json (the portfolio used to pick the best project for each job and to
+# build tailored resumes) in step with your GitHub repos. Runs daily but only DOES the sync
+# when the portfolio is >= 14 days old (see auto_sync_projects.py) — a manual "Fetch from
+# GitHub" button press also resets that 14-day clock. If the list changed it is committed to
+# main, which redeploys the site.
+on:
+  schedule:
+    - cron: "30 2 * * *"        # 08:00 IST
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Sync now even if the last sync was < 14 days ago"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: projects-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # raises the GitHub API limit from 60 to 1000/hour
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests
+
+      - name: Sync projects from GitHub (only when due)
+        run: |
+          if [ "${{ github.event.inputs.force }}" = "true" ]; then
+            python auto_sync_projects.py --force
+          else
+            python auto_sync_projects.py
+          fi
+
+      - name: Commit data/projects.json if it changed
+        run: |
+          if git diff --quiet -- data/projects.json; then
+            echo "No portfolio changes."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/projects.json
+          git commit -m "chore: sync portfolio projects from GitHub"
+          git pull --rebase origin main
+          git push origin main
