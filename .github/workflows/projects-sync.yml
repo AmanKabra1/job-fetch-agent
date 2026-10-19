@@ -26,7 +26,13 @@ jobs:
   sync:
     runs-on: ubuntu-latest
     env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # raises the GitHub API limit from 60 to 1000/hour
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # raises the GitHub API limit; sees PUBLIC repos only
+      # OPTIONAL — to also sync your PRIVATE repos: add a repo secret GH_PAT (a personal access
+      # token with `repo` scope). This repository is PUBLIC, so private-project details are
+      # only committed if you ALSO add a repo VARIABLE STORE_PRIVATE_IN_REPO = 1; otherwise they
+      # stay out of git (and the scheduled run keeps just the public ones).
+      GH_PAT: ${{ secrets.GH_PAT }}
+      STORE_PRIVATE_IN_REPO: ${{ vars.STORE_PRIVATE_IN_REPO }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,7 +59,7 @@ jobs:
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/projects.json
+          git add data/projects.json    # data/projects_private.json is gitignored on purpose
           git commit -m "chore: sync portfolio projects from GitHub"
           git pull --rebase origin main
           git push origin main

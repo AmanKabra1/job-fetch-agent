@@ -185,9 +185,14 @@ def fetch_github_projects() -> dict:
         "rate_limited": res["rate_limited"],
         "repos_seen": res["repos_seen"],
         "errors": res["errors"],
+        "private_projects": data.get("private_count", 0),
+        "private_included": res["authed"],
     }
-    msg = (f"✓ {len(data['projects'])} real projects ({len(res['new'])} new). "
+    msg = (f"✓ {len(data['projects'])} real projects ({len(res['new'])} new, "
+           f"{data.get('private_count', 0)} private). "
            f"Skipped {len(skipped)} repos that aren't real projects.")
+    if not res["authed"]:
+        msg += " Private repos NOT included — set GH_PAT (a token with repo scope) or run locally while logged in to gh."
     if res["rate_limited"]:
         msg += " GitHub rate limit hit — set GITHUB_TOKEN to check every repo."
     out["message"] = msg

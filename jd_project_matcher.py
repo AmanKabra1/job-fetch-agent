@@ -41,6 +41,9 @@ def get_best_project_for_jd(job: dict, top_n: int = 3) -> dict:
     # Load user's projects
     portfolio = PM.load_projects()
     projects = portfolio.get("projects", [])
+    # Weak repos (tutorial dumps, one-commit scratch projects) must not be swapped into a resume.
+    strong = [p for p in projects if p.get("source") != "github" or (p.get("quality") if p.get("quality") is not None else 100) >= 30]
+    projects = strong or projects
 
     if not projects:
         return {
@@ -182,7 +185,9 @@ def _score_projects_heuristic(projects: list, jd_text: str) -> list:
 
     for project in projects:
         tech_stack = [t.lower() for t in (project.get("tech_stack", []) or [])]
-        desc = (project.get("description", "") or "").lower()
+        # description + README summary + feature bullets (richer GitHub data when available)
+        desc = " ".join([str(project.get("description", "") or ""), str(project.get("summary", "") or ""),
+                         " ".join(project.get("features", []) or [])]).lower()
         name = project.get("name", "").lower()
 
         score = 0
@@ -205,6 +210,8 @@ def _score_projects_heuristic(projects: list, jd_text: str) -> list:
         # 2. DESCRIPTION QUALITY BONUS
         if len(desc) > 50:  # Project has meaningful description
             score += 10
+        # Showcase strength from the GitHub scan (tests, CI, Docker, live demo, commits...)
+        score += min(10, int(project.get("quality") or 0) // 10)
 
         # Description mentions tech from JD
         desc_tech_matches = sum(1 for jd_tech in jd_tech_terms if jd_tech in desc)
@@ -221,8 +228,10 @@ def _score_projects_heuristic(projects: list, jd_text: str) -> list:
             score += 5
 
         # PENALTY: Irrelevant tech (like "Testing" for non-QA/dev roles)
-        irrelevant_techs = ["testing", "test", "jest", "pytest", "qa", "uat"]
-        has_irrelevant = sum(1 for tech in tech_stack if any(irr in tech for irr in irrelevant_techs))
+        # EXACT labels only: the richer GitHub scan now lists "Unit Testing"/"Jest"/"Pytest" as real
+        # engineering practice, which must not be treated as a QA-only project.
+        irrelevant_techs = {"testing", "test", "qa", "uat"}
+        has_irrelevant = sum(1 for tech in tech_stack if tech in irrelevant_techs)
         if job_type == "backend" and has_irrelevant > 0:
             score -= 15  # Penalize QA-focused projects for backend roles
 
@@ -230,14 +239,19 @@ def _score_projects_heuristic(projects: list, jd_text: str) -> list:
 
         scored.append({
             **project,
-            "match_score": final_score
+            "match_score": final_score,
+            "_raw_score": score,          # un-clamped: separates projects that all cap at 100
         })
 
     # Sort by score (highest first), then by tech diversity as tiebreaker
     scored.sort(
         key=lambda p: (
             p.get("match_score", 0),
-            len([t for t in (p.get("tech_stack", []) or []) if t.lower() in [kw for kw in jd_tech_terms]])
+            # how many of the JD's technologies the project REALLY uses (its tech_stack) —
+            # first tie-breaker, because long README text inflates the keyword bonuses above
+            len({kw for kw in jd_tech_terms for t in (p.get("tech_stack", []) or []) if kw in t.lower()}),
+            p.get("quality", 0) or 0,
+            p.get("_raw_score", 0),
         ),
         reverse=True
     )

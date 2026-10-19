@@ -1,40 +1,215 @@
 {
   "projects": [
     {
-      "description": "A single-user web app (and optional daily cron): 1. Find jobs across many boards ? generic: ranked to whatever you give it (an uploaded resume / target role / JD / skills), never to any baked-in data. 2. Create a resume two ways: (A) generate your saved resume",
-      "github_url": "https://github.com/AmanKabra1/job-fetch-agent",
-      "language": "Python",
-      "stars": 0,
-      "updated": "2026-10-12T08:15:49Z",
-      "source": "github",
-      "tech_stack": [
+      "name": "Cricket",
+      "description": "A real-time scoring platform for local cricket tournaments and grounds \u2014 inspired by CricHeroes, Cricbuzz, and ESPN Cricinfo, but built for community sport. Cricket-first, with a sport-agnostic core teams/tournaments/venues ready to extend to football, kabaddi, etc. > Status: Phases 1\u201312 complete \u2014 full platform live on web Vercel and > backend/AI Render, with an Expo app built via EAS Play Store > submission intentionally on hold. See docs/NEXTSTEPS.mddocs/NEXTSTEPS.md > for the phase log. Admins create teams/players, schedule matches & tournaments, and score win-probability, leaderboards and push notifications.",
+      "summary": "A real-time scoring platform for local cricket tournaments and grounds \u2014 inspired by CricHeroes, Cricbuzz, and ESPN Cricinfo, but built for community sport. Cricket-first, with a sport-agnostic core teams/tournaments/venues ready to extend to football, kabaddi, etc. > Status: Phases 1\u201312 complete \u2014 full platform live on web Vercel and > backend/AI Render, with an Expo app built via EAS Play Store > submission intentionally on hold. See docs/NEXTSTEPS.mddocs/NEXTSTEPS.md > for the phase log. Admins create teams/players, schedule matches & tournaments, and score win-probability, leaderboards and push notifications.",
+      "features": [],
+      "github_url": "https://github.com/AmanKabra1/Cricket",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "https://cricket-one-flax.vercel.app",
+      "language": "TypeScript",
+      "languages": [
+        "TypeScript",
         "Python"
       ],
-      "name": "job-fetch-agent",
+      "stars": 0,
+      "forks": 0,
+      "created": "2026-06-01T05:42:43Z",
+      "updated": "2026-06-17T04:47:43Z",
+      "commits": 220,
+      "source": "github",
+      "tech_stack": [
+        "Python",
+        "FastAPI",
+        "ASGI/WSGI",
+        "Redis",
+        "SQLAlchemy",
+        "MySQL",
+        "Pydantic",
+        "Security Best Practices",
+        "JWT Authentication",
+        "AWS",
+        "Unit Testing",
+        "TypeScript",
+        "Node.js",
+        "React"
+      ],
+      "quality": 95,
       "repo_facts": {
-        "source_files": 34,
-        "code_files": 33,
+        "source_files": 187,
+        "code_files": 185,
         "manifests": [
+          "Dockerfile",
+          "docker-compose.yml",
+          "package.json",
           "requirements.txt",
-          "requirements.txt",
-          "vercel.json"
+          "vercel.json",
+          "vite.config.ts"
         ],
         "has_readme": true,
-        "notebooks": 0
-      }
+        "notebooks": 0,
+        "has_docker": true,
+        "has_ci": true,
+        "has_tests": true
+      },
+      "v": 3
+    },
+    {
+      "name": "CoWorking-Space",
+      "description": "The modern operating system for coworking spaces \u2014 manage buildings, facilities, bookings, billing, members, inventory, vendors, and community from one platform. powershell cd backend python -m venv venv venv\\Scripts\\Activate.ps1 # PowerShell; may need: Set-ExecutionPolicy RemoteSigned -Scope CurrentUser pip install -r requirements/development.txt python manage.py migrate python manage.py createsuperuser python manage.py runserver Celery worker Windows uses the solo pool: powershell celery -A coworkhub worker -l info --pool=solo",
+      "summary": "The modern operating system for coworking spaces \u2014 manage buildings, facilities, bookings, billing, members, inventory, vendors, and community from one platform. powershell cd backend python -m venv venv venv\\Scripts\\Activate.ps1 # PowerShell; may need: Set-ExecutionPolicy RemoteSigned -Scope CurrentUser pip install -r requirements/development.txt python manage.py migrate python manage.py createsuperuser python manage.py runserver Celery worker Windows uses the solo pool: powershell celery -A coworkhub worker -l info --pool=solo",
+      "features": [
+        "Workspace \u2014 buildings \u2192 floors \u2192 rooms \u2192 desks \u2192 parking, with occupancy tracking",
+        "Billing & Payments \u2014 GST invoices, Razorpay/Stripe checkout, webhooks",
+        "Inventory \u2014 pantry, canteen, water, appliances & supplies per building, with restock/consume and low-stock alerts",
+        "Vendors & Bills \u2014 suppliers and their bills/expenses per building, with a paid/pending/overdue summary",
+        "Exports \u2014 download any list as Excel, Word, or PDF",
+        "Community & Chat \u2014 posts, events, real-time messaging"
+      ],
+      "github_url": "https://github.com/AmanKabra1/CoWorking-Space",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "https://co-working-space-alpha.vercel.app",
+      "language": "Python",
+      "languages": [
+        "Python",
+        "TypeScript"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "created": "2026-06-08T09:12:11Z",
+      "updated": "2026-08-24T09:39:16Z",
+      "commits": 87,
+      "source": "github",
+      "tech_stack": [
+        "TypeScript",
+        "Node.js",
+        "Next.js",
+        "React",
+        "Validation",
+        "Tailwind CSS",
+        "Docker",
+        "CI/CD",
+        "Python",
+        "Django",
+        "Redis",
+        "Git",
+        "MySQL"
+      ],
+      "quality": 90,
+      "repo_facts": {
+        "source_files": 324,
+        "code_files": 323,
+        "manifests": [
+          "Dockerfile",
+          "docker-compose.yml",
+          "manage.py",
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0,
+        "has_docker": true,
+        "has_ci": true,
+        "has_tests": false
+      },
+      "v": 3
+    },
+    {
+      "name": "vendor-management",
+      "description": "Vendor Management System (NestJS + Angular) with JWT auth & role-based admin/vendor portals \u2014 evolving into RideFleet, a shared delivery-rider platform",
+      "summary": "",
+      "features": [],
+      "github_url": "https://github.com/AmanKabra1/vendor-management",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "https://vendor-management-jade.vercel.app",
+      "language": "TypeScript",
+      "languages": [
+        "TypeScript",
+        "JavaScript"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "created": "2026-06-17T10:05:31Z",
+      "updated": "2026-09-17T13:03:40Z",
+      "commits": 75,
+      "source": "github",
+      "tech_stack": [
+        "TypeScript",
+        "Node.js",
+        "NestJS",
+        "JWT Authentication",
+        "Swagger/OpenAPI",
+        "WebSockets",
+        "Security Best Practices",
+        "Validation",
+        "MongoDB",
+        "MySQL",
+        "Email Integration",
+        "OAuth 2.0",
+        "TypeORM",
+        "Unit Testing"
+      ],
+      "quality": 80,
+      "repo_facts": {
+        "source_files": 146,
+        "code_files": 141,
+        "manifests": [
+          "Dockerfile",
+          "angular.json",
+          "docker-compose.yml",
+          "nest-cli.json",
+          "package.json",
+          "vercel.json"
+        ],
+        "has_readme": false,
+        "notebooks": 0,
+        "has_docker": true,
+        "has_ci": true,
+        "has_tests": true
+      },
+      "v": 3
     },
     {
       "name": "formforge",
       "description": "FormForge \u2014 AI-powered form builder (Laravel 12 + Livewire 3): generate forms from a prompt, drag-and-drop editing, Word/Excel import, response insights.",
+      "summary": "Built with Laravel 12, Livewire 3 Volt, Alpine.js and Tailwind CSS. Requirements: PHP 8.2+, Composer, Node 18+. bash composer install npm install cp .env.example .env php artisan key:generate php artisan migrate --seed # creates demo@example.com / password npm run build # or: npm run dev php artisan serve # http://localhost:8000 php artisan queue:work # in a second terminal: needed for AI generation and imports On Windows you can instead run start.bat or start.ps1, which does the setup and starts the server. You still need to run php artisan queue:work separately.",
+      "features": [
+        "Import. Turn a Word questionnaire (.docx) or an Excel sheet (.xlsx) into a form.",
+        "Version history. Every save creates a snapshot you can restore with one click.",
+        "Raw JSON editor for editing the schema directly, with validation.",
+        "Public forms at /f/{slug}, with a progress bar, validation and a success screen.",
+        "Responses. Searchable table, full-response drawer, CSV export, and an Insights tab (responses per day, answer breakdowns).",
+        "Quality of life. Ctrl+K quick search, Ctrl+S to save, toasts, unsaved-changes warnings."
+      ],
       "github_url": "https://github.com/AmanKabra1/formforge",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "",
       "language": "Blade",
+      "languages": [
+        "Blade",
+        "PHP"
+      ],
       "stars": 0,
+      "forks": 0,
+      "created": "2026-08-05T16:56:48Z",
       "updated": "2026-09-23T06:12:02Z",
+      "commits": 6,
       "source": "github",
       "tech_stack": [
+        "Laravel",
+        "Livewire",
+        "Node.js",
+        "Tailwind CSS",
+        "Docker",
         "Blade",
-        "AI"
+        "PHP",
+        "LLM"
       ],
+      "quality": 71,
       "repo_facts": {
         "source_files": 109,
         "code_files": 108,
@@ -45,69 +220,98 @@
           "vite.config.js"
         ],
         "has_readme": true,
-        "notebooks": 0
-      }
+        "notebooks": 0,
+        "has_docker": true,
+        "has_ci": false,
+        "has_tests": true
+      },
+      "v": 3
     },
     {
-      "description": "Vendor Management System (NestJS + Angular) with JWT auth & role-based admin/vendor portals ? evolving into RideFleet, a shared delivery-rider platform",
-      "github_url": "https://github.com/AmanKabra1/vendor-management",
-      "language": "TypeScript",
-      "stars": 0,
-      "updated": "2026-09-17T13:03:40Z",
-      "source": "github",
-      "tech_stack": [
-        "TypeScript"
-      ],
-      "name": "vendor-management",
-      "repo_facts": {
-        "source_files": 146,
-        "code_files": 141,
-        "manifests": [
-          "Dockerfile",
-          "nest-cli.json",
-          "package.json",
-          "vercel.json"
-        ],
-        "has_readme": false,
-        "notebooks": 0
-      }
-    },
-    {
-      "description": "Production multi-agent AI travel planner ? LangGraph, Groq LLaMA 3.3, MCP (flights/weather/hotels), human-in-the-loop, PostgreSQL memory, Streamlit UI",
-      "github_url": "https://github.com/AmanKabra1/ai-travel-planner",
+      "name": "job-fetch-agent",
+      "description": "A single-user web app and optional daily cron: 1. Find jobs across many boards \u2014 generic: ranked to whatever you give it an uploaded resume / target role / JD / skills, never to any baked-in data. 2. Create a resume two ways: A generate your saved resume resumeprofile.pyresumeprofile.py in your own one-page format, tailored to a pasted JD, or B upload any resume and tailor it while keeping its exact format. Output is PDF and/or Word. Your saved profile is used only in *Create a resume \u2192 A* \u2014 the *Find jobs* section never uses it. The optional daily cron writes fresh listings to a plain",
+      "summary": "A single-user web app and optional daily cron: 1. Find jobs across many boards \u2014 generic: ranked to whatever you give it an uploaded resume / target role / JD / skills, never to any baked-in data. 2. Create a resume two ways: A generate your saved resume resumeprofile.pyresumeprofile.py in your own one-page format, tailored to a pasted JD, or B upload any resume and tailor it while keeping its exact format. Output is PDF and/or Word. Your saved profile is used only in *Create a resume \u2192 A* \u2014 the *Find jobs* section never uses it. The optional daily cron writes fresh listings to a plain",
+      "features": [],
+      "github_url": "https://github.com/AmanKabra1/job-fetch-agent",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "https://job-fetch-agent.vercel.app",
       "language": "Python",
+      "languages": [
+        "Python"
+      ],
       "stars": 0,
-      "updated": "2026-08-29T18:26:51Z",
+      "forks": 0,
+      "created": "2026-06-15T05:06:13Z",
+      "updated": "2026-10-19T00:16:09Z",
+      "commits": 261,
       "source": "github",
       "tech_stack": [
         "Python",
+        "FastAPI",
+        "Pandas",
+        "Groq",
         "LangGraph",
-        "PostgreSQL",
-        "AI",
-        "Machine Learning"
+        "ASGI/WSGI",
+        "Browser Automation",
+        "CI/CD",
+        "GitHub Actions",
+        "Git",
+        "Java",
+        "NestJS",
+        "TypeScript",
+        "Node.js"
       ],
-      "name": "ai-travel-planner",
+      "quality": 58,
       "repo_facts": {
-        "source_files": 20,
-        "code_files": 20,
+        "source_files": 35,
+        "code_files": 34,
         "manifests": [
-          "requirements.txt"
+          "requirements.txt",
+          "vercel.json"
         ],
-        "has_readme": false,
-        "notebooks": 0
-      }
+        "has_readme": true,
+        "notebooks": 0,
+        "has_docker": false,
+        "has_ci": true,
+        "has_tests": false
+      },
+      "v": 3
     },
     {
-      "description": "SingPlay ? music streaming, DJ, karaoke & Sing Along app built with Next.js 16, TiDB, Drizzle ORM",
+      "name": "singplay",
+      "description": "SingPlay \u2014 music streaming, DJ, karaoke & Sing Along app built with Next.js 16, TiDB, Drizzle ORM",
+      "summary": "A music player, karaoke trainer and DJ booth in one responsive web app. Browse a catalog, play tracks through a persistent player, practise singing with lyrics that highlight in time with the music, and mix two decks in a personal DJ booth. Built on Next.js 16 App Router, React 19, Tailwind CSS v4, Drizzle ORM and TiDB Cloud Serverless. Commercial chart music cannot legally be streamed without licensing deals with the labels and performing-rights organisations that own it. SingPlay is therefore built against sources that are legal to stream:",
+      "features": [],
       "github_url": "https://github.com/AmanKabra1/singplay",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "",
       "language": "TypeScript",
-      "stars": 0,
-      "updated": "2026-08-12T05:18:19Z",
-      "source": "github",
-      "tech_stack": [
+      "languages": [
         "TypeScript"
       ],
-      "name": "singplay",
+      "stars": 0,
+      "forks": 0,
+      "created": "2026-08-07T14:27:37Z",
+      "updated": "2026-08-12T05:18:19Z",
+      "commits": 15,
+      "source": "github",
+      "tech_stack": [
+        "TypeScript",
+        "Node.js",
+        "AWS",
+        "File Uploads / S3",
+        "Security Best Practices",
+        "JWT Authentication",
+        "Next.js",
+        "React",
+        "Validation",
+        "MySQL",
+        "Tailwind CSS",
+        "GCP"
+      ],
+      "quality": 48,
       "repo_facts": {
         "source_files": 169,
         "code_files": 168,
@@ -115,88 +319,140 @@
           "package.json"
         ],
         "has_readme": true,
-        "notebooks": 0
-      }
+        "notebooks": 0,
+        "has_docker": false,
+        "has_ci": false,
+        "has_tests": false
+      },
+      "v": 3
     },
     {
-      "description": "A LangGraph pipeline that turns a one-line topic into a finished technical blog post ? routing, researching, planning, writing sections in parallel, and generating diagrams ? wrapped in a Streamlit UI that runs on a phone, a tablet or a desktop. It runs in one of two modes, chosen automatically by w",
-      "github_url": "https://github.com/AmanKabra1/langgraph-blog-writer",
-      "language": "Python",
+      "name": "amrutam-backend1",
+      "description": "1. Clone repo 2. Install dependencies: npm install 3. Set environment variables in .env 4. Run DB migrations Sequelize auto-sync 5. Start server: npm run dev",
+      "summary": "1. Clone repo 2. Install dependencies: npm install 3. Set environment variables in .env 4. Run DB migrations Sequelize auto-sync 5. Start server: npm run dev",
+      "features": [],
+      "github_url": "https://github.com/AmanKabra1/amrutam-backend1",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "",
+      "language": "JavaScript",
+      "languages": [
+        "JavaScript"
+      ],
       "stars": 0,
-      "updated": "2026-08-03T05:53:31Z",
+      "forks": 0,
+      "created": "2025-11-19T06:22:15Z",
+      "updated": "2026-06-23T06:24:36Z",
+      "commits": 8,
       "source": "github",
       "tech_stack": [
-        "Python",
-        "LangGraph"
+        "Node.js",
+        "Security Best Practices",
+        "Express.js",
+        "JWT Authentication",
+        "MongoDB",
+        "PostgreSQL",
+        "Sequelize",
+        "Unit Testing",
+        "CI/CD",
+        "JavaScript"
       ],
-      "name": "langgraph-blog-writer",
+      "quality": 46,
       "repo_facts": {
-        "source_files": 16,
-        "code_files": 16,
+        "source_files": 20,
+        "code_files": 20,
         "manifests": [
-          "package.json",
-          "requirements.txt"
-        ],
-        "has_readme": true,
-        "notebooks": 0
-      }
-    },
-    {
-      "description": "Live location sharing PWA - connect with share codes and auto-share every 3 hours",
-      "github_url": "https://github.com/AmanKabra1/live-location-share",
-      "language": "HTML",
-      "stars": 0,
-      "updated": "2026-07-15T04:16:04Z",
-      "source": "github",
-      "tech_stack": [
-        "HTML"
-      ],
-      "name": "live-location-share",
-      "repo_facts": {
-        "source_files": 16,
-        "code_files": 10,
-        "manifests": [
-          "Dockerfile",
           "package.json"
         ],
-        "has_readme": false,
-        "notebooks": 0
-      }
+        "has_readme": true,
+        "notebooks": 0,
+        "has_docker": false,
+        "has_ci": true,
+        "has_tests": true
+      },
+      "v": 3
     },
     {
-      "description": "Express + TypeScript REST API: JWT auth, role-based access, MongoDB (Mongoose), Redis, Zod validation",
-      "github_url": "https://github.com/AmanKabra1/task-management-api",
+      "name": "uber-services",
+      "description": "circleci-image: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456 circleci-url: https://circleci.com/gh/nestjs/nest Nesthttps://github.com/nestjs/nest framework TypeScript starter repository. bash $ npm install bash $ npm run start",
+      "summary": "circleci-image: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456 circleci-url: https://circleci.com/gh/nestjs/nest Nesthttps://github.com/nestjs/nest framework TypeScript starter repository. bash $ npm install bash $ npm run start",
+      "features": [],
+      "github_url": "https://github.com/AmanKabra1/uber-services",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "",
       "language": "TypeScript",
+      "languages": [
+        "TypeScript",
+        "JavaScript"
+      ],
       "stars": 0,
-      "updated": "2026-06-23T09:09:57Z",
+      "forks": 0,
+      "created": "2026-06-23T06:05:42Z",
+      "updated": "2026-06-23T06:05:47Z",
+      "commits": 1,
       "source": "github",
       "tech_stack": [
         "TypeScript",
+        "Node.js",
+        "NestJS",
+        "Validation",
         "MongoDB",
-        "Redis"
+        "Unit Testing",
+        "Docker",
+        "JavaScript",
+        "Git",
+        "AWS"
       ],
-      "name": "task-management-api",
+      "quality": 46,
       "repo_facts": {
-        "source_files": 12,
-        "code_files": 12,
+        "source_files": 25,
+        "code_files": 25,
         "manifests": [
+          "docker-compose.yml",
+          "nest-cli.json",
           "package.json"
         ],
-        "has_readme": false,
-        "notebooks": 0
-      }
+        "has_readme": true,
+        "notebooks": 0,
+        "has_docker": true,
+        "has_ci": false,
+        "has_tests": true
+      },
+      "v": 3
     },
     {
-      "description": "[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
+      "name": "demo1",
+      "description": "circleci-image: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456 circleci-url: https://circleci.com/gh/nestjs/nest Nesthttps://github.com/nestjs/nest framework TypeScript starter repository. bash $ npm install bash $ npm run start",
+      "summary": "circleci-image: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456 circleci-url: https://circleci.com/gh/nestjs/nest Nesthttps://github.com/nestjs/nest framework TypeScript starter repository. bash $ npm install bash $ npm run start",
+      "features": [],
       "github_url": "https://github.com/AmanKabra1/demo1",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "",
       "language": "TypeScript",
-      "stars": 0,
-      "updated": "2026-06-23T06:51:56Z",
-      "source": "github",
-      "tech_stack": [
+      "languages": [
         "TypeScript"
       ],
-      "name": "demo1",
+      "stars": 0,
+      "forks": 0,
+      "created": "2025-01-15T10:03:25Z",
+      "updated": "2026-06-23T06:51:56Z",
+      "commits": 5,
+      "source": "github",
+      "tech_stack": [
+        "TypeScript",
+        "Node.js",
+        "NestJS",
+        "JWT Authentication",
+        "Validation",
+        "OAuth 2.0",
+        "PostgreSQL",
+        "Unit Testing",
+        "Git",
+        "AWS"
+      ],
+      "quality": 40,
       "repo_facts": {
         "source_files": 36,
         "code_files": 36,
@@ -205,494 +461,399 @@
           "package.json"
         ],
         "has_readme": true,
-        "notebooks": 0
-      }
+        "notebooks": 0,
+        "has_docker": false,
+        "has_ci": false,
+        "has_tests": true
+      },
+      "v": 3
     },
     {
-      "description": "1. Clone repo 2. Install dependencies: npm install 3. Set environment variables in .env 4. Run DB migrations Sequelize auto-sync 5. Start server: npm run dev",
-      "github_url": "https://github.com/AmanKabra1/amrutam-backend1",
-      "language": "JavaScript",
-      "stars": 0,
-      "updated": "2026-06-23T06:24:36Z",
-      "source": "github",
-      "tech_stack": [
+      "name": "finance-backend",
+      "description": "circleci-image: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456 circleci-url: https://circleci.com/gh/nestjs/nest Nesthttps://github.com/nestjs/nest framework TypeScript starter repository. bash $ npm install bash $ npm run start",
+      "summary": "circleci-image: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456 circleci-url: https://circleci.com/gh/nestjs/nest Nesthttps://github.com/nestjs/nest framework TypeScript starter repository. bash $ npm install bash $ npm run start",
+      "features": [],
+      "github_url": "https://github.com/AmanKabra1/finance-backend",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "",
+      "language": "TypeScript",
+      "languages": [
+        "TypeScript",
         "JavaScript"
       ],
-      "name": "amrutam-backend1",
+      "stars": 0,
+      "forks": 0,
+      "created": "2026-04-13T03:54:41Z",
+      "updated": "2026-06-23T05:07:32Z",
+      "commits": 2,
+      "source": "github",
+      "tech_stack": [
+        "TypeScript",
+        "Node.js",
+        "NestJS",
+        "JWT Authentication",
+        "Swagger/OpenAPI",
+        "Prisma",
+        "Security Best Practices",
+        "Validation",
+        "OAuth 2.0",
+        "Unit Testing",
+        "JavaScript",
+        "Git",
+        "AWS"
+      ],
+      "quality": 36,
+      "repo_facts": {
+        "source_files": 25,
+        "code_files": 25,
+        "manifests": [
+          "nest-cli.json",
+          "package.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0,
+        "has_docker": false,
+        "has_ci": false,
+        "has_tests": true
+      },
+      "v": 3
+    },
+    {
+      "name": "langgraph-blog-writer",
+      "description": "A LangGraph pipeline that turns a one-line topic into a finished technical blog post \u2014 routing, researching, planning, writing sections in parallel, and generating diagrams \u2014 wrapped in a Streamlit UI that runs on a phone, a tablet or a desktop. It runs in one of two modes, chosen automatically by what's in Secrets: Open mode is what you get from git clone && streamlit run app.py \u2014 nothing to configure. Hosted mode is for putting the app on the internet on your own credentials without strangers draining your free tier.",
+      "summary": "A LangGraph pipeline that turns a one-line topic into a finished technical blog post \u2014 routing, researching, planning, writing sections in parallel, and generating diagrams \u2014 wrapped in a Streamlit UI that runs on a phone, a tablet or a desktop. It runs in one of two modes, chosen automatically by what's in Secrets: Open mode is what you get from git clone && streamlit run app.py \u2014 nothing to configure. Hosted mode is for putting the app on the internet on your own credentials without strangers draining your free tier.",
+      "features": [],
+      "github_url": "https://github.com/AmanKabra1/langgraph-blog-writer",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "",
+      "language": "Python",
+      "languages": [
+        "Python",
+        "JavaScript"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "created": "2026-08-03T04:54:43Z",
+      "updated": "2026-08-03T05:53:31Z",
+      "commits": 2,
+      "source": "github",
+      "tech_stack": [
+        "Node.js",
+        "Browser Automation",
+        "Python",
+        "LangGraph",
+        "LangChain",
+        "Pydantic",
+        "Pandas",
+        "OAuth 2.0",
+        "JavaScript",
+        "LLM",
+        "Git",
+        "Linux"
+      ],
+      "quality": 34,
+      "repo_facts": {
+        "source_files": 16,
+        "code_files": 16,
+        "manifests": [
+          "package.json",
+          "requirements.txt"
+        ],
+        "has_readme": true,
+        "notebooks": 0,
+        "has_docker": false,
+        "has_ci": false,
+        "has_tests": true
+      },
+      "v": 3
+    },
+    {
+      "name": "ai-travel-planner",
+      "description": "Production multi-agent AI travel planner \u2014 LangGraph, Groq LLaMA 3.3, MCP (flights/weather/hotels), human-in-the-loop, PostgreSQL memory, Streamlit UI",
+      "summary": "",
+      "features": [],
+      "github_url": "https://github.com/AmanKabra1/ai-travel-planner",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "",
+      "language": "Python",
+      "languages": [
+        "Python"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "created": "2026-08-05T16:57:01Z",
+      "updated": "2026-08-29T18:26:51Z",
+      "commits": 110,
+      "source": "github",
+      "tech_stack": [
+        "Python",
+        "Groq",
+        "LangChain",
+        "LangGraph",
+        "OpenAI API",
+        "Pandas",
+        "PostgreSQL",
+        "Pydantic",
+        "JWT Authentication",
+        "SQLAlchemy",
+        "ASGI/WSGI",
+        "WebSockets",
+        "AI Agents",
+        "MCP"
+      ],
+      "quality": 30,
       "repo_facts": {
         "source_files": 20,
         "code_files": 20,
         "manifests": [
-          "package.json"
+          "requirements.txt"
         ],
-        "has_readme": true,
-        "notebooks": 0
-      }
+        "has_readme": false,
+        "notebooks": 0,
+        "has_docker": false,
+        "has_ci": false,
+        "has_tests": true
+      },
+      "v": 3
     },
     {
-      "description": "[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
-      "github_url": "https://github.com/AmanKabra1/uber-services",
-      "language": "TypeScript",
+      "name": "live-location-share",
+      "description": "Live location sharing PWA - connect with share codes and auto-share every 3 hours",
+      "summary": "",
+      "features": [],
+      "github_url": "https://github.com/AmanKabra1/live-location-share",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "",
+      "language": "HTML",
+      "languages": [
+        "HTML",
+        "JavaScript",
+        "CSS"
+      ],
       "stars": 0,
-      "updated": "2026-06-23T06:05:47Z",
+      "forks": 0,
+      "created": "2026-06-29T05:08:18Z",
+      "updated": "2026-07-15T04:16:04Z",
+      "commits": 10,
       "source": "github",
       "tech_stack": [
-        "TypeScript"
+        "Node.js",
+        "Security Best Practices",
+        "Express.js",
+        "JWT Authentication",
+        "Docker",
+        "HTML",
+        "JavaScript",
+        "CSS"
       ],
-      "name": "uber-services",
+      "quality": 21,
       "repo_facts": {
-        "source_files": 25,
-        "code_files": 25,
-        "manifests": [
-          "docker-compose.yml",
-          "nest-cli.json",
-          "package.json"
-        ],
-        "has_readme": true,
-        "notebooks": 0
-      }
-    },
-    {
-      "description": "[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456",
-      "github_url": "https://github.com/AmanKabra1/finance-backend",
-      "language": "TypeScript",
-      "stars": 0,
-      "updated": "2026-06-23T05:07:32Z",
-      "source": "github",
-      "tech_stack": [
-        "TypeScript"
-      ],
-      "name": "finance-backend",
-      "repo_facts": {
-        "source_files": 25,
-        "code_files": 25,
-        "manifests": [
-          "nest-cli.json",
-          "package.json"
-        ],
-        "has_readme": true,
-        "notebooks": 0
-      }
-    },
-    {
-      "description": "A real-time scoring platform for local cricket tournaments and grounds ? inspired by CricHeroes, Cricbuzz, and ESPN Cricinfo, but built for community sport. Cricket-first, with a sport-agnostic core (teams/tournaments/venues) ready to extend to football, kabaddi, etc.",
-      "github_url": "https://github.com/AmanKabra1/Cricket",
-      "language": "TypeScript",
-      "stars": 0,
-      "updated": "2026-06-17T04:47:43Z",
-      "source": "github",
-      "tech_stack": [
-        "TypeScript"
-      ],
-      "name": "Cricket",
-      "repo_facts": {
-        "source_files": 187,
-        "code_files": 185,
+        "source_files": 16,
+        "code_files": 10,
         "manifests": [
           "Dockerfile",
-          "requirements.txt",
-          "docker-compose.yml",
           "package.json"
         ],
-        "has_readme": true,
-        "notebooks": 0
-      }
+        "has_readme": false,
+        "notebooks": 0,
+        "has_docker": true,
+        "has_ci": false,
+        "has_tests": false
+      },
+      "v": 3
     },
     {
-      "description": "The modern operating system for coworking spaces ? manage buildings, facilities, bookings, billing, members, inventory, vendors, and community from one platform. | Layer | Technology | |-------|-----------| | Backend | Django 5.1 + Django REST Framework, SimpleJWT auth |",
-      "github_url": "https://github.com/AmanKabra1/CoWorking-Space",
-      "language": "Python",
+      "name": "task-management-api",
+      "description": "Express + TypeScript REST API: JWT auth, role-based access, MongoDB (Mongoose), Redis, Zod validation",
+      "summary": "",
+      "features": [],
+      "github_url": "https://github.com/AmanKabra1/task-management-api",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "",
+      "language": "TypeScript",
+      "languages": [
+        "TypeScript"
+      ],
       "stars": 0,
-      "updated": "2026-08-24T09:39:16Z",
+      "forks": 0,
+      "created": "2026-06-23T09:09:53Z",
+      "updated": "2026-06-23T09:09:57Z",
+      "commits": 1,
       "source": "github",
       "tech_stack": [
-        "Python"
+        "TypeScript",
+        "Node.js",
+        "Security Best Practices",
+        "Express.js",
+        "JWT Authentication",
+        "MongoDB",
+        "Redis",
+        "Validation",
+        "Unit Testing"
       ],
-      "name": "CoWorking-Space",
+      "quality": 8,
       "repo_facts": {
-        "source_files": 324,
-        "code_files": 323,
+        "source_files": 12,
+        "code_files": 12,
         "manifests": [
-          "Dockerfile",
-          "manage.py",
-          "docker-compose.yml",
           "package.json"
         ],
-        "has_readme": true,
-        "notebooks": 0
-      }
+        "has_readme": false,
+        "notebooks": 0,
+        "has_docker": false,
+        "has_ci": false,
+        "has_tests": false
+      },
+      "v": 3
     }
   ],
-  "last_updated": "2026-10-12T16:01:05.758921",
+  "last_updated": "2026-10-19T11:47:08.356481",
   "source": "github",
   "total": 14,
   "repo_checks": {
     "job-fetch-agent": {
-      "pushed_at": "2026-10-12T08:15:49Z",
+      "pushed_at": "2026-10-19T00:16:09Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 34,
-        "code_files": 33,
-        "manifests": [
-          "requirements.txt",
-          "requirements.txt",
-          "vercel.json"
-        ],
-        "has_readme": true,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "formforge": {
       "pushed_at": "2026-09-23T06:12:02Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 109,
-        "code_files": 108,
-        "manifests": [
-          "Dockerfile",
-          "composer.json",
-          "package.json",
-          "vite.config.js"
-        ],
-        "has_readme": true,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "vendor-management": {
       "pushed_at": "2026-09-17T13:03:40Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 146,
-        "code_files": 141,
-        "manifests": [
-          "Dockerfile",
-          "nest-cli.json",
-          "package.json",
-          "vercel.json"
-        ],
-        "has_readme": false,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "ai-travel-planner": {
       "pushed_at": "2026-08-29T18:26:51Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 20,
-        "code_files": 20,
-        "manifests": [
-          "requirements.txt"
-        ],
-        "has_readme": false,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "singplay": {
       "pushed_at": "2026-08-12T05:18:19Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 169,
-        "code_files": 168,
-        "manifests": [
-          "package.json"
-        ],
-        "has_readme": true,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "langgraph-blog-writer": {
       "pushed_at": "2026-08-03T05:53:31Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 16,
-        "code_files": 16,
-        "manifests": [
-          "package.json",
-          "requirements.txt"
-        ],
-        "has_readme": true,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "live-location-share": {
       "pushed_at": "2026-07-15T04:16:04Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 16,
-        "code_files": 10,
-        "manifests": [
-          "Dockerfile",
-          "package.json"
-        ],
-        "has_readme": false,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "SB": {
       "pushed_at": "2026-06-23T09:59:01Z",
       "real": false,
       "reason": "no manifest and only 1 source files \u2014 looks like snippets, not a project",
-      "facts": {
-        "source_files": 1,
-        "code_files": 1,
-        "manifests": [],
-        "has_readme": false,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "hotel_management_project": {
       "pushed_at": "2026-06-23T09:41:40Z",
       "real": false,
       "reason": "no README and no description",
-      "facts": {
-        "source_files": 23,
-        "code_files": 17,
-        "manifests": [
-          "manage.py"
-        ],
-        "has_readme": false,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "task-management-api": {
       "pushed_at": "2026-06-23T09:09:57Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 12,
-        "code_files": 12,
-        "manifests": [
-          "package.json"
-        ],
-        "has_readme": false,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "demo1": {
       "pushed_at": "2026-06-23T06:51:56Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 36,
-        "code_files": 36,
-        "manifests": [
-          "nest-cli.json",
-          "package.json"
-        ],
-        "has_readme": true,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "babbar": {
       "pushed_at": "2026-06-23T06:42:29Z",
       "real": false,
       "reason": "no manifest and only 78 source files \u2014 looks like snippets, not a project",
-      "facts": {
-        "source_files": 78,
-        "code_files": 78,
-        "manifests": [],
-        "has_readme": false,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "ML-AI-IT": {
       "pushed_at": "2026-06-23T06:32:42Z",
       "real": false,
       "reason": "no manifest and only 19 source files \u2014 looks like snippets, not a project",
-      "facts": {
-        "source_files": 19,
-        "code_files": 14,
-        "manifests": [],
-        "has_readme": false,
-        "notebooks": 20
-      },
-      "v": 2
+      "v": 3
     },
     "amrutam-backend1": {
       "pushed_at": "2026-06-23T06:24:36Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 20,
-        "code_files": 20,
-        "manifests": [
-          "package.json"
-        ],
-        "has_readme": true,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "uber-services": {
       "pushed_at": "2026-06-23T06:05:47Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 25,
-        "code_files": 25,
-        "manifests": [
-          "docker-compose.yml",
-          "nest-cli.json",
-          "package.json"
-        ],
-        "has_readme": true,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "Project-NodeJS": {
       "pushed_at": "2026-06-23T05:16:22Z",
       "real": false,
       "reason": "no README and no description",
-      "facts": {
-        "source_files": 45,
-        "code_files": 34,
-        "manifests": [
-          "package.json",
-          "package.json"
-        ],
-        "has_readme": false,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "finance-backend": {
       "pushed_at": "2026-06-23T05:07:32Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 25,
-        "code_files": 25,
-        "manifests": [
-          "nest-cli.json",
-          "package.json"
-        ],
-        "has_readme": true,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "AgenticAI": {
       "pushed_at": "2026-06-19T09:27:07Z",
       "real": false,
       "reason": "learning/starter/boilerplate repo (14 source files, needs 15+)",
-      "facts": {
-        "source_files": 14,
-        "code_files": 14,
-        "manifests": [
-          "pyproject.toml",
-          "requirements.txt",
-          "pyproject.toml",
-          "requirements.txt"
-        ],
-        "has_readme": true,
-        "notebooks": 6
-      },
-      "v": 2
+      "v": 3
     },
     "langchain-learning": {
       "pushed_at": "2026-06-17T06:14:01Z",
       "real": false,
       "reason": "learning/starter/boilerplate repo (4 source files, needs 15+)",
-      "facts": {
-        "source_files": 4,
-        "code_files": 4,
-        "manifests": [
-          "pyproject.toml",
-          "requirements.txt",
-          "pyproject.toml",
-          "requirements.txt"
-        ],
-        "has_readme": true,
-        "notebooks": 9
-      },
-      "v": 2
+      "v": 3
     },
     "Cricket": {
       "pushed_at": "2026-06-17T04:47:43Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 187,
-        "code_files": 185,
-        "manifests": [
-          "Dockerfile",
-          "requirements.txt",
-          "docker-compose.yml",
-          "package.json"
-        ],
-        "has_readme": true,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "CoWorking-Space": {
       "pushed_at": "2026-08-24T09:39:16Z",
       "real": true,
       "reason": "ok",
-      "facts": {
-        "source_files": 324,
-        "code_files": 323,
-        "manifests": [
-          "Dockerfile",
-          "manage.py",
-          "docker-compose.yml",
-          "package.json"
-        ],
-        "has_readme": true,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "aman_portfolio-app": {
       "pushed_at": "2026-06-16T10:47:20Z",
       "real": false,
       "reason": "no README and no description",
-      "facts": {
-        "source_files": 107,
-        "code_files": 103,
-        "manifests": [
-          "nest-cli.json",
-          "package.json",
-          "angular.json",
-          "package.json"
-        ],
-        "has_readme": false,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     },
     "Images": {
       "pushed_at": "2025-01-09T10:15:02Z",
       "real": false,
       "reason": "no manifest and only 0 source files \u2014 looks like snippets, not a project",
-      "facts": {
-        "source_files": 0,
-        "code_files": 0,
-        "manifests": [],
-        "has_readme": false,
-        "notebooks": 0
-      },
-      "v": 2
+      "v": 3
     }
-  }
+  },
+  "private_count": 12
 }

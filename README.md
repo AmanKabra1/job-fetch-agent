@@ -221,6 +221,19 @@ reCAPTCHA/hCaptcha and per-job screening questions (work authorisation etc.) tha
 Apply / Naukri 1-click / Indeed Apply / Wellfound / Instahyre / Cutshort act through your logged-in account and are against
 those sites' terms to automate. Use the **Low competition** chip + **Auto-fill all** to work through the best jobs quickly.
 
+## Projects from GitHub (public + private)
+
+The **Fetch from GitHub** button (and the 14-day scheduled sync, `projects-sync.yml`) keeps only repos that really
+contain a project (manifest + enough source files + README/description) and stores, per project: full tech stack read
+from the dependency files, language mix, README summary and feature bullets, live-demo URL, Docker/CI/tests flags,
+commit count, dates and a 0-100 quality score. The job matcher uses the tech stack and quality to pick the best project
+for each job, and weak repos (quality < 30) are never swapped into a resume.
+
+**Private repos:** found automatically when you run locally while `gh` is logged in to AmanKabra1, or when `GH_PAT`
+(a token with `repo` scope) is set. This repo is PUBLIC, so private projects are stored in `data/projects_private.json`
+(gitignored) and their resume entry never prints a repo link. To let the scheduled/hosted side use them too, add repo secret
+`GH_PAT` and repo variable `STORE_PRIVATE_IN_REPO=1` — that commits private project details to this public repo.
+
 ## How resumes are tailored (2026 ATS research)
 
 - **File name is evergreen:** `Aman_Kabra_Resume.pdf` / `.docx` — no job title, company, date or "ATS"
