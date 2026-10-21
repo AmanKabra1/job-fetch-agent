@@ -217,7 +217,7 @@ def load_portfolio_projects() -> list:
         return []
 
     try:
-        with open(PROJECTS_FILE, "r") as f:
+        with open(PROJECTS_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
         return data.get("projects", [])
     except Exception as e:
@@ -248,16 +248,17 @@ def generate_projects_dict(projects: list) -> str:
 
         # Project entry
         lines.append("    {")
-        lines.append(f'        "name": "{proj["name"]}",')
-        lines.append(f'        "stack": "{stack}",')
-        lines.append(f'        "link": "{link}",')
+        # json.dumps yields a valid Python string literal (escapes quotes, backslashes, newlines,
+        # unicode). The old hand-rolled quote escaping broke on README text such as "\S" or a
+        # trailing backslash, which crashed the cron's sync step and blocked publishing the feed.
+        lines.append(f'        "name": {json.dumps(str(proj["name"]), ensure_ascii=False)},')
+        lines.append(f'        "stack": {json.dumps(str(stack), ensure_ascii=False)},')
+        lines.append(f'        "link": {json.dumps(str(link), ensure_ascii=False)},')
         lines.append('        "bullets": [')
 
         # Bullets
         for bullet in bullets:
-            # Escape quotes
-            bullet_clean = bullet.replace('"', '\\"')
-            lines.append(f'            "{bullet_clean}",')
+            lines.append(f'            {json.dumps(str(bullet), ensure_ascii=False)},')
 
         lines.append("        ],")
         lines.append("    },")
@@ -273,18 +274,20 @@ def update_profile_projects(new_projects_dict: str) -> bool:
         return False
 
     try:
-        with open(PROFILE_FILE, "r") as f:
+        with open(PROFILE_FILE, "r", encoding="utf-8") as f:
             content = f.read()
 
         # Replace PROJECTS section
+        # callable replacement: the new text is inserted LITERALLY (a plain string would have its
+        # backslashes interpreted as regex escapes -> "bad escape \S")
         new_content = re.sub(
             r'PROJECTS = \[.*?\n\]',
-            new_projects_dict,
+            lambda _m: new_projects_dict,
             content,
             flags=re.DOTALL
         )
 
-        with open(PROFILE_FILE, "w") as f:
+        with open(PROFILE_FILE, "w", encoding="utf-8", newline="") as f:
             f.write(new_content)
 
         return True

@@ -74,6 +74,10 @@ jobs:
         run: python fetch_jobs.py
 
       - name: Sync portfolio projects to resume profile
+        # Non-blocking: its result is stashed away below and never published, so a failure here
+        # must not stop the job feed from being published (it did on 2026-10-20: "bad escape \S"
+        # from README text broke this step and the feed went ~22 h stale).
+        continue-on-error: true
         run: python sync_projects_to_profile.py
 
       - name: Stash resume_profile.py before switching branches
