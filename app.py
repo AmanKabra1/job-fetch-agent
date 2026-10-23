@@ -1637,6 +1637,66 @@ async def api_ats_score(request: Request):
     return JSONResponse(result)
 
 
+def _one_page_text_docx(resume_text: str, notes: list) -> bytes:
+    """Word document of `resume_text` that is guaranteed (estimated) to fit ONE page.
+
+    Picks the largest font (11 -> 6.5pt) whose estimated height fits the page; the optional
+    `notes` block ("ATS Optimization Applied") is kept only if it fits at >= 8.5pt, otherwise
+    it is omitted — the resume itself always wins."""
+    import math
+    from docx import Document
+    from docx.shared import Pt, Inches
+    from reportlab.pdfbase.pdfmetrics import stringWidth
+
+    lines = [l.rstrip() for l in resume_text.replace("\r", "").split("\n")]
+    page_w, page_h = 8.27 * 72, 11.69 * 72                      # A4 in points
+    mx, my = 0.55 * 72, 0.45 * 72
+    usable_w, usable_h = page_w - 2 * mx, page_h - 2 * my
+
+    def height(size, with_notes):
+        # Calibri averages ~8% narrower than Helvetica; keep a 6% safety margin on height.
+        total = 0.0
+        for l in lines:
+            w = stringWidth(l or " ", "Helvetica", size) * 0.92
+            total += max(1, math.ceil(w / usable_w)) * size * 1.2
+        if with_notes:
+            total += size * 1.2 * (2 + sum(max(1, math.ceil(stringWidth(n, "Helvetica", size) * 0.92 / usable_w)) for n in notes))
+        return total * 1.06
+
+    size, with_notes = None, bool(notes)
+    for sz in (11, 10.5, 10, 9.5, 9, 8.5, 8, 7.5, 7, 6.5):
+        if with_notes and sz < 8.5:
+            with_notes = False                                   # drop the notes before going tiny
+        if height(sz, with_notes) <= usable_h:
+            size = sz
+            break
+    if size is None:
+        size, with_notes = 6.5, False
+
+    doc = Document()
+    for sec in doc.sections:
+        sec.page_width, sec.page_height = Inches(8.27), Inches(11.69)
+        sec.left_margin = sec.right_margin = Inches(0.55)
+        sec.top_margin = sec.bottom_margin = Inches(0.45)
+    normal = doc.styles["Normal"]
+    normal.font.name = "Calibri"
+    normal.font.size = Pt(size)
+    normal.paragraph_format.space_before = Pt(0)
+    normal.paragraph_format.space_after = Pt(0)
+    normal.paragraph_format.line_spacing = 1.0
+    for l in lines:
+        doc.add_paragraph(l)
+    if with_notes:
+        h = doc.add_paragraph()
+        r = h.add_run("ATS Optimization Applied")
+        r.bold = True
+        for n in notes:
+            doc.add_paragraph("• " + n)
+    buf = io.BytesIO()
+    doc.save(buf)
+    return buf.getvalue()
+
+
 @app.post("/api/ats-improve")
 async def api_ats_improve(resume_text: str = Form("")):
     """Apply ATS improvements to a resume and return as Word document.
@@ -1649,33 +1709,9 @@ async def api_ats_improve(resume_text: str = Form("")):
     score = ats_result.get("score", 0)
     recommendations = ats_result.get("recommendations", [])
 
-    # Create improved resume as Word document
-    from docx import Document
-    from docx.shared import Pt, RGBColor, Inches
-    from docx.enum.text import WD_ALIGN_PARAGRAPH
-
-    doc = Document()
-    doc.add_paragraph(resume_text)
-
-    # Add ATS improvements section
-    doc.add_paragraph()
-    heading = doc.add_heading("ATS Optimization Applied", level=2)
-    heading.runs[0].font.size = Pt(11)
-    heading.runs[0].font.color.rgb = RGBColor(22, 163, 74)
-
-    p = doc.add_paragraph(f"Current ATS Score: {score}/100", style='List Bullet')
-
-    if recommendations:
-        p = doc.add_paragraph("Recommended Improvements:", style='Heading 3')
-        p.runs[0].font.size = Pt(10)
-        for rec in recommendations[:5]:
-            doc.add_paragraph(rec, style='List Bullet')
-
-    # Save to BytesIO
-    buf = io.BytesIO()
-    doc.save(buf)
-    buf.seek(0)
-    data = buf.getvalue()
+    # Create improved resume as Word document — ONE PAGE (largest font that fits; the notes
+    # block is dropped rather than letting the resume spill onto a second page).
+    data = _one_page_text_docx(resume_text, [f"Current ATS Score: {score}/100"] + list(recommendations[:5]))
 
     # FileResponse needs a PATH (a BytesIO made this endpoint 500 every time).
     return Response(
@@ -1920,27 +1956,27 @@ def _render_resume_files(title: str, company: str, description: str, fmt: str,
 
     base = RB.base_filename()
     out_files = []
+    # ONE-PAGE GUARANTEE: both files are rendered through the fit helpers, which shrink fonts /
+    # spacing / margins step by step until the page count is exactly 1 (see resume_builder).
+    rk = dict(summary=summary, skills=skills, matched=matched, target_title=title,
+              target_company=company, ats_keywords=ats_keywords, best_project=best_project,
+              headline=headline, experience=experience)
+    pdf_data, pdf_scale, pdf_pages, pdf_trim = RB.fit_pdf(rk)
     if fmt in ("pdf", "both"):
-        buf = io.BytesIO()
-        RB.render_pdf(buf, summary, skills, matched, title, company, ats_keywords,
-                      best_project=best_project, headline=headline, experience=experience)
-        data = buf.getvalue()
-        _save_resume_copy(base + ".pdf", data)
+        _save_resume_copy(base + ".pdf", pdf_data)
         out_files.append({"name": base + ".pdf", "mime": "application/pdf",
-                          "b64": base64.b64encode(data).decode()})
+                          "b64": base64.b64encode(pdf_data).decode()})
     if fmt in ("docx", "both"):
-        buf = io.BytesIO()
-        RB.render_docx(buf, summary, skills, matched, title, company, ats_keywords,
-                       best_project=best_project, headline=headline, experience=experience)
-        data = buf.getvalue()
-        _save_resume_copy(base + ".docx", data)
+        docx_data, _docx_scale = RB.fit_docx(rk, pdf_scale, pdf_trim)
+        _save_resume_copy(base + ".docx", docx_data)
         out_files.append({"name": base + ".docx", "mime": _DOCX_MIME,
-                          "b64": base64.b64encode(data).decode()})
+                          "b64": base64.b64encode(docx_data).decode()})
     return {"files": out_files, "emphasized": sorted(set(matched) | set(kw["matched"])),
             "ats_keywords": ats_keywords or [], "ats_score": ats.get("score", 0),
             "ats_note": ats.get("note", ""), "headline": headline,
             "coverage": kw["coverage"], "gaps": kw["gaps"],
-            "ats_missing": ats.get("missing_keywords", []), "matched_terms": kw["matched"]}
+            "ats_missing": ats.get("missing_keywords", []), "matched_terms": kw["matched"],
+            "pages": pdf_pages, "fit_scale": pdf_scale, "trim_level": pdf_trim}
 
 
 @app.post("/api/resume/build")

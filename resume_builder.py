@@ -204,10 +204,79 @@ def evergreen_name_from(filename_stem: str) -> str:
 
 
 # --------------------------------------------------------------------------- #
+# ONE-PAGE GUARANTEE
+# --------------------------------------------------------------------------- #
+# Every generated resume must fit on a SINGLE page whatever the job description adds
+# (headline, Core Competencies line, a long tailored project...). Instead of hoping the fixed
+# font sizes fit, each renderer takes a `scale` (fonts, line spacing, gaps, margins) and the
+# fit_* helpers below shrink it step by step until the page count is exactly 1.
+MIN_SCALE = 0.62            # absolute floor; reached only after content has been trimmed too
+READABLE_SCALE = 0.88       # shrink fonts down to here BEFORE cutting any content (8.5pt -> ~7.5pt)
+DOCX_LINE_SPACING = 0.92    # Word "multiple": Calibri single spacing (~1.22em) is looser than the PDF
+# Word lays text out differently from reportlab (Calibri vs Helvetica, spacing model), so the
+# Word scale = PDF scale * this factor, calibrated against real Word page counts.
+DOCX_SCALE_FACTOR = 0.92   # measured: Word still fits at 1.00, breaks at 1.05 -> ~12% safety margin
+_STEPS = [round(1.0 - 0.02 * i, 2) for i in range(0, 20)]
+
+
+def _trim_cfg(trim: int) -> dict:
+    """Content trimming ladder used only when shrinking the type alone is not enough:
+    0 = everything; 1 = project bullets capped at 3; 2 = + at most one extra project and
+    older roles keep 3 bullets; 3 = + no extra projects, project bullets capped at 2,
+    older roles keep 2 bullets."""
+    return {0: {"pb": None, "others": None, "exp": None},
+            1: {"pb": 3, "others": None, "exp": None},
+            2: {"pb": 3, "others": 1, "exp": 3},
+            3: {"pb": 2, "others": 0, "exp": 2}}[max(0, min(3, trim))]
+
+
+def _cap(items, n):
+    items = list(items or [])
+    return items if n is None else items[:n]
+
+
+def _pdf_pages(data: bytes) -> int:
+    return len(re.findall(rb"/Type\s*/Page(?![a-zA-Z])", data))
+
+
+def fit_pdf(render_kwargs: dict):
+    """Render the PDF on exactly ONE page: keep all content and shrink the type down to
+    READABLE_SCALE first; if that is not enough, trim content one level at a time (see
+    _trim_cfg), each time restarting at full size; only as a last resort go below
+    READABLE_SCALE. Returns (pdf_bytes, scale, pages, trim)."""
+    import io
+    last = None
+    for trim in range(0, 4):
+        floor = READABLE_SCALE if trim < 3 else MIN_SCALE
+        for sc in _STEPS:
+            if sc < floor:
+                break
+            buf = io.BytesIO()
+            render_pdf(buf, scale=sc, trim=trim, **render_kwargs)
+            data = buf.getvalue()
+            last = (data, sc, _pdf_pages(data), trim)
+            if last[2] <= 1:
+                return last
+    return last
+
+
+def fit_docx(render_kwargs: dict, pdf_scale: float = None, trim: int = None):
+    """Render the Word file with the SAME shrink + trim the PDF needed (same content), the
+    scale times DOCX_SCALE_FACTOR. Returns (docx_bytes, scale)."""
+    import io
+    if pdf_scale is None or trim is None:
+        _d, pdf_scale, _p, trim = fit_pdf(render_kwargs)
+    sc = max(MIN_SCALE * DOCX_SCALE_FACTOR, round(pdf_scale * DOCX_SCALE_FACTOR, 3))
+    buf = io.BytesIO()
+    render_docx(buf, scale=sc, trim=trim, **render_kwargs)
+    return buf.getvalue(), sc
+
+
+# --------------------------------------------------------------------------- #
 # PDF RENDERER  (reportlab)
 # --------------------------------------------------------------------------- #
 def render_pdf(path, summary, skills, matched, target_title, target_company,
-               ats_keywords=None, best_project=None, headline=None, experience=None):
+               ats_keywords=None, best_project=None, headline=None, experience=None, scale=1.0, trim=0):
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.units import mm
     from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
@@ -223,38 +292,39 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
 
     doc = SimpleDocTemplate(
         path, pagesize=A4,
-        leftMargin=14 * mm, rightMargin=14 * mm,
-        topMargin=6 * mm, bottomMargin=6 * mm,
+        leftMargin=14 * mm * max(0.8, scale), rightMargin=14 * mm * max(0.8, scale),
+        topMargin=6 * mm * max(0.7, scale), bottomMargin=6 * mm * max(0.7, scale),
         title=f"{P.NAME} - Resume", author=P.NAME,
     )
     content_w = doc.width
 
     # Sizes/spacing tuned so the full resume (incl. an ATS line) fits on ONE page.
-    name_st = ParagraphStyle("name", fontName="Helvetica-Bold", fontSize=18,
-                             alignment=TA_CENTER, textColor=DARK, spaceAfter=1, leading=20)
-    contact_st = ParagraphStyle("contact", fontName="Helvetica", fontSize=8.2,
-                                alignment=TA_CENTER, textColor=DARK, leading=10)
-    summary_st = ParagraphStyle("summary", fontName="Helvetica", fontSize=8.5,
-                                alignment=TA_JUSTIFY, textColor=DARK, leading=10.0)
-    body_st = ParagraphStyle("body", fontName="Helvetica", fontSize=8.5,
-                             textColor=DARK, leading=10.0)
+    name_st = ParagraphStyle("name", fontName="Helvetica-Bold", fontSize=18 * scale,
+                             alignment=TA_CENTER, textColor=DARK, spaceAfter=1 * scale, leading=20 * scale)
+    contact_st = ParagraphStyle("contact", fontName="Helvetica", fontSize=8.2 * scale,
+                                alignment=TA_CENTER, textColor=DARK, leading=10 * scale)
+    summary_st = ParagraphStyle("summary", fontName="Helvetica", fontSize=8.5 * scale,
+                                alignment=TA_JUSTIFY, textColor=DARK, leading=10.0 * scale)
+    body_st = ParagraphStyle("body", fontName="Helvetica", fontSize=8.5 * scale,
+                             textColor=DARK, leading=10.0 * scale)
     bullet_st = ParagraphStyle("bullet", parent=body_st, leftIndent=10, bulletIndent=0)
-    role_l = ParagraphStyle("role_l", fontName="Helvetica-Bold", fontSize=9.4, textColor=DARK)
-    role_r = ParagraphStyle("role_r", fontName="Helvetica-Bold", fontSize=8.6,
+    role_l = ParagraphStyle("role_l", fontName="Helvetica-Bold", fontSize=9.4 * scale, textColor=DARK)
+    role_r = ParagraphStyle("role_r", fontName="Helvetica-Bold", fontSize=8.6 * scale,
                             textColor=DARK, alignment=2)
-    sub_l = ParagraphStyle("sub_l", fontName="Helvetica-Oblique", fontSize=8.4, textColor=DARK)
-    sub_r = ParagraphStyle("sub_r", fontName="Helvetica-Oblique", fontSize=8.4,
+    sub_l = ParagraphStyle("sub_l", fontName="Helvetica-Oblique", fontSize=8.4 * scale, textColor=DARK)
+    sub_r = ParagraphStyle("sub_r", fontName="Helvetica-Oblique", fontSize=8.4 * scale,
                            textColor=DARK, alignment=2)
 
+    cfg = _trim_cfg(trim)
     story = []
 
     def section(title):
-        story.append(Spacer(1, 3))
+        story.append(Spacer(1, 3 * scale))
         story.append(Paragraph(title.upper(),
-                     ParagraphStyle("sec", fontName="Helvetica-Bold", fontSize=9.8,
-                                    textColor=ACCENT, spaceAfter=1, leading=10.5)))
+                     ParagraphStyle("sec", fontName="Helvetica-Bold", fontSize=9.8 * scale,
+                                    textColor=ACCENT, spaceAfter=1 * scale, leading=10.5 * scale)))
         story.append(HRFlowable(width="100%", thickness=0.8, color=ACCENT,
-                                spaceBefore=1, spaceAfter=2.5))
+                                spaceBefore=1 * scale, spaceAfter=2.5 * scale))
 
     def two_col(left, right, lstyle, rstyle):
         t = Table([[Paragraph(left, lstyle), Paragraph(right, rstyle)]],
@@ -275,8 +345,8 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
         return ListFlowable(
             [ListItem(Paragraph(b, bullet_st), leftIndent=12)
              for b in items],
-            bulletType="bullet", bulletFontSize=6.5, start="•",
-            leftIndent=12, spaceBefore=0.5, spaceAfter=0.5,
+            bulletType="bullet", bulletFontSize=6.5 * scale, start="•",
+            leftIndent=12, spaceBefore=0.5 * scale, spaceAfter=0.5 * scale,
         )
 
     def bold_matched(skill):
@@ -296,9 +366,9 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
         # Role headline directly under the name: title + top stack mirrors the JD's
         # wording — the highest-weighted spot for recruiter/ATS title matching.
         story.append(Paragraph(headline, ParagraphStyle(
-            "headline", fontName="Helvetica-Bold", fontSize=9.4, alignment=TA_CENTER,
-            textColor=ACCENT, leading=11.5, spaceBefore=1)))
-    story.append(Spacer(1, 2))
+            "headline", fontName="Helvetica-Bold", fontSize=9.4 * scale, alignment=TA_CENTER,
+            textColor=ACCENT, leading=11.5 * scale, spaceBefore=1 * scale)))
+    story.append(Spacer(1, 2 * scale))
 
     # Professional summary
     section("Professional Summary")
@@ -308,11 +378,11 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
     section("Experience")
     for i, job in enumerate(experience or P.EXPERIENCE):
         if i:
-            story.append(Spacer(1, 2.5))
+            story.append(Spacer(1, 2.5 * scale))
         story.append(two_col(job["company"], job["dates"], role_l, role_r))
         story.append(two_col(job["title"], job["location"], sub_l, sub_r))
-        story.append(Spacer(1, 0.5))
-        story.append(bullets(job["bullets"]))
+        story.append(Spacer(1, 0.5 * scale))
+        story.append(bullets(_cap(job["bullets"], cfg["exp"] if i else None)))
 
     # Technical skills
     section("Technical Skills")
@@ -320,11 +390,11 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
         top = _top_matches(items, matched)
         line = f"<b>{category}:</b> " + ", ".join(f"<b>{s}</b>" if s in top else s for s in items)
         story.append(Paragraph(line, body_st))
-        story.append(Spacer(1, 1))
+        story.append(Spacer(1, 1 * scale))
     if ats_keywords:
         kw = ", ".join(bold_matched(k) for k in ats_keywords)
         story.append(Paragraph(f"<b>Core Competencies:</b> {kw}", body_st))
-        story.append(Spacer(1, 1))
+        story.append(Spacer(1, 1 * scale))
 
     # Projects
     section("Projects")
@@ -340,38 +410,38 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
         if github_link:
             head += f' | <a href="{github_link}">GitHub</a>'
         story.append(Paragraph(head, body_st))
-        story.append(Spacer(1, 1))
+        story.append(Spacer(1, 1 * scale))
 
         # Use tailored description if available, otherwise use original
         desc = proj.get("tailored_description") or proj.get("description", "")
         if desc:
             story.append(Paragraph(desc, body_st))
-            story.append(Spacer(1, 1))
+            story.append(Spacer(1, 1 * scale))
 
         # Use tailored bullets if available, otherwise use original
         bullet_points = proj.get("tailored_bullets") or proj.get("bullets", [])
         if bullet_points:
-            story.append(bullets(bullet_points))
+            story.append(bullets(_cap(bullet_points, cfg["pb"])))
     else:
         # No match: show first project from profile (default)
         proj = P.PROJECTS[0] if P.PROJECTS else {}
         head = (f'<b>{proj.get("name", "Project")}</b> | <i>{proj.get("stack", "")}</i> | '
                 f'{_proj_links(proj)}')
         story.append(Paragraph(head, body_st))
-        story.append(Spacer(1, 1))
+        story.append(Spacer(1, 1 * scale))
         if proj.get("bullets"):
-            story.append(bullets(proj.get("bullets", [])))
+            story.append(bullets(_cap(proj.get("bullets", []), cfg["pb"])))
 
     # Show OTHER projects from profile (2nd onwards, always visible)
     # Skip matched project to avoid duplication
-    for proj in _other_projects(best_project):
-        story.append(Spacer(1, 2.5))
+    for proj in _other_projects(best_project)[:cfg["others"]]:
+        story.append(Spacer(1, 2.5 * scale))
         head = (f'<b>{proj.get("name", "Project")}</b> | <i>{proj.get("stack", "")}</i> | '
                 f'{_proj_links(proj)}')
         story.append(Paragraph(head, body_st))
-        story.append(Spacer(1, 1))
+        story.append(Spacer(1, 1 * scale))
         if proj.get("bullets"):
-            story.append(bullets(proj.get("bullets", [])))
+            story.append(bullets(_cap(proj.get("bullets", []), cfg["pb"])))
 
     # Education
     section("Education")
@@ -389,7 +459,7 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
 # WORD RENDERER  (python-docx)
 # --------------------------------------------------------------------------- #
 def render_docx(path, summary, skills, matched, target_title, target_company,
-                ats_keywords=None, best_project=None, headline=None, experience=None):
+                ats_keywords=None, best_project=None, headline=None, experience=None, scale=1.0, trim=0):
     from docx import Document
     from docx.shared import Pt, RGBColor, Inches
     from docx.enum.text import WD_ALIGN_PARAGRAPH, WD_TAB_ALIGNMENT
@@ -401,23 +471,23 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
 
     doc = Document()
     for section in doc.sections:
-        section.top_margin = Inches(0.38)
-        section.bottom_margin = Inches(0.38)
-        section.left_margin = Inches(0.5)
-        section.right_margin = Inches(0.5)
+        section.top_margin = Inches(0.38 * max(0.7, scale))
+        section.bottom_margin = Inches(0.38 * max(0.7, scale))
+        section.left_margin = Inches(0.5 * max(0.8, scale))
+        section.right_margin = Inches(0.5 * max(0.8, scale))
     usable_width = doc.sections[0].page_width - doc.sections[0].left_margin - doc.sections[0].right_margin
 
     # Tuned compact so the resume stays on ONE page.
     normal = doc.styles["Normal"]
     normal.font.name = "Calibri"
-    normal.font.size = Pt(8.8)
+    normal.font.size = Pt(8.8 * scale)
     normal.font.color.rgb = DARK
 
     def no_space(p, before=0, after=1):
         pf = p.paragraph_format
-        pf.space_before = Pt(before)
-        pf.space_after = Pt(after)
-        pf.line_spacing = 1.0
+        pf.space_before = Pt(before * scale)
+        pf.space_after = Pt(after * scale)
+        pf.line_spacing = DOCX_LINE_SPACING
         return p
 
     def add_bottom_border(p):
@@ -435,7 +505,7 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
         p = no_space(doc.add_paragraph(), before=4, after=2)
         run = p.add_run(title.upper())
         run.bold = True
-        run.font.size = Pt(10)
+        run.font.size = Pt(10 * scale)
         run.font.color.rgb = ACCENT
         add_bottom_border(p)
 
@@ -464,21 +534,23 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     r = p.add_run(P.NAME)
     r.bold = True
-    r.font.size = Pt(18)
+    r.font.size = Pt(18 * scale)
     r.font.color.rgb = DARK
 
     p = no_space(doc.add_paragraph(), after=2)
     p.alignment = WD_ALIGN_PARAGRAPH.CENTER
     c = p.add_run(" | ".join([P.LOCATION, P.PHONE, P.EMAIL, P.LINKEDIN, P.GITHUB]))
-    c.font.size = Pt(8)
+    c.font.size = Pt(8 * scale)
 
     if headline:
         p = no_space(doc.add_paragraph(), after=1)
         p.alignment = WD_ALIGN_PARAGRAPH.CENTER
         hr = p.add_run(headline)
         hr.bold = True
-        hr.font.size = Pt(9.5)
+        hr.font.size = Pt(9.5 * scale)
         hr.font.color.rgb = ACCENT
+
+    cfg = _trim_cfg(trim)
 
     # Summary
     section_heading("Professional Summary")
@@ -486,10 +558,10 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
 
     # Experience
     section_heading("Experience")
-    for job in (experience or P.EXPERIENCE):
+    for ji, job in enumerate(experience or P.EXPERIENCE):
         two_col(job["company"], job["dates"], left_bold=True, italic=False)
         two_col(job["title"], job["location"], left_bold=False, italic=True)
-        for b in job["bullets"]:
+        for b in _cap(job["bullets"], cfg["exp"] if ji else None):
             bullet(b)
 
     # Technical skills
@@ -535,7 +607,7 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
 
         # Use tailored bullets if available, otherwise use original
         bullet_points = proj.get("tailored_bullets") or proj.get("bullets", [])
-        for b in bullet_points:
+        for b in _cap(bullet_points, cfg["pb"]):
             bullet(b)
     else:
         # No match: show first project from profile (default)
@@ -546,19 +618,19 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
         sr = p.add_run(f' | {proj.get("stack", "")} | ')
         sr.italic = True
         p.add_run(_proj_links(proj, html=False)).font.color.rgb = ACCENT
-        for b in proj.get("bullets", []):
+        for b in _cap(proj.get("bullets", []), cfg["pb"]):
             bullet(b)
 
     # Show OTHER projects from profile (2nd onwards, always visible)
     # Skip matched project to avoid duplication
-    for proj in _other_projects(best_project):
+    for proj in _other_projects(best_project)[:cfg["others"]]:
         p = no_space(doc.add_paragraph())
         nr = p.add_run(proj.get("name", "Project"))
         nr.bold = True
         sr = p.add_run(f' | {proj.get("stack", "")} | ')
         sr.italic = True
         p.add_run(_proj_links(proj, html=False)).font.color.rgb = ACCENT
-        for b in proj.get("bullets", []):
+        for b in _cap(proj.get("bullets", []), cfg["pb"]):
             bullet(b)
 
 
@@ -601,11 +673,17 @@ def cmd_new(args):
 
     if fmt in ("pdf", "both"):
         pdf_path = os.path.join(OUTPUT_DIR, base + ".pdf")
-        render_pdf(pdf_path, summary, skills, matched, args.title, args.company)
+        pdf_data, _sc, _pg, _tr = fit_pdf(dict(summary=summary, skills=skills, matched=matched,
+                                          target_title=args.title, target_company=args.company))
+        with open(pdf_path, "wb") as _f:
+            _f.write(pdf_data)
         written.append(pdf_path)
     if fmt in ("docx", "both"):
         docx_path = os.path.join(OUTPUT_DIR, base + ".docx")
-        render_docx(docx_path, summary, skills, matched, args.title, args.company)
+        docx_data, _sc = fit_docx(dict(summary=summary, skills=skills, matched=matched,
+                                       target_title=args.title, target_company=args.company))
+        with open(docx_path, "wb") as _f:
+            _f.write(docx_data)
         written.append(docx_path)
 
     print(f"Target role : {args.title} @ {args.company}")

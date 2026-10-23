@@ -447,6 +447,7 @@ _DENSITY_PRESETS = (
     {"body": 8.0, "head": 9.0,  "name": 15.0, "contact": 8.0, "ls": 0.98, "sp": 0.5},
     {"body": 7.5, "head": 8.5,  "name": 14.0, "contact": 7.5, "ls": 0.95, "sp": 0.3},
     {"body": 7.0, "head": 8.0,  "name": 13.0, "contact": 7.0, "ls": 0.92, "sp": 0.15},
+    {"body": 6.5, "head": 7.5,  "name": 12.0, "contact": 6.5, "ls": 0.90, "sp": 0.10},
 )
 
 
@@ -513,7 +514,7 @@ def _estimate_height_pt(blocks, ps, usable_w_pt) -> float:
         # lines -> errs toward shrinking, which keeps us on one page).
         cpl = max(16, usable_w_pt / (0.50 * size))
         nlines = max(1, math.ceil(len(text) / cpl))
-        line_h = ps["ls"] * 1.18 * size
+        line_h = ps["ls"] * 1.25 * size      # Word: Calibri single = ~1.22em, + safety
         before, after = _BLOCK_SPACING[kind]
         total += nlines * line_h + (before + after) * ps["sp"]
     return total
@@ -656,29 +657,161 @@ def docx_to_pdf(docx_bytes: bytes) -> bytes:
 
 
 def _fallback_text_pdf(docx_bytes: bytes) -> bytes:
-    """Last-resort PDF: dump the docx text into a simple reportlab layout."""
+    """Last-resort PDF (no Word available): the docx text in a simple reportlab layout, shrunk
+    step by step until it fits ONE page."""
     from docx import Document
     from reportlab.lib.pagesizes import A4
     from reportlab.lib.units import mm
-    from reportlab.lib.styles import getSampleStyleSheet
+    from reportlab.lib.styles import ParagraphStyle
     from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 
     doc = Document(io.BytesIO(docx_bytes))
-    styles = getSampleStyleSheet()
-    out = io.BytesIO()
-    pdf = SimpleDocTemplate(out, pagesize=A4, leftMargin=15 * mm, rightMargin=15 * mm,
-                            topMargin=12 * mm, bottomMargin=12 * mm)
-    story = []
+    texts = []
     for p in doc.paragraphs:
         txt = p.text.strip()
         if txt:
-            safe = txt.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
-            story.append(Paragraph(safe, styles["Normal"]))
-            story.append(Spacer(1, 3))
-    if not story:
-        story.append(Paragraph("(empty resume)", styles["Normal"]))
-    pdf.build(story)
+            texts.append(txt.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
+    if not texts:
+        texts = ["(empty resume)"]
+
+    def build(size):
+        out = io.BytesIO()
+        st = ParagraphStyle("n", fontName="Helvetica", fontSize=size, leading=size * 1.18)
+        m = 12 * mm if size >= 9 else 8 * mm
+        pdf = SimpleDocTemplate(out, pagesize=A4, leftMargin=15 * mm if size >= 9 else 11 * mm,
+                                rightMargin=15 * mm if size >= 9 else 11 * mm, topMargin=m, bottomMargin=m)
+        story = []
+        for t in texts:
+            story.append(Paragraph(t, st))
+            story.append(Spacer(1, size * 0.3))
+        pdf.build(story)
+        return out.getvalue()
+
+    data = b""
+    for size in (10, 9.5, 9, 8.5, 8, 7.5, 7, 6.5, 6):
+        data = build(size)
+        if len(re.findall(rb"/Type\s*/Page(?![a-zA-Z])", data)) <= 1:
+            break
+    return data
+
+
+# --------------------------------------------------------------------------- #
+# ONE-PAGE GUARANTEE for an uploaded .docx (edited in place)
+# --------------------------------------------------------------------------- #
+_WORD_OK = None            # None = untested, True/False after first try (Word is local/Windows only)
+_ORIG_PAGES = {}           # sha1(original bytes) -> page count
+
+
+def _word_pdf(docx_bytes: bytes):
+    """docx -> PDF bytes via Microsoft Word, or None when Word is not available
+    (e.g. Vercel/Linux). The first failure is remembered so we never retry slowly."""
+    global _WORD_OK
+    if _WORD_OK is False:
+        return None
+    try:
+        import pythoncom
+        pythoncom.CoInitialize()
+    except Exception:
+        pythoncom = None
+    try:
+        from docx2pdf import convert
+        with tempfile.TemporaryDirectory() as td:
+            i, o = os.path.join(td, "in.docx"), os.path.join(td, "in.pdf")
+            with open(i, "wb") as f:
+                f.write(docx_bytes)
+            convert(i, o)
+            if os.path.exists(o):
+                _WORD_OK = True
+                with open(o, "rb") as f:
+                    return f.read()
+        return None
+    except Exception:
+        if _WORD_OK is None:
+            _WORD_OK = False
+        return None
+    finally:
+        if pythoncom is not None:
+            try:
+                pythoncom.CoUninitialize()
+            except Exception:
+                pass
+
+
+def _pdf_page_count(pdf: bytes) -> int:
+    return len(re.findall(rb"/Type\s*/Page(?![a-zA-Z])", pdf))
+
+
+def shrink_docx(docx_bytes: bytes, f: float) -> bytes:
+    """Scale every font size, paragraph gap and margin of a .docx by `f` (<1) — keeps the
+    user's layout, just a little tighter."""
+    from docx import Document
+    from docx.shared import Pt, Emu
+    doc = Document(io.BytesIO(docx_bytes))
+
+    def scale_para(p):
+        pf = p.paragraph_format
+        for attr in ("space_before", "space_after"):
+            v = getattr(pf, attr)
+            if v is not None:
+                setattr(pf, attr, Emu(int(v * f)))
+        for r in p.runs:
+            if r.font.size is not None:
+                r.font.size = Pt(max(5.5, round(r.font.size.pt * f * 2) / 2))
+
+    for st in doc.styles:
+        try:
+            if st.font is not None and st.font.size is not None:
+                st.font.size = Pt(max(5.5, round(st.font.size.pt * f * 2) / 2))
+            pf = getattr(st, "paragraph_format", None)
+            if pf is not None:
+                for attr in ("space_before", "space_after"):
+                    v = getattr(pf, attr)
+                    if v is not None:
+                        setattr(pf, attr, Emu(int(v * f)))
+        except Exception:
+            continue
+    for p in doc.paragraphs:
+        scale_para(p)
+    for t in doc.tables:
+        for row in t.rows:
+            for cell in row.cells:
+                for p in cell.paragraphs:
+                    scale_para(p)
+    m = max(0.72, f)
+    for sec in doc.sections:
+        for attr in ("top_margin", "bottom_margin", "left_margin", "right_margin"):
+            v = getattr(sec, attr)
+            if v is not None:
+                setattr(sec, attr, Emu(int(v * m)))
+    out = io.BytesIO()
+    doc.save(out)
     return out.getvalue()
+
+
+def fit_docx_one_page(original: bytes, tailored: bytes, force: bool = False) -> bytes:
+    """Keep a tailored resume on ONE page. If the user's original was one page and the
+    tailoring (added keywords/skills) pushed it onto a second, shrink type/spacing/margins a
+    little at a time, verifying the page count with Word. A multi-page original is left alone
+    (we never crush a 2-page CV); without Word (Vercel) nothing can be verified, so the file is
+    returned unchanged."""
+    import hashlib
+    if not force:                      # force=True: a document WE rebuilt from a PDF must be 1 page
+        key = hashlib.sha1(original).hexdigest()
+        if key not in _ORIG_PAGES:
+            pdf = _word_pdf(original)
+            _ORIG_PAGES[key] = _pdf_page_count(pdf) if pdf else None
+        if _ORIG_PAGES[key] != 1:
+            return tailored
+    last = tailored
+    for f in (1.0, 0.96, 0.92, 0.88, 0.84, 0.80, 0.76):
+        cand = tailored if f == 1.0 else shrink_docx(tailored, f)
+        pdf = _word_pdf(cand)
+        if pdf is None:
+            return tailored
+        last = cand
+        if _pdf_page_count(pdf) <= 1:
+            return cand
+    return last
 
 
 # --------------------------------------------------------------------------- #
@@ -711,9 +844,9 @@ def tailor_upload(filename: str, data: bytes, jd_text: str = "",
 
     layout_preserved = ext == ".docx"
     if layout_preserved:
-        tailored_docx = tailor_docx(data, info, ats=ats)
+        tailored_docx = fit_docx_one_page(data, tailor_docx(data, info, ats=ats))
     else:
-        tailored_docx = rebuild_docx_from_text(resume_text, info, ats=ats)
+        tailored_docx = fit_docx_one_page(b"", rebuild_docx_from_text(resume_text, info, ats=ats), force=True)
 
     result = {
         "analysis": info,
