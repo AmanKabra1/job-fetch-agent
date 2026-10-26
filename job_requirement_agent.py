@@ -53,16 +53,17 @@ def check_job_expiration(job: dict) -> dict:
     title = str(job.get("title", "")).lower()
     full_text = title + " " + description
 
+    # Phrases about THIS posting being closed. A bare "closed"/"expired" matched ordinary JD text
+    # ("closed-loop control", "closed source", "expired tokens") and dropped valid jobs.
     closed_signals = [
-        r"closed",
-        r"expired",
-        r"no longer accepting",
-        r"no longer hiring",
-        r"hiring completed",
-        r"position filled",
-        r"not accepting applications",
-        r"applications closed",
-        r"no longer available",
+        r"\b(?:this\s+)?(?:job|position|role|vacancy|posting|listing|opening)\s+(?:is\s+|has\s+been\s+|has\s+)?(?:now\s+)?(?:closed|expired|filled)\b",
+        r"\bapplications?\s+(?:are\s+|is\s+|have\s+been\s+)?(?:now\s+)?closed\b",
+        r"\bno longer accepting\b",
+        r"\bno longer hiring\b",
+        r"\bhiring (?:is\s+)?completed\b",
+        r"\bposition (?:has been )?filled\b",
+        r"\bnot accepting (?:any more )?applications\b",
+        r"\bno longer available\b",
     ]
 
     for signal in closed_signals:

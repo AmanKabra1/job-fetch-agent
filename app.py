@@ -390,17 +390,15 @@ SCREENING_ANSWERS = {
 
 
 def _newest_first(rows):
-    """Display order = match-% TIER first, newest posted first inside each tier:
-         100%  -> 9 Oct, 8 Oct, 7 Oct ...
-         90-99 -> 9 Oct, 8 Oct, 7 Oct ...
-         80-89 -> ...   and so on down.
-    Within the same tier AND same day the higher raw score comes first; undated jobs go
-    last in their tier. (WHICH jobs are shown is still chosen by score upstream.)"""
+    """Display order = NEWEST DAY first (26 Oct, 25 Oct, 24 Oct ...), best match first inside
+    each day, undated jobs last. (WHICH jobs are shown is still chosen by score upstream.)"""
     def key(j):
         shown = j.get("score", j.get("_match_score", 0)) or 0
         raw = j.get("score_raw", j.get("_score_raw", shown)) or 0
-        tier = 10 if shown >= 100 else int(shown // 10)
-        return (-tier, _days_old(j.get("date_posted")), -raw)
+        # STRICT date flow: today, then yesterday, then the day before ... (undated last);
+        # inside one day the better match comes first. (It used to sort by match-% tier FIRST,
+        # which put a 3-day-old 100% job above today's 90% one and scrambled the dates.)
+        return (_days_old(j.get("date_posted")), -raw)
     return sorted(rows, key=key)
 
 
@@ -1000,6 +998,11 @@ def _score_and_rank(rows, limit, target_text=None, cand_years=0):
         scored.append({
             "competition": r.get("_competition") or "",
             "jd_flags": r.get("_jd_flags") or [],
+            # verdict of the strict JD agent (job_fit_analyzer), computed by the cron
+            "interview_likelihood": r.get("interview_likelihood"),
+            "fit_level": r.get("fit_level"),
+            "ai_why": (r.get("_fit_analysis") or {}).get("why", ""),
+            "ai_gaps": ((r.get("_fit_analysis") or {}).get("skill_gaps") or [])[:5],
             "score": score,
             "base": max(0, min(100, base)),
             "matched": matched,
@@ -1501,7 +1504,8 @@ def fetch_from_feed(limit: int):
     """Read + generically rank jobs from the committed daily feed (data/jobs.json),
     refreshed by the GitHub Actions cron. No external service or credentials."""
     rows, fetched_at = _read_feed()
-    return _score_and_rank(rows, limit), fetched_at
+    # score picks WHICH jobs make the cut; the display order is strictly newest day first
+    return _newest_first(_score_and_rank(rows, limit)), fetched_at
 
 
 def load_cache():
@@ -3262,7 +3266,7 @@ function renderJobs(){
       const idx = offset + i + 1;
       return `<tr>
         <td>${idx}</td>
-        <td><span class="score ${scoreClass(j.score)}">${j.score}%</span>${j.interview_likelihood!=null?('<div class="note" style="font-size:10px;margin-top:2px;color:#4dd0e1">AI: '+j.interview_likelihood+'%</div>'):j.skill_pct!=null?('<div class="note" style="font-size:10px;margin-top:2px">skills '+j.skill_pct+'%</div>'):''}${j.fit_level?' <div class="note" style="font-size:9px;margin-top:2px">'+j.fit_level+'</div>':''}</td>
+        <td><span class="score ${scoreClass(j.score)}">${j.score}%</span>${j.interview_likelihood!=null?('<div class="note" title="'+esc((j.ai_why||'')+((j.ai_gaps||[]).length?' | missing: '+j.ai_gaps.join(', '):''))+'" style="font-size:10px;margin-top:2px;color:#4dd0e1">AI: '+j.interview_likelihood+'%</div>'):j.skill_pct!=null?('<div class="note" style="font-size:10px;margin-top:2px">skills '+j.skill_pct+'%</div>'):''}${j.fit_level?' <div class="note" style="font-size:9px;margin-top:2px">'+j.fit_level+'</div>':''}</td>
         <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${exp}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.competition==='LOW'?' <span class="chip" style="background:#0e7490;color:#fff" title="'+esc((j.jd_flags||j.why||[]).join(' · '))+'">low competition</span>':(j.competition==='HIGH'?' <span class="chip" style="opacity:.7" title="crowded: many applicants expected">crowded</span>':'')}${j.salary_lpa>0?(' <span class="chip"'+(j.salary_lpa>CURRENT_LPA?' style="background:#1c7c3f;color:#fff" title="above your current pay"':'')+'>'+j.salary_lpa+' LPA'+(j.salary_lpa>CURRENT_LPA?' ↑':'')+'</span>'):''}${matchLine}${missLine}</td>
         <td>${esc(j.company)}</td>
         <td class="note">${size}</td>
@@ -4144,12 +4148,17 @@ if (githubBtn) {
       } else if(d.research_note){ h='<div class="note">'+esc(d.research_note)+'</div>'; }
       if((d.unverified||[]).length) h='<div class="note" style="color:#f0d98a;margin-bottom:8px">&#9888; Check before sending: <b>'+d.unverified.map(esc).join(', ')+'</b> is not in your resume/notes — confirm it is true or delete it.</div>'+h;
       $('#qaResearchBox').innerHTML=h;
-      // Same as the resume sections: 10 s after each generate, clear the four input
-      // boxes (question / company / role / JD) so the next question starts fresh.
-      // The ANSWER stays on screen so you can still copy it.
+      // 10 s after each generate EVERYTHING clears — the four inputs (question / company / role / JD)
+      // AND the answer with its research notes — so the next question starts fresh.
+      // Because the answer disappears, it is copied to the clipboard the moment it is written
+      // (the Copy button still works during the 10 s).
+      try{ await navigator.clipboard.writeText(d.answer); toast('Answer copied to clipboard — it clears in 10 s.'); }catch(e){}
       clearTimeout(window._qaClearTimer);
       window._qaClearTimer=setTimeout(()=>{
-        ['#qaQuestion','#qaCompany','#qaRole','#qaJD'].forEach(s=>{ const el=$(s); if(el) el.value=''; });
+        ['#qaQuestion','#qaCompany','#qaRole','#qaJD','#qaAnswer'].forEach(s=>{ const el=$(s); if(el) el.value=''; });
+        const box=$('#qaResearchBox'); if(box) box.innerHTML='';
+        const res=$('#qaResult'); if(res) res.style.display='none';
+        countWords();
       }, 10000);
     }catch(e){ toast('Error: '+e); }
     finally{ btn.disabled=false; $('#qaRegen').disabled=false; btn.textContent=old; $('#qaStatus').textContent=''; }

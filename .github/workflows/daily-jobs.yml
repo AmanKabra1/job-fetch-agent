@@ -6,18 +6,20 @@ on:
   # and a writable checkout to git-push the feed branch. Vercel's function can do
   # none of those, so it only SERVES the feed this workflow publishes.
   #
-  # 5 runs a day, UTC (IST = UTC+5:30). Minutes are deliberately OFF the hour (:17/:43):
-  # GitHub delays or silently DROPS scheduled runs at :00 when its queue is busy (the old
-  # 03:00 UTC run was never starting; the others started 2-6 hours late). Even so a start
-  # can slip by up to an hour or two, so the first slot is early enough for your morning.
-  #   21:43 UTC = 03:13 IST   |  01:17 UTC = 06:47 IST   |  05:43 UTC = 11:13 IST
-  #   09:17 UTC = 14:47 IST   |  13:43 UTC = 19:13 IST
+  # 3 runs a day MAX (each run reads JDs with the Groq agent = tokens), timed just AFTER the
+  # worldwide posting peaks so every run finds a fresh batch (UTC; IST = UTC+5:30):
+  #   03:43 UTC = 09:13 IST  — India business day + Europe morning postings (Europe 09:00-11:00 CET
+  #                            is the busiest posting window for EU/remote roles)
+  #   09:43 UTC = 15:13 IST  — India afternoon + Europe midday/afternoon wave
+  #   16:13 UTC = 21:43 IST  — US morning-to-midday peak (09:00-12:00 ET / 06:00-09:00 PT, the
+  #                            largest posting window in the world) lands before this run
+  # Minutes are deliberately OFF the hour (:13/:43): GitHub delays or silently DROPS scheduled runs
+  # at :00 when its queue is busy. A start can still slip by an hour or more — that is GitHub's
+  # free scheduler, not this file; use workflow_dispatch (or an external trigger) for exact times.
   schedule:
-    - cron: "43 21 * * *"
-    - cron: "17 1 * * *"
-    - cron: "43 5 * * *"
-    - cron: "17 9 * * *"
-    - cron: "43 13 * * *"
+    - cron: "43 3 * * *"
+    - cron: "43 9 * * *"
+    - cron: "13 16 * * *"
   workflow_dispatch: {}   # trigger manually from the Actions tab any time
 
 permissions:
@@ -73,12 +75,9 @@ jobs:
       - name: Fetch jobs and write data/jobs.json
         run: python fetch_jobs.py
 
-      - name: Sync portfolio projects to resume profile
-        # Non-blocking: its result is stashed away below and never published, so a failure here
-        # must not stop the job feed from being published (it did on 2026-10-20: "bad escape \S"
-        # from README text broke this step and the feed went ~22 h stale).
-        continue-on-error: true
-        run: python sync_projects_to_profile.py
+      # (Removed 2026-10-26: this step ran sync_projects_to_profile.py, which asked Groq to write
+      # bullets for every project on EVERY run — and its output was discarded by the stash below,
+      # so it only burned tokens and hit rate limits. Project data is synced by projects-sync.yml.)
 
       - name: Stash resume_profile.py before switching branches
         run: git stash push -m "synced projects" resume_profile.py || true

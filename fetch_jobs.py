@@ -653,13 +653,24 @@ def main():
     print(f"  quality breakdown: {quality_breakdown}", flush=True)
     print(f"  NOTE: Showing ALL jobs this cron. Next cron will keep ONLY 95%+ from this batch.", flush=True)
 
-    # AI Analysis: Analyze top 50 jobs for interview likelihood
-    print(f"  analyzing top 50 jobs for interview likelihood ...", flush=True)
+    # STRICT JD AGENT: every job gets a verdict (Groq LLM for up to FIT_LLM_JOBS new jobs, hard rules
+    # for the rest). Verdicts from earlier runs are reused, so each job is only read by the AI once.
+    # SKIP jobs (hard-rule failure, missing core must-haves, wrong role, <40 score) are DROPPED.
+    print("  strict JD agent: reading job descriptions ...", flush=True)
     try:
-        ranked = JFA.analyze_top_jobs(ranked, top_n=50)
-        print(f"    ✓ analyzed top 50 jobs for fit", flush=True)
+        prev_fit = {str(r.get("job_url", "")): r.get("_fit_analysis") for r in existing
+                    if isinstance(r.get("_fit_analysis"), dict) and r["_fit_analysis"].get("source") == "ai+rules"}
+        ranked = JFA.analyze_top_jobs(ranked, top_n=FIT_LLM_JOBS, previous=prev_fit)
+        before = len(ranked)
+        ranked, dropped = JFA.gate_feed(ranked)
+        lv = {}
+        for r in ranked:
+            k = (r.get("_fit_analysis") or {}).get("fit_level", "?")
+            lv[k] = lv.get(k, 0) + 1
+        print(f"    strict gate: dropped {dropped} SKIP jobs of {before}; kept {len(ranked)} "
+              f"({', '.join(f'{k} {v}' for k, v in sorted(lv.items()))})", flush=True)
     except Exception as e:
-        print(f"    ! fit analysis failed: {e} (continuing without analysis)", flush=True)
+        print(f"    ! strict JD agent failed: {e} (continuing with the rule-screened feed)", flush=True)
 
     # FRESHNESS: drop anything older than MAX_AGE_DAYS, then order NEWEST POSTED FIRST (same
     # day: better match first). The feed is replaced every run, so what you see is the latest.
