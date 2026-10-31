@@ -6,24 +6,28 @@ on:
   # and a writable checkout to git-push the feed branch. Vercel's function can do
   # none of those, so it only SERVES the feed this workflow publishes.
   #
-  # 3 runs a day MAX (each run reads JDs with the Groq agent = tokens), timed just AFTER the
-  # worldwide posting peaks so every run finds a fresh batch (UTC; IST = UTC+5:30):
-  #   03:43 UTC = 09:13 IST  — India business day + Europe morning postings (Europe 09:00-11:00 CET
-  #                            is the busiest posting window for EU/remote roles)
-  #   09:43 UTC = 15:13 IST  — India afternoon + Europe midday/afternoon wave
-  #   16:13 UTC = 21:43 IST  — US morning-to-midday peak (09:00-12:00 ET / 06:00-09:00 PT, the
-  #                            largest posting window in the world) lands before this run
-  # Minutes are deliberately OFF the hour (:13/:43): GitHub delays or silently DROPS scheduled runs
-  # at :00 when its queue is busy. A start can still slip by an hour or more — that is GitHub's
-  # free scheduler, not this file; use workflow_dispatch (or an external trigger) for exact times.
+  # 3 REAL fetches a day MAX (each reads JDs with the Groq agent = tokens), timed just AFTER the
+  # worldwide job-posting peaks (UTC; IST = UTC+5:30) — see SLOTS_UTC in cron_gate.py:
+  #   03:43 UTC = 09:13 IST  India business day + Europe morning (Europe 09:00-11:00 CET is the
+  #                          busiest posting window for EU/remote roles)
+  #   09:43 UTC = 15:13 IST  India afternoon + Europe midday/afternoon wave
+  #   16:13 UTC = 21:43 IST  US morning-to-midday peak (09:00-12:00 ET / 06:00-09:00 PT, the
+  #                          largest posting window in the world) has just happened
+  #
+  # WHY IT WAKES EVERY 30 MIN: GitHub's free scheduler starts scheduled runs HOURS late (measured
+  # 4.5-6.8 h late on every run since 2026-10-26, 0 min queue time, so the lag is in GitHub's
+  # dispatch). Moving the cron minutes only moves the problem. Instead the workflow wakes every
+  # 30 minutes (a wake-up that finds nothing due costs ~20 s) and cron_gate.py starts the real
+  # fetch only when a slot has passed and the feed has not been published since. So each slot runs
+  # once, ~30 min after GitHub starts delivering events, and never more than 3 times a day.
+  # Minutes are off the hour (:07/:37) because GitHub delays/drops events at :00.
   schedule:
-    - cron: "43 3 * * *"
-    - cron: "43 9 * * *"
-    - cron: "13 16 * * *"
+    - cron: "7,37 * * * *"
   workflow_dispatch: {}   # trigger manually from the Actions tab any time
 
 permissions:
   contents: write
+  actions: read      # cron_gate.py counts failed runs to cap retries
 
 # Never let two fetches race each other onto the feed branch (a scheduled run
 # overlapping a manual one would collide on `git push origin feed`).
@@ -52,19 +56,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Gate - is a fetch due now?
+        id: gate
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 cron_gate.py
+
       - uses: actions/setup-python@v5
+        if: steps.gate.outputs.run == 'true'
         with:
           python-version: "3.11"
 
       - name: Install dependencies
+        if: steps.gate.outputs.run == 'true'
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
       - name: Load existing jobs from feed branch (to keep portfolio intact)
+        if: steps.gate.outputs.run == 'true'
         run: python load_existing_jobs.py
 
       - name: Verify AI scoring key is present
+        if: steps.gate.outputs.run == 'true'
         run: |
           if [ -z "$GROQ_API_KEY" ]; then
             echo "::warning title=GROQ_API_KEY missing::AI job scoring is DISABLED. Every job will score 50% / MAYBE. Add the secret at Settings > Secrets and variables > Actions."
@@ -73,6 +87,7 @@ jobs:
           fi
 
       - name: Fetch jobs and write data/jobs.json
+        if: steps.gate.outputs.run == 'true'
         run: python fetch_jobs.py
 
       # (Removed 2026-10-26: this step ran sync_projects_to_profile.py, which asked Groq to write
@@ -80,9 +95,11 @@ jobs:
       # so it only burned tokens and hit rate limits. Project data is synced by projects-sync.yml.)
 
       - name: Stash resume_profile.py before switching branches
+        if: steps.gate.outputs.run == 'true'
         run: git stash push -m "synced projects" resume_profile.py || true
 
       - name: Publish feed to the 'feed' branch (main untouched, no Vercel deploy)
+        if: steps.gate.outputs.run == 'true'
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

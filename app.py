@@ -4135,6 +4135,7 @@ if (githubBtn) {
     fd.append('research',$('#qaResearch').checked?'true':'false');
     fd.append('max_words',$('#qaWords').value||'0');
     if(VIS){ const f=$('#qaFile').files[0]; if(!f){ toast('Upload your resume first.'); return; } fd.append('file',f); }
+    clearInterval(window._qaClearTimer); window._qaActive=false;     // a new question cancels any running countdown
     const btn=$('#qaBtn'), old=btn.textContent; btn.disabled=true; $('#qaRegen').disabled=true;
     btn.textContent='Writing…'; $('#qaStatus').textContent=$('#qaCompany').value.trim()&&$('#qaResearch').checked?'researching the company, then writing…':'';
     try{
@@ -4152,16 +4153,25 @@ if (githubBtn) {
       // AND the answer with its research notes — so the next question starts fresh.
       // Because the answer disappears, it is copied to the clipboard the moment it is written
       // (the Copy button still works during the 10 s).
-      try{ await navigator.clipboard.writeText(d.answer); toast('Answer copied to clipboard — it clears in 10 s.'); }catch(e){}
-      clearTimeout(window._qaClearTimer);
-      window._qaClearTimer=setTimeout(()=>{
+      try{ await navigator.clipboard.writeText(d.answer); toast('Answer copied to clipboard — it stays for 30 s, then clears.', 6000); }catch(e){}
+      // The answer stays for a FULL QA_KEEP_SECONDS (30 s) with a live countdown — nothing is
+      // cleared earlier — then the inputs and the answer are wiped. Generating again restarts it.
+      clearInterval(window._qaClearTimer); window._qaActive=true;
+      const QA_KEEP_SECONDS=30; let left=QA_KEEP_SECONDS; const stat=$('#qaStatus');
+      const tick=()=>{ if(stat) stat.textContent='Answer clears in '+left+' s (already copied to clipboard)'; };
+      tick();
+      window._qaClearTimer=setInterval(()=>{
+        left--;
+        if(left>0){ tick(); return; }
+        clearInterval(window._qaClearTimer); window._qaActive=false;
         ['#qaQuestion','#qaCompany','#qaRole','#qaJD','#qaAnswer'].forEach(s=>{ const el=$(s); if(el) el.value=''; });
         const box=$('#qaResearchBox'); if(box) box.innerHTML='';
         const res=$('#qaResult'); if(res) res.style.display='none';
+        if(stat) stat.textContent='';
         countWords();
-      }, 10000);
+      }, 1000);
     }catch(e){ toast('Error: '+e); }
-    finally{ btn.disabled=false; $('#qaRegen').disabled=false; btn.textContent=old; $('#qaStatus').textContent=''; }
+    finally{ btn.disabled=false; $('#qaRegen').disabled=false; btn.textContent=old; if(!window._qaActive) $('#qaStatus').textContent=''; }
   }
   $('#qaBtn').onclick=ask; $('#qaRegen').onclick=ask;
   $('#qaCopy').onclick=async()=>{ try{ await navigator.clipboard.writeText($('#qaAnswer').value); toast('Copied.'); }catch(e){ $('#qaAnswer').select(); toast('Press Ctrl+C to copy.'); } };
