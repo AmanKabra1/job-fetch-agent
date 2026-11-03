@@ -243,8 +243,8 @@
       "stars": 0,
       "forks": 0,
       "created": "2026-06-15T05:06:13Z",
-      "updated": "2026-10-19T00:16:09Z",
-      "commits": 261,
+      "updated": "2026-11-02T20:45:48Z",
+      "commits": 266,
       "source": "github",
       "tech_stack": [
         "Python",
@@ -262,10 +262,10 @@
         "TypeScript",
         "Node.js"
       ],
-      "quality": 58,
+      "quality": 59,
       "repo_facts": {
-        "source_files": 35,
-        "code_files": 34,
+        "source_files": 36,
+        "code_files": 35,
         "manifests": [
           "requirements.txt",
           "vercel.json"
@@ -712,12 +712,12 @@
       "v": 3
     }
   ],
-  "last_updated": "2026-10-19T11:47:08.356481",
+  "last_updated": "2026-11-03T09:56:18.311650",
   "source": "github",
   "total": 14,
   "repo_checks": {
     "job-fetch-agent": {
-      "pushed_at": "2026-10-19T00:16:09Z",
+      "pushed_at": "2026-11-02T20:45:48Z",
       "real": true,
       "reason": "ok",
       "v": 3
@@ -855,5 +855,5 @@
       "v": 3
     }
   },
-  "private_count": 12
+  "private_count": 0
 }
