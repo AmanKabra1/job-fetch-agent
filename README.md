@@ -21,6 +21,53 @@ Sheet, no service account, no credentials.**
 
 ---
 
+**Live app:** https://job-fetch-agent.vercel.app
+
+## Quick start
+
+```bash
+pip install -r requirements.txt
+python app.py            # dashboard at http://localhost:8000
+python fetch_jobs.py     # one-off feed refresh -> data/jobs.json
+```
+
+Free hosting: Vercel (hobby tier) serves the dashboard in feed mode and a free
+GitHub Actions cron refreshes the feed. See [Deploy the dashboard to Vercel](#deploy-the-dashboard-to-vercel).
+
+## Environment variables (names only; never commit values)
+
+Set in a local `.env`, Vercel project settings, or GitHub secrets. All are optional unless noted.
+
+| Name | Purpose |
+|---|---|
+| `JOBS_SOURCE` | `live` (local default) or `feed` (hosted; set on Vercel) |
+| `TAVILY_API_KEY` | Enables web-search career-page and LinkedIn-post sources |
+| `GROQ_API_KEY`, `GROQ_MODEL`, `GOOGLE_API_KEY`, `FIT_MODEL` | Optional LLM-assisted fit analysis |
+| `CURRENT_LPA`, `CURRENT_CTC`, `EXPECTED_CTC`, `MIN_ACCEPT_LPA` | Pay-based ranking and filtering |
+| `NOTICE_PERIOD`, `WILLING_TO_RELOCATE`, `WORK_AUTH_INDIA`, `CANDIDATE_CURRENT_LOCATION` | Apply-kit answers |
+| `GH_PAT`, `STORE_PRIVATE_IN_REPO` | Private GitHub project sync |
+| `PROFILE_PIN`, `PROFILE_SECRET` | Protect the saved profile |
+| `MP_INSTAHYRE`, `MP_CUTSHORT`, `MP_RR`, `MP_YC` | Caps for the extra portals |
+
+## Documentation index
+
+This README is the entry point. The other guides overlap somewhat and are kept for history:
+
+| Doc | Topic |
+|---|---|
+| [OPEN_APP.md](OPEN_APP.md) | How to open and access the app |
+| [SYSTEM_FLOW.md](SYSTEM_FLOW.md) | End-to-end system flow |
+| [COMPLETE_INTEGRATION_GUIDE.md](COMPLETE_INTEGRATION_GUIDE.md) | Job fetch + resume platform integration |
+| [VERCEL_INTEGRATION_PATCH.md](VERCEL_INTEGRATION_PATCH.md) | Vercel integration patch notes |
+| [PROJECT_MANAGEMENT_GUIDE.md](PROJECT_MANAGEMENT_GUIDE.md) | Managing projects used in resumes |
+| [PEAK_SEARCH_STRATEGY.md](PEAK_SEARCH_STRATEGY.md) | Best times to search |
+| [TESTING_GUIDE.md](TESTING_GUIDE.md) | Step-by-step testing of the Vercel app |
+| [UAT_TEST_PLAN.md](UAT_TEST_PLAN.md) | First-level UAT plan |
+| [DEVELOPMENT_SUMMARY.md](DEVELOPMENT_SUMMARY.md) | Development summary |
+| [COMPLETION_SUMMARY.md](COMPLETION_SUMMARY.md) | Completion summary |
+
+---
+
 ## One-time setup
 
 There is **no external service to configure** — the feed is just a file in the
