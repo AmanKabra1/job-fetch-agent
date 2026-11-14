@@ -31,6 +31,9 @@ GBP_TO_INR = float(os.environ.get("GBP_TO_INR", "112"))
 # salary is never rejected (most Indian postings don't list pay).
 MIN_ACCEPT_LPA = float(os.environ.get("MIN_ACCEPT_LPA", "6"))
 TARGET_LPA = float(os.environ.get("CURRENT_LPA", "7"))
+# How many years ABOVE your own experience a JD may ask and still show up. 1 = a 2-yr dev
+# sees "2-3"/"3+" but never "3-5"/"4+". Set EXP_STRETCH_YEARS=0 for strictly <= your YOE.
+EXP_STRETCH_YEARS = float(os.environ.get("EXP_STRETCH_YEARS", "1"))
 
 # --------------------------------------------------------------------------- #
 # Text helpers
@@ -83,7 +86,8 @@ _ROLE_ALWAYS_BAD = re.compile(
 # Seniority — exempted by a junior marker.
 _ROLE_LEVEL_BAD = re.compile(
     r"\b(manager|director|head\s+of|vp\b|principal|distinguished|architect|lead\b|"
-    r"staff\s+(?:software|engineer|developer|backend)|^staff\b|senior|sr\.?\s|sde[- ]?(?:3|iii|4)|"
+    r"staff\s+(?:software|engineer|developer|backend)|^staff\b|senior|sr\.?\s|sde[- ]?(?:3|iii|4|iv|5)\b|"
+    r"(?:engineer|developer|engineering|swe|mts)\s*[-–]?\s*(?:3|4|5|iii|iv|v)\b(?!\s*\+?\s*(?:years?|yrs?|to\b|-))|level\s*[3-9]\b|\bl[3-9]\b|"
     r"intern(?:ship)?\b|trainee|fresher|apprentice)", re.I)
 # Symbol-bearing stacks can't sit inside the \b(...)\b groups above.
 _ROLE_BAD2 = re.compile(r"(\.net\b|dotnet|\bc#|\bphp\b|\bc\+\+|\bcpp\b)", re.I)
@@ -164,7 +168,7 @@ def too_senior(lo, hi, candidate_years) -> bool:
     '1-4' / '2-5' / '3-5' / '4+' are out while '1-2' / '2-3' / '2.5' / '3' / '3+' stay."""
     if not lo and not hi:
         return False
-    cap = (candidate_years or 2) + 1
+    cap = (candidate_years or 2) + EXP_STRETCH_YEARS
     return (lo or 0) > cap or (hi or 0) > cap
 
 
@@ -207,7 +211,11 @@ def required_years(text: str):
         seg = t[max(0, pos - 60): pos + 70]
         if not _EXP_CTX.search(seg):
             continue
-        if _NOT_REQ.search(t[max(0, pos - 40): pos + 25]):
+        # Company-history wording only counts inside the SAME sentence as the number —
+        # "...founded 12 years ago. 6+ years experience in Node" must keep the 6+ ask.
+        before = re.split(r"[.!?;\n]\s", t[max(0, pos - 40): pos])[-1]
+        after = re.split(r"[.!?;\n]\s", t[pos: pos + 25])[0]
+        if _NOT_REQ.search(before + after):
             continue
         if _SECONDARY.search(t[max(0, pos - 40): pos]):
             continue
@@ -567,6 +575,7 @@ def screen_job(job: dict, candidate_years: int = 2, skills=None, strict_role: bo
         fit += 8                          # JD read and it states no experience ask
     else:
         fit -= 6                          # JD never read: requirement is unverified, no bonus
+        out["boost"] -= 8                 # unverified jobs rank below ones whose JD was actually read
         flags.append("JD not read — verify experience/skills")
     if _JUNIOR_OK.search(title):
         fit += 6; flags.append("junior/SDE-1 level")

@@ -108,7 +108,8 @@ COUNTRY_INDEED = "India"
 # Which boards to hit. Every board python-jobspy supports — LinkedIn/Indeed/
 # Google are the workhorses in India; the rest are tried resiliently (a board
 # that blocks us or returns nothing never aborts the run).
-SITES = ["linkedin", "indeed", "google", "glassdoor", "zip_recruiter", "naukri", "bayt"]
+# "bayt" removed 2026-11: Gulf-focused board, blocks scrapers (HTTP 403) so its JDs can never be read.
+SITES = ["linkedin", "indeed", "google", "glassdoor", "zip_recruiter", "naukri"]
 
 # Only jobs posted within this many hours (72 = last 3 days for sufficient volume).
 # Increased from 24 to 72 to get enough jobs on Indian boards
@@ -475,6 +476,25 @@ def screen_rows(rows, label):
     return kept
 
 
+STRICT_UNREAD = os.environ.get("STRICT_UNREAD", "1") != "0"
+STRICT_UNREAD_FLOOR = 40     # never shrink the feed below this many rows just to be strict
+
+
+def drop_unverified(rows):
+    """A job whose JD could not be read AND whose experience ask is unknown can't be
+    checked against your 2 years — drop it (e.g. LinkedIn rate-limited). Naukri rows stay:
+    their experience range is folded into the text, so the years ARE verified."""
+    if not STRICT_UNREAD:
+        return rows
+    ok = [r for r in rows if r.get("_jd_read") or r.get("_req_years")]
+    dropped = len(rows) - len(ok)
+    if len(ok) < STRICT_UNREAD_FLOOR:
+        print(f"  strict-unread: only {len(ok)} verified rows, keeping unverified ones to fill the feed", flush=True)
+        return rows
+    print(f"  strict-unread: dropped {dropped} jobs whose JD + experience could not be verified", flush=True)
+    return ok
+
+
 def main():
     print("Fetching jobs ...", flush=True)
     jobs = fetch_all_jobs()
@@ -520,6 +540,8 @@ def main():
             today_rows = screen_rows(today_rows, "pass 2 (after LinkedIn JDs)")
     except Exception as e:
         print(f"  ! LinkedIn enrichment skipped: {e}", flush=True)
+
+    today_rows = drop_unverified(today_rows)
 
     # DEDUPLICATION STEP 1: Remove exact URL duplicates within this run
     print(f"  deduplicating jobs within this run ...", flush=True)

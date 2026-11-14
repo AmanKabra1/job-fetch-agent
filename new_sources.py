@@ -285,16 +285,32 @@ def enrich_linkedin(rows, max_n=60, min_interval=1.1):
             and _LI_ID.search(str(r.get("job_url") or ""))]
     todo.sort(key=lambda r: str(r.get("date_posted") or ""), reverse=True)   # newest first
     done = 0
+    blocked_in_a_row = 0
     for r in todo[:max_n]:
         jid = _LI_ID.search(r["job_url"]).group(1)
-        try:
-            resp = requests.get(f"https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{jid}",
-                                headers=_UA, timeout=15)
-        except Exception:
+        resp = None
+        # LinkedIn rate-limits datacenter IPs in bursts: wait and retry (30s, 60s) instead of
+        # giving up at the first 429 (that left ~70% of LinkedIn jobs unread).
+        for wait in (0, 30, 60):
+            if wait:
+                time.sleep(wait)
+            try:
+                resp = requests.get(f"https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{jid}",
+                                    headers=_UA, timeout=15)
+            except Exception:
+                resp = None
+                break
+            if resp.status_code not in (429, 403, 999):
+                break
+        if resp is None:
             break
         if resp.status_code in (429, 403, 999):
-            print(f"    ! LinkedIn enrichment stopped (HTTP {resp.status_code}) after {done} jobs", flush=True)
-            break
+            blocked_in_a_row += 1
+            if blocked_in_a_row >= 3:
+                print(f"    ! LinkedIn enrichment stopped (HTTP {resp.status_code}) after {done} jobs", flush=True)
+                break
+            continue
+        blocked_in_a_row = 0
         if resp.status_code != 200:
             time.sleep(min_interval)
             continue
@@ -314,10 +330,65 @@ def enrich_linkedin(rows, max_n=60, min_interval=1.1):
     return done
 
 
+def fetch_hirist(terms, max_age_hours=0, pages=2, max_terms=10):
+    """Hirist (India tech-only board) via its open JSON search API — no key, no login.
+    Every job carries STRUCTURED experience (min/max years), mandatory skill tags and the
+    live applicant count, so your 2-yr limit is verified even though Hirist exposes no
+    free-text JD. We synthesise a short JD line the screener already knows how to read:
+    "Experience: 1-3 years. Key skills: ... [Hirist: 120 applicants]"."""
+    rows, seen = [], set()
+    for term in list(dict.fromkeys(terms))[:max_terms]:
+        for page in range(pages):
+            try:
+                r = requests.get("https://gladiator.hirist.tech/job/search", timeout=_TIMEOUT,
+                                 headers={**_UA, "Accept": "application/json"},
+                                 params={"query": term, "pageNo": page, "pageSize": 50})
+                if r.status_code != 200:
+                    break
+                data = r.json().get("data", [])
+            except Exception:
+                break
+            if not data:
+                break
+            for j in data:
+                url, title = j.get("jobDetailUrl") or "", _strip(j.get("title"))
+                if not url or url in seen or not _DEV.search(title):
+                    continue
+                lo, hi = j.get("min"), j.get("max")
+                try:
+                    lo, hi = int(lo or 0), int(hi or 0)
+                except (TypeError, ValueError):
+                    lo = hi = 0
+                if lo > 3:                                   # clearly senior: skip before screening
+                    continue
+                ms = j.get("createdTimeMs") or j.get("createdTime")
+                if ms and not _age_ok(str(int(ms) // 1000), max_age_hours):
+                    continue
+                seen.add(url)
+                skills = ", ".join(t.get("name", "") for t in (j.get("tags") or []) if t.get("isMandatory")) \
+                    or ", ".join(t.get("name", "") for t in (j.get("tags") or [])[:8])
+                locs = ", ".join(l.get("name", "") for l in (j.get("locations") or [])) or "India"
+                n_app = j.get("applyCount")
+                desc = f"Experience: {lo}-{hi} years. Key skills: {skills}."
+                if n_app is not None:
+                    desc += f" [Hirist: {n_app} applicants]"
+                rows.append({
+                    "title": title, "company": (j.get("companyData") or {}).get("companyName", "").strip(),
+                    "location": locs + ", India", "site": "hirist",
+                    "date_posted": _iso_date(str(int(ms) // 1000)) if ms else "",
+                    "is_remote": "True" if j.get("workFromHome") else "False",
+                    "job_url": url, "description": desc,
+                })
+            if not r.json().get("hasMore"):
+                break
+    return rows
+
+
 def fetch_all(terms, max_age_hours=0):
     """All new-portal sources. Returns (rows, per_source_counts)."""
     out, counts = [], {}
     for name, fn in (
+        ("hirist", lambda: fetch_hirist(terms, max_age_hours=max_age_hours)),
         ("workable", lambda: fetch_workable(terms, max_age_hours=max_age_hours)),
         ("workingnomads", lambda: fetch_workingnomads(terms, max_age_hours=max_age_hours)),
         ("himalayas-india", lambda: fetch_himalayas_india(terms, max_age_hours=max_age_hours)),

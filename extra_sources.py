@@ -386,10 +386,13 @@ GREENHOUSE_BOARDS = {
     "Porter": "porter", "InMobi": "inmobi", "Glance": "glance",
     "HackerRank": "hackerrank", "BlueStone": "bluestone", "Rubrik": "rubrik",
     "Zscaler": "zscaler", "Thoughtworks": "thoughtworks", "Coursera": "coursera",
-    "Okta": "okta",
+    "Okta": "okta", "JFrog": "jfrog", "Sumo Logic": "sumologic",
 }
 LEVER_BOARDS = {
     "Mistral AI": "mistral", "Spotify": "spotify",
+    # Indian product companies on Lever, verified live 2026-11-14 (full JDs, direct apply)
+    "Mindtickle": "mindtickle", "Zeta": "zeta", "Paytm": "paytm", "FamPay": "fampay",
+    "CRED": "cred", "Meesho": "meesho", "Pocket FM": "pocketfm", "Porter (Lever)": "porter",
 }
 ASHBY_BOARDS = {
     "OpenAI": "openai", "ElevenLabs": "elevenlabs", "Notion": "notion",
