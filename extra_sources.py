@@ -386,13 +386,14 @@ GREENHOUSE_BOARDS = {
     "Porter": "porter", "InMobi": "inmobi", "Glance": "glance",
     "HackerRank": "hackerrank", "BlueStone": "bluestone", "Rubrik": "rubrik",
     "Zscaler": "zscaler", "Thoughtworks": "thoughtworks", "Coursera": "coursera",
-    "Okta": "okta", "JFrog": "jfrog", "Sumo Logic": "sumologic",
+    "Okta": "okta", "JFrog": "jfrog", "Sumo Logic": "sumologic", "Turing": "turing",
 }
 LEVER_BOARDS = {
     "Mistral AI": "mistral", "Spotify": "spotify",
     # Indian product companies on Lever, verified live 2026-11-14 (full JDs, direct apply)
     "Mindtickle": "mindtickle", "Zeta": "zeta", "Paytm": "paytm", "FamPay": "fampay",
     "CRED": "cred", "Meesho": "meesho", "Pocket FM": "pocketfm", "Porter (Lever)": "porter",
+    "Hevo Data": "hevodata",
 }
 ASHBY_BOARDS = {
     "OpenAI": "openai", "ElevenLabs": "elevenlabs", "Notion": "notion",
@@ -401,7 +402,7 @@ ASHBY_BOARDS = {
     "Render": "render", "PostHog": "posthog", "Mux": "mux",
     # Indian AI / fintech startups on Ashby (verified live 2026-10-06)
     "Sarvam AI": "sarvam", "Navi": "navi", "Atlan": "atlan",
-    "Smallest.ai": "smallest",
+    "Smallest.ai": "smallest", "Tekion": "tekion",
 }
 # Kept for reference / the UI label "via {company} careers". The big-tech vanity
 # pages (Google/Amazon/Meta/Apple/Netflix) are JS apps with no jobs in the raw

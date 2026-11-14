@@ -330,6 +330,153 @@ def enrich_linkedin(rows, max_n=60, min_interval=1.1):
     return done
 
 
+# --------------------------------------------------------------------------- #
+# Direct company career pages on ATS systems beyond Greenhouse/Lever/Ashby.
+# All verified live 2026-11-14: open JSON endpoints, no key, full job descriptions.
+# --------------------------------------------------------------------------- #
+# Workday (most MNCs): (display name, tenant, wd-number, site)
+WORKDAY_BOARDS = [
+    ("Salesforce", "salesforce", 12, "External_Career_Site"),
+    ("Capital One", "capitalone", 12, "Capital_One"),
+    ("Deutsche Bank", "db", 3, "DBWebsite"),
+    ("Novartis", "novartis", 3, "novartis_Careers"),
+    ("Qualcomm", "qualcomm", 12, "External"),
+    ("AstraZeneca", "astrazeneca", 3, "Careers"),
+]
+# SmartRecruiters (Indian mid-size product companies): display name -> company id
+SMARTRECRUITERS_BOARDS = {"AbhiBus": "abhibus", "ixigo": "ixigo", "Unacademy": "unacademy",
+                          "Gainsight": "gainsight", "Mindtickle (SR)": "mindtickle"}
+# Recruitee (startups): display name -> subdomain
+RECRUITEE_BOARDS = {"Box8": "box8"}
+
+_INDIA_LOC = re.compile(r"india|bengaluru|bangalore|mumbai|delhi|gurgaon|gurugram|noida|hyderabad|pune|"
+                        r"chennai|kolkata|ahmedabad|jaipur|indore|kochi|coimbatore|chandigarh", re.I)
+_JSON_H = {**_UA, "Accept": "application/json"}
+
+
+def _title_wanted(title):
+    return bool(_DEV.search(title)) and not _SENIOR.search(title)
+
+
+def _workday_days(posted_on):
+    """'Posted Today' / 'Posted Yesterday' / 'Posted 3 Days Ago' / 'Posted 30+ Days Ago' -> days."""
+    p = str(posted_on or "").lower()
+    if "today" in p:
+        return 0
+    if "yesterday" in p:
+        return 1
+    m = re.search(r"(\d+)\+?\s*day", p)
+    return int(m.group(1)) if m else 99
+
+
+def fetch_workday(terms, max_age_hours=0, max_terms=4, detail_cap=25):
+    rows, seen = [], set()
+    max_days = (max_age_hours or 96) / 24
+    for name, tenant, wd, site in WORKDAY_BOARDS:
+        base = f"https://{tenant}.wd{wd}.myworkdayjobs.com/wday/cxs/{tenant}/{site}"
+        cand = {}
+        for term in list(dict.fromkeys(terms))[:max_terms]:
+            try:
+                r = requests.post(base + "/jobs", headers={**_JSON_H, "Content-Type": "application/json"},
+                                  timeout=_TIMEOUT,
+                                  json={"appliedFacets": {}, "limit": 20, "offset": 0, "searchText": f"{term} india"})
+                if r.status_code != 200:
+                    break
+                postings = r.json().get("jobPostings", [])
+            except Exception:
+                break
+            for j in postings:
+                title, path = _strip(j.get("title")), j.get("externalPath") or ""
+                if (path and path not in cand and _INDIA_LOC.search(j.get("locationsText", ""))
+                        and _title_wanted(title) and _workday_days(j.get("postedOn")) <= max_days):
+                    cand[path] = (title, j)
+        for path, (title, j) in list(cand.items())[:detail_cap]:
+            try:
+                d = requests.get(base + path, headers=_JSON_H, timeout=_TIMEOUT).json().get("jobPostingInfo", {})
+            except Exception:
+                continue
+            url = d.get("externalUrl") or f"https://{tenant}.wd{wd}.myworkdayjobs.com/en-US/{site}{path}"
+            if url in seen:
+                continue
+            seen.add(url)
+            body = _strip(d.get("jobDescription"))
+            if len(body) > 7000:
+                body = body[:4000] + " … " + body[-3000:]
+            rows.append({
+                "title": title, "company": name,
+                "location": d.get("location") or j.get("locationsText", "India"),
+                "site": f"{name} careers (Workday)",
+                "date_posted": str(d.get("startDate") or "")[:10], "is_remote": "",
+                "job_url": url, "description": body or f"{title} at {name}."})
+    return rows
+
+
+def fetch_smartrecruiters(terms, max_age_hours=0, detail_cap=25):
+    rows, seen = [], set()
+    for name, cid in SMARTRECRUITERS_BOARDS.items():
+        try:
+            r = requests.get(f"https://api.smartrecruiters.com/v1/companies/{cid}/postings",
+                             params={"limit": 100, "country": "in"}, headers=_JSON_H, timeout=_TIMEOUT)
+            if r.status_code != 200:
+                continue
+            items = r.json().get("content", [])
+        except Exception:
+            continue
+        n = 0
+        for j in items:
+            title = _strip(j.get("name"))
+            if not _title_wanted(title) or not _age_ok(j.get("releasedDate"), max_age_hours):
+                continue
+            if n >= detail_cap:
+                break
+            n += 1
+            try:
+                d = requests.get(f"https://api.smartrecruiters.com/v1/companies/{cid}/postings/{j['id']}",
+                                 headers=_JSON_H, timeout=_TIMEOUT).json()
+            except Exception:
+                continue
+            url = d.get("postingUrl") or d.get("applyUrl") or ""
+            if not url or url in seen:
+                continue
+            seen.add(url)
+            secs = (d.get("jobAd") or {}).get("sections") or {}
+            body = " ".join(_strip((secs.get(k) or {}).get("text"))
+                            for k in ("jobDescription", "qualifications", "additionalInformation"))
+            loc = j.get("location") or {}
+            rows.append({
+                "title": title, "company": name.replace(" (SR)", ""),
+                "location": ", ".join(x for x in (loc.get("city"), loc.get("country", "").upper()) if x) or "India",
+                "site": f"{name.replace(' (SR)', '')} careers (SmartRecruiters)",
+                "date_posted": _iso_date(j.get("releasedDate")), "is_remote": "True" if loc.get("remote") else "False",
+                "job_url": url, "description": body[:7000] or f"{title} at {name}."})
+    return rows
+
+
+def fetch_recruitee(terms, max_age_hours=0):
+    rows = []
+    for name, sub in RECRUITEE_BOARDS.items():
+        try:
+            r = requests.get(f"https://{sub}.recruitee.com/api/offers/", headers=_JSON_H, timeout=_TIMEOUT)
+            if r.status_code != 200:
+                continue
+            offers = r.json().get("offers", [])
+        except Exception:
+            continue
+        for o in offers:
+            title = _strip(o.get("title"))
+            loc = f"{o.get('location') or ''} {o.get('country') or ''}"
+            if (o.get("status") not in (None, "published") or not _title_wanted(title)
+                    or not _INDIA_LOC.search(loc) or not _age_ok(o.get("published_at"), max_age_hours)):
+                continue
+            body = _strip(f"{o.get('description') or ''} {o.get('requirements') or ''}")
+            rows.append({
+                "title": title, "company": name, "location": loc.strip() or "India",
+                "site": f"{name} careers (Recruitee)", "date_posted": _iso_date(o.get("published_at")),
+                "is_remote": "True" if o.get("remote") else "False",
+                "job_url": o.get("careers_url") or "", "description": body[:7000] or f"{title} at {name}."})
+    return [r for r in rows if r["job_url"]]
+
+
 def fetch_hirist(terms, max_age_hours=0, pages=2, max_terms=10):
     """Hirist (India tech-only board) via its open JSON search API — no key, no login.
     Every job carries STRUCTURED experience (min/max years), mandatory skill tags and the
@@ -389,6 +536,9 @@ def fetch_all(terms, max_age_hours=0):
     out, counts = [], {}
     for name, fn in (
         ("hirist", lambda: fetch_hirist(terms, max_age_hours=max_age_hours)),
+        ("workday", lambda: fetch_workday(terms, max_age_hours=max_age_hours)),
+        ("smartrecruiters", lambda: fetch_smartrecruiters(terms, max_age_hours=max_age_hours)),
+        ("recruitee", lambda: fetch_recruitee(terms, max_age_hours=max_age_hours)),
         ("workable", lambda: fetch_workable(terms, max_age_hours=max_age_hours)),
         ("workingnomads", lambda: fetch_workingnomads(terms, max_age_hours=max_age_hours)),
         ("himalayas-india", lambda: fetch_himalayas_india(terms, max_age_hours=max_age_hours)),
