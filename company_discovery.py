@@ -796,12 +796,14 @@ def _find_coworking_spaces(bbox) -> list:
 (
   nwr["name"]["office"="coworking"]({b});
   nwr["name"]["office"~"^(coworking|shared|hotdesk)"]({b});
-  nwr["name"~"(coworking|co-working|shared office|startup hub|tech park|business park)"i]({b});
+  nwr["name"~"(coworking|co-working|shared office|startup hub|tech park|business park)",i]({b});
 );
-out geom;
+out center tags;
 """
     try:
-        r = requests.post(_OVERPASS, data=query, headers=_UA, timeout=40)
+        # Overpass wants the query in a FORM FIELD named "data" (the main query does this);
+        # posting the raw text was rejected with HTTP 400 every time.
+        r = requests.post(_OVERPASS, data={"data": query}, headers=_UA, timeout=40)
         r.raise_for_status()
         data = r.json()
         spaces = []
@@ -813,6 +815,8 @@ out geom;
             coords = None
             if "lat" in elem and "lon" in elem:
                 coords = (elem["lat"], elem["lon"])
+            elif isinstance(elem.get("center"), dict):      # ways/relations carry a center
+                coords = (elem["center"]["lat"], elem["center"]["lon"])
             spaces.append({"name": name, "coords": coords})
         return spaces
     except Exception as e:

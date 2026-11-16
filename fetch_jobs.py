@@ -70,7 +70,22 @@ SEARCH_TERMS = [
     # Level / shape of role
     "junior backend developer", "junior software engineer", "software engineer 1",
     "API developer", "microservices developer",
+
+    # Added 2026-11: more ways the SAME roles are worded on Indian boards
+    "software engineer python", "backend engineer node.js", "SDE I", "software engineer II",
+    "associate software developer", "python django developer", "full stack engineer node react",
+    "AI automation engineer", "LLM application developer", "integration engineer",
 ]
+
+# City-by-city pass. A single "India" search returns only the top ~100 per board, so most
+# local postings never surface. Re-running the CORE terms per city (LinkedIn + Indeed only,
+# to keep the run short) pulls in far more. Home city first. Turn off with CITY_PASS=0.
+CITY_PASS = os.environ.get("CITY_PASS", "1") != "0"
+CITIES = ["Noida", "Delhi NCR", "Gurugram", "Bengaluru", "Hyderabad", "Pune", "Mumbai", "Chennai"]
+CITY_TERMS = ["backend developer", "software engineer", "python developer", "node.js developer",
+              "AI engineer", "SDE 1"]
+CITY_SITES = ["linkedin", "indeed"]
+CITY_RESULTS = 40
 # NOTE: Java was deliberately cut from the search terms (you wanted fewer Java roles).
 # Java-primary postings that still slip in via the generic terms are rejected by
 # jd_screener.java_profile(); Java as a SECONDARY skill next to Node/Python is kept.
@@ -273,6 +288,23 @@ def fetch_all_jobs() -> pd.DataFrame:
             frames.append(df)
             print(f"    -> {len(df)} rows", flush=True)
 
+    if CITY_PASS:
+        got = 0
+        for city in CITIES:
+            for term in CITY_TERMS:
+                try:
+                    df = scrape_jobs(site_name=CITY_SITES, search_term=term, location=f"{city}, India",
+                                     results_wanted=CITY_RESULTS, hours_old=HOURS_OLD,
+                                     country_indeed=COUNTRY_INDEED, linkedin_fetch_description=False)
+                except Exception as e:
+                    print(f"    ! city pass {city}/{term!r} failed: {e}", flush=True)
+                    continue
+                if df is not None and not df.empty:
+                    df["search_term"] = f"{term} @ {city}"
+                    frames.append(df)
+                    got += len(df)
+        print(f"    -> city pass ({len(CITIES)} cities x {len(CITY_TERMS)} terms): {got} rows", flush=True)
+
     # Extra real sources — Remotive + RemoteOK + Jobicy + Arbeitnow + Himalayas AND
     # direct company career pages (Greenhouse/Lever/Ashby ATS APIs + HN + WWR).
     #
@@ -445,7 +477,9 @@ def rank_for_feed(rows):
 
 # How many LinkedIn postings to open for their real JD + applicant count each run.
 # (~1 request/second, so 60 ≈ 1 minute; set 0 to disable.)
-LINKEDIN_ENRICH_MAX = int(os.environ.get("LINKEDIN_ENRICH_MAX", "250"))
+# 250 was being hit on every run (201 jobs then dropped as unverifiable) — LinkedIn was NOT
+# blocking us, the cap was. ~1.5 s per job, so 500 adds roughly 6 more minutes.
+LINKEDIN_ENRICH_MAX = int(os.environ.get("LINKEDIN_ENRICH_MAX", "500"))
 CANDIDATE_YEARS = 2
 
 
@@ -476,6 +510,9 @@ def screen_rows(rows, label):
     return kept
 
 
+# Max NEW jobs per run that the Groq strict JD agent reads (the rest get rule-based verdicts).
+# This name was used below but never defined, so the whole agent step crashed every run.
+FIT_LLM_JOBS = int(os.environ.get("FIT_LLM_JOBS", "60"))
 STRICT_UNREAD = os.environ.get("STRICT_UNREAD", "1") != "0"
 STRICT_UNREAD_FLOOR = 40     # never shrink the feed below this many rows just to be strict
 

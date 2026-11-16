@@ -2712,6 +2712,9 @@ INDEX_HTML = r"""<!doctype html>
   a { color:#7db0ff; text-decoration:none; } a:hover { text-decoration:underline; }
   .chips { display:flex; gap:4px; flex-wrap:wrap; margin-top:4px; }
   .chip { font-size:10px; color:var(--mut); border:1px solid var(--line); border-radius:10px; padding:1px 7px; }
+  .chip.opened { background:#475569; color:#fff; border-color:#475569; }
+  tr.opened-row td { opacity:.62; }
+  tr.opened-row td:last-child, tr.opened-row td:nth-last-child(2) { opacity:1; }
   .row-actions { display:flex; gap:6px; align-items:center; }
   .panel { margin-top:30px; border-top:1px solid var(--line); padding-top:16px; }
   .pill { font-size:11px; padding:2px 8px; border:1px solid var(--line); border-radius:20px; color:var(--mut); }
@@ -3253,6 +3256,7 @@ function renderJobs(){
                             +(window._fetchedAt?(' · '+window._fetchedAt):'');
   if(wrap) wrap.style.display='none';
 
+  const openedMap = getOpened();
   // Render three sections: TODAY, THIS_WEEK, RECENT with styled headers
   const renderSection = (title, count, jobs, offset, emoji) => {
     if(!jobs.length) return '';
@@ -3264,16 +3268,17 @@ function renderJobs(){
       const size=j.employees>=150?(j.employees>=1000?(Math.floor(j.employees/1000)+'k+'):(j.employees+'+')):'';
       const exp=j.exp_label?('<span class="chip" title="experience comparison">'+esc(j.exp_label)+(j.exp_fit?' &#9989;':'')+'</span>'):'';
       const idx = offset + i + 1;
-      return `<tr>
+      const openedInfo = openedMap[j.job_url];
+      return `<tr data-url="${esc(j.job_url)}"${openedInfo?' class="opened-row"':''}>
         <td>${idx}</td>
         <td><span class="score ${scoreClass(j.score)}">${j.score}%</span>${j.interview_likelihood!=null?('<div class="note" title="'+esc((j.ai_why||'')+((j.ai_gaps||[]).length?' | missing: '+j.ai_gaps.join(', '):''))+'" style="font-size:10px;margin-top:2px;color:#4dd0e1">AI: '+j.interview_likelihood+'%</div>'):j.skill_pct!=null?('<div class="note" style="font-size:10px;margin-top:2px">skills '+j.skill_pct+'%</div>'):''}${j.fit_level?' <div class="note" style="font-size:9px;margin-top:2px">'+j.fit_level+'</div>':''}</td>
-        <td><strong>${esc(j.title)}</strong>${j.is_remote?' <span class="chip">remote</span>':''}${exp}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.competition==='LOW'?' <span class="chip" style="background:#0e7490;color:#fff" title="'+esc((j.jd_flags||j.why||[]).join(' · '))+'">low competition</span>':(j.competition==='HIGH'?' <span class="chip" style="opacity:.7" title="crowded: many applicants expected">crowded</span>':'')}${j.salary_lpa>0?(' <span class="chip"'+(j.salary_lpa>CURRENT_LPA?' style="background:#1c7c3f;color:#fff" title="above your current pay"':'')+'>'+j.salary_lpa+' LPA'+(j.salary_lpa>CURRENT_LPA?' ↑':'')+'</span>'):''}${matchLine}${missLine}</td>
+        <td><strong>${esc(j.title)}</strong>${openedBadge(openedInfo)}${j.is_remote?' <span class="chip">remote</span>':''}${exp}${j.big?' <span class="tag add" style="font-size:10px">big co</span>':''}${j.competition==='LOW'?' <span class="chip" style="background:#0e7490;color:#fff" title="'+esc((j.jd_flags||j.why||[]).join(' · '))+'">low competition</span>':(j.competition==='HIGH'?' <span class="chip" style="opacity:.7" title="crowded: many applicants expected">crowded</span>':'')}${j.salary_lpa>0?(' <span class="chip"'+(j.salary_lpa>CURRENT_LPA?' style="background:#1c7c3f;color:#fff" title="above your current pay"':'')+'>'+j.salary_lpa+' LPA'+(j.salary_lpa>CURRENT_LPA?' ↑':'')+'</span>'):''}${matchLine}${missLine}</td>
         <td>${esc(j.company)}</td>
         <td class="note">${size}</td>
         <td>${esc(j.location)}</td>
         <td class="note">${j.site?('via '+esc(j.site)):''}</td>
         <td>${esc(j.date_posted)}</td>
-        <td>${j.job_url?'<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener">Open</a>':''}</td>
+        <td>${j.job_url?'<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener" onclick="markOpenedIdx('+(offset+i)+')">Open</a>':''}</td>
         <td><button onclick="applyKit(${offset+i})" style="margin-bottom:4px">Apply</button>${
           isAutoFilled(j.job_url)
             ? '<button class="tag have" id="afRowBtn'+(offset+i)+'" onclick="quickAutoFill('+(offset+i)+')" style="display:block;width:100%;font-size:9px;margin:2px 0;padding:3px 6px;background:#16a34a;border:none;cursor:pointer" title="Already auto-filled -- click to open &amp; fill it again">✅ auto-filled</button>'
@@ -3680,7 +3685,7 @@ function showApplyModal(j, d){
     +'<div class="field" style="margin-top:12px"><label>3 · Apply on the site'
     +(already?' <span class="tag have" style="font-size:10px;background:#16a34a">✅ auto-filled already</span>':'')
     +'</label><div class="bar">'
-    +(j.job_url?('<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener"><button>Open job &amp; apply &#8599;</button></a>')
+    +(j.job_url?('<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener" data-u="'+esc(j.job_url)+'" onclick="markOpened(this.dataset.u)"><button>Open job &amp; apply &#8599;</button></a>')
                :'<span class="note">This listing has no direct apply link.</span>')
     +autofillBtnHtml
     +'</div><div class="note" style="margin-top:6px">Review the resume &amp; note, then submit on the site yourself. '+autofillNote+'</div>'
@@ -3712,10 +3717,37 @@ function siteRequirementsHint(site, url){
   if(u.includes('glassdoor.')) return 'Glassdoor usually redirects to the employer\'s own site, or asks you to sign in to apply.';
   return 'This site usually asks for: your name, email, phone, resume, and sometimes a cover letter or a few screening questions.'+yours;
 }
+// "Opened" tag: remembers (in this browser) the FIRST time you opened each job, so a job you
+// already looked at is dimmed and badged instead of looking new. Entries expire after 45 days.
+function getOpened(){ try{ return JSON.parse(localStorage.getItem('openedJobs')||'{}'); }catch(e){ return {}; } }
+function openedBadge(info){
+  return info ? ' <span class="chip opened opened-badge" title="First opened '+esc(new Date(info.at).toLocaleString())+'">&#128065; opened</span>' : '';
+}
+function markOpened(url){
+  if(!url) return;
+  let info;
+  try{
+    const m=getOpened();
+    if(!m[url]) m[url]={at:Date.now()};
+    info=m[url];
+    const cutoff=Date.now()-45*86400000;
+    Object.keys(m).forEach(k=>{ if(m[k].at<cutoff) delete m[k]; });
+    localStorage.setItem('openedJobs', JSON.stringify(m));
+  }catch(e){ info={at:Date.now()}; }
+  // update every visible row for this job in place (no full re-render)
+  document.querySelectorAll('tr[data-url]').forEach(tr=>{
+    if(tr.dataset.url!==url) return;
+    tr.classList.add('opened-row');
+    const cell=tr.querySelector('td:nth-child(3) strong');
+    if(cell && !tr.querySelector('.opened-badge')) cell.insertAdjacentHTML('afterend', openedBadge(info));
+  });
+}
+function markOpenedIdx(idx){ const j=(window._view||[])[idx]; if(j) markOpened(j.job_url); }
 function getAutoFilled(){ try{ return JSON.parse(localStorage.getItem('autoFilledJobs')||'{}'); }catch(e){ return {}; } }
 function isAutoFilled(url){ return !!(url && getAutoFilled()[url]); }
 function markAutoFilled(url, ats){
   if(!url) return;
+  markOpened(url);                 // auto-fill opens the job in a browser window
   try{
     const m=getAutoFilled(); m[url]={at:Date.now(), ats:ats||''};
     localStorage.setItem('autoFilledJobs', JSON.stringify(m));
