@@ -1,0 +1,43 @@
+name: Job Fetch Keepalive
+
+# The real clock for "Daily Job Fetch". GitHub's own `schedule:` trigger is unreliable for this
+# repo (hours late / skipped), so this job stays alive ~5h40m, checks every 5 minutes whether a
+# posting-peak fetch slot is due (keepalive.py -> cron_gate logic) and dispatches the fetch, then
+# starts its own replacement before GitHub's 6h job limit. Repo is public => Actions minutes are
+# free. Nothing to configure. The schedule below + the "Ensure keepalive" step in daily-jobs.yml
+# only exist to restart the chain if it ever breaks.
+
+on:
+  schedule:
+    - cron: "23 */5 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+  actions: write      # dispatch daily-jobs.yml and this workflow
+
+# One running + at most one waiting: the replacement queues behind the current run (seamless
+# hand-over) and any extra restart requests are dropped.
+concurrency:
+  group: job-fetch-keepalive
+  cancel-in-progress: false
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 355
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Watch the fetch slots (about 5h40m)
+        run: python keepalive.py
+
+      - name: Hand over to the next keepalive run
+        if: always()
+        run: gh workflow run keepalive.yml

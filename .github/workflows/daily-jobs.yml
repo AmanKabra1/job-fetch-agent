@@ -23,11 +23,23 @@ on:
   # Minutes are off the hour (:07/:37) because GitHub delays/drops events at :00.
   schedule:
     - cron: "7,37 * * * *"
-  workflow_dispatch: {}   # trigger manually from the Actions tab any time
+  # Trigger manually from the Actions tab any time (always runs), OR from an external timer
+  # (cron-job.org etc.) that sends {"inputs": {"source": "cron"}}: GitHub's own scheduler above
+  # is unreliable (hours late / skipped), a dispatch is delivered promptly. With source=cron the
+  # gate (cron_gate.py) behaves exactly like a schedule wake-up: it fetches only when a slot is
+  # due and not yet published, so firing it every 30 min can never cause extra fetches.
+  workflow_dispatch:
+    inputs:
+      source:
+        description: "manual = always fetch; cron = only if a posting-peak slot is due"
+        required: false
+        default: "manual"
+        type: choice
+        options: [manual, cron]
 
 permissions:
   contents: write
-  actions: read      # cron_gate.py counts failed runs to cap retries
+  actions: write     # cron_gate.py counts failed runs; the "Ensure keepalive" step can restart keepalive.yml
 
 # Never let two fetches race each other onto the feed branch (a scheduled run
 # overlapping a manual one would collide on `git push origin feed`).
@@ -60,7 +72,17 @@ jobs:
         id: gate
         env:
           GH_TOKEN: ${{ github.token }}
+          DISPATCH_SOURCE: ${{ github.event.inputs.source }}
         run: python3 cron_gate.py
+
+      - name: Ensure keepalive clock is running (restart it if the chain ever broke)
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          alive=$(gh run list --workflow keepalive.yml --limit 5 --json status --jq '[.[]|select(.status=="in_progress" or .status=="queued" or .status=="waiting" or .status=="pending")]|length')
+          echo "keepalive runs alive: $alive"
+          if [ "${alive:-0}" = "0" ]; then gh workflow run keepalive.yml && echo "restarted keepalive"; fi
 
       - uses: actions/setup-python@v5
         if: steps.gate.outputs.run == 'true'

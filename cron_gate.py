@@ -89,6 +89,10 @@ def _failed_since(slot: dt.datetime) -> int:
 def main() -> int:
     now = dt.datetime.now(dt.timezone.utc)
     event = os.environ.get("GITHUB_EVENT_NAME", "schedule")
+    # An external timer dispatches with source=cron: gate it like a schedule wake-up (slot due +
+    # not yet published + failure cap). Only a human-started dispatch (source=manual) forces a run.
+    if event == "workflow_dispatch" and os.environ.get("DISPATCH_SOURCE", "").strip().lower() == "cron":
+        event = "schedule"
     # explicit refspec so refs/remotes/origin/feed is always updated (shallow CI checkout)
     subprocess.run(["git", "fetch", "--depth=1", "origin", "+feed:refs/remotes/origin/feed"], capture_output=True)
     last = _last_publish()
