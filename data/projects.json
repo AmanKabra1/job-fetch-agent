@@ -1,6 +1,62 @@
 {
   "projects": [
     {
+      "name": "vendor-management",
+      "description": "Vendor Management System (NestJS + Angular) with JWT auth & role-based admin/vendor portals \u2014 evolving into RideFleet, a shared delivery-rider platform",
+      "summary": "Angular 19 frontend + NestJS backend + MongoDB. Live: https://vendor-management-jade.vercel.app frontend/ Angular app backend/ NestJS API Vercel serverless entry: backend/api/index.ts docs/ DEPLOYMENT.md, USER-GUIDE.md, PROJECT-OVERVIEW.md Requires Node 20+ and a MongoDB connection string a free MongoDB Atlas M0 cluster works. bash cd backend npm install",
+      "features": [],
+      "github_url": "https://github.com/AmanKabra1/vendor-management",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "https://vendor-management-jade.vercel.app",
+      "language": "TypeScript",
+      "languages": [
+        "TypeScript",
+        "JavaScript"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "created": "2026-06-17T10:05:31Z",
+      "updated": "2026-11-10T06:16:26Z",
+      "commits": 76,
+      "source": "github",
+      "tech_stack": [
+        "TypeScript",
+        "Node.js",
+        "NestJS",
+        "JWT Authentication",
+        "Swagger/OpenAPI",
+        "WebSockets",
+        "Security Best Practices",
+        "Validation",
+        "MongoDB",
+        "MySQL",
+        "Email Integration",
+        "OAuth 2.0",
+        "TypeORM",
+        "Unit Testing"
+      ],
+      "quality": 95,
+      "repo_facts": {
+        "source_files": 146,
+        "code_files": 141,
+        "manifests": [
+          "Dockerfile",
+          "angular.json",
+          "docker-compose.yml",
+          "nest-cli.json",
+          "package.json",
+          "vercel.json"
+        ],
+        "has_readme": true,
+        "notebooks": 0,
+        "has_docker": true,
+        "has_ci": true,
+        "has_tests": true
+      },
+      "v": 3
+    },
+    {
       "name": "Cricket",
       "description": "A real-time scoring platform for local cricket tournaments and grounds \u2014 inspired by CricHeroes, Cricbuzz, and ESPN Cricinfo, but built for community sport. Cricket-first, with a sport-agnostic core teams/tournaments/venues ready to extend to football, kabaddi, etc. > Status: Phases 1\u201312 complete \u2014 full platform live on web Vercel and > backend/AI Render, with an Expo app built via EAS Play Store > submission intentionally on hold. See docs/NEXTSTEPS.mddocs/NEXTSTEPS.md > for the phase log. Admins create teams/players, schedule matches & tournaments, and score win-probability, leaderboards and push notifications.",
       "summary": "A real-time scoring platform for local cricket tournaments and grounds \u2014 inspired by CricHeroes, Cricbuzz, and ESPN Cricinfo, but built for community sport. Cricket-first, with a sport-agnostic core teams/tournaments/venues ready to extend to football, kabaddi, etc. > Status: Phases 1\u201312 complete \u2014 full platform live on web Vercel and > backend/AI Render, with an Expo app built via EAS Play Store > submission intentionally on hold. See docs/NEXTSTEPS.mddocs/NEXTSTEPS.md > for the phase log. Admins create teams/players, schedule matches & tournaments, and score win-probability, leaderboards and push notifications.",
@@ -117,62 +173,6 @@
       "v": 3
     },
     {
-      "name": "vendor-management",
-      "description": "Vendor Management System (NestJS + Angular) with JWT auth & role-based admin/vendor portals \u2014 evolving into RideFleet, a shared delivery-rider platform",
-      "summary": "",
-      "features": [],
-      "github_url": "https://github.com/AmanKabra1/vendor-management",
-      "private_repo_url": "",
-      "private": false,
-      "live_url": "https://vendor-management-jade.vercel.app",
-      "language": "TypeScript",
-      "languages": [
-        "TypeScript",
-        "JavaScript"
-      ],
-      "stars": 0,
-      "forks": 0,
-      "created": "2026-06-17T10:05:31Z",
-      "updated": "2026-09-17T13:03:40Z",
-      "commits": 75,
-      "source": "github",
-      "tech_stack": [
-        "TypeScript",
-        "Node.js",
-        "NestJS",
-        "JWT Authentication",
-        "Swagger/OpenAPI",
-        "WebSockets",
-        "Security Best Practices",
-        "Validation",
-        "MongoDB",
-        "MySQL",
-        "Email Integration",
-        "OAuth 2.0",
-        "TypeORM",
-        "Unit Testing"
-      ],
-      "quality": 80,
-      "repo_facts": {
-        "source_files": 146,
-        "code_files": 141,
-        "manifests": [
-          "Dockerfile",
-          "angular.json",
-          "docker-compose.yml",
-          "nest-cli.json",
-          "package.json",
-          "vercel.json"
-        ],
-        "has_readme": false,
-        "notebooks": 0,
-        "has_docker": true,
-        "has_ci": true,
-        "has_tests": true
-      },
-      "v": 3
-    },
-    {
       "name": "formforge",
       "description": "FormForge \u2014 AI-powered form builder (Laravel 12 + Livewire 3): generate forms from a prompt, drag-and-drop editing, Word/Excel import, response insights.",
       "summary": "Built with Laravel 12, Livewire 3 Volt, Alpine.js and Tailwind CSS. Requirements: PHP 8.2+, Composer, Node 18+. bash composer install npm install cp .env.example .env php artisan key:generate php artisan migrate --seed # creates demo@example.com / password npm run build # or: npm run dev php artisan serve # http://localhost:8000 php artisan queue:work # in a second terminal: needed for AI generation and imports On Windows you can instead run start.bat or start.ps1, which does the setup and starts the server. You still need to run php artisan queue:work separately.",
@@ -196,8 +196,8 @@
       "stars": 0,
       "forks": 0,
       "created": "2026-08-05T16:56:48Z",
-      "updated": "2026-09-23T06:12:02Z",
-      "commits": 6,
+      "updated": "2026-11-10T06:16:00Z",
+      "commits": 7,
       "source": "github",
       "tech_stack": [
         "Laravel",
@@ -207,7 +207,8 @@
         "Docker",
         "Blade",
         "PHP",
-        "LLM"
+        "LLM",
+        "Git"
       ],
       "quality": 71,
       "repo_facts": {
@@ -243,8 +244,8 @@
       "stars": 0,
       "forks": 0,
       "created": "2026-06-15T05:06:13Z",
-      "updated": "2026-11-02T20:45:48Z",
-      "commits": 266,
+      "updated": "2026-11-17T05:02:50Z",
+      "commits": 272,
       "source": "github",
       "tech_stack": [
         "Python",
@@ -257,15 +258,15 @@
         "CI/CD",
         "GitHub Actions",
         "Git",
+        "LLM",
         "Java",
         "NestJS",
-        "TypeScript",
-        "Node.js"
+        "TypeScript"
       ],
       "quality": 59,
       "repo_facts": {
-        "source_files": 36,
-        "code_files": 35,
+        "source_files": 37,
+        "code_files": 36,
         "manifests": [
           "requirements.txt",
           "vercel.json"
@@ -294,8 +295,8 @@
       "stars": 0,
       "forks": 0,
       "created": "2026-08-07T14:27:37Z",
-      "updated": "2026-08-12T05:18:19Z",
-      "commits": 15,
+      "updated": "2026-11-10T06:16:23Z",
+      "commits": 16,
       "source": "github",
       "tech_stack": [
         "TypeScript",
@@ -309,7 +310,8 @@
         "Validation",
         "MySQL",
         "Tailwind CSS",
-        "GCP"
+        "GCP",
+        "Git"
       ],
       "quality": 48,
       "repo_facts": {
@@ -416,6 +418,56 @@
         "has_readme": true,
         "notebooks": 0,
         "has_docker": true,
+        "has_ci": false,
+        "has_tests": true
+      },
+      "v": 3
+    },
+    {
+      "name": "ai-travel-planner",
+      "description": "Production multi-agent AI travel planner \u2014 LangGraph, Groq LLaMA 3.3, MCP (flights/weather/hotels), human-in-the-loop, PostgreSQL memory, Streamlit UI",
+      "summary": "Multi-agent AI travel planner LangGraph + Groq + Streamlit. bash cd MultiagentsystemMCP python -m venv .venv && source .venv/bin/activate # Windows: .venv\\Scripts\\activate pip install -r requirements.txt cp .env.example .env # then fill in your keys streamlit run frontend.py GROQAPIKEY, TAVILYAPIKEY, AVIATIONSTACKAPIKEY, OPENWEATHERAPIKEY, DATABASEURL PostgreSQL for LangGraph checkpoints. Optional: GROQMODEL, GOOGLEAPIKEY, AVIATIONMCPPYTHON. The app is Streamlit, so Streamlit Community Cloud works: push to GitHub, create an app pointing at MultiagentsystemMCP/frontend.py, and paste the variables above into the app's Secrets. Use a free hosted PostgreSQL for example Neon or Supabase for DATABASEURL. For a VPS setup see MultiagentsystemMCP/DEPLOYMENT.md.",
+      "features": [],
+      "github_url": "https://github.com/AmanKabra1/ai-travel-planner",
+      "private_repo_url": "",
+      "private": false,
+      "live_url": "",
+      "language": "Python",
+      "languages": [
+        "Python"
+      ],
+      "stars": 0,
+      "forks": 0,
+      "created": "2026-08-05T16:57:01Z",
+      "updated": "2026-11-10T06:16:16Z",
+      "commits": 111,
+      "source": "github",
+      "tech_stack": [
+        "Python",
+        "Groq",
+        "LangChain",
+        "LangGraph",
+        "OpenAI API",
+        "Pandas",
+        "PostgreSQL",
+        "Pydantic",
+        "JWT Authentication",
+        "SQLAlchemy",
+        "ASGI/WSGI",
+        "WebSockets",
+        "MCP",
+        "Git"
+      ],
+      "quality": 45,
+      "repo_facts": {
+        "source_files": 20,
+        "code_files": 20,
+        "manifests": [
+          "requirements.txt"
+        ],
+        "has_readme": true,
+        "notebooks": 0,
+        "has_docker": false,
         "has_ci": false,
         "has_tests": true
       },
@@ -536,8 +588,8 @@
       "stars": 0,
       "forks": 0,
       "created": "2026-08-03T04:54:43Z",
-      "updated": "2026-08-03T05:53:31Z",
-      "commits": 2,
+      "updated": "2026-11-10T06:16:08Z",
+      "commits": 4,
       "source": "github",
       "tech_stack": [
         "Node.js",
@@ -562,56 +614,6 @@
           "requirements.txt"
         ],
         "has_readme": true,
-        "notebooks": 0,
-        "has_docker": false,
-        "has_ci": false,
-        "has_tests": true
-      },
-      "v": 3
-    },
-    {
-      "name": "ai-travel-planner",
-      "description": "Production multi-agent AI travel planner \u2014 LangGraph, Groq LLaMA 3.3, MCP (flights/weather/hotels), human-in-the-loop, PostgreSQL memory, Streamlit UI",
-      "summary": "",
-      "features": [],
-      "github_url": "https://github.com/AmanKabra1/ai-travel-planner",
-      "private_repo_url": "",
-      "private": false,
-      "live_url": "",
-      "language": "Python",
-      "languages": [
-        "Python"
-      ],
-      "stars": 0,
-      "forks": 0,
-      "created": "2026-08-05T16:57:01Z",
-      "updated": "2026-08-29T18:26:51Z",
-      "commits": 110,
-      "source": "github",
-      "tech_stack": [
-        "Python",
-        "Groq",
-        "LangChain",
-        "LangGraph",
-        "OpenAI API",
-        "Pandas",
-        "PostgreSQL",
-        "Pydantic",
-        "JWT Authentication",
-        "SQLAlchemy",
-        "ASGI/WSGI",
-        "WebSockets",
-        "AI Agents",
-        "MCP"
-      ],
-      "quality": 30,
-      "repo_facts": {
-        "source_files": 20,
-        "code_files": 20,
-        "manifests": [
-          "requirements.txt"
-        ],
-        "has_readme": false,
         "notebooks": 0,
         "has_docker": false,
         "has_ci": false,
@@ -712,42 +714,42 @@
       "v": 3
     }
   ],
-  "last_updated": "2026-11-03T09:56:18.311650",
+  "last_updated": "2026-11-17T11:01:39.899207",
   "source": "github",
   "total": 14,
   "repo_checks": {
     "job-fetch-agent": {
-      "pushed_at": "2026-11-02T20:45:48Z",
+      "pushed_at": "2026-11-17T05:02:50Z",
       "real": true,
       "reason": "ok",
       "v": 3
     },
     "formforge": {
-      "pushed_at": "2026-09-23T06:12:02Z",
+      "pushed_at": "2026-11-10T06:16:00Z",
       "real": true,
       "reason": "ok",
       "v": 3
     },
     "vendor-management": {
-      "pushed_at": "2026-09-17T13:03:40Z",
+      "pushed_at": "2026-11-10T06:16:26Z",
       "real": true,
       "reason": "ok",
       "v": 3
     },
     "ai-travel-planner": {
-      "pushed_at": "2026-08-29T18:26:51Z",
+      "pushed_at": "2026-11-10T06:16:16Z",
       "real": true,
       "reason": "ok",
       "v": 3
     },
     "singplay": {
-      "pushed_at": "2026-08-12T05:18:19Z",
+      "pushed_at": "2026-11-10T06:16:23Z",
       "real": true,
       "reason": "ok",
       "v": 3
     },
     "langgraph-blog-writer": {
-      "pushed_at": "2026-08-03T05:53:31Z",
+      "pushed_at": "2026-11-10T06:16:08Z",
       "real": true,
       "reason": "ok",
       "v": 3
