@@ -1913,6 +1913,145 @@ def api_saved_profile(request: Request):
         raise HTTPException(500, f"Could not load saved profile: {e}")
 
 
+# --------------------------------------------------------------------------- #
+# "OPENED" TAG SYNC — remembers which jobs you already opened, shared by every device
+# (phone / tablet / PC) that is unlocked with your PIN. Vercel has no permanent disk, so the
+# list lives in a free Redis store (Vercel Marketplace -> Upstash Redis adds KV_REST_API_URL +
+# KV_REST_API_TOKEN to the project automatically; UPSTASH_REDIS_REST_* works too). Running the
+# app locally falls back to data/opened_jobs.json. With neither, sync reports "off" and the page
+# keeps working per-browser exactly as before.
+# --------------------------------------------------------------------------- #
+OPENED_TTL_MS = 45 * 86400 * 1000
+OPENED_MAX_PER_CALL = 600
+_OPENED_KEY = "opened_jobs"
+_OPENED_FILE = os.path.join(HERE, "data", "opened_jobs.json")
+
+
+def _kv_conf():
+    url = (os.environ.get("KV_REST_API_URL") or os.environ.get("UPSTASH_REDIS_REST_URL") or "").rstrip("/")
+    tok = os.environ.get("KV_REST_API_TOKEN") or os.environ.get("UPSTASH_REDIS_REST_TOKEN") or ""
+    return (url, tok) if url and tok else None
+
+
+def _kv_pipeline(cmds):
+    import requests
+    url, tok = _kv_conf()
+    r = requests.post(url + "/pipeline", headers={"Authorization": f"Bearer {tok}"}, json=cmds, timeout=8)
+    r.raise_for_status()
+    out = []
+    for item in r.json():
+        if isinstance(item, dict) and item.get("error"):
+            raise RuntimeError(str(item["error"])[:120])
+        out.append(item.get("result") if isinstance(item, dict) else item)
+    return out
+
+
+def _opened_backend() -> str:
+    if _kv_conf():
+        return "kv"
+    return "off" if ON_VERCEL else "file"
+
+
+def _opened_clean(incoming) -> dict:
+    """Keep only well-formed {http(s) url: epoch-ms} pairs; bad/absurd times become 'now'."""
+    now = int(time.time() * 1000)
+    out = {}
+    if not isinstance(incoming, dict):
+        return out
+    for u, t in list(incoming.items())[:OPENED_MAX_PER_CALL]:
+        if not isinstance(u, str) or not u.startswith(("http://", "https://")) or len(u) > 2000:
+            continue
+        try:
+            t = int(t)
+        except (TypeError, ValueError):
+            t = now
+        out[u] = t if (now - OPENED_TTL_MS) <= t <= (now + 86400000) else now
+    return out
+
+
+def _opened_load() -> dict:
+    """{url: first-opened ms} for the last 45 days (older entries are pruned as a side effect)."""
+    now = int(time.time() * 1000)
+    backend = _opened_backend()
+    if backend == "kv":
+        flat = _kv_pipeline([["HGETALL", _OPENED_KEY]])[0] or []
+        if isinstance(flat, dict):
+            items = flat.items()
+        else:
+            items = [(flat[i], flat[i + 1]) for i in range(0, len(flat) - 1, 2)]
+        m = {}
+        for u, t in items:
+            try:
+                m[str(u)] = int(t)
+            except (TypeError, ValueError):
+                pass
+        old = [u for u, t in m.items() if t < now - OPENED_TTL_MS]
+        if old:
+            try:
+                _kv_pipeline([["HDEL", _OPENED_KEY, *old[:200]]])
+            except Exception:
+                pass
+        return {u: t for u, t in m.items() if t >= now - OPENED_TTL_MS}
+    if backend == "file":
+        try:
+            with open(_OPENED_FILE, "r", encoding="utf-8") as f:
+                m = json.load(f)
+        except (OSError, ValueError):
+            m = {}
+        return {u: int(t) for u, t in m.items() if isinstance(t, (int, float)) and t >= now - OPENED_TTL_MS}
+    return {}
+
+
+def _opened_merge(incoming: dict) -> dict:
+    """Add new entries (the FIRST open time wins), return the full merged map."""
+    clean = _opened_clean(incoming)
+    backend = _opened_backend()
+    if backend == "kv":
+        if clean:
+            _kv_pipeline([["HSETNX", _OPENED_KEY, u, str(t)] for u, t in clean.items()])
+        return _opened_load()
+    if backend == "file":
+        m = _opened_load()
+        for u, t in clean.items():
+            m.setdefault(u, t)
+        os.makedirs(os.path.dirname(_OPENED_FILE), exist_ok=True)
+        with open(_OPENED_FILE, "w", encoding="utf-8") as f:
+            json.dump(m, f)
+        return m
+    return {}
+
+
+@app.get("/api/opened")
+def api_opened_get(request: Request):
+    if not _profile_unlocked(request):
+        raise HTTPException(401, "Locked — unlock My Profile with your PIN to sync opened jobs.")
+    backend = _opened_backend()
+    if backend == "off":
+        return {"sync": "off", "opened": {}}
+    try:
+        return {"sync": backend, "opened": _opened_load()}
+    except Exception as e:
+        return {"sync": "off", "opened": {}, "error": str(e)[:120]}
+
+
+@app.post("/api/opened")
+async def api_opened_post(request: Request):
+    if not _profile_unlocked(request):
+        raise HTTPException(401, "Locked — unlock My Profile with your PIN to sync opened jobs.")
+    backend = _opened_backend()
+    if backend == "off":
+        return {"sync": "off", "opened": {}}
+    try:
+        body = await request.json()
+    except Exception:
+        raise HTTPException(400, "Send JSON like {\"opened\": {\"<job url>\": <epoch ms>}}")
+    try:
+        merged = await run_in_threadpool(_opened_merge, (body or {}).get("opened"))
+        return {"sync": backend, "opened": merged}
+    except Exception as e:
+        return {"sync": "off", "opened": {}, "error": str(e)[:120]}
+
+
 def _save_resume_copy(fname: str, data: bytes):
     """Keep a local copy so generated files show up in the 'Generated resumes'
     panel. No-op on Vercel (read-only filesystem)."""
@@ -2841,6 +2980,7 @@ INDEX_HTML = r"""<!doctype html>
         <label class="note" title="Filter results to a city/area; remote jobs are kept too">📍 <input id="jobLoc" type="text" placeholder="location e.g. Noida" style="width:130px"/></label>
         <label class="switch note" title="Greenhouse/Lever/Ashby ATS APIs + Hacker News + We Work Remotely"><input type="checkbox" id="jfCareer" checked/> Search company career pages directly</label>
         <span class="note" id="count"></span>
+        <span class="note" id="openedSyncNote" style="display:none"></span>
       </div>
     </div>
 
@@ -3717,31 +3857,94 @@ function siteRequirementsHint(site, url){
   if(u.includes('glassdoor.')) return 'Glassdoor usually redirects to the employer\'s own site, or asks you to sign in to apply.';
   return 'This site usually asks for: your name, email, phone, resume, and sometimes a cover letter or a few screening questions.'+yours;
 }
-// "Opened" tag: remembers (in this browser) the FIRST time you opened each job, so a job you
-// already looked at is dimmed and badged instead of looking new. Entries expire after 45 days.
+// "Opened" tag: remembers the FIRST time you opened each job, so a job you already looked at is
+// dimmed and badged instead of looking new. Saved in this browser AND (when you are unlocked with
+// your PIN and the server has a store) synced to every other device. Entries expire after 45 days.
+window._openedSync = 'unknown';          // 'unknown' | 'kv' | 'file' | 'off'
 function getOpened(){ try{ return JSON.parse(localStorage.getItem('openedJobs')||'{}'); }catch(e){ return {}; } }
-function openedBadge(info){
-  return info ? ' <span class="chip opened opened-badge" title="First opened '+esc(new Date(info.at).toLocaleString())+'">&#128065; opened</span>' : '';
+function saveOpened(m){
+  const cutoff=Date.now()-45*86400000;
+  Object.keys(m).forEach(k=>{ if(!m[k] || m[k].at<cutoff) delete m[k]; });
+  try{ localStorage.setItem('openedJobs', JSON.stringify(m)); }catch(e){}
 }
-function markOpened(url){
-  if(!url) return;
-  let info;
-  try{
-    const m=getOpened();
-    if(!m[url]) m[url]={at:Date.now()};
-    info=m[url];
-    const cutoff=Date.now()-45*86400000;
-    Object.keys(m).forEach(k=>{ if(m[k].at<cutoff) delete m[k]; });
-    localStorage.setItem('openedJobs', JSON.stringify(m));
-  }catch(e){ info={at:Date.now()}; }
-  // update every visible row for this job in place (no full re-render)
+function openedBadge(info){
+  const synced=(window._openedSync==='kv'||window._openedSync==='file');
+  return info ? ' <span class="chip opened opened-badge" title="First opened '+esc(new Date(info.at).toLocaleString())
+    +(synced?' · synced across your devices':' · this device only')+'">&#128065; opened</span>' : '';
+}
+function paintOpened(map){
   document.querySelectorAll('tr[data-url]').forEach(tr=>{
-    if(tr.dataset.url!==url) return;
+    const info=map[tr.dataset.url]; if(!info) return;
     tr.classList.add('opened-row');
     const cell=tr.querySelector('td:nth-child(3) strong');
     if(cell && !tr.querySelector('.opened-badge')) cell.insertAdjacentHTML('afterend', openedBadge(info));
   });
 }
+// merge the server's list into this browser's; returns the entries the server is still missing
+function applyServerOpened(server){
+  const local=getOpened(); let changed=false; const missing={};
+  Object.keys(server||{}).forEach(u=>{
+    const t=Number(server[u]); if(!t) return;
+    if(!local[u]){ local[u]={at:t}; changed=true; }
+    else if(t<local[u].at){ local[u].at=t; changed=true; }
+  });
+  Object.keys(local).forEach(u=>{ if(!(server && u in server)) missing[u]=local[u].at; });
+  if(changed) saveOpened(local);
+  paintOpened(local);
+  return missing;
+}
+function showOpenedSync(){
+  const el=document.getElementById('openedSyncNote'); if(!el) return;
+  const s=window._openedSync;
+  if(s==='kv'||s==='file'){ el.style.display=''; el.textContent=' · \u{1F441} opened tags synced across your devices'; }
+  else if(s==='off'){ el.style.display=''; el.textContent=' · \u{1F441} opened tags saved on this device only (unlock My Profile with your PIN to sync)'; }
+}
+async function pushOpened(obj, keep){
+  if(window._openedSync==='off' || !Object.keys(obj).length) return;
+  try{
+    // keepalive lets a single tap survive a page change, but browsers cap such a request at
+    // 64 KB — a bulk upload (new device) must NOT use it or it would be rejected silently.
+    const r=await fetch('/api/opened',{method:'POST',headers:{'Content-Type':'application/json'},
+                                        body:JSON.stringify({opened:obj}),keepalive:!!keep});
+    if(!r.ok){ if(r.status===401){ window._openedSync='off'; showOpenedSync(); } return; }
+    const d=await r.json();
+    window._openedSync=d.sync||'off';
+    if(window._openedSync!=='off') applyServerOpened(d.opened);
+    showOpenedSync();
+  }catch(e){}
+}
+async function syncOpened(){
+  try{
+    const r=await fetch('/api/opened',{cache:'no-store'});
+    if(!r.ok){ window._openedSync='off'; showOpenedSync(); return; }   // locked (visitor mode) or no server
+    const d=await r.json();
+    window._openedSync=d.sync||'off';
+    showOpenedSync();
+    if(window._openedSync==='off') return;
+    const missing=applyServerOpened(d.opened);
+    // upload what only this device knew, in chunks (server accepts up to 600 per call)
+    const keys=Object.keys(missing);
+    for(let i=0;i<keys.length;i+=400){
+      const part={}; keys.slice(i,i+400).forEach(k=>part[k]=missing[k]);
+      await pushOpened(part, false);
+    }
+  }catch(e){}
+}
+function markOpened(url){
+  if(!url) return;
+  const m=getOpened();
+  if(!m[url]) m[url]={at:Date.now()};
+  saveOpened(m);
+  paintOpened({[url]:m[url]});
+  pushOpened({[url]:m[url].at}, true);
+}
+window.addEventListener('load', ()=>{ setTimeout(syncOpened, 700); });
+// phones/tablets restore pages from memory without a normal load or focus event
+window.addEventListener('pageshow', e=>{ if(e.persisted) syncOpened(); });
+window.addEventListener('online', ()=>{ syncOpened(); });
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) syncOpened(); });
+window.addEventListener('focus', ()=>{ syncOpened(); });
+setInterval(()=>{ if(!document.hidden) syncOpened(); }, 60000);
 function markOpenedIdx(idx){ const j=(window._view||[])[idx]; if(j) markOpened(j.job_url); }
 function getAutoFilled(){ try{ return JSON.parse(localStorage.getItem('autoFilledJobs')||'{}'); }catch(e){ return {}; } }
 function isAutoFilled(url){ return !!(url && getAutoFilled()[url]); }

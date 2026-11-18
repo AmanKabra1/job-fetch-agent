@@ -29,3 +29,6 @@ resume/
 
 # Vercel
 .vercel/
+
+# local fallback for the cross-device 'opened' tag (see app.py /api/opened)
+data/opened_jobs.json
