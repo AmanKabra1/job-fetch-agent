@@ -237,24 +237,58 @@ def analyze(resume_text: str, jd_text: str = "", extra_skills: str = "") -> dict
         "present": present,
         "typed": typed,
         "suggestions": suggestions,
+        "expanded": _spelled_out_forms(resume_text or "", jd_text or ""),
         "bold_terms": sorted(bold_terms, key=len, reverse=True),
         "had_request": had_request,
     }
+
+
+# Acronym <-> spelled-out pairs. A classic ATS filter matches the EXACT string a recruiter typed,
+# so when the resume says "AWS" and the JD says "Amazon Web Services" (or the reverse) the missing
+# form is worth adding. HONEST by construction: only for a skill the resume ALREADY shows in one
+# form — it is the same skill, spelled the other way.
+_SPELL_PAIRS = [
+    ("Amazon Web Services (AWS)", r"\baws\b", r"amazon web services"),
+    ("Google Cloud Platform (GCP)", r"\bgcp\b", r"google cloud platform"),
+    ("Continuous Integration / Continuous Delivery (CI/CD)", r"\bci\s*/\s*cd\b|\bcicd\b",
+     r"continuous (?:integration|delivery|deployment)"),
+    ("Large Language Models (LLM)", r"\bllms?\b", r"large language models?"),
+    ("Retrieval-Augmented Generation (RAG)", r"\brag\b", r"retrieval[- ]augmented generation"),
+    ("Machine Learning (ML)", r"\bml\b", r"machine learning"),
+    ("Structured Query Language (SQL)", r"\bsql\b", r"structured query language"),
+    ("Object-Oriented Programming (OOP)", r"\boop\b", r"object[- ]oriented"),
+    ("Representational State Transfer (REST)", r"\brest\b", r"representational state transfer"),
+    ("JSON Web Token (JWT)", r"\bjwt\b", r"json web tokens?"),
+    ("Role-Based Access Control (RBAC)", r"\brbac\b", r"role[- ]based access control"),
+]
+
+
+def _spelled_out_forms(resume_text: str, jd_text: str) -> list:
+    out = []
+    for display, short_rx, long_rx in _SPELL_PAIRS:
+        r_short = re.search(short_rx, resume_text, re.I)
+        r_long = re.search(long_rx, resume_text, re.I)
+        j_short = re.search(short_rx, jd_text, re.I)
+        j_long = re.search(long_rx, jd_text, re.I)
+        if (r_short and j_long and not r_long) or (r_long and j_short and not r_short):
+            out.append(display)
+    return out
 
 
 def _key_skills_line(analysis: dict, ats: bool = False) -> str:
     """The skills line we insert.
 
     Normal: skills you already have + skills you typed.
-    ATS mode: ALSO append the JD's remaining keywords ('suggestions') so an
-    Applicant Tracking System scanning for the JD's terms finds them all — i.e.
-    ~100% keyword coverage. (The UI warns you to keep these truthful.)"""
+    ATS mode: ALSO the spelled-out / acronym form of skills your resume already shows, when the
+    JD uses the other form ("Amazon Web Services (AWS)"). It NEVER adds JD keywords your resume
+    lacks ('suggestions') — padding a resume with skills you cannot show is flagged by 2026 AI
+    screeners and falls apart in the interview; those are only reported to you."""
     skills = list(analysis["present"])
     for t in analysis["typed"]:
         if t not in skills:
             skills.append(t)
     if ats:
-        for s in analysis["suggestions"]:
+        for s in analysis.get("expanded", []):
             if s not in skills:
                 skills.append(s)
     return ", ".join(skills)
@@ -822,8 +856,8 @@ def tailor_upload(filename: str, data: bytes, jd_text: str = "",
                   want_docx: bool = True, ats: bool = True) -> dict:
     """Tailor an uploaded resume.
 
-    ats=True (default): also add the JD's remaining keywords to the skills line
-    for ~100% ATS keyword coverage.
+    ats=True (default): also add spelled-out / acronym forms of skills the resume ALREADY
+    shows (e.g. "Amazon Web Services (AWS)"). Never adds skills the resume lacks.
 
     Returns dict with:
       analysis, layout_preserved (bool), docx (bytes|None), pdf (bytes|None),
@@ -854,7 +888,7 @@ def tailor_upload(filename: str, data: bytes, jd_text: str = "",
         "docx": tailored_docx if want_docx else None,
         "pdf": None,
         "pdf_note": None,
-        "ats_added": len(info["suggestions"]) if ats else 0,
+        "ats_added": len(info.get("expanded", [])) if ats else 0,
     }
 
     if want_pdf:

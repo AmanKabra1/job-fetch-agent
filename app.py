@@ -2393,8 +2393,8 @@ async def api_resume_tailor(
     # Build TWO versions from the same upload (tailor_upload is blocking — parses
     # files and launches Word for PDF — so run each off the event loop):
     #   A = Standard  (ats=False): only skills you genuinely have + skills you typed
-    #   B = ATS-boost (ats=True):  A + the JD's remaining important keywords appended
-    #                              for maximum ATS keyword coverage / higher ATS score
+    #   B = ATS-boost (ats=True):  A + spelled-out / acronym forms of skills the resume ALREADY
+    #                              shows ("Amazon Web Services (AWS)") — never skills it lacks
     variants = [
         ("A_standard", False),
         ("B_ats", True),
@@ -4138,14 +4138,15 @@ async function tailorResume(){
     if(d.pdf_note) html+='<div class="note" style="color:var(--ambt)">PDF note: '+esc(d.pdf_note)+'</div>';
     if((a.present||[]).length) html+='<div class="field" style="margin-top:10px"><label>Highlighted (you already have, JD wants)</label><div class="tagrow">'+tags(a.present,'have')+'</div></div>';
     if((a.typed||[]).length) html+='<div class="field"><label>Added from your skills box</label><div class="tagrow">'+tags(a.typed,'add')+'</div></div>';
-    if(d.ats_added && (a.suggestions||[]).length) html+='<div class="field"><label>Added for ATS keyword coverage — <b>verify these are truthful before sending</b></label><div class="tagrow">'+tags(a.suggestions,'miss')+'</div></div>';
+    if((a.expanded||[]).length) html+='<div class="field"><label>Spelled out for ATS (version B) — same skills your resume already shows</label><div class="tagrow">'+tags(a.expanded,'add')+'</div></div>';
+    if((a.suggestions||[]).length) html+='<div class="field"><label>The job asks for these but your resume does not show them — <b>NOT added</b> (add them yourself only if they are true)</label><div class="tagrow">'+tags(a.suggestions,'miss')+'</div></div>';
     if(!a.had_request) html+='<div class="note" style="margin-top:8px">No JD or skills given — returned your resume unchanged in the chosen format(s).</div>';
     const aFiles=(d.files||[]).filter(f=>f.version&&f.version[0]==='A').map(f=>esc(f.name));
     const bFiles=(d.files||[]).filter(f=>f.version&&f.version[0]==='B').map(f=>esc(f.name));
     html+='<div class="field" style="margin-top:10px"><label>Two versions downloaded</label>'
          +'<div class="note"><b>A — Standard:</b> only skills you genuinely have. Safe to send anywhere. '+(aFiles.join(', ')||'—')+'</div>'
-         +'<div class="note"><b>B — ATS-optimized:</b> A plus the JD\'s remaining keywords for a higher ATS score'
-         +(d.ats_added?(' (+'+d.ats_added+' keywords)'):'')+' — <b>verify they\'re truthful before sending.</b> '+(bFiles.join(', ')||'—')+'</div></div>';
+         +'<div class="note"><b>B — ATS-optimized:</b> A plus the spelled-out / short form of skills you already have, so exact-word ATS filters match (e.g. AWS and Amazon Web Services)'
+         +(d.ats_added?(' (+'+d.ats_added+' added)'):' (nothing extra needed for this job)')+'. It never adds skills you do not have. '+(bFiles.join(', ')||'—')+'</div></div>';
     $('#tailorResult').innerHTML=html;
     toast('Tailored resume downloaded.');
     // Clear the pasted JD / skills so the next tailor starts fresh.
