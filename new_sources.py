@@ -273,7 +273,7 @@ _LI_APPL = re.compile(r'class="[^"]*num-applicants__caption[^"]*"[^>]*>\s*([^<]+
 _LI_CRIT = re.compile(r'description__job-criteria-text[^>]*>\s*([^<]+?)\s*<', re.I)
 
 
-def enrich_linkedin(rows, max_n=60, min_interval=1.1):
+def enrich_linkedin(rows, max_n=60, min_interval=1.1, budget_s=0):
     """Fetch the public guest posting page for up to `max_n` LinkedIn rows lacking a
     description. Adds the JD text plus a '[LinkedIn: <n> applicants]' tag the screener's
     competition model reads. Polite (≈1 req/s), best-effort: a 429/403 stops the pass
@@ -286,7 +286,13 @@ def enrich_linkedin(rows, max_n=60, min_interval=1.1):
     todo.sort(key=lambda r: str(r.get("date_posted") or ""), reverse=True)   # newest first
     done = 0
     blocked_in_a_row = 0
+    t_start = time.time()
     for r in todo[:max_n]:
+        # Time budget: when LinkedIn throttles us the 30s/60s retry waits add up (one run spent
+        # 62 min reading just 324 jobs). Newest jobs are read first, so stopping late loses little.
+        if budget_s and time.time() - t_start > budget_s:
+            print(f"    ! LinkedIn enrichment time budget ({budget_s // 60} min) reached after {done} jobs", flush=True)
+            break
         jid = _LI_ID.search(r["job_url"]).group(1)
         resp = None
         # LinkedIn rate-limits datacenter IPs in bursts: wait and retry (30s, 60s) instead of

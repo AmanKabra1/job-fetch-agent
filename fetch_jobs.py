@@ -480,6 +480,8 @@ def rank_for_feed(rows):
 # 250 was being hit on every run (201 jobs then dropped as unverifiable) — LinkedIn was NOT
 # blocking us, the cap was. ~1.5 s per job, so 500 adds roughly 6 more minutes.
 LINKEDIN_ENRICH_MAX = int(os.environ.get("LINKEDIN_ENRICH_MAX", "500"))
+# Hard time cap for that pass (seconds): LinkedIn throttling once stretched it to 62 min.
+LINKEDIN_ENRICH_BUDGET_S = int(os.environ.get("LINKEDIN_ENRICH_BUDGET_S", "1200"))
 CANDIDATE_YEARS = 2
 
 
@@ -571,7 +573,7 @@ def main():
     # LinkedIn rows come back without a description (fetching one per job is slow).
     # Fetch the real JD + applicant count only for survivors, newest first, then re-screen.
     try:
-        n = NS.enrich_linkedin(today_rows, max_n=LINKEDIN_ENRICH_MAX)
+        n = NS.enrich_linkedin(today_rows, max_n=LINKEDIN_ENRICH_MAX, budget_s=LINKEDIN_ENRICH_BUDGET_S)
         if n:
             print(f"  enriched {n} LinkedIn jobs with full JD + applicant counts", flush=True)
             today_rows = screen_rows(today_rows, "pass 2 (after LinkedIn JDs)")
