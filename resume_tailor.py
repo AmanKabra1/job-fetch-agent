@@ -194,6 +194,91 @@ def extract_text(filename: str, data: bytes) -> str:
 
 
 # --------------------------------------------------------------------------- #
+# PROFILE LINKS — a clickable word like "LinkedIn" / "GitHub" hides its address from any parser
+# that only reads text (many ATS do), so the recruiter's profile record loses the URL. The real
+# address lives in the link data, so we print it as visible text in the contact area.
+# --------------------------------------------------------------------------- #
+_PROFILE_HOSTS = (("linkedin.com", "LinkedIn", r"/in/"), ("github.com", "GitHub", None))
+
+
+def _short_url(u: str) -> str:
+    return re.sub(r"^https?://(?:www\.)?|/+$", "", str(u or "").strip())
+
+
+def _is_profile_url(uri: str, host: str, must: str) -> bool:
+    u = uri.lower()
+    if host not in u:
+        return False
+    if must:                                       # LinkedIn profile = /in/<name>
+        return re.search(must, u) is not None
+    # GitHub profile = github.com/<user> (a repo link has a 2nd path segment)
+    return re.match(r"^https?://(?:www\.)?github\.com/[^/?#]+/?$", u) is not None
+
+
+def _pdf_link_uris(data: bytes) -> list:
+    out = []
+    try:
+        from pypdf import PdfReader
+        for page in PdfReader(io.BytesIO(data)).pages:
+            for a in (page.get("/Annots") or []):
+                try:
+                    action = a.get_object().get("/A")
+                    uri = action.get_object().get("/URI") if action else None
+                    if uri:
+                        out.append(str(uri))
+                except Exception:
+                    continue
+    except Exception:
+        pass
+    return out
+
+
+def restore_link_text(resume_text: str, uris: list) -> str:
+    """In the first lines (contact area), replace a bare 'LinkedIn' / 'GitHub' label with the
+    real short address from the PDF's link data. No-op if the address is already visible."""
+    lines = (resume_text or "").split("\n")
+    head_n = min(len(lines), 8)
+    head = "\n".join(lines[:head_n])
+    for host, label, must in _PROFILE_HOSTS:
+        if re.search(re.escape(host), head, re.I):
+            continue
+        uri = next((u for u in uris if _is_profile_url(u, host, must)), None)
+        if not uri:
+            continue
+        pat = re.compile(r"(?<![A-Za-z0-9])" + re.escape(label) + r"(?![A-Za-z0-9])", re.I)
+        for i in range(head_n):
+            if pat.search(lines[i]):
+                lines[i] = pat.sub(_short_url(uri), lines[i], count=1)
+                break
+    return "\n".join(lines)
+
+
+def _restore_docx_link_text(doc):
+    """Same idea inside a .docx: a hyperlink whose visible text is only 'LinkedIn' / 'GitHub'
+    gets its address as text (top of the document only; formatting of the run is kept)."""
+    try:
+        from docx.oxml.ns import qn
+        for p in doc.paragraphs[:8]:
+            for h in p._p.xpath(".//w:hyperlink"):
+                rid = h.get(qn("r:id"))
+                if not rid or rid not in doc.part.rels:
+                    continue
+                target = doc.part.rels[rid].target_ref
+                ts = h.xpath(".//w:t")
+                shown = "".join(t.text or "" for t in ts).strip()
+                if not ts or "/" in shown or "." in shown:
+                    continue                           # already shows an address
+                for host, label, must in _PROFILE_HOSTS:
+                    if _is_profile_url(target, host, must) and shown.lower() == label.lower():
+                        ts[0].text = _short_url(target)
+                        for extra in ts[1:]:
+                            extra.text = ""
+                        break
+    except Exception:
+        pass
+
+
+# --------------------------------------------------------------------------- #
 # ANALYSIS
 # --------------------------------------------------------------------------- #
 def analyze(resume_text: str, jd_text: str = "", extra_skills: str = "") -> dict:
@@ -377,6 +462,7 @@ def tailor_docx(data: bytes, analysis: dict, ats: bool = False) -> bytes:
     """Edit an uploaded .docx in place and return the tailored bytes."""
     from docx import Document
     doc = Document(io.BytesIO(data))
+    _restore_docx_link_text(doc)
 
     regex = _bold_terms_regex(analysis["bold_terms"])
     if regex is not None:
@@ -674,7 +760,12 @@ def docx_to_pdf(docx_bytes: bytes) -> bytes:
                     return f.read()
         raise RuntimeError("Word produced no PDF output")
     except Exception as word_err:
-        # Fallback: render the docx text into a basic PDF (layout not preserved).
+        # No Word (hosted site): first try the formatted Word-free renderer (keeps bold,
+        # headings, centring, bullets, links, ONE page); the plain text dump is the last resort.
+        try:
+            return _fallback_formatted_pdf(docx_bytes)
+        except Exception:
+            pass
         try:
             return _fallback_text_pdf(docx_bytes)
         except Exception as fb_err:
@@ -688,6 +779,137 @@ def docx_to_pdf(docx_bytes: bytes) -> bytes:
                 pythoncom.CoUninitialize()
             except Exception:
                 pass
+
+
+def _fallback_formatted_pdf(docx_bytes: bytes) -> bytes:
+    """Word-free docx -> PDF that keeps the resume's structure: bold/italic runs, per-paragraph
+    size, centring, bullets, hyperlinks, spacing, page size/margins; table rows become one
+    'a  |  b' line. Standard PDF fonts (Helvetica/Times/Courier) and a single column, so it
+    reads cleanly in an ATS. Shrinks step by step until it is exactly ONE page."""
+    import docx_pagefit as PF
+    from docx import Document
+    from docx.oxml.ns import qn
+    from docx.table import Table
+    from docx.text.paragraph import Paragraph as DPara
+    from docx.text.run import Run as DRun
+    from reportlab.lib.styles import ParagraphStyle
+    from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+
+    doc = Document(io.BytesIO(docx_bytes))
+    defaults = PF._doc_defaults(doc)
+    sec = doc.sections[0]
+    page = (sec.page_width.pt, sec.page_height.pt)
+    margins = (sec.left_margin.pt, sec.right_margin.pt, sec.top_margin.pt, sec.bottom_margin.pt)
+    esc = lambda s: s.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
+
+    def runs_markup(p):
+        """[(markup, size, font, bold)] pieces of a paragraph, hyperlinks kept."""
+        parts = []
+        for child in p._p.iterchildren():
+            tag = child.tag.split("}")[-1]
+            if tag == "r":
+                rs, href = [DRun(child, p)], None
+            elif tag == "hyperlink":
+                rid = child.get(qn("r:id"))
+                href = doc.part.rels[rid].target_ref if rid and rid in doc.part.rels else None
+                rs = [DRun(r, p) for r in child.xpath("./w:r")]
+            else:
+                continue
+            for r in rs:
+                if not r.text:
+                    continue
+                font, size, bold = PF._run_font(p, r, defaults)
+                m = esc(r.text)
+                if bold:
+                    m = f"<b>{m}</b>"
+                if r.italic:
+                    m = f"<i>{m}</i>"
+                if href and href.lower().startswith(("http", "mailto")):
+                    m = f'<a href="{esc(href)}">{m}</a>'
+                parts.append((m, size, font, bold))
+        return parts
+
+    # ---- collect blocks once: (markup, size, font, align, left, bullet, before, after, line_mult)
+    blocks = []
+    for child in doc.element.body.iterchildren():
+        tag = child.tag.split("}")[-1]
+        if tag == "p":
+            p = DPara(child, doc)
+            parts = runs_markup(p)
+            if not parts:
+                continue
+            is_list = bool(p._p.xpath("./w:pPr/w:numPr")) or (p.style is not None and p.style.name.lower().startswith("list"))
+            al = p.alignment
+            if al is None:
+                for st in PF._style_chain(p.style):
+                    if st.paragraph_format.alignment is not None:
+                        al = st.paragraph_format.alignment
+                        break
+            left = PF._style_attr(p, "left_indent", defaults)
+            before = PF._style_attr(p, "space_before", defaults)
+            after = PF._style_attr(p, "space_after", defaults)
+            ls = PF._style_attr(p, "line_spacing", defaults)
+            blocks.append(dict(
+                markup="".join(x[0] for x in parts), size=max(x[1] for x in parts), font=parts[0][2],
+                align={1: TA_CENTER, 2: TA_RIGHT}.get(int(al) if al is not None else 0, TA_LEFT),
+                left=(left.pt if left is not None else (14.0 if is_list else 0.0)), bullet=is_list,
+                before=(before.pt if before is not None else defaults[2]),
+                after=(after.pt if after is not None else defaults[3]),
+                mult=(float(ls) if ls is not None and not hasattr(ls, "pt") else defaults[4])))
+        elif tag == "tbl":
+            t = Table(child, doc)
+            for row in t.rows:
+                seen, cells = set(), []
+                for c in row.cells:
+                    if id(c._tc) in seen:
+                        continue
+                    seen.add(id(c._tc))
+                    ps = [DPara(pp._p, doc) for pp in c.paragraphs if pp.text.strip()]
+                    pieces = [x for pp in ps for x in runs_markup(pp)]
+                    if pieces:
+                        cells.append(pieces)
+                if not cells:
+                    continue
+                allp = [x for c in cells for x in c]
+                blocks.append(dict(
+                    markup="  |  ".join("".join(x[0] for x in c) for c in cells),
+                    size=max(x[1] for x in allp), font=allp[0][2], align=TA_LEFT, left=0.0, bullet=False,
+                    before=0.0, after=1.0, mult=defaults[4]))
+    if not blocks:
+        raise ValueError("empty document")
+
+    def build(scale):
+        out = io.BytesIO()
+        k = max(0.45, scale)
+        pdf = SimpleDocTemplate(out, pagesize=page, leftMargin=margins[0] * max(0.55, k), rightMargin=margins[1] * max(0.55, k),
+                                topMargin=margins[2] * max(0.55, k), bottomMargin=margins[3] * max(0.55, k))
+        story = []
+        for b in blocks:
+            base, _wf, lh = PF._font_info(b["font"])
+            size = max(5.5, b["size"] * scale)
+            # the bullet is part of the TEXT ("• ...", hanging indent) so a text-only parser sees it
+            st = ParagraphStyle("b", fontName=base, fontSize=size, leading=size * lh * b["mult"],
+                                alignment=b["align"], leftIndent=b["left"] + (10 if b["bullet"] else 0),
+                                firstLineIndent=(-10 if b["bullet"] else 0),
+                                spaceBefore=b["before"] * scale, spaceAfter=b["after"] * scale)
+            bold_font = {"Helvetica": "Helvetica-Bold", "Times-Roman": "Times-Bold", "Courier": "Courier-Bold"}[base]
+            italic_font = {"Helvetica": "Helvetica-Oblique", "Times-Roman": "Times-Italic", "Courier": "Courier-Oblique"}[base]
+            from reportlab.pdfbase.pdfmetrics import registerFontFamily
+            try:
+                registerFontFamily(base, normal=base, bold=bold_font, italic=italic_font, boldItalic=bold_font)
+            except Exception:
+                pass
+            story.append(Paragraph(("•&nbsp;" + b["markup"]) if b["bullet"] else b["markup"], st))
+        pdf.build(story)
+        return out.getvalue()
+
+    data = b""
+    for s in (1.0, 0.96, 0.92, 0.88, 0.84, 0.80, 0.76, 0.72, 0.68, 0.64, 0.60, 0.56):
+        data = build(s)
+        if len(re.findall(rb"/Type\s*/Page(?![a-zA-Z])", data)) <= 1:
+            break
+    return data
 
 
 def _fallback_text_pdf(docx_bytes: bytes) -> bytes:
@@ -804,6 +1026,23 @@ def shrink_docx(docx_bytes: bytes, f: float) -> bytes:
                         setattr(pf, attr, Emu(int(v * f)))
         except Exception:
             continue
+    # Many Word files take their font size and paragraph gaps from the document DEFAULTS
+    # (w:docDefaults), not from any style or run — scale those too, or such a file can't shrink.
+    try:
+        from docx.oxml.ns import qn
+        dd = doc.styles.element.find(qn("w:docDefaults"))
+        if dd is not None:
+            for sz in list(dd.iter(qn("w:sz"), qn("w:szCs"))):
+                v = sz.get(qn("w:val"))
+                if v and v.isdigit():
+                    sz.set(qn("w:val"), str(max(11, int(round(int(v) * f)))))   # half-points, floor 5.5pt
+            for sp in list(dd.iter(qn("w:spacing"))):
+                for a in ("w:before", "w:after"):
+                    v = sp.get(qn(a))
+                    if v and v.isdigit():
+                        sp.set(qn(a), str(int(int(v) * f)))
+    except Exception:
+        pass
     for p in doc.paragraphs:
         scale_para(p)
     for t in doc.tables:
@@ -822,13 +1061,46 @@ def shrink_docx(docx_bytes: bytes, f: float) -> bytes:
     return out.getvalue()
 
 
+# Word-free one-page fit (hosted site / Linux). docx_pagefit.estimate_fill() was calibrated against
+# real Microsoft Word (calibrate_pagefit.py): it never under-counted by more than ~1-2%, so we ask
+# for a little headroom and shrink only as far as needed.
+_EST_LIMIT = 0.985          # estimated fill we accept (1.0 = exactly one page)
+_EST_MULTIPAGE = 1.12       # an ORIGINAL estimated above this is a real multi-page CV: leave it alone
+
+
+def _estimate_fit(original: bytes, tailored: bytes, force: bool) -> bytes:
+    """Same policy as the Word path, using the estimator instead of Word."""
+    try:
+        import docx_pagefit as PF
+        e_orig = 0.0
+        if not force:
+            e_orig = PF.estimate_fill(original) if original else 0.0
+            if e_orig > _EST_MULTIPAGE:                    # multi-page CV: never crush it
+                return tailored
+        limit = _EST_LIMIT if force else max(e_orig, _EST_LIMIT)   # never tighter than the original
+        if PF.estimate_fill(tailored) <= limit:
+            return tailored
+        cand = tailored
+        for f in (0.98, 0.96, 0.94, 0.92, 0.90, 0.88, 0.86, 0.84, 0.82, 0.80, 0.78, 0.76):
+            cand = shrink_docx(tailored, f)
+            if PF.estimate_fill(cand) <= limit:
+                return cand
+        return cand
+    except Exception:
+        return tailored
+
+
 def fit_docx_one_page(original: bytes, tailored: bytes, force: bool = False) -> bytes:
     """Keep a tailored resume on ONE page. If the user's original was one page and the
     tailoring (added keywords/skills) pushed it onto a second, shrink type/spacing/margins a
     little at a time, verifying the page count with Word. A multi-page original is left alone
-    (we never crush a 2-page CV); without Word (Vercel) nothing can be verified, so the file is
-    returned unchanged."""
+    (we never crush a 2-page CV). Without Word (the hosted Vercel site) the page count is
+    ESTIMATED instead (docx_pagefit, calibrated against real Word)."""
     import hashlib
+    if _WORD_OK is None:
+        _word_pdf(tailored)                    # one-time probe: remembers whether Word exists
+    if _WORD_OK is False:
+        return _estimate_fit(original, tailored, force)
     if not force:                      # force=True: a document WE rebuilt from a PDF must be 1 page
         key = hashlib.sha1(original).hexdigest()
         if key not in _ORIG_PAGES:
@@ -874,6 +1146,8 @@ def tailor_upload(filename: str, data: bytes, jd_text: str = "",
             "text-based PDF or a .docx instead."
         )
 
+    if ext == ".pdf":
+        resume_text = restore_link_text(resume_text, _pdf_link_uris(data))
     info = analyze(resume_text, jd_text, extra_skills)
 
     layout_preserved = ext == ".docx"
