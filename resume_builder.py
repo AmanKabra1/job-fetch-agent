@@ -139,7 +139,7 @@ def resume_plain_text(summary, skills, ats_keywords=None, headline=None,
         L += [f"- {b}" for b in bl if b]
     L += ["", "EDUCATION", f"{P.EDUCATION['school']} {P.EDUCATION['dates']}",
           f"{P.EDUCATION['degree']} {P.EDUCATION['location']}", "", "CERTIFICATIONS",
-          " | ".join(P.CERTIFICATIONS)]
+          " | ".join(certs_for_resume())]
     return "\n".join(L)
 
 
@@ -150,6 +150,22 @@ def _top_matches(items, matched):
     """The JD-matched skills to highlight on one skills line: only the first few (matched
     skills are already sorted to the front), so the section stays readable."""
     return set([s for s in items if s in matched][:MAX_HIGHLIGHT_PER_LINE])
+
+
+_NON_TECH_CERT = re.compile(r"marketing|\bseo\b|sales|digital garage|social media|advertis", re.I)
+
+
+def certs_for_resume():
+    """Certifications to print. Non-engineering ones (e.g. Digital Marketing) only dilute a
+    backend/AI resume for recruiters skimming it, so they are left out — unless that would
+    leave the section empty."""
+    keep = [c for c in P.CERTIFICATIONS if not _NON_TECH_CERT.search(c)]
+    return keep or list(P.CERTIFICATIONS)
+
+
+def short_url(u: str) -> str:
+    """'https://www.linkedin.com/in/x/' -> 'linkedin.com/in/x' (readable text for a text-only parser)."""
+    return re.sub(r"^https?://(?:www\.)?|/+$", "", str(u or ""))
 
 
 def _proj_links(proj, html=True):
@@ -358,8 +374,10 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
     contact = " &nbsp;|&nbsp; ".join([
         P.LOCATION, P.PHONE,
         f'<a href="mailto:{P.EMAIL}">{P.EMAIL}</a>',
-        f'<a href="{P.LINKEDIN}">LinkedIn</a>',
-        f'<a href="{P.GITHUB}">GitHub</a>',
+        # visible address text (still clickable): a parser that only reads text would otherwise
+        # see the bare words "LinkedIn | GitHub" and lose the profile URLs
+        f'<a href="{P.LINKEDIN}">{short_url(P.LINKEDIN)}</a>',
+        f'<a href="{P.GITHUB}">{short_url(P.GITHUB)}</a>',
     ])
     story.append(Paragraph(contact, contact_st))
     if headline:
@@ -450,7 +468,7 @@ def render_pdf(path, summary, skills, matched, target_title, target_company,
 
     # Certifications
     section("Certifications")
-    story.append(Paragraph("  |  ".join(P.CERTIFICATIONS), body_st))
+    story.append(Paragraph("  |  ".join(certs_for_resume()), body_st))
 
     doc.build(story)
 
@@ -641,7 +659,7 @@ def render_docx(path, summary, skills, matched, target_title, target_company,
 
     # Certifications
     section_heading("Certifications")
-    no_space(doc.add_paragraph()).add_run("  |  ".join(P.CERTIFICATIONS))
+    no_space(doc.add_paragraph()).add_run("  |  ".join(certs_for_resume()))
 
     doc.save(path)
 

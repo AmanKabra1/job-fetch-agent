@@ -213,12 +213,14 @@ def role_family(title: str, jd_text: str = "") -> str:
         return "node"
     if re.search(r"full[- ]?stack", t):
         return "fullstack"
+    # "Backend Engineer (SDE-1)" is a BACKEND role with a level tag, not an "SDE" role —
+    # so backend is checked before sde (the SDE preset would hide the JD's real title).
+    if re.search(r"back[- ]?end|server[- ]side|\bapi\b", t):
+        return "backend"
     if re.search(r"\bsde\b|software development engineer", t):
         return "sde"
     if re.search(r"software (engineer|developer)", t):
         return "software"
-    if re.search(r"back[- ]?end|server[- ]side|api", t):
-        return "backend"
     if re.search(r"\b(llm|genai|rag|langchain)\b", j) and not re.search(r"\b(node|python|java)\b", t):
         return "ai"
     return "backend"
@@ -245,13 +247,52 @@ _HEADLINE_PRIORITY = {
 }
 
 
-def build_headline(family: str, matched_terms) -> str:
-    """'Backend Software Engineer | Node.js · NestJS · Python · Microservices' — role
-    title mirrors the JD family; stack = JD-matched, evidenced skills first."""
+# Exact-title mirroring: ATS filters and recruiters match the JOB TITLE string first. When the
+# posting's title is a plain engineering title for a family you really work in, the headline
+# uses it verbatim ("Backend Engineer"), not a paraphrase ("Backend Software Engineer").
+# AI and SDE families keep the honest preset above (it states what your current role is).
+_EXACT_TITLE_FAMILIES = {"backend", "node", "python", "software", "fullstack"}
+_SAFE_TITLE = re.compile(
+    r"^(?:junior |associate )?(?:backend|back-end|full[- ]?stack|software|python|node(?:\.?js)?|"
+    r"nest(?:\.?js)?|api|application|platform)\b[\w .+/#-]{0,24}?(?:engineer|developer)$", re.I)
+_TITLE_BAD = re.compile(r"senior|sr\b|lead|principal|staff|manager|architect|director|head|intern|trainee", re.I)
+
+
+def exact_title(title: str) -> str:
+    """The JD's own title cleaned of locations / levels / team names, or '' if not a safe fit."""
+    t = re.sub(r"\([^)]*\)|\[[^\]]*\]", " ", title or "")
+    t = re.split(r"\s[-–—|@]\s|[,|]", t)[0]
+    t = re.sub(r"\s+(?:i{1,2}|[12])$", "", re.sub(r"\s+", " ", t).strip(" -–—|"), flags=re.I)
+    if not t or len(t.split()) > 5 or _TITLE_BAD.search(t) or not _SAFE_TITLE.match(t):
+        return ""
+    if t.islower() or t.isupper():
+        t = (t.title().replace(".Js", ".js").replace("Node Js", "Node.js").replace("Nest Js", "NestJS")
+             .replace("Nestjs", "NestJS").replace("Api", "API"))
+    return t
+
+
+def build_headline(family: str, matched_terms, title: str = "") -> str:
+    """'Backend Engineer | Node.js · NestJS · Python · Microservices' — role title is the JD's
+    own title when safe (else the family preset); stack = JD-matched, evidenced skills first."""
     pri = _HEADLINE_PRIORITY.get(family, _HEADLINE_PRIORITY["backend"])
     mt = list(matched_terms or [])
     stack = [s for s in pri if s in mt] + [s for s in pri if s not in mt]
-    return f"{_FAMILY_TITLE.get(family, _FAMILY_TITLE['backend'])} | " + " · ".join(stack[:4])
+    role = (exact_title(title) if family in _EXACT_TITLE_FAMILIES else "") or \
+        _FAMILY_TITLE.get(family, _FAMILY_TITLE["backend"])
+    return f"{role} | " + " · ".join(stack[:4])
+
+
+# Spell-out pairs: classic ATS filters match the EXACT string a recruiter typed, so when the JD
+# spells a term out ("Amazon Web Services") and the resume only says "AWS" (or the reverse), the
+# long form is added to Core Competencies. Only for skills the profile really evidences.
+_EXPAND = {
+    "AWS": (r"amazon web services", "Amazon Web Services (AWS)"),
+    "GCP": (r"google cloud platform", "Google Cloud Platform (GCP)"),
+    "CI/CD": (r"continuous (?:integration|delivery|deployment)", "Continuous Integration / Continuous Delivery (CI/CD)"),
+    "LLM": (r"large language models?", "Large Language Models (LLM)"),
+    "RAG": (r"retrieval[- ]augmented generation", "Retrieval-Augmented Generation (RAG)"),
+    "REST APIs": (r"representational state transfer", "RESTful APIs (REST)"),
+}
 
 
 # --------------------------------------------------------------------------- #
@@ -286,12 +327,20 @@ def analyze(jd_text: str, title: str = "", extra_evidence: str = "", listed_in_r
         else:
             gaps.append(canon)
 
+    # spelled-out forms the JD uses that the resume doesn't show yet (evidence-backed only)
+    expansions = []
+    for canon, (long_rx, long_form) in _EXPAND.items():
+        if canon in matched and re.search(long_rx, jd_text or "", re.I) and not re.search(long_rx, visible, re.I):
+            expansions.append(long_form)
+            if canon in mirror:                      # the spelled-out form already contains it
+                mirror.remove(canon)
+
     family = role_family(title, jd_text)
     return {
         "family": family,
-        "headline": build_headline(family, matched),
+        "headline": build_headline(family, matched, title),
         "matched": matched,
-        "mirror": mirror[:10],
+        "mirror": (expansions + mirror)[:10],
         "gaps": gaps[:12],
         "coverage": round(100 * got / tot) if tot else 0,
         "keywords": kws,
