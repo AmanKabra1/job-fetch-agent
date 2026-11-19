@@ -1930,7 +1930,18 @@ _OPENED_FILE = os.path.join(HERE, "data", "opened_jobs.json")
 def _kv_conf():
     url = (os.environ.get("KV_REST_API_URL") or os.environ.get("UPSTASH_REDIS_REST_URL") or "").rstrip("/")
     tok = os.environ.get("KV_REST_API_TOKEN") or os.environ.get("UPSTASH_REDIS_REST_TOKEN") or ""
-    return (url, tok) if url and tok else None
+    if url and tok:
+        return url, tok
+    # Vercel lets you pick a custom prefix when connecting the store ("STORAGE" is its default
+    # suggestion -> STORAGE_REST_API_URL / STORAGE_REST_API_TOKEN). Accept ANY <PREFIX>_REST_API_URL
+    # with its matching <PREFIX>_REST_API_TOKEN (the read-only token has a different name).
+    for name, val in os.environ.items():
+        if name.endswith("_REST_API_URL") and val:
+            prefix = name[: -len("_REST_API_URL")]
+            tok = os.environ.get(prefix + "_REST_API_TOKEN", "")
+            if tok:
+                return val.rstrip("/"), tok
+    return None
 
 
 def _kv_pipeline(cmds):
