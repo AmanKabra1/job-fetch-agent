@@ -81,7 +81,8 @@ SEARCH_TERMS = [
 # local postings never surface. Re-running the CORE terms per city (LinkedIn + Indeed only,
 # to keep the run short) pulls in far more. Home city first. Turn off with CITY_PASS=0.
 CITY_PASS = os.environ.get("CITY_PASS", "1") != "0"
-CITIES = ["Noida", "Delhi NCR", "Gurugram", "Bengaluru", "Hyderabad", "Pune", "Mumbai", "Chennai"]
+CITIES = ["Noida", "Delhi NCR", "Gurugram", "Bengaluru", "Hyderabad", "Pune", "Mumbai", "Chennai",
+          "Jaipur", "Ahmedabad", "Kolkata", "Indore"]       # last four added 2026-11-19 for more daily jobs
 CITY_TERMS = ["backend developer", "software engineer", "python developer", "node.js developer",
               "AI engineer", "SDE 1"]
 CITY_SITES = ["linkedin", "indeed"]
@@ -479,7 +480,7 @@ def rank_for_feed(rows):
 # (~1 request/second, so 60 ≈ 1 minute; set 0 to disable.)
 # 250 was being hit on every run (201 jobs then dropped as unverifiable) — LinkedIn was NOT
 # blocking us, the cap was. ~1.5 s per job, so 500 adds roughly 6 more minutes.
-LINKEDIN_ENRICH_MAX = int(os.environ.get("LINKEDIN_ENRICH_MAX", "500"))
+LINKEDIN_ENRICH_MAX = int(os.environ.get("LINKEDIN_ENRICH_MAX", "900"))   # read 3 at a time now (new_sources)
 # Hard time cap for that pass (seconds): LinkedIn throttling once stretched it to 62 min.
 LINKEDIN_ENRICH_BUDGET_S = int(os.environ.get("LINKEDIN_ENRICH_BUDGET_S", "1200"))
 CANDIDATE_YEARS = 2

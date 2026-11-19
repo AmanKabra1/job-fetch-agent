@@ -2021,6 +2021,13 @@ def _opened_merge(incoming: dict) -> dict:
     return {}
 
 
+@app.get("/api/opened/status")
+def api_opened_status():
+    """Public, no data: which store (if any) the server has for the opened-tag sync. Lets you check
+    from any browser/phone whether the free Redis store is connected: {"store": "kv"|"file"|"off"}."""
+    return {"store": _opened_backend()}
+
+
 @app.get("/api/opened")
 def api_opened_get(request: Request):
     if not _profile_unlocked(request):
@@ -3356,7 +3363,10 @@ function renderJobs(){
   let autoDiv = $('#autoFillAllDiv');
   if(!autoDiv){ autoDiv = document.createElement('div'); autoDiv.id='autoFillAllDiv';
                 b.parentElement.insertBefore(autoDiv, b); }
-  const autoEligible = view.filter(j => autoFillAts(j.job_url) && !isAutoFilled(j.job_url));
+  // count only the rows currently shown (date filter applied) — same set the button acts on
+  const _sf = window._selectedDateFilter || 'ALL';
+  const _catOf = j => (j._date_category==='TODAY' || j._date_category==='THIS_WEEK') ? j._date_category : 'RECENT';
+  const autoEligible = view.filter(j => (_sf==='ALL' || _sf===_catOf(j)) && autoFillAts(j.job_url) && !isAutoFilled(j.job_url));
   autoDiv.innerHTML = autoEligible.length
     ? ('<div style="margin-bottom:16px;padding:10px 12px;background:#0f172a;border:1px solid #1e293b;border-radius:6px">'
       +'<button class="secondary" id="autoFillAllBtn" onclick="autoFillAllEligible()">🪄 Auto-fill all eligible ('+autoEligible.length+')</button>'
@@ -3418,7 +3428,7 @@ function renderJobs(){
         <td>${esc(j.location)}</td>
         <td class="note">${j.site?('via '+esc(j.site)):''}</td>
         <td>${esc(j.date_posted)}</td>
-        <td>${j.job_url?'<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener" onclick="markOpenedIdx('+(offset+i)+')">Open</a>':''}</td>
+        <td>${j.job_url?'<a href="'+esc(j.job_url)+'" target="_blank" rel="noopener" onclick="markOpened(this.closest(\'tr\').dataset.url)">Open</a>':''}</td>
         <td><button onclick="applyKit(${offset+i})" style="margin-bottom:4px">Apply</button>${
           isAutoFilled(j.job_url)
             ? '<button class="tag have" id="afRowBtn'+(offset+i)+'" onclick="quickAutoFill('+(offset+i)+')" style="display:block;width:100%;font-size:9px;margin:2px 0;padding:3px 6px;background:#16a34a;border:none;cursor:pointer" title="Already auto-filled -- click to open &amp; fill it again">✅ auto-filled</button>'
@@ -3432,6 +3442,15 @@ function renderJobs(){
   };
 
   const selectedFilter = window._selectedDateFilter || 'ALL';
+  // Every row button (Apply / Tailor / auto-fill / Open) addresses its job by POSITION in
+  // window._view, so _view must be EXACTLY the rows as drawn — grouped by date, date filter
+  // applied. It used to stay the raw ranked list, so with a date filter on (or whenever the
+  // ranking differed from the date grouping) a button acted on a DIFFERENT job than its row.
+  const drawn = [];
+  if(selectedFilter==='ALL' || selectedFilter==='TODAY') drawn.push(...byDate.TODAY);
+  if(selectedFilter==='ALL' || selectedFilter==='THIS_WEEK') drawn.push(...byDate.THIS_WEEK);
+  if(selectedFilter==='ALL' || selectedFilter==='RECENT') drawn.push(...byDate.RECENT);
+  window._view = drawn;
   let html = '';
   let offset = 0;
 
@@ -3897,7 +3916,12 @@ function showOpenedSync(){
   const el=document.getElementById('openedSyncNote'); if(!el) return;
   const s=window._openedSync;
   if(s==='kv'||s==='file'){ el.style.display=''; el.textContent=' · \u{1F441} opened tags synced across your devices'; }
-  else if(s==='off'){ el.style.display=''; el.textContent=' · \u{1F441} opened tags saved on this device only (unlock My Profile with your PIN to sync)'; }
+  else if(s==='off'){
+    el.style.display='';
+    el.textContent = window._openedWhy==='locked'
+      ? ' · \u{1F441} opened tags are saved on THIS device only — open My Profile and enter your PIN on this device to share them across devices'
+      : ' · \u{1F441} opened tags are saved on THIS device only — the server has no shared store connected yet';
+  }
 }
 async function pushOpened(obj, keep){
   if(window._openedSync==='off' || !Object.keys(obj).length) return;
@@ -3906,7 +3930,7 @@ async function pushOpened(obj, keep){
     // 64 KB — a bulk upload (new device) must NOT use it or it would be rejected silently.
     const r=await fetch('/api/opened',{method:'POST',headers:{'Content-Type':'application/json'},
                                         body:JSON.stringify({opened:obj}),keepalive:!!keep});
-    if(!r.ok){ if(r.status===401){ window._openedSync='off'; showOpenedSync(); } return; }
+    if(!r.ok){ if(r.status===401){ window._openedSync='off'; window._openedWhy='locked'; showOpenedSync(); } return; }
     const d=await r.json();
     window._openedSync=d.sync||'off';
     if(window._openedSync!=='off') applyServerOpened(d.opened);
@@ -3916,9 +3940,10 @@ async function pushOpened(obj, keep){
 async function syncOpened(){
   try{
     const r=await fetch('/api/opened',{cache:'no-store'});
-    if(!r.ok){ window._openedSync='off'; showOpenedSync(); return; }   // locked (visitor mode) or no server
+    if(!r.ok){ window._openedSync='off'; window._openedWhy=(r.status===401?'locked':'error'); showOpenedSync(); return; }
     const d=await r.json();
     window._openedSync=d.sync||'off';
+    if(window._openedSync==='off') window._openedWhy='nostore';
     showOpenedSync();
     if(window._openedSync==='off') return;
     const missing=applyServerOpened(d.opened);

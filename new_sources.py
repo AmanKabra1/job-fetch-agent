@@ -273,33 +273,69 @@ _LI_APPL = re.compile(r'class="[^"]*num-applicants__caption[^"]*"[^>]*>\s*([^<]+
 _LI_CRIT = re.compile(r'description__job-criteria-text[^>]*>\s*([^<]+?)\s*<', re.I)
 
 
-def enrich_linkedin(rows, max_n=60, min_interval=1.1, budget_s=0):
+def _li_apply(resp_text, row):
+    """Put the guest page's JD + applicant count + criteria on the row. True if a JD was found."""
+    m = _LI_DESC.search(resp_text)
+    if not m:
+        return False
+    desc = _strip(m.group(1))
+    ap = _LI_APPL.search(resp_text)
+    crit = " ".join(_LI_CRIT.findall(resp_text)[:4])
+    tail = []
+    if ap:
+        tail.append(f"[LinkedIn: {html.unescape(ap.group(1))}]")
+    if crit:
+        tail.append(f"[LinkedIn criteria: {html.unescape(crit)}]")
+    row["description"] = (desc + "\n" + " ".join(tail)).strip()
+    return True
+
+
+def enrich_linkedin(rows, max_n=60, min_interval=1.1, budget_s=0, workers=3):
     """Fetch the public guest posting page for up to `max_n` LinkedIn rows lacking a
     description. Adds the JD text plus a '[LinkedIn: <n> applicants]' tag the screener's
-    competition model reads. Polite (≈1 req/s), best-effort: a 429/403 stops the pass
-    and the rows simply stay as they were. Returns how many rows were enriched."""
+    competition model reads. Returns how many rows were enriched.
+
+    Reads `workers` postings at a time (each worker still waits `min_interval` between its own
+    requests, so the total stays gentle). One sequential reader managed ~1 job per 2.8 s, which
+    hit the time budget with ~280 of 717 jobs unread — those were then dropped as unverifiable.
+    Newest jobs go first. LinkedIn throttling (429/403/999): each job retries after 30 s / 60 s;
+    if 4 jobs in a row stay blocked, or the time budget runs out, every worker stops at once."""
     import time
+    import threading
+    from concurrent.futures import ThreadPoolExecutor
+
     todo = [r for r in rows
             if "linkedin" in str(r.get("site", "")).lower()
             and len(str(r.get("description") or "")) < 200
             and _LI_ID.search(str(r.get("job_url") or ""))]
     todo.sort(key=lambda r: str(r.get("date_posted") or ""), reverse=True)   # newest first
-    done = 0
-    blocked_in_a_row = 0
+    todo = todo[:max_n]
+    if not todo:
+        return 0
+
+    stop = threading.Event()
+    lock = threading.Lock()
+    st = {"done": 0, "blocked": 0}
     t_start = time.time()
-    for r in todo[:max_n]:
-        # Time budget: when LinkedIn throttles us the 30s/60s retry waits add up (one run spent
-        # 62 min reading just 324 jobs). Newest jobs are read first, so stopping late loses little.
-        if budget_s and time.time() - t_start > budget_s:
-            print(f"    ! LinkedIn enrichment time budget ({budget_s // 60} min) reached after {done} jobs", flush=True)
-            break
+
+    def over_budget():
+        return bool(budget_s) and time.time() - t_start > budget_s
+
+    def work(r):
+        if stop.is_set():
+            return
+        if over_budget():
+            with lock:
+                if not stop.is_set():
+                    stop.set()
+                    print(f"    ! LinkedIn enrichment time budget ({budget_s // 60} min) reached "
+                          f"after {st['done']} jobs", flush=True)
+            return
         jid = _LI_ID.search(r["job_url"]).group(1)
         resp = None
-        # LinkedIn rate-limits datacenter IPs in bursts: wait and retry (30s, 60s) instead of
-        # giving up at the first 429 (that left ~70% of LinkedIn jobs unread).
         for wait in (0, 30, 60):
-            if wait:
-                time.sleep(wait)
+            if wait and stop.wait(wait):           # interruptible sleep: stop ends it at once
+                return
             try:
                 resp = requests.get(f"https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{jid}",
                                     headers=_UA, timeout=15)
@@ -309,31 +345,25 @@ def enrich_linkedin(rows, max_n=60, min_interval=1.1, budget_s=0):
             if resp.status_code not in (429, 403, 999):
                 break
         if resp is None:
-            break
+            return
         if resp.status_code in (429, 403, 999):
-            blocked_in_a_row += 1
-            if blocked_in_a_row >= 3:
-                print(f"    ! LinkedIn enrichment stopped (HTTP {resp.status_code}) after {done} jobs", flush=True)
-                break
-            continue
-        blocked_in_a_row = 0
-        if resp.status_code != 200:
-            time.sleep(min_interval)
-            continue
-        m = _LI_DESC.search(resp.text)
-        if m:
-            desc = _strip(m.group(1))
-            ap = _LI_APPL.search(resp.text)
-            crit = " ".join(_LI_CRIT.findall(resp.text)[:4])
-            tail = []
-            if ap:
-                tail.append(f"[LinkedIn: {html.unescape(ap.group(1))}]")
-            if crit:
-                tail.append(f"[LinkedIn criteria: {html.unescape(crit)}]")
-            r["description"] = (desc + "\n" + " ".join(tail)).strip()
-            done += 1
-        time.sleep(min_interval)
-    return done
+            with lock:
+                st["blocked"] += 1
+                if st["blocked"] >= 4 and not stop.is_set():
+                    stop.set()
+                    print(f"    ! LinkedIn enrichment stopped (HTTP {resp.status_code}) after {st['done']} jobs",
+                          flush=True)
+            return
+        with lock:
+            st["blocked"] = 0
+        if resp.status_code == 200 and _li_apply(resp.text, r):
+            with lock:
+                st["done"] += 1
+        stop.wait(min_interval)
+
+    with ThreadPoolExecutor(max_workers=max(1, workers)) as ex:
+        list(ex.map(work, todo))
+    return st["done"]
 
 
 # --------------------------------------------------------------------------- #
